@@ -61,4 +61,15 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 
 ## 性能について
 
-ビルドとテストが通ったことは、性能目標を満たしたことを意味しない。**1質問20B instructions以下、warm heap 2.5GiB以下、cold peak 3.0GiB以下の実測は依然として無い。** Candle F32の421MモデルがICPのinstruction上限に収まる保証はどこにも無く、次に測るべき対象である。
+**測定した。** `tools/measure_inference.py` がlocal replica上で合成packの `measured_instructions` を実測した（詳細は[PERFORMANCE_MEASUREMENTS.md](PERFORMANCE_MEASUREMENTS.md)）。
+
+| tier | hidden | 層 | 質問あたり instructions |
+|---|---|---|---|
+| measure-s | 128 | 2 | 193M〜228M |
+| measure-m | 512 | 4 | 4.73B〜5.43B |
+
+これを実checkpoint（28層・hidden 1024・128 tokens）へ外挿すると **494B〜567B instructions**。**設計目標20Bの25〜28倍、ICPのupdate上限40Bの12〜14倍**である。
+
+つまり **F32のままでは実checkpointは載らない**。必要な削減は最低12倍で、INT8化で見込める4倍では足りない。INT8と蒸留の併用、または層数・hiddenの再検討が必要になる。ただし「Scoreを削る」「尺度説明を短縮する」「入力を切る」といった意味を削る最適化は、この結果を理由にしても認められない。
+
+**未測定**: heap使用量（`warm 2.5GiB` / `cold peak 3.0GiB`）はcanisterのheapを読む口がなく未測定。1.57 GiB packの投入も未実施（CLI経由のアップロードはargv長制約で256 KiB chunkが上限、約6400回の呼び出しになり非現実的。これはcanister側ではなくクライアント側の制約）。
