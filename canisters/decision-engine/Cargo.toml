@@ -26,3 +26,6 @@ candle = ["dep:laya-candle", "dep:hf-tokenizer"]
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom = { version = "0.3", default-features = false }
 rand_chacha = { version = "0.9", default-features = false }
+# Already in the graph via ic-laya-core; declared here only so the seed derivation
+# in src/getrandom_ic.rs can name it. No new crate is added.
+sha2.workspace = true

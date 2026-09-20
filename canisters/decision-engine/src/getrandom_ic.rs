@@ -15,14 +15,30 @@
 //!
 //! ## Security scope
 //!
-//! The stream is ChaCha20 keyed from `ic0.time`, the caller, the running canister,
-//! and a monotonic counter. That is unpredictable to an off-chain observer but is
-//! **not** a substitute for `raw_rand`: `time` is validator-influenced and the
-//! seed is reproducible in principle by anyone who learns those inputs. It is
-//! therefore suitable only for what this module actually serves — candle's
-//! `Tensor::rand` initialization and `ahash` hash-map seeding. It must not be used
-//! to generate keys, nonces, or any security token; no such call exists in this
-//! canister, which keeps no secrets and signs nothing.
+//! The stream is ChaCha20 keyed by SHA-256 over the message's IC environment:
+//! the running canister, the caller, `ic0.time`, and a counter. Every byte of
+//! every field contributes (see `seed`).
+//!
+//! It is **not** a substitute for `raw_rand`. Two properties limit it:
+//!
+//! 1. `ic0.time` is validator-influenced, so an adversary who can steer the
+//!    round's timestamp knows part of the input.
+//! 2. `STATE` and `COUNTER` are thread-locals, and the IC reconstitutes the Wasm
+//!    instance for every message. Both therefore reset per message, so the
+//!    counter does not distinguish two `getrandom` calls that land in the same
+//!    nanosecond for the same caller and canister. Two calls in that situation
+//!    derive the same key and would produce the same stream.
+//!
+//! Those are acceptable only because of what this module actually serves:
+//! candle's `Tensor::rand` initialization and `ahash` hash-map seeding. Neither
+//! is a security boundary here — no `HashMap`/`HashSet` exists anywhere in the
+//! workspace (everything is `BTreeMap`), so an ahash seed is not observable, and
+//! this canister keeps no secrets and signs nothing.
+//!
+//! **Do not use this for keys, nonces, salting, or any security token.** If such
+//! a need appears, replace it with the management canister's `raw_rand`, which is
+//! asynchronous and therefore cannot be reached through this synchronous
+//! `getrandom` interface.
 //!
 //! The PRNG runs on plain arithmetic and does not call `getrandom`, so there is no
 //! recursion into this backend.
@@ -31,33 +47,37 @@ use core::cell::RefCell;
 use core::mem::MaybeUninit;
 use rand_chacha::rand_core::{RngCore, SeedableRng};
 use rand_chacha::ChaCha20Rng;
+use sha2::{Digest, Sha256};
 
 thread_local! {
     static STATE: RefCell<Option<ChaCha20Rng>> = const { RefCell::new(None) };
     static COUNTER: RefCell<u64> = const { RefCell::new(0) };
 }
 
+/// Derives the ChaCha20 key from the per-message IC environment.
+///
+/// Every field is length-framed before hashing. Writing the principals at fixed
+/// offsets instead would silently discard most of their bytes: a principal is up
+/// to 29 bytes, so a 32-byte buffer split four ways keeps only the first 8 bytes
+/// of each field and the slots still look full.
 fn seed() -> [u8; 32] {
-    let mut seed = [0u8; 32];
-    let canister = ic_cdk::api::canister_self();
-    let caller = ic_cdk::api::msg_caller();
-    let time = ic_cdk::api::time();
-    let spin = COUNTER.with(|c| {
+    let counter = COUNTER.with(|c| {
         let mut c = c.borrow_mut();
         *c = c.wrapping_add(1);
         *c
     });
-    let mut put = |offset: usize, bytes: &[u8]| {
-        let end = (offset + bytes.len()).min(seed.len());
-        if offset < end {
-            seed[offset..end].copy_from_slice(&bytes[..end - offset]);
-        }
-    };
-    put(0, canister.as_slice());
-    put(8, caller.as_slice());
-    put(16, &time.to_le_bytes());
-    put(24, &spin.to_le_bytes());
-    seed
+    let mut hasher = Sha256::new();
+    hasher.update(b"ic-laya/getrandom-seed/v1");
+    for field in [
+        ic_cdk::api::canister_self().as_slice(),
+        ic_cdk::api::msg_caller().as_slice(),
+        &ic_cdk::api::time().to_be_bytes(),
+        &counter.to_be_bytes(),
+    ] {
+        hasher.update((field.len() as u64).to_be_bytes());
+        hasher.update(field);
+    }
+    hasher.finalize().into()
 }
 
 /// Called by `getrandom`'s `custom` backend. The signature must match
@@ -83,8 +103,14 @@ pub unsafe extern "Rust" fn __getrandom_v03_custom(
     // SAFETY: the caller guarantees `dest` is valid for `len` bytes, and the
     // resulting slice is fully overwritten below.
     let out = unsafe { core::slice::from_raw_parts_mut(dest as *mut MaybeUninit<u8>, len) };
+    // `try_borrow_mut`, not `borrow_mut`: a re-entrant call would otherwise panic
+    // on the borrow and trap the whole canister update. Returning an error keeps
+    // the failure local to the caller that asked for random bytes.
     STATE.with(|cell| {
-        let mut slot = cell.borrow_mut();
+        let mut slot = match cell.try_borrow_mut() {
+            Ok(slot) => slot,
+            Err(_) => return Err(getrandom::Error::UNEXPECTED),
+        };
         let rng = slot.get_or_insert_with(|| ChaCha20Rng::from_seed(seed()));
         let mut written = 0usize;
         while written < len {
@@ -95,6 +121,6 @@ pub unsafe extern "Rust" fn __getrandom_v03_custom(
             }
             written += take;
         }
-    });
-    Ok(())
+        Ok(())
+    })
 }
