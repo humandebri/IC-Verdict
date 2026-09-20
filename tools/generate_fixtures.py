@@ -50,6 +50,14 @@ TIERS = {
                       intermediate_size=2048, vocab_size=2048, global_every=4,
                       local_attention=128, mask_token_id=3, decision_heads=8,
                       decision_ff=512),
+    # The candidate for the conformance target: 6 layers at the real checkpoint's
+    # hidden width, 16 heads, sliding window 128, and the intermediate ratio the real
+    # checkpoint uses (2624/1024). vocab is reduced only to keep the pack small.
+    "measure-6l768": dict(TINY, hidden_size=768, layers=6, attention_heads=16,
+                          intermediate_size=1968, vocab_size=4096, global_every=3,
+                          local_attention=128, global_rope_theta=160000.0,
+                          local_rope_theta=10000.0, mask_token_id=3, decision_heads=16,
+                          decision_ff=1024),
     "measure-l": dict(TINY, hidden_size=1024, layers=2, attention_heads=16,
                       intermediate_size=2624, vocab_size=4096, global_every=3,
                       local_attention=128, global_rope_theta=160000.0,

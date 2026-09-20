@@ -125,6 +125,43 @@ instr/MACは1.79〜1.99で、**すでに下限に近い**。wasmを逆アセン�
 
 唯一の例外はGeLU（53 instr/MAC）だが、シェア1.2%なので直しても全体は1%しか改善しない。
 
+## 目標構成の実測: 6層 / hidden 768
+
+蒸留候補の構成（encoder 6層 / hidden 768 / 16 heads / intermediate 1968 / sliding 128）を
+実測した。実checkpointと同じhidden幅・head数・窓・intermediate比を持ち、層数とvocabだけを落とした合成pack
+（53.0M params、202 MiB）。
+
+| 質問 | instructions | encoder | decision |
+|---|---|---|---|
+| RefundRequested (Noul) | 11,586,919,694 | 83% | 16% |
+| PaymentAction (Choice) | 12,274,407,298 | 83% | 16% |
+| PaymentRisk (Score) | 13,282,223,929 | 83% | 16% |
+
+3質問合計 **36.2B instructions**。これは:
+
+- ICPのupdate call上限40Bに対して **0.90倍**（上限内だが余裕は10%）
+- 設計目標20Bに対して 1.8倍
+- 壁時計（2B/秒）で **約18秒**
+
+サブフェーズの構成は4層h512のときとほぼ同じ（mlp_up 36%、attn 29%、mlp_down 18%、decision 16%）。
+**hiddenを広げても律速は変わらない**ため、INT8の対象は同じでよい。
+
+### INT8を当てた場合の見通し
+
+MLP（54%）とattention（29%）がINT8の対象で、合計83%。**×3** を当てると:
+
+| 構成 | 3質問合計 | 壁時計 |
+|---|---|---|
+| 6層 h768（F32） | 36.2B | 約18秒 |
+| **+ INT8×3** | **約11.7B** | **約6秒** |
+| + encoder共有×3 併用 | 約7.5B | 約3.7秒 |
+
+**つまり「6層 h768 + INT8×3」で約6秒**、設計目標20B（10秒）を満たす。
+encoder共有が効けばさらに3.7秒程度。
+
+**注意**: この表のINT8行はまだ**外挿**である。実測は「6層 h768 F32 = 36.2B」まで。
+INT8カーネルの実装と再測定が次の作業である。
+
 ## 壁時計時間: ここが本質的な制約
 
 公式ドキュメント（[Resource limits](https://docs.internetcomputer.org/references/resource-limits/)）:
