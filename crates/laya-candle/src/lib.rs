@@ -82,12 +82,27 @@ impl Attention {
 #[derive(Clone)]
 struct EncoderLayer { attention_norm:Option<Norm>,attention:Attention,mlp_norm:Norm,wi:Linear,wo:Linear,theta:f64,distance:Option<usize> }
 impl EncoderLayer {
-    fn forward(&self,x:&Tensor)->CResult<Tensor>{
+    fn forward(&self,x:&Tensor)->CResult<Tensor>{self.forward_marked(x,&mut |_|{})}
+    /// Same computation, with a marker after each sub-phase.
+    ///
+    /// The split matters because the two halves have different fixes: the attention
+    /// projections and the MLP are dense matmuls (quantisation territory), whereas
+    /// softmax and the gated activation are element-wise and would need different
+    /// treatment.
+    fn forward_marked(&self,x:&Tensor,mark:&mut dyn FnMut(&'static str))->CResult<Tensor>{
         let normalized=match &self.attention_norm{Some(n)=>n.forward(x)?,None=>x.clone()};
-        let x=(x+self.attention.forward(&normalized,Some(self.theta),self.distance)?)?;
+        mark("layer.attn_norm");
+        let attended=self.attention.forward(&normalized,Some(self.theta),self.distance)?;
+        mark("layer.attn");
+        let x=(x+attended)?;
+        mark("layer.attn_resid");
         let y=self.wi.forward(&self.mlp_norm.forward(&x)?)?;let half=y.dim(1)?/2;
+        mark("layer.mlp_up");
         let gate=(y.narrow(1,0,half)?.gelu_erf()?*y.narrow(1,half,half)?)?;
-        &x+self.wo.forward(&gate)?
+        mark("layer.mlp_act");
+        let out=(&x+self.wo.forward(&gate)?)?;
+        mark("layer.mlp_down");
+        Ok(out)
     }
 }
 #[derive(Clone)]
@@ -166,11 +181,15 @@ impl LayaModel {
     /// function pointer and this crate does not depend on `ic-cdk`, so it works
     /// on native (where the counter is a stub returning 0) and inside a canister
     /// (where it reads `instruction_counter`) without a second implementation.
-    fn forward_profiled(&self,input:&TokenInput,mark:&mut dyn FnMut(&'static str))->CResult<Tensor>{
+    fn forward_profiled(&self,input:&TokenInput,mark:&mut dyn FnMut(&'static str),detailed:bool)->CResult<Tensor>{
         let dev=&Device::Cpu;let ids=Tensor::from_vec(input.input_ids.clone(),input.input_ids.len(),dev)?;
         let mut x=self.embedding_norm.forward(&self.embedding.index_select(&ids,0)?)?;
         mark("embedding");
-        for layer in &self.layers{x=layer.forward(&x)?;}
+        if detailed {
+            for layer in &self.layers{x=layer.forward_marked(&x,mark)?;}
+        } else {
+            for layer in &self.layers{x=layer.forward(&x)?;}
+        }
         mark("encoder");
         x=self.final_norm.forward(&x)?;
         let qt=self.qtype.narrow(0,input.qtype_id as usize,1)?;x=x.broadcast_add(&qt)?;
@@ -190,6 +209,12 @@ impl LayaModel {
     /// delta since the previous boundary, so the entries sum to the total for
     /// this call (the `decode` phase covers `.to_vec1` and the finite check).
     pub fn infer_profiled(&mut self,input:&TokenInput,counter:&dyn Fn()->u64)->Result<Vec<PhaseCost>>{
+        self.infer_profiled_detailed(input,counter,false)
+    }
+
+    /// As `infer_profiled`, but also marks the sub-phases of every encoder layer.
+    /// The per-layer entries repeat, so callers should aggregate by name.
+    pub fn infer_profiled_detailed(&mut self,input:&TokenInput,counter:&dyn Fn()->u64,detailed:bool)->Result<Vec<PhaseCost>>{
         if input.input_ids.is_empty() || input.input_ids.len()>MAX_TOKENS || !(2..=7).contains(&input.markers.len()) || input.qtype_id as usize>=self.config.qtypes
             || input.input_ids.iter().any(|&v|v as usize>=self.config.vocab_size){return Err(Error::Invalid("token input".into()));}
         let mut prev=None;
@@ -198,7 +223,7 @@ impl LayaModel {
         let mut last=counter();
         {
             let mut record=|name:&'static str|{let now=counter();costs.push(PhaseCost{name,instructions:now.saturating_sub(last)});last=now;};
-            let tensor=self.forward_profiled(input,&mut record).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+            let tensor=self.forward_profiled(input,&mut record,detailed).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
             let values=tensor.to_vec1::<f32>().map_err(|e|Error::ModelUnavailable(e.to_string()))?;
             record("decode");
             if values.iter().any(|x|!x.is_finite()){return Err(Error::Numeric);}

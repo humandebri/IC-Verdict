@@ -107,7 +107,7 @@ fn measure_phases(req:DecisionRequest)->Result<Vec<PhaseCostDto>>{
         let t=t.borrow();let mut m=m.borrow_mut();
         let (t,m)=match (t.as_ref(),m.as_mut()){(Some(t),Some(m))=>(t,m),_=>return Err(Error::ModelUnavailable("checkpoint not warmed".into()))};
         let input=crate::schema::render(&schema,t,&req.state)?;
-        m.infer_profiled(&input,&||ic_cdk::api::instruction_counter())
+        m.infer_profiled_detailed(&input,&||ic_cdk::api::instruction_counter(),true)
             .map(|costs|costs.into_iter().map(|c|PhaseCostDto{name:c.name.to_string(),instructions:c.instructions}).collect())
     }))
 }

@@ -66,7 +66,13 @@ def measure_tier(icp: Icp, tier: str, args) -> dict:
         total = sum(p["instructions"] for p in phases)
         # `share` is derived here, not by the caller: the original `phases` entries
         # only carry name and instructions.
-        detailed = [dict(p, share=round(p["instructions"] / total, 4)) for p in phases]
+        # Encoder sub-phases repeat once per layer, so aggregate by name. The first
+        # occurrence of each name fixes the report order.
+        aggregated: dict[str, int] = {}
+        for entry in phases:
+            aggregated[entry["name"]] = aggregated.get(entry["name"], 0) + entry["instructions"]
+        detailed = [{"name": name, "instructions": value, "share": round(value / total, 4)}
+                    for name, value in aggregated.items()]
         phases_per_schema.append({
             "schema": schema["schema_id"], "primitive": schema["primitive"],
             "wall_seconds": wall, "total": total, "phases": detailed,
@@ -86,6 +92,7 @@ def measure_tier(icp: Icp, tier: str, args) -> dict:
     theoretical_macs = per_layer * layers
     record["theoretical_macs_encoder"] = theoretical_macs
     record["phases"] = phases_per_schema
+    record["phase_names_observed"] = len({p["name"] for e in phases_per_schema for p in e.get("phases", [])})
     for entry in phases_per_schema:
         if "total" in entry and theoretical_macs:
             entry["instructions_per_mac"] = round(entry["total"] / theoretical_macs, 1)
