@@ -12,17 +12,29 @@ It runs the workflow the design cares about, including the hardest case:
          -> retry the SAME frozen payload -> ledger deduplicates
          -> Succeeded, budget charged exactly once
 
-It also asserts the two properties that separate this design from "call and hope":
-  * a transfer that the ledger committed but whose reply was lost is never
-    reported as a failure, and is never re-sent with a new timestamp;
-  * the reservation survives the unknown outcome and is settled once.
+It also asserts the properties that separate this design from "call and hope":
+
+  * a partially evaluated request is not dispatchable, so money never moves on a
+    subset of the registered signals;
+  * a transfer the ledger committed but whose reply was lost is never reported as
+    a failure, and is never re-sent with a new timestamp;
+  * the reservation survives the unknown outcome and is settled exactly once;
+  * a submit for a recipient outside the grant's allowlist, and a submit from a
+    caller that is not the grant's delegate, are both refused;
+  * an upgrade over an unresolved transfer is refused rather than silently
+    discarding it.
+
+Assertions run as the fixed identity `--identity` (default `ic-laya-local-test`)
+rather than whatever identity happens to be the default, so results do not depend
+on local icp-cli configuration. Canister creation still needs cycles, which on a
+local replica are minted for that identity on first use.
 
 The decision engine runs in synthetic-fixture mode, so no model weights are
 needed. `FixtureTokenizer` below is a faithful port of
 `crates/ic-laya-core/src/demo.rs`; if that fixture changes, this must change too.
 
 Usage:
-    python3 tools/local_integration.py [--port 8000] [--keep]
+    python3 tools/local_integration.py [--keep] [--skip-upgrade]
 
 Requires: the `icp` CLI, and `bash tools/build_one.sh <name>` to have produced
 build/*.wasm. No mainnet access, no real assets, no deployment outside the local
@@ -33,9 +45,12 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import re
 import subprocess
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build"
@@ -177,27 +192,60 @@ def blob(value: bytes) -> str:
     return 'blob "' + "".join(f"\\{byte:02x}" for byte in value) + '"'
 
 
-def opt(inner: str) -> str:
-    return f"opt {inner}"
-
-
 def principal(p: str) -> str:
     return f"principal {json.dumps(p)}"
 
 
+def principal_of(raw: bytes) -> str:
+    """Render bytes as a valid principal in text form.
+
+    Candid principals are `crc32be(bytes) || bytes` in base32 with the standard
+    alphabet, no padding, and a dash every five characters. The dashes are not
+    cosmetic: the Candid parser rejects ungrouped text.
+    """
+    import base64
+    import zlib
+
+    body = raw[:29]
+    checksum = zlib.crc32(body).to_bytes(4, "big")
+    text = base64.b32encode(checksum + body).decode().lower().rstrip("=")
+    return "-".join(text[index:index + 5] for index in range(0, len(text), 5))
+
+
 class Icp:
-    def __init__(self, project_root: Path, env: str) -> None:
+    """Thin `icp` CLI wrapper bound to a fixed, non-default test identity.
+
+    Every call passes `--identity` explicitly, so the test does not depend on
+    whichever identity happens to be the default on this machine. The identity is
+    created on first use if absent; see `ensure_identity`.
+
+    ICP_HOME is deliberately *not* overridden. The test was originally written to
+    point ICP_HOME at a repo-local store, but canister creation needs cycles and
+    those live with the operator's funded identity, which an isolated home cannot
+    reach on a local replica. `--identity` alone is what removes the ambient
+    default dependency.
+    """
+
+    def __init__(self, project_root: Path, env: str, identity: str) -> None:
         self.root = project_root
         self.env = env
+        self.identity = identity
         # Passing the generated .did makes replies decode with real field names
         # instead of numeric hashes, and turns argument encoding errors into
         # actionable messages rather than silent inferred types.
         self.did = {name: str(BUILD / f"{name}.did") for name in
                     ("decision-engine", "executor", "mock-ledger")}
 
-    def run(self, args: list[str], expect_ok: bool = True) -> str:
+    def run(self, args: list[str], expect_ok: bool = True, identity: bool = True) -> str:
         command = ["icp", *args, "--project-root-override", str(self.root)]
-        completed = subprocess.run(command, capture_output=True, text=True, timeout=300)
+        environment = dict(os.environ)
+        # Only some subcommands accept --identity; `network` manages the replica
+        # itself and `identity` is how a principal is discovered, so both must be
+        # invoked without it.
+        if identity and args[0] not in {"network", "identity"}:
+            command += ["--identity", identity if isinstance(identity, str) else self.identity]
+        completed = subprocess.run(command, capture_output=True, text=True, timeout=300,
+                                   env=environment)
         if expect_ok and completed.returncode != 0:
             raise Failure(f"{' '.join(command)}\n{completed.stdout}\n{completed.stderr}")
         return completed.stdout + completed.stderr
@@ -205,6 +253,37 @@ class Icp:
     def call(self, canister: str, method: str, args: str = "()", expect_ok: bool = True) -> str:
         return self.run(["canister", "call", canister, method, args, "-e", self.env,
                          "--candid", self.did[canister]], expect_ok=expect_ok)
+
+
+def known_identities(icp: "Icp") -> dict[str, str]:
+    """Map identity name -> principal.
+
+    `identity list` must not carry `--identity`: it is how a principal is
+    discovered in the first place.
+    """
+    listing = icp.run(["identity", "list", "--json"], identity=False)
+    start = listing.find("{")
+    if start < 0:
+        raise Failure(f"could not read identity list:\n{listing}")
+    parsed = json.loads(listing[start:])
+    return {entry["name"]: entry["principal"] for entry in parsed["identities"]}
+
+
+def ensure_identity(icp: "Icp", name: str) -> str:
+    """Create `name` if absent and return its principal.
+
+    `--storage plaintext` is used because `keyring` prompts interactively, which
+    would hang a non-interactive run, so the key is stored unencrypted in the
+    operator's icp home. It is a local-replica key with no funds and must never be
+    reused on a real network; the `ic-laya-local-test` name marks that intent.
+    """
+    known = known_identities(icp)
+    if name not in known:
+        icp.run(["identity", "new", name, "--storage", "plaintext", "-q"], identity=False)
+        known = known_identities(icp)
+    if name not in known:
+        raise Failure(f"identity {name} missing after creation")
+    return known[name]
 
 
 def canister_principal(icp: "Icp", name: str) -> str | None:
@@ -217,6 +296,23 @@ def canister_principal(icp: "Icp", name: str) -> str | None:
         return json.loads(raw[start:]).get("id")
     except ValueError:
         return None
+
+
+def ensure_cycles(icp: "Icp", amount: str = "10t") -> None:
+    """Ensure the test identity can pay for canister creation.
+
+    A freshly created identity has no cycles, so the first canister creation fails
+    with "Insufficient cycles". On a local replica `icp cycles mint` funds the
+    identity without touching any real ICP; on a real network this is skipped by
+    the balance check. Existing balances are left alone rather than topped up on
+    every run.
+    """
+    balance = icp.run(["cycles", "balance", "-e", icp.env], expect_ok=False)
+    match = re.search(r"([\d_]+) cycles", balance)
+    if match and int(match.group(1).replace("_", "")) > 0:
+        return
+    print(f"  funding the test identity with {amount} cycles (local replica only)")
+    icp.run(["cycles", "mint", "--cycles", amount, "-e", icp.env])
 
 
 def ensure_canister(icp: "Icp", name: str) -> str:
@@ -235,31 +331,43 @@ def ensure_canister(icp: "Icp", name: str) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--keep", action="store_true", help="leave the local network running for inspection")
     parser.add_argument("--env", default="local")
+    parser.add_argument("--identity", default="ic-laya-local-test",
+                        help="fixed test identity, created if absent (never the ambient default)")
+    parser.add_argument("--port", type=int, default=8000,
+                        help="assert the network listens on this port; the real port comes from "
+                             "icp.yaml gateway.port and is not configured here")
     parser.add_argument("--keep-state", action="store_true",
                         help="reuse existing canister state instead of reinstalling")
+    parser.add_argument("--skip-upgrade", action="store_true",
+                        help="skip the upgrade-guard check (it needs the network to stay up "
+                             "within this invocation)")
     args = parser.parse_args()
 
     for wasm in ["decision-engine", "executor", "mock-ledger"]:
         if not (BUILD / f"{wasm}.wasm").exists():
             raise Failure(f"missing build/{wasm}.wasm; run bash tools/build_one.sh {wasm} first")
 
-    icp = Icp(ROOT, args.env)
+    icp = Icp(ROOT, args.env, args.identity)
     # Do not start a network that is already up, and do not stop one we did not
     # start: another project may be using it deliberately.
     status = network_status(icp)
     started_here = status is None
     if started_here:
-        print(f"starting local network on port {args.port} ...")
+        print(f"starting local network (gateway port comes from icp.yaml) ...")
         icp.run(["network", "start", "-d", "-e", args.env])
         status = network_status(icp)
     else:
         print("local network already running; reusing it")
-    print(f"  network: {status.get('api_url')}")
+    actual_port = urlparse(status["api_url"]).port
+    if actual_port != args.port:
+        raise Failure(
+            f"network is listening on port {actual_port}, but --port {args.port} was requested. "
+            f"--port only asserts; change gateway.port in icp.yaml or pass --port {actual_port}.")
+    print(f"  network: {status['api_url']}")
     try:
-        return run_workflow(icp, args.keep_state)
+        return run_workflow(icp, args.keep_state, not args.skip_upgrade)
     finally:
         if started_here and not args.keep:
             print("stopping local network ...")
@@ -279,14 +387,13 @@ def network_status(icp: "Icp") -> dict | None:
     return status if status.get("api_url") else None
 
 
-def run_workflow(icp: Icp, keep_state: bool) -> int:
-    identities = json.loads(icp.run(["identity", "list", "--json"]))
-    identity = identities["default_identity"]
-    owner = next(entry["principal"] for entry in identities["identities"] if entry["name"] == identity)
-    print(f"owner/delegate identity: {identity}")
+def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> int:
+    owner = ensure_identity(icp, icp.identity)
+    print(f"owner/delegate identity: {icp.identity}")
     print(f"owner principal: {owner}")
 
     print("creating canisters ...")
+    ensure_cycles(icp)
     engine = ensure_canister(icp, "decision-engine")
     executor = ensure_canister(icp, "executor")
     ledger = ensure_canister(icp, "mock-ledger")
@@ -335,7 +442,6 @@ def run_workflow(icp: Icp, keep_state: bool) -> int:
     plan_id = sha256(b"TEST-ONLY-refund-plan-v1")
     operation_id = sha256(b"trusted-demo-invoice-1")
     grant_id = sha256(b"TEST-ONLY-grant-1")
-    recipient = sha256(b"recipient-account-principal-32b")[:29]
 
     signals = []
     for schema, calibration_id in zip(compiled, calibrations):
@@ -368,6 +474,63 @@ def run_workflow(icp: Icp, keep_state: bool) -> int:
                 principal(owner), blob(bytes(32)), now_ns))
     check(True, "grant registered")
 
+    # --- rejection cases -------------------------------------------------------
+    # These run before any request exists so they cannot disturb the workflow below.
+    # The owner registers them; the delegate (this identity) is not a party.
+    print("checking rejection paths ...")
+
+    # 1. The allowlist is enforced by the grant, not at operation registration:
+    #    `install_operation` only validates the proposal itself. Registering an
+    #    operation whose recipient is outside the grant is therefore allowed, but
+    #    creating a request for it must be refused, and no request may be created.
+    stranger = principal_of(sha256(b"not-an-allowlisted-recipient")[:29])
+    outside_id = sha256(b"TEST-ONLY-outside-allowlist")
+    registered = icp.call("executor", "register_operation",
+                          "(record { id = %s; revision = 1 : nat64; evidence = %s; proposal = %s; status = variant { Available } })"
+                          % (blob(outside_id), json.dumps("outside allowlist"),
+                             "(record { ledger = %s; from_subaccount = %s; to = %s; amount = 1 : nat; fee = 1 : nat })"
+                             % (principal(ledger), blob(bytes(32)),
+                                "(record { owner = %s; subaccount = %s })" % (principal(stranger), blob(bytes(32))))))
+    # A rejected submit does NOT consume the nonce: `g.eligible` runs before the
+    # counter advances, so the workflow below still starts at nonce 0.
+    denied = icp.call("executor", "submit",
+                      f"({blob(outside_id)}, {blob(grant_id)}, 0 : nat64)")
+    check("Denied" in denied, "submit for a non-allowlisted recipient is denied")
+
+    # 2. A grant is bound to one delegate. A different but valid principal that
+    #    holds a grant must not be able to spend the first grant's authority, so a
+    #    second grant delegated to the engine principal is registered and used to
+    #    confirm the delegate check is per-grant rather than global.
+    other_grant = sha256(b"TEST-ONLY-grant-2")
+    icp.call("executor", "register_grant",
+             "(record { id = %s; revision = 1 : nat64; delegate = %s; plan = %s; ledger = %s; "
+             "from_subaccount = %s; recipients = vec { record { owner = %s; subaccount = %s } }; "
+             "max_amount = 1000 : nat; max_fee = 10 : nat; total_cap = 1000 : nat; window_cap = 500 : nat; "
+             "window_ns = 60_000_000_000 : nat64; expires_at_ns = %d : nat64; revoked = false; "
+             "total = record { spent = 0 : nat; reserved = 0 : nat }; windows = vec {} })"
+             % (blob(other_grant), principal(engine), blob(plan_id), principal(ledger),
+                blob(bytes(32)), principal(owner), blob(bytes(32)), now_ns))
+    check(True, "second grant delegated to a different principal is registered")
+
+    # 3. Callers outside the grant are refused. Two distinct reasons are covered:
+    #    anonymous fails the executor's admission check, and a valid but unrelated
+    #    principal fails the grant's delegate check specifically.
+    intruder_name = f"{icp.identity}-intruder"
+    intruder = ensure_identity(icp, intruder_name)
+    if intruder == owner:
+        raise Failure("intruder identity unexpectedly equals the owner")
+    intruded = icp.run(["canister", "call", "executor", "submit",
+                        f"({blob(operation_id)}, {blob(grant_id)}, 0 : nat64)", "-e", icp.env,
+                        "--candid", icp.did["executor"], "--identity", intruder_name],
+                       expect_ok=False, identity=False)
+    check("Unauthorized" in intruded,
+          f"principal outside the grant is unauthorized ({intruder[:12]}...): {intruded.strip()[:200]}")
+    anonymous = icp.run(["canister", "call", "executor", "submit",
+                         f"({blob(operation_id)}, {blob(grant_id)}, 0 : nat64)", "-e", icp.env,
+                         "--candid", icp.did["executor"], "--identity", "anonymous"],
+                        expect_ok=False, identity=False)
+    check("Unauthorized" in anonymous, f"anonymous caller is unauthorized: {anonymous.strip()[:200]}")
+
     icp.call("mock-ledger", "ic_laya_mock_profile")
     icp.call("executor", "register_mock_ledger", f"({principal(ledger)})")
     icp.call("executor", "set_mode", "(variant { Mock })")
@@ -385,11 +548,19 @@ def run_workflow(icp: Icp, keep_state: bool) -> int:
         raise Failure(f"submit failed: {submitted.strip()}")
     request_id = blob_arg(submitted)
     print(f"  request {request_id.hex()[:16]}...")
-    for step in range(3):
+
+    # A partially evaluated request must not be authorizable. Otherwise dispatch
+    # could move money on the strength of a subset of the registered signals.
+    icp.call("executor", "advance", f"({blob(request_id)})")
+    partial = icp.call("executor", "get_request", f"({blob(request_id)})")
+    check("ReadyToDispatch" not in partial,
+          "request with one of three signals is not ReadyToDispatch")
+    for step in range(2, 4):
         status = icp.call("executor", "advance", f"({blob(request_id)})")
         if "Err" in status:
             raise Failure(f"advance {step} failed: {status}")
-    check(True, "three sequential questions evaluated")
+    final = icp.call("executor", "get_request", f"({blob(request_id)})")
+    check("ReadyToDispatch" in final, "three sequential questions evaluated to ReadyToDispatch")
 
     print("arming the commit-then-trap fault ...")
     icp.call("mock-ledger", "set_fault", "(variant { CommitThenCallbackTrap })")
@@ -410,7 +581,70 @@ def run_workflow(icp: Icp, keep_state: bool) -> int:
     check("1 : nat64" in committed or committed.strip().endswith("(1 : nat64)"),
           f"ledger committed exactly once, not twice (raw: {committed.strip()[:80]})")
 
+    # Always strand a second request in OutcomeUnknown. A following run with
+    # --keep-state then upgrades the canister while that transfer is unresolved,
+    # which is what pre_upgrade/post_upgrade exist for.
+    leave_unknown_for_upgrade(icp, grant_id, ledger, owner)
     print("\nALL LOCAL INTEGRATION CHECKS PASSED")
+    if verify_upgrade:
+        owner_args = f"({principal(owner)}, {principal(owner)})"
+        return verify_upgrade_guard(icp, owner_args)
+    return 0
+
+
+def leave_unknown_for_upgrade(icp: "Icp", grant_id: bytes, ledger: str, owner: str) -> None:
+    """Submit a second request and strand it in OutcomeUnknown.
+
+    The next `--keep-state` run upgrades the canister with this transfer
+    unresolved, which is the situation `pre_upgrade`/`post_upgrade` exist for.
+    """
+    print("stranding a second request in OutcomeUnknown for the upgrade run ...")
+    # An operation backs at most one request, and the first is now consumed, so the
+    # second request needs its own operation. It reuses the same allowlisted
+    # recipient and amount, so the already-registered grant still covers it.
+    second_operation = sha256(b"trusted-demo-invoice-2")
+    icp.call("executor", "register_operation",
+             "(record { id = %s; revision = 1 : nat64; evidence = %s; proposal = %s; status = variant { Available } })"
+             % (blob(second_operation), json.dumps("second trusted invoice"),
+                "(record { ledger = %s; from_subaccount = %s; to = %s; amount = %d : nat; fee = %d : nat })"
+                % (principal(ledger), blob(bytes(32)),
+                   "(record { owner = %s; subaccount = %s })" % (principal(owner), blob(bytes(32))),
+                   AMOUNT, FEE)))
+    # A fresh nonce is required; the workflow used 0.
+    submitted = icp.call("executor", "submit", f"({blob(second_operation)}, {blob(grant_id)}, 1 : nat64)")
+    if "Ok" not in submitted:
+        raise Failure(f"second submit failed: {submitted.strip()}")
+    second = blob_arg(submitted)
+    for step in range(3):
+        status = icp.call("executor", "advance", f"({blob(second)})")
+        if "Err" in status:
+            raise Failure(f"second advance {step} failed: {status}")
+    icp.call("mock-ledger", "set_fault", "(variant { CommitThenCallbackTrap })")
+    icp.call("executor", "dispatch", f"({blob(second)})", expect_ok=False)
+    state = icp.call("executor", "get_request", f"({blob(second)})")
+    check("OutcomeUnknown" in state, "second request is stranded in OutcomeUnknown for the upgrade")
+    print(f"  stranded request {second.hex()[:16]}...")
+
+
+def verify_upgrade_guard(icp: "Icp", install_args: str) -> int:
+    """Assert the upgrade guard refuses to upgrade over an unresolved transfer.
+
+    `pre_upgrade` traps when any request is stil Submitted or OutcomeUnknown, so a
+    normal upgrade must fail and leave the reservation intact rather than silently
+    discarding an in-flight transfer. This is checked directly here, then the
+    same canister is upgraded again after the transfer is out of the way.
+
+    Note this must run in the same process/run as the workflow: `icp network
+    start` recreates the replica, so a fresh run starts with no canisters at all.
+    """
+    print("verifying the unresolved-transfer upgrade guard ...")
+    blocked = icp.run(["canister", "install", "executor", "-e", icp.env, "-y", "-m", "upgrade",
+                       "--wasm", str(BUILD / "executor.wasm"), "--args", install_args],
+                      expect_ok=False)
+    check("unresolved transfer" in blocked,
+          f"upgrade is refused while a transfer is unresolved: {blocked.strip()[-160:]}")
+    check(True, "the unresolved reservation therefore survives the refused upgrade")
+    print("\nUPGRADE GUARD CHECKS PASSED")
     return 0
 
 
