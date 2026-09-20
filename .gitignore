@@ -1,0 +1,8 @@
+/target/
+/build/
+/.dfx/
+/.venv/
+/checkpoints/
+__pycache__/
+*.pyc
+# Cargo.lock is intentionally NOT ignored. Generate, review, and commit it.

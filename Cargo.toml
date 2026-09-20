@@ -1,0 +1,32 @@
+[workspace]
+resolver = "2"
+members = ["crates/ic-laya-core", "crates/laya-candle", "crates/hf-tokenizer", "crates/canister-common", "canisters/decision-engine", "canisters/executor", "canisters/mock-ledger"]
+default-members = ["crates/ic-laya-core"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+thiserror = "2.0"
+bincode = "1.3.3"
+candid = "0.10"
+ic-cdk = "=0.20.3"
+candle-core = { version = "=0.11.0", default-features = false }
+candle-nn = { version = "=0.11.0", default-features = false }
+tokenizers = { version = "=0.22.0", default-features = false, features = ["fancy-regex"] }
+ic-laya-core = { path = "crates/ic-laya-core" }
+laya-candle = { path = "crates/laya-candle" }
+hf-tokenizer = { path = "crates/hf-tokenizer" }
+canister-common = { path = "crates/canister-common" }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+overflow-checks = true

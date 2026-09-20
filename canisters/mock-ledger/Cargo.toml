@@ -1,0 +1,14 @@
+[package]
+name = "mock-ledger"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[lib]
+crate-type = ["cdylib", "rlib"]
+[dependencies]
+ic-laya-core.workspace = true
+canister-common.workspace = true
+ic-cdk.workspace = true
+candid.workspace = true
+serde.workspace = true
+serde_json.workspace = true

@@ -1,0 +1,4 @@
+HTML internal anchors: 102 links resolved.
+Unique anchor IDs: 20.
+Tables: 10.
+HTML syntax/links inspected programmatically; no browser visual check performed.

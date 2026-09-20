@@ -1,0 +1,76 @@
+{
+  "kind": "PyTorch versus NumPy on synthetic weights",
+  "torch": "2.14.0",
+  "cases": [
+    {
+      "pre_norm": true,
+      "qtype": 0,
+      "options": 3,
+      "tokens": 16,
+      "pytorch_numpy_max_abs": 6.297295228677169e-09
+    },
+    {
+      "pre_norm": true,
+      "qtype": 1,
+      "options": 2,
+      "tokens": 13,
+      "pytorch_numpy_max_abs": 8.376400840309772e-10
+    },
+    {
+      "pre_norm": true,
+      "qtype": 2,
+      "options": 3,
+      "tokens": 19,
+      "pytorch_numpy_max_abs": 6.7911140877452425e-09
+    },
+    {
+      "pre_norm": true,
+      "qtype": 2,
+      "options": 5,
+      "tokens": 21,
+      "pytorch_numpy_max_abs": 9.049629949922644e-09
+    },
+    {
+      "pre_norm": true,
+      "qtype": 2,
+      "options": 7,
+      "tokens": 29,
+      "pytorch_numpy_max_abs": 5.387754544589063e-09
+    },
+    {
+      "pre_norm": false,
+      "qtype": 0,
+      "options": 3,
+      "tokens": 16,
+      "pytorch_numpy_max_abs": 2.8486905976482513e-09
+    },
+    {
+      "pre_norm": false,
+      "qtype": 1,
+      "options": 2,
+      "tokens": 13,
+      "pytorch_numpy_max_abs": 2.783676891424114e-09
+    },
+    {
+      "pre_norm": false,
+      "qtype": 2,
+      "options": 3,
+      "tokens": 19,
+      "pytorch_numpy_max_abs": 3.367007245930198e-09
+    },
+    {
+      "pre_norm": false,
+      "qtype": 2,
+      "options": 5,
+      "tokens": 21,
+      "pytorch_numpy_max_abs": 4.203014838943808e-09
+    },
+    {
+      "pre_norm": false,
+      "qtype": 2,
+      "options": 7,
+      "tokens": 29,
+      "pytorch_numpy_max_abs": 4.767394699498051e-09
+    }
+  ]
+}

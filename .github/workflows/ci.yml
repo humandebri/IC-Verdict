@@ -1,0 +1,48 @@
+name: tests-and-builds
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python tools/generate_fixtures.py
+      - run: python -m unittest discover -s tests -v
+      # Lockfile was not fabricated in the compiler-less authoring environment.
+      # Generate once in a networked build, review it, and commit it afterward.
+      - run: cargo generate-lockfile
+      - run: cargo test --workspace --locked
+      - run: cargo check -p decision-engine --features candle --locked
+      - run: cargo run --locked -p ic-laya-core --example mock_workflow
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-validation
+          path: |
+            Cargo.lock
+            artifacts/
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - run: bash tools/build_one.sh decision-engine
+      - run: bash tools/build_one.sh executor
+      - run: bash tools/build_one.sh mock-ledger
+      # This is a required check, not continue-on-error. Incompatibility must surface.
+      - run: IC_LAYA_CANDLE=1 bash tools/build_one.sh decision-engine
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: candid-and-wasm
+          path: |
+            build/
+            Cargo.lock

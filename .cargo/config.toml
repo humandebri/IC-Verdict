@@ -1,0 +1,20 @@
+# wasm32-unknown-unknown only.
+#
+# getrandom 0.3 has no OS entropy source on wasm32-unknown-unknown and refuses to
+# build without either the `wasm_js` feature (wasm-bindgen/js-sys, unusable on ICP)
+# or a custom backend. It enters our wasm dependency graph transitively and
+# non-optionally:
+#   candle-core -> rand -> rand_core -> getrandom
+#   tokenizers  -> ahash            -> getrandom
+#
+# Selecting the "custom" backend here makes getrandom call
+# `__getrandom_v03_custom`, which canisters/decision-engine provides in
+# src/getrandom_ic.rs using IC syscalls instead of a browser or an OS.
+#
+# Scope is limited to the wasm32 target so native builds and the executor /
+# mock-ledger canisters (whose graphs contain no getrandom) are unaffected.
+#
+# Note: a RUSTFLAGS environment variable overrides this table. Build canisters for
+# wasm through tools/build_one.sh so the setting is always applied.
+[target.wasm32-unknown-unknown]
+rustflags = ['--cfg', 'getrandom_backend="custom"']

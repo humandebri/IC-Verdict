@@ -1,0 +1,22 @@
+# Pins the compiler for this workspace.
+#
+# Why it is pinned rather than "stable": candle-core 0.11.0 uses the
+# `stdarch_neon_f16` intrinsics (float16x8_t) in cpu/neon.rs whenever the
+# aarch64 target advertises the `fp16` feature, which Apple Silicon does by
+# default. That library feature is still unstable on Rust 1.93.0, so
+# `laya-candle` and `decision-engine --features candle` fail with E0658 there:
+#
+#     error[E0658]: use of unstable library feature `stdarch_neon_f16`
+#        --> candle-core-0.11.0/src/cpu/neon.rs:160:30
+#
+# It compiles on 1.97.1, where that intrinsic has been stabilized. The wasm32
+# target never compiles cpu/neon.rs, so canister builds are unaffected by this
+# and work on either compiler.
+#
+# Raising or changing this pin requires re-running:
+#   cargo test --workspace
+#   cargo check -p decision-engine --features candle
+#   IC_LAYA_CANDLE=1 bash tools/build_one.sh decision-engine
+[toolchain]
+channel = "1.97.1"
+targets = ["wasm32-unknown-unknown"]

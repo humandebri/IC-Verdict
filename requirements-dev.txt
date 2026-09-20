@@ -1,0 +1,4 @@
+# Python references/tooling only, not canister runtime dependencies.
+numpy>=2.0,<3
+safetensors>=0.5,<1
+torch>=2.5,<3

@@ -1,0 +1,377 @@
+IC-Laya v2 DOCUMENT / NUMERIC EXAMPLE CHECKS
+No model inference, Rust compilation, canister benchmark, security proof or ledger integration.
+
+PASS  Core contains Choice, Noul, Score
+PASS  1 question per evaluation, 3 per workflow
+PASS  Compact128 prefix budget leaves at least 63 state tokens
+PASS  Choice 2..5; Score 3..7, default 5
+PASS  Silent truncation disabled
+PASS  Live transfer disabled; amount cap zero
+PASS  Unverified revisions/thresholds are not invented
+PASS  Equal normalized means can have different upper tails
+PASS  3 bins: score endpoint units correct
+PASS  3 bins: exact CDF/tail complement at point 0, threshold 0
+PASS  3 bins: exact CDF/tail complement at point 0, threshold 1
+PASS  3 bins: exact CDF/tail complement at point 0, threshold 2
+PASS  3 bins: exact CDF/tail complement at point 1, threshold 0
+PASS  3 bins: exact CDF/tail complement at point 1, threshold 1
+PASS  3 bins: exact CDF/tail complement at point 1, threshold 2
+PASS  3 bins: exact CDF/tail complement at point 2, threshold 0
+PASS  3 bins: exact CDF/tail complement at point 2, threshold 1
+PASS  3 bins: exact CDF/tail complement at point 2, threshold 2
+PASS  4 bins: score endpoint units correct
+PASS  4 bins: exact CDF/tail complement at point 0, threshold 0
+PASS  4 bins: exact CDF/tail complement at point 0, threshold 1
+PASS  4 bins: exact CDF/tail complement at point 0, threshold 2
+PASS  4 bins: exact CDF/tail complement at point 0, threshold 3
+PASS  4 bins: exact CDF/tail complement at point 1, threshold 0
+PASS  4 bins: exact CDF/tail complement at point 1, threshold 1
+PASS  4 bins: exact CDF/tail complement at point 1, threshold 2
+PASS  4 bins: exact CDF/tail complement at point 1, threshold 3
+PASS  4 bins: exact CDF/tail complement at point 2, threshold 0
+PASS  4 bins: exact CDF/tail complement at point 2, threshold 1
+PASS  4 bins: exact CDF/tail complement at point 2, threshold 2
+PASS  4 bins: exact CDF/tail complement at point 2, threshold 3
+PASS  4 bins: exact CDF/tail complement at point 3, threshold 0
+PASS  4 bins: exact CDF/tail complement at point 3, threshold 1
+PASS  4 bins: exact CDF/tail complement at point 3, threshold 2
+PASS  4 bins: exact CDF/tail complement at point 3, threshold 3
+PASS  5 bins: score endpoint units correct
+PASS  5 bins: exact CDF/tail complement at point 0, threshold 0
+PASS  5 bins: exact CDF/tail complement at point 0, threshold 1
+PASS  5 bins: exact CDF/tail complement at point 0, threshold 2
+PASS  5 bins: exact CDF/tail complement at point 0, threshold 3
+PASS  5 bins: exact CDF/tail complement at point 0, threshold 4
+PASS  5 bins: exact CDF/tail complement at point 1, threshold 0
+PASS  5 bins: exact CDF/tail complement at point 1, threshold 1
+PASS  5 bins: exact CDF/tail complement at point 1, threshold 2
+PASS  5 bins: exact CDF/tail complement at point 1, threshold 3
+PASS  5 bins: exact CDF/tail complement at point 1, threshold 4
+PASS  5 bins: exact CDF/tail complement at point 2, threshold 0
+PASS  5 bins: exact CDF/tail complement at point 2, threshold 1
+PASS  5 bins: exact CDF/tail complement at point 2, threshold 2
+PASS  5 bins: exact CDF/tail complement at point 2, threshold 3
+PASS  5 bins: exact CDF/tail complement at point 2, threshold 4
+PASS  5 bins: exact CDF/tail complement at point 3, threshold 0
+PASS  5 bins: exact CDF/tail complement at point 3, threshold 1
+PASS  5 bins: exact CDF/tail complement at point 3, threshold 2
+PASS  5 bins: exact CDF/tail complement at point 3, threshold 3
+PASS  5 bins: exact CDF/tail complement at point 3, threshold 4
+PASS  5 bins: exact CDF/tail complement at point 4, threshold 0
+PASS  5 bins: exact CDF/tail complement at point 4, threshold 1
+PASS  5 bins: exact CDF/tail complement at point 4, threshold 2
+PASS  5 bins: exact CDF/tail complement at point 4, threshold 3
+PASS  5 bins: exact CDF/tail complement at point 4, threshold 4
+PASS  6 bins: score endpoint units correct
+PASS  6 bins: exact CDF/tail complement at point 0, threshold 0
+PASS  6 bins: exact CDF/tail complement at point 0, threshold 1
+PASS  6 bins: exact CDF/tail complement at point 0, threshold 2
+PASS  6 bins: exact CDF/tail complement at point 0, threshold 3
+PASS  6 bins: exact CDF/tail complement at point 0, threshold 4
+PASS  6 bins: exact CDF/tail complement at point 0, threshold 5
+PASS  6 bins: exact CDF/tail complement at point 1, threshold 0
+PASS  6 bins: exact CDF/tail complement at point 1, threshold 1
+PASS  6 bins: exact CDF/tail complement at point 1, threshold 2
+PASS  6 bins: exact CDF/tail complement at point 1, threshold 3
+PASS  6 bins: exact CDF/tail complement at point 1, threshold 4
+PASS  6 bins: exact CDF/tail complement at point 1, threshold 5
+PASS  6 bins: exact CDF/tail complement at point 2, threshold 0
+PASS  6 bins: exact CDF/tail complement at point 2, threshold 1
+PASS  6 bins: exact CDF/tail complement at point 2, threshold 2
+PASS  6 bins: exact CDF/tail complement at point 2, threshold 3
+PASS  6 bins: exact CDF/tail complement at point 2, threshold 4
+PASS  6 bins: exact CDF/tail complement at point 2, threshold 5
+PASS  6 bins: exact CDF/tail complement at point 3, threshold 0
+PASS  6 bins: exact CDF/tail complement at point 3, threshold 1
+PASS  6 bins: exact CDF/tail complement at point 3, threshold 2
+PASS  6 bins: exact CDF/tail complement at point 3, threshold 3
+PASS  6 bins: exact CDF/tail complement at point 3, threshold 4
+PASS  6 bins: exact CDF/tail complement at point 3, threshold 5
+PASS  6 bins: exact CDF/tail complement at point 4, threshold 0
+PASS  6 bins: exact CDF/tail complement at point 4, threshold 1
+PASS  6 bins: exact CDF/tail complement at point 4, threshold 2
+PASS  6 bins: exact CDF/tail complement at point 4, threshold 3
+PASS  6 bins: exact CDF/tail complement at point 4, threshold 4
+PASS  6 bins: exact CDF/tail complement at point 4, threshold 5
+PASS  6 bins: exact CDF/tail complement at point 5, threshold 0
+PASS  6 bins: exact CDF/tail complement at point 5, threshold 1
+PASS  6 bins: exact CDF/tail complement at point 5, threshold 2
+PASS  6 bins: exact CDF/tail complement at point 5, threshold 3
+PASS  6 bins: exact CDF/tail complement at point 5, threshold 4
+PASS  6 bins: exact CDF/tail complement at point 5, threshold 5
+PASS  7 bins: score endpoint units correct
+PASS  7 bins: exact CDF/tail complement at point 0, threshold 0
+PASS  7 bins: exact CDF/tail complement at point 0, threshold 1
+PASS  7 bins: exact CDF/tail complement at point 0, threshold 2
+PASS  7 bins: exact CDF/tail complement at point 0, threshold 3
+PASS  7 bins: exact CDF/tail complement at point 0, threshold 4
+PASS  7 bins: exact CDF/tail complement at point 0, threshold 5
+PASS  7 bins: exact CDF/tail complement at point 0, threshold 6
+PASS  7 bins: exact CDF/tail complement at point 1, threshold 0
+PASS  7 bins: exact CDF/tail complement at point 1, threshold 1
+PASS  7 bins: exact CDF/tail complement at point 1, threshold 2
+PASS  7 bins: exact CDF/tail complement at point 1, threshold 3
+PASS  7 bins: exact CDF/tail complement at point 1, threshold 4
+PASS  7 bins: exact CDF/tail complement at point 1, threshold 5
+PASS  7 bins: exact CDF/tail complement at point 1, threshold 6
+PASS  7 bins: exact CDF/tail complement at point 2, threshold 0
+PASS  7 bins: exact CDF/tail complement at point 2, threshold 1
+PASS  7 bins: exact CDF/tail complement at point 2, threshold 2
+PASS  7 bins: exact CDF/tail complement at point 2, threshold 3
+PASS  7 bins: exact CDF/tail complement at point 2, threshold 4
+PASS  7 bins: exact CDF/tail complement at point 2, threshold 5
+PASS  7 bins: exact CDF/tail complement at point 2, threshold 6
+PASS  7 bins: exact CDF/tail complement at point 3, threshold 0
+PASS  7 bins: exact CDF/tail complement at point 3, threshold 1
+PASS  7 bins: exact CDF/tail complement at point 3, threshold 2
+PASS  7 bins: exact CDF/tail complement at point 3, threshold 3
+PASS  7 bins: exact CDF/tail complement at point 3, threshold 4
+PASS  7 bins: exact CDF/tail complement at point 3, threshold 5
+PASS  7 bins: exact CDF/tail complement at point 3, threshold 6
+PASS  7 bins: exact CDF/tail complement at point 4, threshold 0
+PASS  7 bins: exact CDF/tail complement at point 4, threshold 1
+PASS  7 bins: exact CDF/tail complement at point 4, threshold 2
+PASS  7 bins: exact CDF/tail complement at point 4, threshold 3
+PASS  7 bins: exact CDF/tail complement at point 4, threshold 4
+PASS  7 bins: exact CDF/tail complement at point 4, threshold 5
+PASS  7 bins: exact CDF/tail complement at point 4, threshold 6
+PASS  7 bins: exact CDF/tail complement at point 5, threshold 0
+PASS  7 bins: exact CDF/tail complement at point 5, threshold 1
+PASS  7 bins: exact CDF/tail complement at point 5, threshold 2
+PASS  7 bins: exact CDF/tail complement at point 5, threshold 3
+PASS  7 bins: exact CDF/tail complement at point 5, threshold 4
+PASS  7 bins: exact CDF/tail complement at point 5, threshold 5
+PASS  7 bins: exact CDF/tail complement at point 5, threshold 6
+PASS  7 bins: exact CDF/tail complement at point 6, threshold 0
+PASS  7 bins: exact CDF/tail complement at point 6, threshold 1
+PASS  7 bins: exact CDF/tail complement at point 6, threshold 2
+PASS  7 bins: exact CDF/tail complement at point 6, threshold 3
+PASS  7 bins: exact CDF/tail complement at point 6, threshold 4
+PASS  7 bins: exact CDF/tail complement at point 6, threshold 5
+PASS  7 bins: exact CDF/tail complement at point 6, threshold 6
+PASS  Invalid distribution rejected: [500000, 500000]
+PASS  Invalid distribution rejected: [1000000, 0, 1]
+PASS  Invalid distribution rejected: [1000000, -1, 1]
+PASS  Invalid distribution rejected: [0, 0, 0]
+PASS  Positive rounding n=0, d=2
+PASS  Positive rounding n=1, d=2
+PASS  Positive rounding n=1, d=2
+PASS  Positive rounding n=2, d=2
+PASS  Positive rounding n=1999999, d=2
+PASS  Positive rounding n=2000000, d=2
+PASS  Positive rounding n=0, d=3
+PASS  Positive rounding n=1, d=3
+PASS  Positive rounding n=1, d=3
+PASS  Positive rounding n=3, d=3
+PASS  Positive rounding n=2999999, d=3
+PASS  Positive rounding n=3000000, d=3
+PASS  Positive rounding n=0, d=4
+PASS  Positive rounding n=1, d=4
+PASS  Positive rounding n=2, d=4
+PASS  Positive rounding n=4, d=4
+PASS  Positive rounding n=3999999, d=4
+PASS  Positive rounding n=4000000, d=4
+PASS  Positive rounding n=0, d=5
+PASS  Positive rounding n=1, d=5
+PASS  Positive rounding n=2, d=5
+PASS  Positive rounding n=5, d=5
+PASS  Positive rounding n=4999999, d=5
+PASS  Positive rounding n=5000000, d=5
+PASS  Positive rounding n=0, d=6
+PASS  Positive rounding n=1, d=6
+PASS  Positive rounding n=3, d=6
+PASS  Positive rounding n=6, d=6
+PASS  Positive rounding n=5999999, d=6
+PASS  Positive rounding n=6000000, d=6
+PASS  16 ADRs exist
+PASS  ADR-001 complete
+PASS  ADR-002 complete
+PASS  ADR-003 complete
+PASS  ADR-004 complete
+PASS  ADR-005 complete
+PASS  ADR-006 complete
+PASS  ADR-007 complete
+PASS  ADR-008 complete
+PASS  ADR-009 complete
+PASS  ADR-010 complete
+PASS  ADR-011 complete
+PASS  ADR-012 complete
+PASS  ADR-013 complete
+PASS  ADR-014 complete
+PASS  ADR-015 complete
+PASS  ADR-016 complete
+PASS  FINAL_SPEC.md: sources resolve
+PASS  FINAL_SPEC.md: fences paired
+PASS  FINAL_SPEC.md: no Hangul typo
+PASS  SOURCES.md: sources resolve
+PASS  SOURCES.md: fences paired
+PASS  SOURCES.md: no Hangul typo
+PASS  ADR.md: sources resolve
+PASS  ADR.md: fences paired
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: local link SOURCES.md
+PASS  ADR.md: local link FINAL_SPEC.md
+PASS  ADR.md: no Hangul typo
+PASS  IMPLEMENTATION_PLAN.md: sources resolve
+PASS  IMPLEMENTATION_PLAN.md: fences paired
+PASS  IMPLEMENTATION_PLAN.md: no Hangul typo
+PASS  CHANGES.md: sources resolve
+PASS  CHANGES.md: fences paired
+PASS  CHANGES.md: no Hangul typo
+PASS  README.md: sources resolve
+PASS  README.md: fences paired
+PASS  README.md: local link FINAL_SPEC.md
+PASS  README.md: local link IMPLEMENTATION_PLAN.md
+PASS  README.md: local link ADR.md
+PASS  README.md: local link adr/README.md
+PASS  README.md: local link specs/SCORE_AND_WIRE.md
+PASS  README.md: local link specs/WORKFLOW_AND_TX.md
+PASS  README.md: local link profiles/compact128.json
+PASS  README.md: local link CHANGES.md
+PASS  README.md: local link review/REVIEW.md
+PASS  README.md: local link review/CHECKS.txt
+PASS  README.md: local link SOURCES.md
+PASS  README.md: no Hangul typo
+PASS  review/REVIEW.md: sources resolve
+PASS  review/REVIEW.md: fences paired
+PASS  review/REVIEW.md: no Hangul typo
+PASS  specs/SCORE_AND_WIRE.md: sources resolve
+PASS  specs/SCORE_AND_WIRE.md: fences paired
+PASS  specs/SCORE_AND_WIRE.md: no Hangul typo
+PASS  specs/WORKFLOW_AND_TX.md: sources resolve
+PASS  specs/WORKFLOW_AND_TX.md: fences paired
+PASS  specs/WORKFLOW_AND_TX.md: no Hangul typo
+PASS  adr/ADR-011.md: sources resolve
+PASS  adr/ADR-011.md: fences paired
+PASS  adr/ADR-011.md: local link ../SOURCES.md
+PASS  adr/ADR-011.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-011.md: no Hangul typo
+PASS  adr/ADR-008.md: sources resolve
+PASS  adr/ADR-008.md: fences paired
+PASS  adr/ADR-008.md: local link ../SOURCES.md
+PASS  adr/ADR-008.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-008.md: no Hangul typo
+PASS  adr/ADR-014.md: sources resolve
+PASS  adr/ADR-014.md: fences paired
+PASS  adr/ADR-014.md: local link ../SOURCES.md
+PASS  adr/ADR-014.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-014.md: no Hangul typo
+PASS  adr/ADR-015.md: sources resolve
+PASS  adr/ADR-015.md: fences paired
+PASS  adr/ADR-015.md: local link ../SOURCES.md
+PASS  adr/ADR-015.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-015.md: no Hangul typo
+PASS  adr/ADR-006.md: sources resolve
+PASS  adr/ADR-006.md: fences paired
+PASS  adr/ADR-006.md: local link ../SOURCES.md
+PASS  adr/ADR-006.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-006.md: no Hangul typo
+PASS  adr/ADR-013.md: sources resolve
+PASS  adr/ADR-013.md: fences paired
+PASS  adr/ADR-013.md: local link ../SOURCES.md
+PASS  adr/ADR-013.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-013.md: no Hangul typo
+PASS  adr/ADR-003.md: sources resolve
+PASS  adr/ADR-003.md: fences paired
+PASS  adr/ADR-003.md: local link ../SOURCES.md
+PASS  adr/ADR-003.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-003.md: no Hangul typo
+PASS  adr/ADR-012.md: sources resolve
+PASS  adr/ADR-012.md: fences paired
+PASS  adr/ADR-012.md: local link ../SOURCES.md
+PASS  adr/ADR-012.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-012.md: no Hangul typo
+PASS  adr/ADR-009.md: sources resolve
+PASS  adr/ADR-009.md: fences paired
+PASS  adr/ADR-009.md: local link ../SOURCES.md
+PASS  adr/ADR-009.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-009.md: no Hangul typo
+PASS  adr/ADR-002.md: sources resolve
+PASS  adr/ADR-002.md: fences paired
+PASS  adr/ADR-002.md: local link ../SOURCES.md
+PASS  adr/ADR-002.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-002.md: no Hangul typo
+PASS  adr/ADR-004.md: sources resolve
+PASS  adr/ADR-004.md: fences paired
+PASS  adr/ADR-004.md: local link ../SOURCES.md
+PASS  adr/ADR-004.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-004.md: no Hangul typo
+PASS  adr/ADR-007.md: sources resolve
+PASS  adr/ADR-007.md: fences paired
+PASS  adr/ADR-007.md: local link ../SOURCES.md
+PASS  adr/ADR-007.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-007.md: no Hangul typo
+PASS  adr/ADR-001.md: sources resolve
+PASS  adr/ADR-001.md: fences paired
+PASS  adr/ADR-001.md: local link ../SOURCES.md
+PASS  adr/ADR-001.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-001.md: no Hangul typo
+PASS  adr/ADR-005.md: sources resolve
+PASS  adr/ADR-005.md: fences paired
+PASS  adr/ADR-005.md: local link ../SOURCES.md
+PASS  adr/ADR-005.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-005.md: no Hangul typo
+PASS  adr/ADR-010.md: sources resolve
+PASS  adr/ADR-010.md: fences paired
+PASS  adr/ADR-010.md: local link ../SOURCES.md
+PASS  adr/ADR-010.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-010.md: no Hangul typo
+PASS  adr/README.md: sources resolve
+PASS  adr/README.md: fences paired
+PASS  adr/README.md: local link ADR-001.md
+PASS  adr/README.md: local link ADR-002.md
+PASS  adr/README.md: local link ADR-003.md
+PASS  adr/README.md: local link ADR-004.md
+PASS  adr/README.md: local link ADR-005.md
+PASS  adr/README.md: local link ADR-006.md
+PASS  adr/README.md: local link ADR-007.md
+PASS  adr/README.md: local link ADR-008.md
+PASS  adr/README.md: local link ADR-009.md
+PASS  adr/README.md: local link ADR-010.md
+PASS  adr/README.md: local link ADR-011.md
+PASS  adr/README.md: local link ADR-012.md
+PASS  adr/README.md: local link ADR-013.md
+PASS  adr/README.md: local link ADR-014.md
+PASS  adr/README.md: local link ADR-015.md
+PASS  adr/README.md: local link ADR-016.md
+PASS  adr/README.md: no Hangul typo
+PASS  adr/ADR-016.md: sources resolve
+PASS  adr/ADR-016.md: fences paired
+PASS  adr/ADR-016.md: local link ../SOURCES.md
+PASS  adr/ADR-016.md: local link ../FINAL_SPEC.md
+PASS  adr/ADR-016.md: no Hangul typo
+PASS  All 20 review records present
+PASS  All 10 invariants present
+PASS  Unknown and TooOld not conflated
+PASS  Score mean/tail gate present
+
+372/372 checks passed.

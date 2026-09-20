@@ -1,0 +1,58 @@
+{
+  "kind": "design-profile-not-runtime-config",
+  "spec_version": "2.0",
+  "profile_id": "compact128-v1",
+  "language": "en",
+  "primitives": ["choice", "noul", "score"],
+  "reference_checkpoint": "convaiinnovations/laya-typed-decisions",
+  "model_revision": null,
+  "artifact_hashes": null,
+  "runtime": {
+    "language": "rust",
+    "initial_backend": "candle-cpu",
+    "target": "wasm32-unknown-unknown",
+    "batch_size": 1,
+    "reference_dtype": "f32",
+    "first_optimization_candidate": "int8",
+    "learned_act_head_authorizes_transactions": false
+  },
+  "request": {
+    "raw_state_max_bytes": 16384,
+    "max_total_tokens": 128,
+    "max_static_prefix_tokens": 64,
+    "final_separator_tokens": 1,
+    "silent_truncation": false,
+    "max_questions_per_engine_update": 1,
+    "max_question_slots_per_workflow": 3,
+    "choice_min_options": 2,
+    "choice_max_options": 5,
+    "noul_options": ["false", "true"],
+    "score_min_bins": 3,
+    "score_default_bins": 5,
+    "score_max_bins": 7,
+    "extended256_enabled": false
+  },
+  "numeric": {
+    "mass_unit": 1000000,
+    "sum_mass_exact": true,
+    "mean_rounding": "half-up",
+    "mass_rounding": "largest-remainder-index-tiebreak",
+    "score_tail_comparison": ">="
+  },
+  "resource_acceptance_targets_not_measurements": {
+    "instructions_per_engine_evaluation": 20000000000,
+    "inference_instructions_per_three_slot_workflow": 60000000000,
+    "workflow_overhead_included_in_previous_field": false,
+    "warm_heap_max_bytes": 2684354560,
+    "cold_peak_heap_max_bytes": 3221225472
+  },
+  "safety": {
+    "execution_mode": "report_only",
+    "live_transfer_enabled": false,
+    "autonomous_amount_limit_atoms": 0,
+    "calibration_bundle": null,
+    "approved_policy_thresholds": null,
+    "unknown_transaction_releases_reservation": false,
+    "allows_arbitrary_ledger_methods": false
+  }
+}

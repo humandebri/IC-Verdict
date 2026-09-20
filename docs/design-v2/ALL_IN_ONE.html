@@ -1,0 +1,1081 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IC-Laya — 最終仕様 v2.0</title><style>
+:root{color-scheme:light;--ink:#172a35;--muted:#536975;--line:#d8e3e7;--accent:#166775;--bg:#f1f5f6}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:22px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.95 system-ui,-apple-system,"Noto Sans JP","Yu Gothic",sans-serif}
+.shell{max-width:1500px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:30px;margin:auto;padding:30px 25px}
+aside{position:sticky;top:24px;height:calc(100vh - 48px);overflow:auto;padding-top:10px}.brand{font-size:13px;letter-spacing:.1em;font-weight:750;color:var(--accent);margin:0 0 24px}nav a{display:block;margin:4px 0;padding:10px;border-radius:5px;font-size:13px;line-height:1.65;text-decoration:none;color:var(--muted)}nav a:hover{background:#e0ebee}nav span{font-variant-numeric:tabular-nums;font-size:11px;margin-right:9px;color:var(--accent)}.note{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px;margin-top:24px}
+main{min-width:0;background:white;border:1px solid var(--line);border-radius:10px;padding:44px 48px}
+h1,h2,h3,h4{line-height:1.5;overflow-wrap:anywhere}h1{font-size:38px;color:var(--accent);margin:0 0 12px}h2{font-size:24px;border-bottom:2px solid var(--line);margin-top:44px;padding-bottom:12px}h3{font-size:19px;margin-top:32px}h4{font-size:16px;margin-top:26px}a{color:var(--accent);text-underline-offset:3px}p{margin:15px 0}li{margin:7px 0}
+blockquote{background:#edf5f5;border-left:4px solid var(--accent);margin:24px 0;padding:14px 20px;font-size:14px}blockquote p{margin:0}
+pre{background:#f5f8f9;border:1px solid var(--line);padding:18px;border-radius:6px;overflow:auto;line-height:1.65;font-size:12.5px}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.92em;overflow-wrap:anywhere}p code,li code,td code{background:#eff4f5;padding:1px 4px;border-radius:3px}
+table{border-collapse:collapse;width:100%;display:block;overflow:auto;margin:22px 0;font-size:13px;line-height:1.75}td,th{border:1px solid var(--line);padding:10px 12px;min-width:75px;vertical-align:top;text-align:left;overflow-wrap:anywhere}th{background:#eaf2f4}tr:nth-child(even) td{background:#fafcfc}hr{border:0;border-top:1px solid var(--line);margin:40px 0}
+@media(max-width:940px){.shell{display:block;padding:12px}aside{position:static;height:auto;padding:12px 6px}nav{display:grid;grid-template-columns:1fr 1fr}.note{display:none}main{padding:26px 20px}h1{font-size:31px}h2{font-size:22px}}
+@media print{aside{display:none}.shell{display:block;padding:0}main{padding:0;border:0}body{background:white;font-size:10pt}h2{break-before:page}table{display:table;font-size:9pt}pre{white-space:pre-wrap;font-size:8pt}a{color:inherit}}
+</style></head><body><div class="shell"><aside><div class="brand">IC-LAYA<br>FINAL ARCHITECTURE / v2.0</div><nav><a href="#part-spec"><span>01</span>最終仕様</a><a href="#part-plan"><span>02</span>実装計画と受入Gate</a><a href="#part-score"><span>03</span>Score・API・型の契約</a><a href="#part-workflow"><span>04</span>WorkflowとTx状態機械</a><a href="#part-adr"><span>05</span>16件のArchitecture Decision Records</a><a href="#part-changes"><span>06</span>v1からの変更</a><a href="#part-review"><span>07</span>自己レビューと修正</a><a href="#part-sources"><span>08</span>一次資料と確認範囲</a></nav><div class="note">2026-09-19 JST<br><br>Choice · Noul · Score<br>1評価1問 / 1workflow最大3問<br>Compact128 / Rust / ICP<br><br>設計確定。実装・性能・実Txの検証は受入Gateで行う。</div></aside><main><h1>IC-Laya</h1>
+<h2>最終仕様・実装計画・ADR v2.0</h2>
+<p><strong>2026-09-19（JST） | 英語・Rust・ICP | Choice / Noul / Score</strong></p>
+<blockquote>
+<p>設計・API・責務分離を固定した版です。実モデル推論、Rust/Wasm build、ICP性能、ledger接続、実資金Txは未検証です。</p>
+</blockquote>
+<h2>目次</h2>
+<ol>
+<li><a href="#part-spec">最終仕様</a></li>
+<li><a href="#part-plan">実装計画と受入Gate</a></li>
+<li><a href="#part-score">Score・API・型の契約</a></li>
+<li><a href="#part-workflow">WorkflowとTx状態機械</a></li>
+<li><a href="#part-adr">16件のArchitecture Decision Records</a></li>
+<li><a href="#part-changes">v1からの変更</a></li>
+<li><a href="#part-review">自己レビューと修正</a></li>
+<li><a href="#part-sources">一次資料と確認範囲</a></li>
+</ol>
+<hr />
+<p><a id="part-spec"></a></p>
+<h2>1. 最終仕様</h2>
+<p><strong>確定日: 2026-09-19（JST）</strong><br />
+<strong>設計状態: 機能・API・責務分離を固定。モデル品質・ICP性能・本番Txは受入試験前。</strong><br />
+<strong>対象: 英語 / Rust / ICP内推論 / Choice・Noul・Score / 型付き関数連携 / 制約付きTx</strong></p>
+<h3>1. 作るもの</h3>
+<p><strong>Layaのoption-marker scoringをbackendにした、少数質問向けのオンチェーン型付き判断ランタイム</strong>を作る。仮称はIC-Laya。Jevの内部アーキテクチャ再現・完全API互換は主張しない。</p>
+<p>第一級のprimitiveを最初から三つ提供する。</p>
+<table>
+<thead>
+<tr>
+  <th>Primitive</th>
+  <th>Rust側の概念型</th>
+  <th>契約</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Choice</td>
+  <td><code>Choice&lt;T&gt;</code></td>
+  <td>登録された有限候補への分布と、最上位候補</td>
+</tr>
+<tr>
+  <td>Noul</td>
+  <td><code>Noul&lt;P&gt;</code></td>
+  <td>登録された命題Pに対するfalse/trueの分布</td>
+</tr>
+<tr>
+  <td>Score</td>
+  <td><code>Score&lt;S&gt;</code></td>
+  <td>登録された順序尺度Sへの分布、期待レベル、正規化平均、上側確率</td>
+</tr>
+</tbody>
+</table>
+<p><strong>削るのは大量質問・無制限入力・不要な計算であり、Scoreではない。</strong> NLIへ戻してChoice/Scoreを擬似的に組み立てることも、既定のfallbackにしない。</p>
+<p>ランタイムは送金専用ではない。routing、優先度判定、レビュー支援から使える。送金は同じ型付き判断を利用する最初の制約付きexecutor adapterと位置付ける。</p>
+<h3>2. 決定表</h3>
+<table>
+<thead>
+<tr>
+  <th>項目</th>
+  <th>固定する仕様</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Backendの第一参照</td>
+  <td><code>convaiinnovations/laya-typed-decisions</code>。独立repoをrevision固定。root <code>laya</code>との自動切替なし。</td>
+</tr>
+<tr>
+  <td>位置付け</td>
+  <td>実装・移植の参照checkpoint。特定業務での実用採用は評価Gateを通す。</td>
+</tr>
+<tr>
+  <td>実装</td>
+  <td>Rust / Candle CPUを初期実装に利用し、Laya独自headをadapterとして移植。</td>
+</tr>
+<tr>
+  <td>配備構成</td>
+  <td>資金を持たない<code>decision_engine</code>と、policy/永続workflow/権限を持つ<code>executor</code>。</td>
+</tr>
+<tr>
+  <td>推論単位</td>
+  <td>engineの1 updateで1質問、batch size 1。</td>
+</tr>
+<tr>
+  <td>業務単位</td>
+  <td>1 workflowに登録済み質問を1〜3個。必要な分だけ逐次評価。</td>
+</tr>
+<tr>
+  <td>初期profile</td>
+  <td><code>Compact128-v1</code>: 質問・候補・state・特殊tokenを全部合わせて128 tokens以下。</td>
+</tr>
+<tr>
+  <td>Choice</td>
+  <td>2〜5候補。候補ID・順序・説明をschemaで固定。</td>
+</tr>
+<tr>
+  <td>Noul</td>
+  <td>2候補。falseを0、trueを1に固定。</td>
+</tr>
+<tr>
+  <td>Score</td>
+  <td>3〜7段階。標準は5段階。各段階の意味をrubricに記述。</td>
+</tr>
+<tr>
+  <td>長文</td>
+  <td>無言の切詰め・自動要約なし。超過は明示的エラーまたはreview。</td>
+</tr>
+<tr>
+  <td>schema</td>
+  <td>管理者が登録するversion付きschema。質問文・候補・rubricを毎requestで自由に差し替えない。</td>
+</tr>
+<tr>
+  <td>数値計算</td>
+  <td>F32で参照一致を確立。INT8を最初の最適化候補とする。採用は品質・速度の実測後。</td>
+</tr>
+<tr>
+  <td>abstention</td>
+  <td>校正済みの判定ruleとRust policyで決定。モデルのact headを実行権限にしない。</td>
+</tr>
+<tr>
+  <td>Tx</td>
+  <td>executor所有の専用treasuryから、登録済みledger/accountへのICRC-1 transfer。</td>
+</tr>
+<tr>
+  <td>初期運用</td>
+  <td><code>ReportOnly</code>、送金上限0、実資金dispatch無効。</td>
+</tr>
+</tbody>
+</table>
+<p>Layaの三つのprimitiveとoption-marker構造は公開仕様・実装で確認できる。一方typed-decisions版は四つの合成workflowに特化したcheckpointで、任意業務への品質を保証するものではない。<a href="#source-s01">S01</a><a href="#source-s02">S02</a><a href="#source-s03">S03</a><a href="#source-s04">S04</a></p>
+<h3>3. 全体構成</h3>
+<pre><code class="language-text">Application / Rust SDK
+  │ typed proposal + workflow_id + caller nonce
+  ▼
+Executor canister
+  ├ authentication / delegation / business-state validation
+  ├ workflow registry / immutable evidence snapshot
+  ├ q1 ──────────► Decision engine ──► Choice / Noul / Score
+  ├ q2 (必要時) ─► Decision engine ──► Choice / Noul / Score
+  ├ q3 (必要時) ─► Decision engine ──► Choice / Noul / Score
+  ├ same-snapshot result binding / policy revalidation
+  ├ budget reservation / internal AuthorizedTransfer
+  └ durable dispatch ───────────────► Approved ICRC-1 ledger
+</code></pre>
+<p>decision_engineにはtreasury、送金API、任意method呼出し、秘密鍵、モデルを起点とした外部LLM fallbackを持たせない。executorはML演算へ直接依存せず、検証済みの型付きresultを扱う。</p>
+<p>Decision-only利用では認証されたクライアントからengineを呼べるが、そのreceiptをexecutorへ持ち込んで送金許可の代用にするendpointは作らない。実行に使う評価はexecutorが発行し、保存したworkflowに束縛された応答だけとする。</p>
+<h3>4. 質問数・計算量・workflow</h3>
+<h4>4.1 1質問と1業務を混同しない</h4>
+<p><code>evaluate()</code>は常に1質問。<code>run_workflow()</code>は1〜3質問を扱う非同期ジョブである。3質問を一つの巨大forwardへまとめない。複数質問は独立したmodel evaluationであり、一つの潜在表現を無料で共有できると想定しない。公開Laya APIも質問別の入力を作ってbatch化している。<a href="#source-s04">S04</a></p>
+<p>順番と実行条件は登録したworkflowに固定する。例えば必要十分な命題検査 → 対応候補 → リスク尺度という順にし、早い段階で拒否・reviewとなれば残りを省略できる。<strong>早期の許可は不可</strong>で、送金に必要な全signalが揃うまでdispatchしない。</p>
+<p>三つの分布を独立と仮定して確率を掛け合わせない。同じmodel/stateに基づく相関したsignalとして扱い、最終policy全体の誤受理とcoverageを評価する。</p>
+<h4>4.2 同じstateに束縛する</h4>
+<p>workflow受付時に、元テキスト、信頼済み業務record、proposal、model bundle、schema群、calibration群、policy、委任のrevisionを固定する。各応答はworkflow ID、question slot、evaluation ID、snapshot hash、model/schema/calibration IDを持つ。</p>
+<p>同じslotへの再送は同じevaluation IDを使う。engine側は重複要求を既存resultへ収束させ、異なるpayloadの同じIDを拒否する。推論中のtransport障害でも無制限に計算を繰り返さない。rate limit、期限、再送回数上限を設ける。</p>
+<p>途中でstateやmodelが変われば、古い結果と新しい結果を混ぜない。該当workflowを<code>NeedsReview</code>または<code>Stale</code>へ移し、別versionの再評価は明示的な新attemptとして扱う。以前の結果が遅れて届いても、新attemptへ採用しない。</p>
+<h3>5. Compact128と入力コンパイラ</h3>
+<p>128は品質・資源を測るための製品profileであり、ModernBERTの数学的な特殊境界ではない。local attentionの幅が128でも、そのmaskが128-token入力で全結合になるとは限らない。Candle実装では幅の半分を距離制限にしている。<a href="#source-s05">S05</a></p>
+<p>入力はLayaの形式を維持する。</p>
+<pre><code class="language-text">[CLS] &lt;type&gt; question: &lt;instructions&gt; [SEP]
+[MASK] &lt;option0&gt; ... [MASK] &lt;optionK-1&gt; [SEP]
+&lt;state&gt; [SEP]
+</code></pre>
+<p><code>CompiledSchema</code>はstatic prefix token IDs、marker位置、qtype、候補ID、rubric、tokenizer hashを保持する。prefixは最終state用SEPを除き64 tokens以下。動的stateの最大長は<code>128 - prefix_len - 1</code>であり、prefixが上限でも63 tokensの余地を確保する。末尾まで含めた全長を必ず検査する。</p>
+<p><strong>7段階のScoreでもrubricが収まるschemaだけを登録する。</strong> 説明を削って意味を変えたり、勝手に7段階を5段階へ縮めたりしない。入りきらないschemaは登録拒否とし、後続の<code>Extended256</code>を別profileとして検証・校正してから有効化する。v2初期releaseではExtended256は無効。</p>
+<p>Layaの元rendererにはinstruction/option/stateの切詰めがある。<a href="#source-s03">S03</a> 移植では受理する入力を「切詰めが一切起きない部分集合」に限定する。各optionの元コード上の上限やhead budgetも満たすことを確認し、tokenizer fixtureで完全一致させる。max_lenだけ128へ下げ、head_max_lenをそのままにして正常だと判断しない。</p>
+<p>raw stateは16KiB以下をtokenize前に検査。予約済み特殊tokenのリテラル注入はv2では拒否する。アプリのJSONを使う場合はrendererのfield順・空白・escapeをschemaに固定し、modelへ見せたbytesのhashも記録する。</p>
+<p>固定prefixのtoken IDsは再利用するが、bidirectional encoderのhidden stateやdecoder用KV cacheは再利用しない。動的stateを変更したらencoder全体を評価する。</p>
+<h3>6. Scoreを第一級の値にする</h3>
+<h4>6.1 必須の返り値</h4>
+<p><code>Score&lt;S&gt;</code>は、単なるfloatではなく次の情報を持つ。</p>
+<table>
+<thead>
+<tr>
+  <th>Field</th>
+  <th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><code>schema_id / schema_version / rubric_hash</code></td>
+  <td>尺度・段階の定義と方向</td>
+</tr>
+<tr>
+  <td><code>distribution_ppm</code></td>
+  <td>段階順に並べた確率質量。合計1,000,000</td>
+</tr>
+<tr>
+  <td><code>expected_level_microunits</code></td>
+  <td>0〜K−1の段階番号の期待値を10⁶倍した値</td>
+</tr>
+<tr>
+  <td><code>mean_ppm</code></td>
+  <td>期待段階をK−1で割って0〜1へ正規化した値を10⁶倍</td>
+</tr>
+<tr>
+  <td><code>tail_from(bin_id)</code></td>
+  <td>指定段階以上の確率質量の和。SDKで分布から計算</td>
+</tr>
+<tr>
+  <td><code>diagnostics</code></td>
+  <td>top1、margin、分布entropy等。真の正答確率と呼ばない</td>
+</tr>
+<tr>
+  <td><code>stamp</code></td>
+  <td>workflow/snapshot/model/profile/calibrationとの結び付き</td>
+</tr>
+</tbody>
+</table>
+<p>Laya APIの元のScoreは段階番号の期待値であり、初めから0〜1の値ではない。<a href="#source-s04">S04</a> 正規化の分母を明示し、段階数を変えても値の意味が同じだと誤解させない。</p>
+<p>等間隔の段階番号を使う平均は表示用の規約であり、「low→medium」と「high→severe」の実世界の差が同じという主張ではない。別のutility weightが必要ならpolicyに明示する。Riskの0.2は実世界で20%の損失が起きるという意味ではない。</p>
+<h4>6.2 平均だけで判定しない</h4>
+<p>説明用の分布として、5段階のAとBを比較する。</p>
+<pre><code class="language-text">A = [0,   0, 1, 0,   0]   normalized mean = 0.5
+B = [0.5, 0, 0, 0, 0.5]   normalized mean = 0.5
+
+P(level &gt;= 3): A = 0、B = 0.5
+</code></pre>
+<p>同じ平均でも上側の質量は違う。高リスク側を問題にするpolicyは<code>tail_from(high_bin)</code>を利用し、そのeventの校正も評価する。ただしその値もmodelがrubric上の段階へ割り当てた確率であり、現実の事故率ではない。</p>
+<p>未知・情報不足を中間段階へ押し込まない。Scoreの<code>Undetermined/Abstained</code>は分布とは別の外側variantとして扱う。入力や校正の条件を満たさないときに「中くらい」を返すAPIにはしない。</p>
+<h3>7. 型付きAPIと実行権限</h3>
+<p>Rust SDKの公開概念型は以下に固定する。</p>
+<pre><code class="language-rust">Choice&lt;Action&gt;       // Actionの有限候補
+Noul&lt;RefundRequested&gt; // 命題を型で区別
+Score&lt;Risk&gt;           // RiskとUrgencyを取り違えない
+Evaluation&lt;T&gt;         // Assessed(T) / Abstained(reason) / Error(reason)
+</code></pre>
+<p>Candid境界ではgenericをそのまま公開せず、schema ID、version、variant、候補IDを含むDTOを使う。SDKとexecutorはexpected schema/hash/candidate orderを検査してからローカル型へ戻す。<code>Score&lt;Risk&gt;</code>と<code>Score&lt;Urgency&gt;</code>の取り違えを型で防ぎ、同じRiskでもrubric versionの違いは実行時に検査する。<a href="#source-s11">S11</a><a href="#source-s12">S12</a></p>
+<p>概念上、アプリは次のように合成する。これは関数の関係を示す設計例であり、実装済みSDKではない。</p>
+<pre><code class="language-rust">// 同じsnapshotに対して必要なsignalをそろえる。
+let intent: Noul&lt;RefundRequested&gt; = ...;
+let action: Choice&lt;PaymentAction&gt; = ...;
+let risk: Score&lt;PaymentRisk&gt; = ...;
+
+// 型の一致だけでなく、stamp・校正・現stateも検査する。
+let signals = policy.bind_required_signals(intent, action, risk)?;
+let authorized = policy.authorize(proposal, signals, current_state)?;
+executor.dispatch(authorized).await?;
+</code></pre>
+<p><code>AuthorizedTransfer</code>はexecutor内部のprivate constructorでのみ生成し、外部DTO・Deserialize・Clone/Copyにしない。Rust型は意味的正しさやcontrollerの善意を証明しない。永続request state、caller認証、nonce、業務operation ID、予算検査と併用する。</p>
+<p>モデルが選ぶ<code>PaymentAction::Execute</code>は提案に過ぎない。金額、宛先、fee、送金元、委任、残高・invoice等の機械的事実はRust/app stateで検証し、modelの「認める」という文章やscoreから生成しない。</p>
+<h3>8. Calibrationとact head</h3>
+<p>校正は<code>model + dtype/kernel + tokenizer + compiled schema + candidate/rubric order + profile + task domain</code>の組に対して行う。Choice、Noul、Scoreの一つだけが合格しても、別primitiveの合格とは扱わない。</p>
+<p>typed-decisions checkpointには、継承した<code>temperature_by_options</code>がper-type temperatureを上書きする注意点が記載されている。<a href="#source-s02">S02</a> 配備時は有効temperatureを一つに解決した校正artifactを作り、元設定を二重適用しない。まず元APIの出力を再現するparity試験、その後に新しい校正設定での受入試験を行う。</p>
+<p>APIが返すentropy由来の集中度は診断値であり、普遍的な正答confidenceではない。<a href="#source-s03">S03</a> 0.95/0.98といった閾値を設計者が根拠なく本番設定へ入れない。</p>
+<p>act/escalate headは参照実装では保持して一致性を検証する。option logitsへ逆流しない出力枝であることを確認した上で、配備runtimeでは計算を省略できる。<a href="#source-s03">S03</a> <strong>削除の狙いは責務整理であり、主要な速度改善とは見積もらない。</strong> learned abstentionを使わないpolicyは、独立にrisk–coverageを評価する。</p>
+<h3>9. Rust移植と最適化</h3>
+<p>CandleにはModernBERT backboneの実装があるが、Layaの独自headを含む完成済みcanisterは確認できていない。<a href="#source-s05">S05</a> <code>ModernBertForSequenceClassification</code>をそのまま使うのではなく、backboneのhidden出力へqtype embedding、2層decision transformer、marker scorerを接続する。</p>
+<p><strong>演算を似たものへ置換しない。</strong> 特にLayaのdecision transformerはPyTorchの<code>TransformerEncoderLayer</code>をactivation未指定で構築しているため既定のReLUを確認する。scorerのGELU、ModernBERTのGeGLUと区別する。<a href="#source-s03">S03</a><a href="#source-s05">S05</a><a href="#source-s06">S06</a> LayerNorm epsilon、bias、pre-norm、RoPE、padding/local mask、label順もfixtureに含める。</p>
+<p>最適化の順序は固定する。</p>
+<ol>
+<li>F32でPython → Rust native → ICPの同一入力に対する一致性を確立。</li>
+<li>prefix token、attention mask、RoPE table等の再利用、scratch bufferの再利用、不要コピー削減。</li>
+<li>実測で重いlinear演算へINT8/SIMDを導入し、再校正・Scoreの上側誤りを再評価。</li>
+<li>元モデルが品質/資源を満たさない場合のみ、同じ三primitiveを保つ小型studentへ蒸留。自動切替しない。</li>
+</ol>
+<p>INT8 weightsを保持してmatmul直前に全部F32へ展開するだけでは、速度改善を仮定できない。採用する量子化方式は実際のWasm kernel込みで記録する。F16の保存サイズとF32での常駐量、stable memoryとheap、一時bufferを別々に測定する。</p>
+<p>weightsはstable memoryにchunk uploadし、manifest・shape・hashを検証。ロード時の二重保持を避け、必要なら管理された複数updateにwarm-upを分割する。active modelは一つに限定し、無停止切替のための二重常駐は初期要件にしない。</p>
+<h3>10. ICP受入予算</h3>
+<p>ICP公開値はupdateあたり40 billion instructions、wasm32 heap 4GiB。<a href="#source-s07">S07</a> 以下は<strong>実測値ではなく本設計の受入目標</strong>である。</p>
+<table>
+<thead>
+<tr>
+  <th>対象</th>
+  <th>v2目標</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1質問の総instructions</td>
+  <td>tokenize、推論、後処理、serialization込みで20B以下</td>
+</tr>
+<tr>
+  <td>1workflow</td>
+  <td>最大3評価。評価分の上限見積り60B + orchestration/transport分。</td>
+</tr>
+<tr>
+  <td>通常のwarm heap</td>
+  <td>2.5GiB以下</td>
+</tr>
+<tr>
+  <td>cold-loadを含むpeak heap</td>
+  <td>3.0GiB以下</td>
+</tr>
+<tr>
+  <td>入力</td>
+  <td>64 / 96 / 128 tokensで計測。128が配備上限。</td>
+</tr>
+<tr>
+  <td>Primitive別</td>
+  <td>Noul 2候補、Choice 2/3/5、Score 3/5/7を個別計測</td>
+</tr>
+<tr>
+  <td>latency/cycles</td>
+  <td>実replicaで測定し、別途運用SLOを承認。予測の速度を保証しない。</td>
+</tr>
+</tbody>
+</table>
+<p>3質問は別updateで実行するため、workflowの総計算を一つの40B上限へ押し込む設計ではない。一方、分割しても総cyclesや待ち時間は消えない。workflow全体の予算と期限を設ける。</p>
+<p>INT8でも目標を満たさなければ小型studentを検証する。Scoreを消す、rubricを隠れて短縮する、inputを切り捨てる、上限ぎりぎりで本番を有効化することは採用しない。</p>
+<h3>11. Tx安全性</h3>
+<p>初期adapterはexecutorが所有する単一treasuryからのICRC-1 transfer。ownerが、delegate、task、ledger、宛先、1回/累積/期間別上限、fee上限、期限を登録する。個人のwalletから無断でdebitできるとは扱わない。<a href="#source-s10">S10</a></p>
+<p>workflow受付時にcaller nonceを消費し、信頼済み業務operation IDを固定する。別nonceで同じinvoiceを二重処理することも防ぐ。queryによる状態表示やクライアント持込みのdecisionを、送金許可にしない。</p>
+<p>最後のevaluationが完了したら、委任、失効、policy、snapshot、予算を再検査。予算予約、operation予約、送信args凍結、Submitted記録、初回outcallの発行までの間に別の外部awaitを入れない。<a href="#source-s09">S09</a></p>
+<pre><code class="language-text">Received → Evaluating(1..3) → ReadyToDispatch → Submitted
+                ├ NeedsReview / Rejected / Stale      ├ Succeeded
+                └ Cancelled                          ├ FailedDefinitive
+                                                     └ OutcomeUnknown
+</code></pre>
+<p>結果不明は失敗ではない。amount、to、fee、memo、created_at_timeを変えた盲目的再送を禁止し、予約を維持する。ICRC-1のdedupはledgerごとに確認する。unknownの先行attemptがある限り、後のTooOld/BadFeeだけで未実行と確定しない。<a href="#source-s08">S08</a><a href="#source-s10">S10</a></p>
+<p>失効やpause後は新しいdispatchを止めるが、既に送信したTxを取消できるとは約束しない。日付・期限を越えても不明予約を解放しない。upgradeでnonce、成功履歴、業務消費状態、予約を巻き戻さない。</p>
+<h3>12. 固定したこと・残る検証</h3>
+<p><strong>固定:</strong> 三primitive、Laya型backend、二canister分離、少数逐次質問、Compact128、schema registry、Score分布と上側確率、内部認可型、永続送金状態機械。</p>
+<p><strong>受入試験で決める:</strong> 対象業務の学習/校正artifact、固定weight/runtime revision、F32/INT8の配備形式、実測latency/cycles、ledger固有profile、本番risk budget。</p>
+<p>これらを区別し、最終仕様であることを「421MのLayaがすでにICPで動作・性能検証済み」とは表現しない。モデルweightsや本番資金に未検証の値を代入せず、未承認の状態ではReportOnlyのままにする。</p>
+<h3>13. 受入完了の定義</h3>
+<p>Choice・Noul・Scoreがすべて型付き値として返り、同じsnapshotの結果を普通のRust関数へ渡せること。Scoreは平均と分布・上側質量を区別できること。必要な質問を省いた許可ができないこと。モデルが最大スコアを誤って返してもhard policyを越えられず、結果不明から二重送金せずに回復できること。</p>
+<p><strong>最終形は、Layaをそのままホストするサービスではなく、三つの判断primitiveをRustの制御フローと制限付き実行権限へ接続するIC上のランタイムである。</strong></p>
+<hr />
+<p><a id="part-plan"></a></p>
+<h2>2. 実装計画と受入Gate</h2>
+<p>2026-09-19（JST） / 正本は<code>FINAL_SPEC.md</code>。本書のタスクは未実装。</p>
+<h3>1. 実装順</h3>
+<table>
+<thead>
+<tr>
+  <th>Phase</th>
+  <th>実装内容</th>
+  <th>完了条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>P0 — 固定仕様・task</td>
+  <td>1つの英語workflow、三primitiveのschema、5段階Score rubric、誤りのコストを定義</td>
+  <td>schema候補・順序・profileを固定。実送金はoff。</td>
+</tr>
+<tr>
+  <td>P1 — 参照出力</td>
+  <td>Laya typed-decisions、tokenizer、renderer、Python依存をrevision固定しfixture生成</td>
+  <td>token IDs、markers、raw logits、元temperatureの有効値、三primitiveの参照出力を保存。</td>
+</tr>
+<tr>
+  <td>P2 — Rust parity</td>
+  <td>Candle ModernBERT + Laya headを実装</td>
+  <td>PythonとRustでtoken IDs完全一致。head activation・mask・dtype等を点検し、三primitiveで出力一致。</td>
+</tr>
+<tr>
+  <td>P3 — Compact canister</td>
+  <td>chunk upload/warm-up、1質問update、登録schema、重複評価キャッシュ</td>
+  <td>64/96/128 tokens、Choice/Noul/Score各候補数でinstructions/heapを計測。</td>
+</tr>
+<tr>
+  <td>P4 — 数値最適化</td>
+  <td>scratch再利用、静的prefix、SIMD、profile後にINT8 kernel</td>
+  <td>F32との品質差、上側Scoreの誤受理、calibrationを再検証。効果がなければINT8を採用しない。</td>
+</tr>
+<tr>
+  <td>P5 — workflow/executor</td>
+  <td>最大3質問の逐次ジョブ、same-snapshot binding、型付きsignal、委任・予算</td>
+  <td>一部質問欠落、別version、失効、再入で許可不可。</td>
+</tr>
+<tr>
+  <td>P6 — ledger故障試験</td>
+  <td>mock ledger、Submitted/OutcomeUnknown、同一args retry、late callback、upgrade</td>
+  <td>予約・nonce・operation・成功記録の不変条件をすべて満たす。</td>
+</tr>
+<tr>
+  <td>P7 — 校正・運用受入</td>
+  <td>task別calibration、Shadow、対象ledger profile確認、独立review</td>
+  <td>Choice/Noul/Score/合成policyの各Gateを通し、ownerが上限・risk budgetを承認。</td>
+</tr>
+</tbody>
+</table>
+<p>P5/P6はfake engineを使い、P1〜P4と並行して進めてよい。モデル移植が未完でも、認可と送金状態機械を独立に試験できる。日数や未計測の処理時間は約束しない。</p>
+<h3>2. モデル選択の境界</h3>
+<p>実装の第一参照checkpointは<code>convaiinnovations/laya-typed-decisions</code>に固定する。ただしこれは特定workflowのspecialistである。<a href="#source-s02">S02</a> 本番taskに適合しなければ、同じarchitectureへtask別fine-tuningする。root Layaへの変更も評価・manifest変更を経て明示する。</p>
+<p>421M版が資源目標を満たせない場合の次の候補は、ModernBERT-base級backboneとLaya式option-marker headを持つstudent。サイズ・速度・精度は現時点で保証しない。蒸留ではChoice、NoulだけでなくScoreの分布・順序・上側eventもtargetにする。NLIモデルへの無言の置換は禁止。</p>
+<h3>3. 推奨crate境界</h3>
+<pre><code class="language-text">crates/
+  decision-types/       # Choice&lt;T&gt;, Noul&lt;P&gt;, Score&lt;S&gt;, wire DTO
+  schema-compiler/      # tokenizer、prefix/markers、rubric、hash
+  laya-core/            # option logitsを返すbackend trait
+  laya-candle/          # backbone + 2 decision layers + scorer
+  decision-postprocess/# temperature、ppm、mean/CDF/tail、diagnostics
+  decision-policy/     # 外部ML非依存の認可・校正/型検査
+  workflow-core/       # snapshot、slots、attempts、状態遷移
+  ledger-adapter/      # 固定したICRC-1送信・回復
+  sdk/                 # schema照合とtyped復元
+canisters/
+  decision-engine/
+  executor/
+  mock-ledger/
+xtask/
+  reference-fixtures/
+  model-pack/
+  evaluation/
+  instruction-bench/
+</code></pre>
+<p><code>decision-policy</code>がCandleやmodel weightsをimportする依存構造にしない。ledgerのoutcall発行はadapterへ集約する。Pythonはoffline参照・学習・校正に限定し、canister runtimeへ持ち込まない。</p>
+<h3>4. Gate</h3>
+<h4>G1 — 意味と品質</h4>
+<p>Choiceはaccuracy/macro-F1、NoulはBrier/NLL・false positive/negative、ScoreはMAEに加えてCDFの誤差・Ranked Probability Score・重大な過小評価・上側eventの校正を記録する。さらに最終workflowの危険な誤受理率とcoverageを測る。</p>
+<p>例数より、業務レコード・template family単位でのtrain/calibration/test分割を優先する。modelcardのbenchmark値を自分のtaskの合格点として代入しない。small-sampleで過信しない。risk budgetと必要coverageが未承認なら実送金off。</p>
+<p>Scoreは必須Gate。Choiceだけ成功してScoreは無効という状態を、三primitive対応の受入完了とは扱わない。5段階のうち中央へ集中する分布と両端へ分かれる分布をpolicyが区別する試験を含む。</p>
+<h4>G2 — 実装parity</h4>
+<p>token IDsとmarker位置の完全一致、schema変更検出、誤ったqtype・候補順拒否、softmaxの二重適用防止、temperatureの実効値、Scoreの単位を検証する。</p>
+<p>logit比較の初期許容差はF32で<code>atol=1e-3, rtol=1e-3</code>を仮置きし、誤差源を記録して妥当性を判断する。閾値を跨ぐ危険な差を単なる許容誤差で済ませない。NaN/inf・不正分布・未知tensor・shape不一致は拒否。</p>
+<p>元Laya APIのparityと、Compact128＋再校正後の製品parityを別fixtureで管理する。前者の切詰めまで本番APIにコピーしない。</p>
+<h4>G3 — ICP資源</h4>
+<p>1評価20B instructions以下、warm heap 2.5GiB以下、cold peak 3.0GiB以下を目標とする。これはICP上限ではなく余裕を持たせる設計値。<a href="#source-s07">S07</a> tokenization、stable memoryコピー、model forward、後処理、response作成を含む。</p>
+<p>質問数とScoreのbinsを分けて測る。5-bin Scoreは1質問だが、3-binよりstatic tokensが増える。stateの有効長を減らして速い値だけ出さない。全workflowのcycles、遅延、拒否率、cold restartも報告する。native秒数からICP秒数への換算はしない。</p>
+<h4>G4 — 実行安全性</h4>
+<p>必須試験: 他callerのrequest ID、nonce再利用、別nonceの同一operation、partial decision set、異なるsnapshot、model/schema変更、推論中revocation、2重process、quota枯渇、送信後callback trap、unknown後TooOld、遅延success、日次reset、upgrade、過去会計snapshot復元。</p>
+<p>hard invariantはモデルが常に最大スコアを返すstubでも成立させる。型のcompile-fail試験と、Candid/runtimeの認証試験の両方が必要。</p>
+<h4>G5 — 本番有効化</h4>
+<p>特定ledgerのdedup/履歴照合仕様、上限、権限・controller管理、保持する原文、独立reviewを確認する。<code>ReportOnly → Mock → Shadow → LimitedLive</code>を順に進める。Liveを有効化しても、modelの誤推論リスクがゼロになったとは説明しない。</p>
+<h3>5. 最初の小さな完成形</h3>
+<p>1つの英語workflowを用意し、<code>Noul&lt;RefundRequested&gt;</code>、<code>Choice&lt;PaymentAction&gt;</code>、<code>Score&lt;PaymentRisk&gt;</code>を同じstateに対して返す。元から送金権限のあるtreasury operationのみを対象にする。</p>
+<p>最初は値の表示・通常関数への受渡しまで。その後mock ledgerへ接続する。入力テキストだけを見て、recipient・amount・支払済み状態を捏造して送金するデモにはしない。</p>
+<hr />
+<p><a id="part-score"></a></p>
+<h2>3. Score・API・型の契約</h2>
+<p>版: v2.0 / 2026-09-19（JST）</p>
+<h3>数値の正本</h3>
+<p>確率のwire単位はppmで、<code>M = 1_000_000</code>。softmaxの有限性・非負・合計を検証後、largest-remainder法で整数化する。端数同順位は固定bin index順。確率質量の合計を厳密にMにする。異常な値を丸めて正常化しない。</p>
+<p>ScoreのKは3〜7、bin indexは0〜K−1。整数化したmassを<code>m_i</code>とする。</p>
+<pre><code class="language-text">expected_level_microunits = Σ i * m_i
+mean_ppm = round_half_up(Σ i * m_i / (K - 1))
+cdf_ppm(j) = Σ(i &lt;= j) m_i
+tail_ppm(j) = Σ(i &gt;= j) m_i = M - cdf_ppm(j - 1)
+</code></pre>
+<p>演算はchecked u64以上を使い、overflowを拒否する。score indexの期待値は<code>expected_level_microunits / M</code>、正規化平均は<code>mean_ppm / M</code>。K=1は受理しない。bin indexが範囲外ならエラー。上側の尾は明示的に<code>&gt;=</code>で、<code>&gt;</code>と取り違えない。</p>
+<p>wireは分布を正本とし、derived mean/CDF/tailは受信側でも再計算・照合できる。二つの異なる手順で計算したfloat平均と整数化平均を同じ権威ある値として保存しない。元logitsは評価用fixtureへ保存するが、本番の一般利用者へ常時返さない。</p>
+<p>Noulの候補はfalse/trueの2つ。<code>p_true_ppm = mass[1]</code>。Choiceは候補IDを明示し、schema順で分布を並べる。argmaxが同点なら候補順で表示上のselectedを固定し、許可policyはtieをreviewへ回せる。</p>
+<h3>校正と診断</h3>
+<p><code>CalibrationStatus</code>は<code>Uncalibrated</code>または、profile/schema/runtimeを含む署名対象ではないbundle識別子。単一の<code>confidence</code>だけを合否条件にしない。</p>
+<p>entropy由来の<code>concentration</code>、top1、marginは分布の診断値である。既知のtask分布で選択したdecision ruleと組み合わせる。低entropyでも間違う可能性を残し、どのdomainでも正答確率と解釈しない。</p>
+<p>Ordinal labelだけでScoreの真値を決めにくい場合は、ラベル規約を先に定義する。<code>unknown</code>をhigh/medium等と同じ軸のbinにしない。情報不足は<code>Evaluation::Abstained</code>かschema固有の別質問で扱う。</p>
+<h3>外部DTO</h3>
+<p>概念上のwire形は以下。これはCandidコンパイル済み定義ではなく、生成するIDLの契約である。</p>
+<pre><code class="language-text">DecisionRequest {
+  evaluation_id,
+  workflow_binding?,
+  schema_id,
+  schema_version,
+  expected_model_bundle,
+  profile_id,
+  state_utf8,
+  expires_at
+}
+
+DecisionResult {
+  stamp: {
+    evaluation_id, workflow_id?, question_slot?,
+    state_hash, snapshot_hash?,
+    model_bundle_hash, schema_hash, profile_id,
+    calibration_id?, decision_rule_id?
+  },
+  outcome: Assessed(
+    Choice { option_ids, mass_ppm, selected_id }
+    | Noul { false_ppm, true_ppm }
+    | Score { bin_ids, mass_ppm, expected_level_microunits, mean_ppm }
+  ) | Abstained(reason) | Error(reason),
+  usage: { input_tokens, measured_instructions }
+}
+</code></pre>
+<p>clientが持ち込む<code>workflow_binding</code>は実行権限ではない。executorが使用するresultはexecutor自身が登録engineへ発行したcallの返答に限定する。SDKのgeneric型はDTOのschema/version/variantを検証してから構築する。<a href="#source-s11">S11</a><a href="#source-s12">S12</a></p>
+<h3>配備API</h3>
+<table>
+<thead>
+<tr>
+  <th>所属</th>
+  <th>endpoint</th>
+  <th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>engine</td>
+  <td><code>evaluate_one</code> update</td>
+  <td>1質問。既知callerのquota、expiry、schema、expected bundleを検査</td>
+</tr>
+<tr>
+  <td>engine</td>
+  <td><code>lookup_evaluation</code> update</td>
+  <td>同じcaller/evaluation IDの結果回復。新規推論しない</td>
+</tr>
+<tr>
+  <td>engine</td>
+  <td><code>describe_schema</code> query</td>
+  <td>schemaの表示。信頼を要する用途はhash等を別途検証</td>
+</tr>
+<tr>
+  <td>engine admin</td>
+  <td>stage/activate bundle、register schema</td>
+  <td>chunk/manifest検証後のみ有効化</td>
+</tr>
+<tr>
+  <td>executor</td>
+  <td><code>submit_workflow</code> update</td>
+  <td>型付きproposal、operation ID、caller nonceを保存</td>
+</tr>
+<tr>
+  <td>executor</td>
+  <td><code>advance_workflow</code> update</td>
+  <td>保存済みplanから次slot/認可へ。model outputを引数に取らない</td>
+</tr>
+<tr>
+  <td>executor</td>
+  <td><code>get_workflow</code> query / verified update</td>
+  <td>状態表示/確認。再送金しない</td>
+</tr>
+<tr>
+  <td>executor admin</td>
+  <td>delegate/revoke/pause/reconcile</td>
+  <td>callerの役割を明示し、通常model APIと分離</td>
+</tr>
+</tbody>
+</table>
+<p>同じevaluation IDで違うstate/schemaを送る場合はconflict。期限切れのIDは、キャッシュが消えていても新規推論を起動しない。クライアントの再接続で同じものを何度も推論しないよう、live IDはexpiryまで保持し、caller別上限で保護する。</p>
+<h3>TypedSDK</h3>
+<p><code>Choice&lt;T&gt;</code>、<code>Noul&lt;P&gt;</code>、<code>Score&lt;S&gt;</code>は同じものを異なる名前で包むだけではなく、登録schemaと対応するdescriptorから生成する。型tagはRust側の誤用防止、version/hashは更新時の誤用防止を担当する。</p>
+<p>検査済みのdecisionでも実行権限ではない。executor内部で、必要signalの完全性と同じsnapshotを検査した<code>BoundSignals</code>からのみ<code>AuthorizedTransfer</code>を作る。外部はどちらの内部型もdeserializeできない。</p>
+<p>業務の閾値はこの文書に固定しない。risk budgetを未承認のまま<code>mean_ppm &lt; 500_000</code>等の便宜的条件で送金を許可しない。</p>
+<hr />
+<p><a id="part-workflow"></a></p>
+<h2>4. WorkflowとTx状態機械</h2>
+<p>v2.0 / 2026-09-19（JST）</p>
+<h3>1. 固定する記録</h3>
+<p><code>WorkflowRecord</code>はcaller/nonce、operation ID、typed proposal、元evidence、snapshot hash、workflow plan、schema群、model bundle、calibration群、policy/delegation revision、slots、現在状態、送信args、予約、receiptを持つ。</p>
+<p><code>Snapshot</code>はapp側の真実性が検証されたstateと、単なる主張としての非信頼テキストを区別する。nonceやhashがあるだけで文中の事実を真実と認定しない。</p>
+<h3>2. 最大3slotの逐次評価</h3>
+<p>planは登録時に固定する。slotは<code>Pending → InFlight(evaluation_id) → Complete(result)</code>または<code>Abstained/Error</code>。順番を変えたり、望ましくない結果だけを無視したりしない。</p>
+<p>各評価は独立したengine update。1slotに重複リクエストが来ても同じevaluation IDへ収束する。engineはlive IDについて同じpayloadのresultを返し、計算を再発行しない。キャッシュはexpiryとcaller別上限で管理し、expired IDには新規評価しない。期限・回数・cyclesの予算を予約して資源攻撃を防ぐ。</p>
+<p>次slotを開始する条件はplanに明記。deny/reviewへのshort-circuitは可能だが、approveのために必須signalを省くことは不可。必要signal同士の独立性は仮定しない。</p>
+<h3>3. Workflow状態</h3>
+<table>
+<thead>
+<tr>
+  <th>状態</th>
+  <th>次の状態・処理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Received</td>
+  <td>入口検査・nonce消費済み。Evaluatingへ、またはRejected/Cancelled。</td>
+</tr>
+<tr>
+  <td>Evaluating</td>
+  <td>slotごとに結果を保存。必要結果が揃えばReadyToDispatch、問題があればNeedsReview/Rejected/Stale。未送信なら取消可能。</td>
+</tr>
+<tr>
+  <td>NeedsReview</td>
+  <td>承認者が同じsnapshot/hashに対して判断。hard capは迂回しない。</td>
+</tr>
+<tr>
+  <td>Stale</td>
+  <td>元結果では許可しない。明示的な新attemptか取消。</td>
+</tr>
+<tr>
+  <td>ReadyToDispatch</td>
+  <td>永続的な実行許可ではない。現在の権限/予算を再検証してSubmittedへ。</td>
+</tr>
+<tr>
+  <td>Submitted</td>
+  <td>ledger callを発行・結果待ち。Succeeded / FailedDefinitive / OutcomeUnknown。</td>
+</tr>
+<tr>
+  <td>OutcomeUnknown</td>
+  <td>予約維持。照合で成功/確実な未実行へ、または不明のまま停止。</td>
+</tr>
+<tr>
+  <td>Succeeded</td>
+  <td>terminal。遅延エラーで失敗へ戻さない。</td>
+</tr>
+<tr>
+  <td>FailedDefinitive</td>
+  <td>全attemptが未実行と確定した場合のみ。予約解除は1回。</td>
+</tr>
+<tr>
+  <td>Rejected / Cancelled</td>
+  <td>送信前のterminal。一般retryで未完了へ戻さない。</td>
+</tr>
+</tbody>
+</table>
+<p><code>NeedsReview</code>はactorの権限不足や上限超過を解除するための裏口ではない。ownerが上限変更を行う場合はversion変更として再検査する。modelが<code>Review</code>候補を選ぶことと、runtimeの<code>NeedsReview</code>は別の由来を持つが、どちらでも自動送金は止まる。</p>
+<h3>4. 認可・資金・二重処理</h3>
+<p>初期はexecutorの専用treasuryのみ。ownerがdelegate、allowlist、task、期限、一回/累積/期間別予算、fee上限を登録する。modelの提案は委任を作らない。<a href="#source-s10">S10</a></p>
+<p>callerごとのmonotonic nonceを永続化する。同一nonce/同一payloadは既存workflowへ収束。違うpayloadは拒否。compact後もwatermarkを保持し、低いnonceを再実行しない。</p>
+<p>別nonceによる同じ業務を防ぐため、appで検証されたoperation状態を<code>Available → Reserved(workflow_id) → Consumed(workflow_id)</code>とする。任意の新IDをcallerが与えただけでは新規業務と認めない。同時proposalがあっても予約は一つ。</p>
+<p>初回dispatch直前に、全signalのmodel/profile/schema/calibration/snapshot、policy/delegation revision、expiry、revocation、現在予算を確認する。金額+feeをchecked arithmeticで予約し、送信argsを固定、Submittedを記録して送信する。この間に他の外部awaitを挟まない。<a href="#source-s09">S09</a></p>
+<h3>5. 結果不明</h3>
+<p>ICRC-1 transfer argsはledger、caller identity、from_subaccount、to、amount、fee、memo、created_at_timeを固定する。unknown状態で新timestamp、memo、feeにして再送しない。<a href="#source-s08">S08</a><a href="#source-s10">S10</a></p>
+<p>初回のみで確実な未実行エラーならFailedDefinitiveにできる。先行unknownがあるとき、後のTooOld/BadFeeはそのattemptの不受理を示しても、過去の成功を否定しない。予算とoperationの予約を保持する。</p>
+<p>確認したledger profileのdedup期間・条件を満たす同一payloadだけ、回数を限定して再送を検討する。ICRC-1のdedupはSHOULDであり、任意ledgerのexactly-onceを保証しない。履歴に見つからないだけで未実行としない。先行callが後から実行され得ないことも確認する。<a href="#source-s10">S10</a><a href="#source-s08">S08</a></p>
+<p>失効やpause後は受動照合を既定とする。不明だったcallを新しく成立させ得るretryは別途明示承認が必要。それでもdedup・同一args条件を省けない。</p>
+<h3>6. 会計と更新</h3>
+<p>不明予約を日次resetや期限で解放しない。元のbudget epochに紐づけ、累積委任上限とoutstanding reservation上限を併用する。Succeededは予約→spentを1回、FailedDefinitiveは予約解除を1回だけ行う。同一payload retryで二重に予約しない。</p>
+<p>model/schemaを更新するときは新workflowから新bundleを使う。旧workflowが終わるまで旧bundleを保てない場合、drainまたは明示的にstaleへ移す。旧結果と新結果を合成しない。</p>
+<p>executorのcode/model rollbackと会計state rollbackを混同しない。nonce、送金成功、消費済みoperation、不明予約は保全する。不明Txが残る通常upgradeは既定で停止。災害復旧の古いsnapshotからは送金を凍結してledgerと照合する。</p>
+<h3>7. 不変条件</h3>
+<p>I01: modelの最大スコアでも委任・allowlist・上限を越えられない。</p>
+<p>I02: 異なるsnapshot/schema/model/calibrationのsignalを合成して許可できない。</p>
+<p>I03: 全required slotなしのapprove、失効後の新規dispatchはできない。</p>
+<p>I04: 同一caller nonce・同一operationは多重実行できない。</p>
+<p>I05: unknownの予約は失効・日付変更・一般retryで消えない。</p>
+<p>I06: ledger成功はcallback trapやローカルrollbackで取り消せると扱わない。</p>
+<p>I07: Scoreの平均だけへ情報を縮退させ、上側risk ruleを無効化しない。</p>
+<p>I08: prefix/入力超過を無言で切り、異なる意味の質問として処理しない。</p>
+<p>I09: quality/calibration未承認で本番送金を有効化しない。</p>
+<p>I10: engineは送金を発行できず、externally deserialized valueはAuthorizedTransferにならない。</p>
+<hr />
+<p><a id="part-adr"></a></p>
+<h2>5. 16件のArchitecture Decision Records</h2>
+<p>2026-09-19（JST）</p>
+<p>本版は会話中のv1設計を置き換える。ここでの確定は設計・実装方針であり、未実施の品質/性能Gateや本番運用承認を完了扱いしない。</p>
+<hr />
+<h3>ADR-001: 三つのtyped decision primitiveを製品の核にする</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 改訂</p>
+<h3>背景</h3>
+<p>従来のNLI-only設計では、実行時候補のChoiceとordinal Scoreを不自然に代用することになる。</p>
+<h3>決定</h3>
+<p>Choice<T>・Noul<P>・Score<S>をv2の必須primitiveとして固定する。Jevの内部構造や完全互換は主張しない。</p>
+<h3>トレードオフと不採用案</h3>
+<p>NLIの候補別確率を後から正規化する方式を既定backendにしない。モデル交換後もprimitive契約を維持する。</p>
+<h3>検証条件</h3>
+<p>三primitiveの入出力と失敗型を別々に試験する。<a href="#source-s01">S01</a><a href="#source-s04">S04</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-002: Laya typed-decisionsを第一参照checkpointに固定する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 改訂</p>
+<h3>背景</h3>
+<p>小型NLIではなく、動的候補をmarkerで読むarchitectureが目的に合う。ただしspecialist checkpointの汎化は未確認。</p>
+<h3>決定</h3>
+<p>独立repo convaiinnovations/laya-typed-decisionsをrevision固定して移植する。四つの合成workflow以外への品質は独自評価する。</p>
+<h3>トレードオフと不採用案</h3>
+<p>root Layaへのsilent routingや、モデルカードの数値だけによる本番採用はしない。必要なら同型のtask別fine-tuningまたはstudentへ移行する。</p>
+<h3>検証条件</h3>
+<p>品質・資源Gate前は配備適合と認定しない。将来のweights交換もschema/profile/calibrationを再固定する。<a href="#source-s02">S02</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-003: Candle backboneとLaya固有headを分離する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 改訂</p>
+<h3>背景</h3>
+<p>CandleにModernBERTはあるが、Layaの完成済みcanisterではない。標準sequence classifierとも異なる。</p>
+<h3>決定</h3>
+<p>backbone hidden出力にqtype embedding、2層decision transformer、marker scorerを移植する薄いadapterを作る。</p>
+<h3>トレードオフと不採用案</h3>
+<p>Candleだけで無修正動作するとは仮定しない。PyTorch既定のReLU、scorer GELU、backbone GeGLU、mask、normを混同しない。</p>
+<h3>検証条件</h3>
+<p>Python/native/Wasm/ICPのfixture一致とimport/数値検査を通す。<a href="#source-s03">S03</a><a href="#source-s05">S05</a><a href="#source-s06">S06</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-004: 分布・診断値・校正・abstentionを区別する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 改訂</p>
+<h3>背景</h3>
+<p>entropyが低くても正しいとは限らず、Scoreの大きさは確信度ではない。付属temperatureには優先順位の注意点がある。</p>
+<h3>決定</h3>
+<p>全primitiveで分布を保存し、calibration artifactをmodel/dtype/schema/profile/taskに結び付ける。effective temperatureを一意に解決する。</p>
+<h3>トレードオフと不採用案</h3>
+<p>普遍的confidence閾値や、Scoreの平均だけを承認根拠にする処理は採用しない。learned act headは参照で保持し、policyから独立させる。</p>
+<h3>検証条件</h3>
+<p>元出力parity後に再校正し、最終policyのrisk–coverageも測る。<a href="#source-s02">S02</a><a href="#source-s03">S03</a><a href="#source-s04">S04</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-005: engineとexecutorの二canister境界を維持する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 維持</p>
+<h3>背景</h3>
+<p>重い推論と資金権限を同じ変更範囲に入れない。</p>
+<h3>決定</h3>
+<p>engineは推論のみ、executorは認証・workflow・委任・予算・ledger adapterを担当する。</p>
+<h3>トレードオフと不採用案</h3>
+<p>callが増え、非同期状態管理が必要になる。GPU的な一括低latencyは約束しない。</p>
+<h3>検証条件</h3>
+<p>engineから送金できず、クライアントの持込みscoreをexecutorが信用しないことを試験する。<a href="#source-s09">S09</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-006: 委任と内部capabilityを送金の必須条件にする</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 維持</p>
+<h3>背景</h3>
+<p>正しい型の候補を選ぶことと、資金所有者の許可は別。</p>
+<h3>決定</h3>
+<p>executor所有の専用treasuryへ明示委任を設定。AuthorizedTransferはprivateな内部型で、外部DTO/Deserialize/Clone/Copyにしない。</p>
+<h3>トレードオフと不採用案</h3>
+<p>Rustの型だけでone-time実行や意味的正しさを証明しない。nonce、operation、現stateを併用する。</p>
+<h3>検証条件</h3>
+<p>偽造型、権限外caller、金額/宛先差替え、失効でdispatchできないことを確認する。<a href="#source-s10">S10</a><a href="#source-s12">S12</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-007: 複数signalを同一snapshotに束縛する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 強化</p>
+<h3>背景</h3>
+<p>逐次評価中にstateやbundleが変わり、都合のよい結果だけ混ぜると誤った認可になる。</p>
+<h3>決定</h3>
+<p>全slotのworkflow/model/schema/profile/calibration/snapshotを照合。必須slot完了後に現stateと委任/予算を再検査する。</p>
+<h3>トレードオフと不採用案</h3>
+<p>違うslotの確率を独立として掛けない。古い結果を新attemptへ使わず、失効/stale時はreviewへ。</p>
+<h3>検証条件</h3>
+<p>partial set、stale callback、model変更、budget競合、早期approveを拒否する。<a href="#source-s09">S09</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-008: 結果不明を保持する永続Tx状態機械を維持する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 維持</p>
+<h3>背景</h3>
+<p>外部ledgerの処理はcallbackの失敗で巻き戻らない。retryで二重送金が起き得る。</p>
+<h3>決定</h3>
+<p>FrozenTransfer、Submitted、OutcomeUnknown、nonce/operation消費状態を永続化する。不明予約は保持し、同一argsかつ確認済みdedup条件でのみ回復する。</p>
+<h3>トレードオフと不採用案</h3>
+<p>unknown後のTooOld/BadFeeで過去の未実行を断定しない。新timestampによるblind retry、一般的なexactly-once保証は不採用。</p>
+<h3>検証条件</h3>
+<p>late success、callback trap、日次reset、dedup expiry、revocation後retryを故障注入する。<a href="#source-s08">S08</a><a href="#source-s10">S10</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-009: モデルは一つだけ常駐しロードpeakを管理する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 維持</p>
+<h3>背景</h3>
+<p>保存ファイルが入っても、raw bytesとtensorの二重保持でheapが不足し得る。</p>
+<h3>決定</h3>
+<p>stable memoryにchunk uploadしhash/shapeを検査。管理されたwarm-upとactive bundle切替を行う。</p>
+<h3>トレードオフと不採用案</h3>
+<p>無停止切替の二重常駐は初期要件にしない。init/upgradeで無制限の一括ロードをしない。</p>
+<h3>検証条件</h3>
+<p>warm/cold heap、ロード命令数、破損chunk、upgrade回復を測る。<a href="#source-s07">S07</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-010: F32基準から実測でINT8へ進む</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 維持</p>
+<h3>背景</h3>
+<p>INT8はサイズを減らしても、kernel次第では速くならず出力も変わる。</p>
+<h3>決定</h3>
+<p>F32でcorrectnessを確立し、prefix/scratch再利用後、hot linearへINT8/SIMDを適用する。</p>
+<h3>トレードオフと不採用案</h3>
+<p>いきなりINT4化、全weightsの毎回F32展開、未検証fast mathによる速度主張は採用しない。</p>
+<h3>検証条件</h3>
+<p>三primitiveのparity/校正とScoreの上側誤りを再評価。速度とheapが改善した方式だけ採用する。<a href="#source-s05">S05</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-011: 入口制限とevaluationの重複排除を必須にする</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 強化</p>
+<h3>背景</h3>
+<p>少数質問でも巨大入力・無限retry・大量未完了ジョブで資源を消費する。</p>
+<h3>決定</h3>
+<p>認証、16KiB byte cap、token cap、slot cap、quota、expiry、live evaluation IDの重複排除を設ける。</p>
+<h3>トレードオフと不採用案</h3>
+<p>無制限query推論、無言切詰め、expired IDを新規計算する処理は不採用。</p>
+<h3>検証条件</h3>
+<p>最大入力、予約特殊token、同じID別payload、transport再送、pending枯渇を試験する。</p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-012: schema・model・calibrationの版を一体管理する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 強化</p>
+<h3>背景</h3>
+<p>同じRisk型でもrubricが変われば数値の意味は変わる。</p>
+<h3>決定</h3>
+<p>weights/config/tokenizer/runtime/renderer/profile/schema/calibration/ruleをhashで識別する。原文とeffective inputのhashも記録する。</p>
+<h3>トレードオフと不採用案</h3>
+<p>main追従、無言モデル変更、ログへの無制限原文、会計snapshotの巻戻しは禁止。</p>
+<h3>検証条件</h3>
+<p>旧新schema混在、in-flight更新、nonce維持、原文保持方針、controllerの更新手続を確認する。</p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-013: 全primitiveと合成policyを別Gateで受け入れる</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 強化</p>
+<h3>背景</h3>
+<p>Choiceだけ良くてもScoreの重大な過小評価で危険な処理を許可し得る。</p>
+<h3>決定</h3>
+<p>Choice/Noul/Score、最終workflow、実装parity、資源、安全状態機械、対象ledgerを独立Gateにする。</p>
+<h3>トレードオフと不採用案</h3>
+<p>平均accuracyや温度調整の成功だけでLiveへ移行しない。最初はReportOnly/上限0。</p>
+<h3>検証条件</h3>
+<p>ScoreのRPS/CDF誤差/重大過小評価、workflow誤受理率とcoverage、独立reviewを含める。</p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-014: Score/Choice後回しの決定を撤回する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 置換</p>
+<h3>背景</h3>
+<p>前版ADR-014の延期は、今回のLaya採用とScore必須要件に合わない。</p>
+<h3>決定</h3>
+<p>Choice・Noul・Scoreを同じ優先度でv2 coreとする。大量候補、任意tool生成、無制限dynamic schemaだけを対象外とする。</p>
+<h3>トレードオフと不採用案</h3>
+<p>Scoreが重い/精度不足ならschema/profile/modelを見直す。Score削除によって三primitive対応完了とはしない。</p>
+<h3>検証条件</h3>
+<p>三primitiveが一つのengineと同じSDK型体系で使えることを受入条件にする。<a href="#source-s01">S01</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-015: Scoreはrubricと分布を正本にする</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 新規</p>
+<h3>背景</h3>
+<p>元LayaのScoreは0〜K−1の期待段階。正規化値や平均だけを返すと意味・尾の情報を失う。</p>
+<h3>決定</h3>
+<p>期待段階、正規化平均、mass/CDF、上側確率を提供。尺度の方向・段階説明・versionをschemaに固定し、Score<Risk>とScore<Urgency>を区別する。</p>
+<h3>トレードオフと不採用案</h3>
+<p>unknownを中間binにしない。ordinalの等間隔表示を実世界の確率や損失へ読み替えない。</p>
+<h3>検証条件</h3>
+<p>同平均/異なるtail、3/5/7 bins、最大値、丸め、schema変更を数学fixtureで試験する。<a href="#source-s04">S04</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<h3>ADR-016: Compact128・1評価1問・最大3slotを固定する</h3>
+<p>版: v2.0 / 状態: 設計採用 / 前版から: 新規</p>
+<h3>背景</h3>
+<p>少数questionで三primitiveを合成したいが、大batchと長文でICP予算を超えさせたくない。</p>
+<h3>決定</h3>
+<p>1 engine update=1問。1workflow=1〜3問の逐次ジョブ。static prefix≤64、総長≤128。Score標準5/max7、Choice2〜5、Noul2。</p>
+<h3>トレードオフと不採用案</h3>
+<p>短いheadへ無言でrubricを切らない。入りきらない場合のExtended256は別Gate。3評価の総コストは1評価分にならない。</p>
+<h3>検証条件</h3>
+<p>全primitiveの最大候補数でprefix余地と総instructions/heapを測り、early denyとrequired-slot completenessを試験する。<a href="#source-s03">S03</a><a href="#source-s04">S04</a><a href="#source-s07">S07</a></p>
+<p>出典: <a href="#part-sources">SOURCES.md</a>。正本: <a href="#part-spec">最終仕様</a>。</p>
+<hr />
+<p><a id="part-changes"></a></p>
+<h2>6. v1からの変更</h2>
+<p>2026-09-19（JST）。これは会話中に示された設計方針に対する変更記録であり、前版ファイルの機械的なdiffではない。</p>
+<table>
+<thead>
+<tr>
+  <th>前版/直前の議論</th>
+  <th>v2で固定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>NLIを基礎にしたengine</td>
+  <td>Laya式option-marker backend</td>
+</tr>
+<tr>
+  <td>DeBERTa-small/ModernBERT-NLI比較</td>
+  <td>Laya typed-decisionsを第一参照に固定。資源/品質未達なら同じprimitiveを維持して適応/蒸留</td>
+</tr>
+<tr>
+  <td>Choice/Scoreを後続へ</td>
+  <td>三primitiveをcoreへ。ADR-014を置換</td>
+</tr>
+<tr>
+  <td>NLI neutralをuncertaintyへ寄せる説明</td>
+  <td>NLIラベルで代用しない。外側のabstentionと分布を分離</td>
+</tr>
+<tr>
+  <td>1質問/callだけの説明</td>
+  <td>1評価1質問、1workflow最大3質問の逐次実行を明確化</td>
+</tr>
+<tr>
+  <td>Scoreを平均にまとめる</td>
+  <td>rubric ID、期待段階、正規化平均、分布、上側確率を維持</td>
+</tr>
+<tr>
+  <td>128をlocal attention由来の自然境界とする説明</td>
+  <td>製品の資源profileとする。attention maskの同値化はしない</td>
+</tr>
+<tr>
+  <td>act headを無条件で削る</td>
+  <td>参照parityでは保持。実行権限に使わず、logit不変確認後に配備計算を省略</td>
+</tr>
+<tr>
+  <td>短いmax_lenだけ設定</td>
+  <td>prefix≤64をコンパイル時検査。無言切詰め禁止</td>
+</tr>
+<tr>
+  <td>temperatureは付属設定で十分という印象</td>
+  <td>上書き優先順位を確認し、task/profileごとに有効値を一意に固定</td>
+</tr>
+<tr>
+  <td>型付きdecisionをTxへ接続</td>
+  <td>private認可型・委任・nonce・業務重複・不明予約を維持/強化</td>
+</tr>
+</tbody>
+</table>
+<p>新設ADR-015はScoreの数値契約、ADR-016はCompact128/少数逐次workflow。既存の認可・ledger回復・監査・upgradeの境界は撤回しない。</p>
+<hr />
+<p><a id="part-review"></a></p>
+<h2>7. 自己レビューと修正</h2>
+<p>2026-09-19（JST）。対象は会話中の設計説明と今回の最終仕様・ADR。公開一次資料との突合、型/数値契約、状態遷移、受入条件を自己レビューした。第三者監査ではない。</p>
+<h3>修正・明文化した事項</h3>
+<table>
+<thead>
+<tr>
+  <th>ID</th>
+  <th>指摘</th>
+  <th>v2への反映</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>V2-R01</td>
+  <td>Scoreを後回し/削除すると要件を満たさない</td>
+  <td>core primitiveへ昇格。ADR-014置換、ADR-015新設。</td>
+</tr>
+<tr>
+  <td>V2-R02</td>
+  <td>root Layaとtyped-decisions specialistを同じ汎用性で扱う危険</td>
+  <td>独立repoを第一参照に固定し、対象外業務の品質を別Gateにする。</td>
+</tr>
+<tr>
+  <td>V2-R03</td>
+  <td>Scoreの元値は0〜1ではなく0〜K−1</td>
+  <td>期待段階と正規化平均の両方を単位付きで定義。</td>
+</tr>
+<tr>
+  <td>V2-R04</td>
+  <td>平均が同じなら同じriskと扱ってしまう</td>
+  <td>分布と上側確率を正本にする。中央集中/両端分裂の例を試験。</td>
+</tr>
+<tr>
+  <td>V2-R05</td>
+  <td>ordinalの等間隔化を実世界の事故率と誤解する</td>
+  <td>表示上の規約と明記。rubric、方向、utilityを分離。</td>
+</tr>
+<tr>
+  <td>V2-R06</td>
+  <td>1質問/callと3signalのTx合成が矛盾し得る</td>
+  <td>engineは1問、workflow最大3問の逐次ジョブ。必須slotが揃うまで許可しない。</td>
+</tr>
+<tr>
+  <td>V2-R07</td>
+  <td>逐次質問で別snapshot/modelの結果を混ぜられる</td>
+  <td>immutable bindingと全slot一致、stale/late callback排除を規定。</td>
+</tr>
+<tr>
+  <td>V2-R08</td>
+  <td>3質問へ分割すると総計算も1質問分になるという印象</td>
+  <td>最大60Bは評価分だけの目標と明記し、cycles/latencyを別集計。</td>
+</tr>
+<tr>
+  <td>V2-R09</td>
+  <td>max_lenだけ128にするとheadがstateを圧迫しうる</td>
+  <td>prefix≤64をコンパイル時検査。rubric/option/stateの無言切詰めを禁止。</td>
+</tr>
+<tr>
+  <td>V2-R10</td>
+  <td>local attention 128なら128token入力の全attentionが同じになるという解釈</td>
+  <td>実際のlocal maskを保持。128は製品profileとして選択。</td>
+</tr>
+<tr>
+  <td>V2-R11</td>
+  <td>headのactivationをすべてGELUとして移植する誤り</td>
+  <td>PyTorch default ReLU、scorer GELU、backbone GeGLUを分離して照合。</td>
+</tr>
+<tr>
+  <td>V2-R12</td>
+  <td>付属temperatureをそのまま使えば校正済みという過信</td>
+  <td>priorityを解決したeffective設定とtask/profile別再校正を必須化。</td>
+</tr>
+<tr>
+  <td>V2-R13</td>
+  <td>entropy集中度を正答確率として扱う</td>
+  <td>diagnosticsとして返し、calibrationとabstention ruleを別途評価。</td>
+</tr>
+<tr>
+  <td>V2-R14</td>
+  <td>act headを削ると大幅高速化できるという過大評価</td>
+  <td>logits不変の確認後に省略。主要最適化とは見積もらない。</td>
+</tr>
+<tr>
+  <td>V2-R15</td>
+  <td>型付き出力なら直接Txへ渡して安全という混同</td>
+  <td>外部DTOと内部AuthorizedTransferを分離。runtime権限/予算検査を維持。</td>
+</tr>
+<tr>
+  <td>V2-R16</td>
+  <td>transport再送で同じ評価を何度も計算</td>
+  <td>evaluation IDによるlive重複排除、expiry、quotaを規定。</td>
+</tr>
+<tr>
+  <td>V2-R17</td>
+  <td>unknown送金を後続TooOld等だけで失敗扱い</td>
+  <td>不明予約とoperation予約を保持。ledger固有の確実な照合を要求。</td>
+</tr>
+<tr>
+  <td>V2-R18</td>
+  <td>INT8化すれば必ず速いという仮定</td>
+  <td>kernel込みで実測。F32全展開だけの「最適化」を採用しない。</td>
+</tr>
+<tr>
+  <td>V2-R19</td>
+  <td>型名が同じなら違うrubricでも使える</td>
+  <td>schema/version/hashとcandidate順をSDK/runtimeで検査。</td>
+</tr>
+<tr>
+  <td>V2-R20</td>
+  <td>品質未達時にScoreを無効化して受入完了にする</td>
+  <td>三primitive別Gateと最終policy Gateをすべて必須化。</td>
+</tr>
+</tbody>
+</table>
+<h3>第2パス</h3>
+<p>本文、ADR、profileの上限（1/3質問、128tokens、2〜5Choice、3〜7Score、標準5段階）、Scoreの単位、同じsnapshot、ReportOnly、unknown予約保持を読み合わせる。文書構造と数値fixtureを<code>validate.py</code>で確認する。</p>
+<p>validate.pyは実モデル、Rustの型実装、認可コード、ledger接続を試験するものではない。文書の整合と設計上の数値例を検査する補助である。</p>
+<h3>残る受入作業</h3>
+<p>固定したrevision/hash、実tokenizerのschema token数、raw logitsの一致、ICPのinstructions/heap、INT8の実利、Scoreの過小評価と校正、最終workflowの誤受理率、特定ledgerの回復、独立レビューは未実施。</p>
+<p>設計方針は固定したが、これらの未実測値を推測で合格にしない。未合格のまま実資金Txを有効化しない。</p>
+<hr />
+<p><a id="part-sources"></a></p>
+<h2>8. 一次資料と確認範囲</h2>
+<p>確認日: 2026-09-19（JST）。以下のURLは確認した公開資料。main/stableは変わり得るため、実装時はcheckpoint、ソース、toolchainのrevisionとhashを固定する。今回はweightsの取得・実モデル推論・Rust/Wasm build・ICP deployは実施していない。</p>
+<table>
+<thead>
+<tr>
+  <th>ID</th>
+  <th>資料</th>
+  <th>確認範囲</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a id="source-s01"></a>S01</td>
+  <td><a href="https://huggingface.co/convaiinnovations/laya">Laya model card</a></td>
+  <td>三primitive、option-marker architecture、モデル系列。ベンチ速度をICP性能へ転用しない。</td>
+</tr>
+<tr>
+  <td><a id="source-s02"></a>S02</td>
+  <td><a href="https://huggingface.co/convaiinnovations/laya-typed-decisions">Laya typed-decisions model card</a></td>
+  <td>特化対象の限界、temperature_by_optionsの優先による校正注意点。本番taskの精度保証ではない。</td>
+</tr>
+<tr>
+  <td><a id="source-s03"></a>S03</td>
+  <td><a href="https://huggingface.co/convaiinnovations/laya/blob/main/rl_common.py">Laya rl_common.py</a></td>
+  <td>rendering、marker、head、act branch、entropy由来診断。元rendererの無言切詰めをそのまま配備しない。</td>
+</tr>
+<tr>
+  <td><a id="source-s04"></a>S04</td>
+  <td><a href="https://huggingface.co/convaiinnovations/laya/blob/main/rl_agent_api.py">Laya rl_agent_api.py</a></td>
+  <td>質問ごとの入力作成、temperature解決、Scoreの期待段階、Noulのp[1]。</td>
+</tr>
+<tr>
+  <td><a id="source-s05"></a>S05</td>
+  <td><a href="https://raw.githubusercontent.com/huggingface/candle/main/candle-transformers/src/models/modernbert.rs">Candle modernbert.rs</a></td>
+  <td>backbone、GeGLU、local mask、出力経路。Laya checkpointのICP互換を証明するものではない。</td>
+</tr>
+<tr>
+  <td><a id="source-s06"></a>S06</td>
+  <td><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.TransformerEncoderLayer.html">PyTorch TransformerEncoderLayer</a></td>
+  <td>activation等の既定値。採用する参照環境のversionと一致させる。</td>
+</tr>
+<tr>
+  <td><a id="source-s07"></a>S07</td>
+  <td><a href="https://docs.internetcomputer.org/references/resource-limits/">ICP Resource limits</a></td>
+  <td>update 40B instructions、wasm32 heap 4GiB等。20B/3GiBは本設計の目標であり公式上限ではない。</td>
+</tr>
+<tr>
+  <td><a id="source-s08"></a>S08</td>
+  <td><a href="https://docs.internetcomputer.org/guides/canister-calls/idempotency/">ICP Safe retries and idempotency</a></td>
+  <td>nonce、dedup、結果不明、時間窓後の回復と照合。</td>
+</tr>
+<tr>
+  <td><a id="source-s09"></a>S09</td>
+  <td><a href="https://docs.internetcomputer.org/guides/security/inter-canister-calls/">ICP security — Inter-canister calls</a></td>
+  <td>awaitをまたぐstateと権限の再検査、障害処理。</td>
+</tr>
+<tr>
+  <td><a id="source-s10"></a>S10</td>
+  <td><a href="https://github.com/dfinity/ICRC-1/blob/main/standards/ICRC-1/README.md">ICRC-1 specification</a></td>
+  <td>caller所有accountのdebit、transfer args、dedupのSHOULD要件。ledger固有検証は別途必要。</td>
+</tr>
+<tr>
+  <td><a id="source-s11"></a>S11</td>
+  <td><a href="https://docs.internetcomputer.org/references/candid-spec/">Candid type reference</a></td>
+  <td>wireでのrecord/variant/principal等とRust SDKの型復元の境界。</td>
+</tr>
+<tr>
+  <td><a id="source-s12"></a>S12</td>
+  <td><a href="https://doc.rust-lang.org/reference/visibility-and-privacy.html">Rust visibility and privacy</a></td>
+  <td>module/private fieldの保護。意味的正しさや分散した一回性を保証するものではない。</td>
+</tr>
+</tbody>
+</table>
+<p>この文書のcrate構成、Compact128、質問数、上限、型名、API名、状態機械、計測目標は設計上の選択であり、上記資料が公式に推奨した値ではない。</p>
+<hr />
+</main></div></body></html>
