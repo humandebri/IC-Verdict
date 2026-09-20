@@ -1,0 +1,320 @@
+{
+  "kind": "per-phase instruction cost on a local replica",
+  "note": "measure_phases is measurement-only; it bypasses the engine cache and cannot move funds. instructions are counted by the canister",
+  "tiers": [
+    {
+      "tier": "measure-s",
+      "pack_bytes": 3227652,
+      "tensors": 45,
+      "config": {
+        "vocab_size": 512,
+        "hidden_size": 128,
+        "layers": 2,
+        "attention_heads": 4,
+        "intermediate_size": 512,
+        "norm_eps": 1e-05,
+        "global_every": 2,
+        "local_attention": 64,
+        "global_rope_theta": 10000.0,
+        "local_rope_theta": 1000.0,
+        "first_layer_attention_norm": false,
+        "decision_layers": 2,
+        "decision_heads": 4,
+        "decision_ff": 128,
+        "decision_norm_eps": 1e-05,
+        "decision_norm_first": true,
+        "decision_activation": "Relu",
+        "scorer_norm_eps": 1e-05,
+        "qtypes": 3,
+        "mask_token_id": 3
+      },
+      "upload": {
+        "ok": true,
+        "seconds": 0.24,
+        "chunks": 13
+      },
+      "warmup": {
+        "ok": true,
+        "tensors": 0,
+        "seconds": 12.21
+      },
+      "theoretical_macs_encoder": 88080384,
+      "phases": [
+        {
+          "schema": "RefundRequested",
+          "primitive": "Noul",
+          "wall_seconds": 0.297,
+          "total": 192575215,
+          "phases": [
+            {
+              "name": "embedding",
+              "instructions": 580199,
+              "share": 0.003
+            },
+            {
+              "name": "encoder",
+              "instructions": 135388650,
+              "share": 0.703
+            },
+            {
+              "name": "final_norm",
+              "instructions": 490683,
+              "share": 0.0025
+            },
+            {
+              "name": "decision",
+              "instructions": 53282098,
+              "share": 0.2767
+            },
+            {
+              "name": "scorer",
+              "instructions": 2826348,
+              "share": 0.0147
+            },
+            {
+              "name": "decode",
+              "instructions": 7237,
+              "share": 0.0
+            }
+          ],
+          "instructions_per_mac": 2.2
+        },
+        {
+          "schema": "PaymentAction",
+          "primitive": "Choice",
+          "wall_seconds": 0.275,
+          "total": 206793882,
+          "phases": [
+            {
+              "name": "embedding",
+              "instructions": 670707,
+              "share": 0.0032
+            },
+            {
+              "name": "encoder",
+              "instructions": 145039285,
+              "share": 0.7014
+            },
+            {
+              "name": "final_norm",
+              "instructions": 569225,
+              "share": 0.0028
+            },
+            {
+              "name": "decision",
+              "instructions": 57602275,
+              "share": 0.2785
+            },
+            {
+              "name": "scorer",
+              "instructions": 2905055,
+              "share": 0.014
+            },
+            {
+              "name": "decode",
+              "instructions": 7335,
+              "share": 0.0
+            }
+          ],
+          "instructions_per_mac": 2.3
+        },
+        {
+          "schema": "PaymentRisk",
+          "primitive": "Score",
+          "wall_seconds": 0.279,
+          "total": 228005301,
+          "phases": [
+            {
+              "name": "embedding",
+              "instructions": 757756,
+              "share": 0.0033
+            },
+            {
+              "name": "encoder",
+              "instructions": 159399426,
+              "share": 0.6991
+            },
+            {
+              "name": "final_norm",
+              "instructions": 667066,
+              "share": 0.0029
+            },
+            {
+              "name": "decision",
+              "instructions": 64087752,
+              "share": 0.2811
+            },
+            {
+              "name": "scorer",
+              "instructions": 3086079,
+              "share": 0.0135
+            },
+            {
+              "name": "decode",
+              "instructions": 7222,
+              "share": 0.0
+            }
+          ],
+          "instructions_per_mac": 2.6
+        }
+      ]
+    },
+    {
+      "tier": "measure-m",
+      "pack_bytes": 85008388,
+      "tensors": 57,
+      "config": {
+        "vocab_size": 2048,
+        "hidden_size": 512,
+        "layers": 4,
+        "attention_heads": 8,
+        "intermediate_size": 2048,
+        "norm_eps": 1e-05,
+        "global_every": 4,
+        "local_attention": 128,
+        "global_rope_theta": 10000.0,
+        "local_rope_theta": 1000.0,
+        "first_layer_attention_norm": false,
+        "decision_layers": 2,
+        "decision_heads": 8,
+        "decision_ff": 512,
+        "decision_norm_eps": 1e-05,
+        "decision_norm_first": true,
+        "decision_activation": "Relu",
+        "scorer_norm_eps": 1e-05,
+        "qtypes": 3,
+        "mask_token_id": 3
+      },
+      "upload": {
+        "ok": true,
+        "seconds": 0.27,
+        "chunks": 325
+      },
+      "warmup": {
+        "ok": true,
+        "tensors": 0,
+        "seconds": 15.02
+      },
+      "theoretical_macs_encoder": 2751463424,
+      "phases": [
+        {
+          "schema": "RefundRequested",
+          "primitive": "Noul",
+          "wall_seconds": 1.611,
+          "total": 4731643659,
+          "phases": [
+            {
+              "name": "embedding",
+              "instructions": 1791401,
+              "share": 0.0004
+            },
+            {
+              "name": "encoder",
+              "instructions": 3942825715,
+              "share": 0.8333
+            },
+            {
+              "name": "final_norm",
+              "instructions": 1702001,
+              "share": 0.0004
+            },
+            {
+              "name": "decision",
+              "instructions": 742253057,
+              "share": 0.1569
+            },
+            {
+              "name": "scorer",
+              "instructions": 43064588,
+              "share": 0.0091
+            },
+            {
+              "name": "decode",
+              "instructions": 6897,
+              "share": 0.0
+            }
+          ],
+          "instructions_per_mac": 1.7
+        },
+        {
+          "schema": "PaymentAction",
+          "primitive": "Choice",
+          "wall_seconds": 1.733,
+          "total": 5016088540,
+          "phases": [
+            {
+              "name": "embedding",
+              "instructions": 2062711,
+              "share": 0.0004
+            },
+            {
+              "name": "encoder",
+              "instructions": 4179912262,
+              "share": 0.8333
+            },
+            {
+              "name": "final_norm",
+              "instructions": 2007357,
+              "share": 0.0004
+            },
+            {
+              "name": "decision",
+              "instructions": 788261691,
+              "share": 0.1571
+            },
+            {
+              "name": "scorer",
+              "instructions": 43837471,
+              "share": 0.0087
+            },
+            {
+              "name": "decode",
+              "instructions": 7048,
+              "share": 0.0
+            }
+          ],
+          "instructions_per_mac": 1.8
+        },
+        {
+          "schema": "PaymentRisk",
+          "primitive": "Score",
+          "wall_seconds": 1.868,
+          "total": 5432843974,
+          "phases": [
+            {
+              "name": "embedding",
+              "instructions": 2427271,
+              "share": 0.0004
+            },
+            {
+              "name": "encoder",
+              "instructions": 4526209607,
+              "share": 0.8331
+            },
+            {
+              "name": "final_norm",
+              "instructions": 2376690,
+              "share": 0.0004
+            },
+            {
+              "name": "decision",
+              "instructions": 856015935,
+              "share": 0.1576
+            },
+            {
+              "name": "scorer",
+              "instructions": 45807173,
+              "share": 0.0084
+            },
+            {
+              "name": "decode",
+              "instructions": 7298,
+              "share": 0.0
+            }
+          ],
+          "instructions_per_mac": 2.0
+        }
+      ]
+    }
+  ]
+}

@@ -68,6 +68,49 @@ fn register_schema(schema:Schema,qtype_id:u32)->Result<CompiledSchema>{
 }
 #[ic_cdk::update]
 fn register_calibration(c:Calibration)->Result<()>{owner()?;mutate(|s|s.engine.register_calibration(c,ic_cdk::api::time()))}
+/// MEASUREMENT ONLY. Reports where inference instructions are spent, phase by phase.
+///
+/// This exists because the acceptance targets are instruction budgets and nothing
+/// reported a breakdown: `evaluate` returns one total for the whole call. It uses the
+/// same validation and caller checks as `evaluate` but **bypasses the cache**, since
+/// a cached result would report nothing.
+///
+/// It cannot move funds: it does not touch the executor, does not create a Receipt,
+/// and is not reachable from any dispatch path. Gated on the candle feature because
+/// the fixture backend has no real phases to report.
+/// Wire form of `laya_candle::PhaseCost`. Kept local because deriving CandidType on
+/// the crate type would make `laya-candle` depend on candid for a type that only
+/// exists for measurement.
+#[derive(Clone,CandidType,Serialize,Deserialize)]
+pub struct PhaseCostDto { pub name:String, pub instructions:u64 }
+
+#[cfg(feature="candle")]
+#[ic_cdk::update]
+fn measure_phases(req:DecisionRequest)->Result<Vec<PhaseCostDto>>{
+    let caller=ic_cdk::api::msg_caller();let now=ic_cdk::api::time();
+    if !read(|s|s.engine.callers.contains_key(&caller)){return Err(Error::Unauthorized);}
+    if req.state.is_empty() || req.state.len()>MAX_STATE_BYTES{return Err(Error::TooLong);}
+    if req.expires_at_ns<=now || req.expires_at_ns-now>600_000_000_000{return Err(Error::Expired);}
+    // Validate against registered state exactly as evaluate would, so the measured
+    // phases describe a request that would actually be accepted.
+    let schema=read(|s|s.engine.schemas.get(&req.schema_hash).cloned()).ok_or(Error::NotFound)?;
+    read(|s|{
+        if req.model!=s.engine.active_model{return Err(Error::BindingMismatch);}
+        if let Some(id)=req.calibration{
+            let c=s.engine.calibrations.get(&id).ok_or(Error::Uncalibrated)?;
+            c.validate(now)?;
+            if c.model!=req.model || c.schema!=req.schema_hash || c.tokenizer!=schema.tokenizer_hash{return Err(Error::BindingMismatch);}
+            if req.expires_at_ns>c.expires_at_ns{return Err(Error::Uncalibrated);}
+        }Ok(())
+    })?;
+    TOKENIZER.with(|t|MODEL.with(|m|{
+        let t=t.borrow();let mut m=m.borrow_mut();
+        let (t,m)=match (t.as_ref(),m.as_mut()){(Some(t),Some(m))=>(t,m),_=>return Err(Error::ModelUnavailable("checkpoint not warmed".into()))};
+        let input=crate::schema::render(&schema,t,&req.state)?;
+        m.infer_profiled(&input,&||ic_cdk::api::instruction_counter())
+            .map(|costs|costs.into_iter().map(|c|PhaseCostDto{name:c.name.to_string(),instructions:c.instructions}).collect())
+    }))
+}
 #[ic_cdk::update]
 fn evaluate(req:DecisionRequest)->Result<Receipt>{
     let caller=ic_cdk::api::msg_caller();let now=ic_cdk::api::time();

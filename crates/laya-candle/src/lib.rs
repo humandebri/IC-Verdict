@@ -158,7 +158,58 @@ impl LayaModel {
         let selected=x.index_select(&markers,0)?;
         self.scorer_out.forward(&self.scorer_dense.forward(&self.scorer_norm.forward(&selected)?)?.gelu_erf()?)?.squeeze(1)
     }
+
+    /// `forward_tensor` with a callback at each phase boundary.
+    ///
+    /// Measurement only: `InferenceBackend::infer` does not use this, so the
+    /// production path carries no instrumentation. The callback is a plain
+    /// function pointer and this crate does not depend on `ic-cdk`, so it works
+    /// on native (where the counter is a stub returning 0) and inside a canister
+    /// (where it reads `instruction_counter`) without a second implementation.
+    fn forward_profiled(&self,input:&TokenInput,mark:&mut dyn FnMut(&'static str))->CResult<Tensor>{
+        let dev=&Device::Cpu;let ids=Tensor::from_vec(input.input_ids.clone(),input.input_ids.len(),dev)?;
+        let mut x=self.embedding_norm.forward(&self.embedding.index_select(&ids,0)?)?;
+        mark("embedding");
+        for layer in &self.layers{x=layer.forward(&x)?;}
+        mark("encoder");
+        x=self.final_norm.forward(&x)?;
+        let qt=self.qtype.narrow(0,input.qtype_id as usize,1)?;x=x.broadcast_add(&qt)?;
+        mark("final_norm");
+        for layer in &self.decision{x=layer.forward(&x)?;}
+        mark("decision");
+        let markers=Tensor::from_vec(input.markers.clone(),input.markers.len(),dev)?;
+        let selected=x.index_select(&markers,0)?;
+        let out=self.scorer_out.forward(&self.scorer_dense.forward(&self.scorer_norm.forward(&selected)?)?.gelu_erf()?)?.squeeze(1);
+        mark("scorer");
+        out
+    }
+
+    /// Per-phase instruction cost for one question.
+    ///
+    /// Returns one entry per phase in execution order. `instructions` is the
+    /// delta since the previous boundary, so the entries sum to the total for
+    /// this call (the `decode` phase covers `.to_vec1` and the finite check).
+    pub fn infer_profiled(&mut self,input:&TokenInput,counter:&dyn Fn()->u64)->Result<Vec<PhaseCost>>{
+        if input.input_ids.is_empty() || input.input_ids.len()>MAX_TOKENS || !(2..=7).contains(&input.markers.len()) || input.qtype_id as usize>=self.config.qtypes
+            || input.input_ids.iter().any(|&v|v as usize>=self.config.vocab_size){return Err(Error::Invalid("token input".into()));}
+        let mut prev=None;
+        for &p in &input.markers {if input.input_ids.get(p as usize)!=Some(&self.config.mask_token_id) || prev.is_some_and(|v|p<=v){return Err(Error::Invalid("option markers".into()));}prev=Some(p);}
+        let mut costs:Vec<PhaseCost>=Vec::new();
+        let mut last=counter();
+        {
+            let mut record=|name:&'static str|{let now=counter();costs.push(PhaseCost{name,instructions:now.saturating_sub(last)});last=now;};
+            let tensor=self.forward_profiled(input,&mut record).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+            let values=tensor.to_vec1::<f32>().map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+            record("decode");
+            if values.iter().any(|x|!x.is_finite()){return Err(Error::Numeric);}
+        }
+        Ok(costs)
+    }
 }
+
+/// One phase of a profiled inference. Measurement only; never part of a Receipt.
+#[derive(Debug,Clone,PartialEq,Eq,Serialize,Deserialize)]
+pub struct PhaseCost { pub name:&'static str, pub instructions:u64 }
 impl InferenceBackend for LayaModel {
     fn bundle_id(&self)->Digest{self.bundle}
     fn kind(&self)->BackendKind{self.backend_kind}

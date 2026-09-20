@@ -547,8 +547,10 @@ def main() -> int:
 
     if not args.skip_build:
         print("building decision-engine with the candle feature ...")
+        target_dir = os.environ.get("CARGO_TARGET_DIR", "/tmp/target")
         subprocess.run(["bash", "tools/build_one.sh", "decision-engine"], cwd=ROOT, check=True,
-                       env={**os.environ, "IC_LAYA_CANDLE": "1"})
+                       env={**os.environ, "IC_LAYA_CANDLE": "1", "CARGO_TARGET_DIR": target_dir,
+                            "PATH": f"{Path.home()}/.cargo/bin:" + os.environ["PATH"]})
     if not (BUILD / "decision-engine.wasm").exists():
         raise Failure("build/decision-engine.wasm missing")
 
