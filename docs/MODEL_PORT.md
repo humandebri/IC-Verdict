@@ -60,3 +60,7 @@ batch=1・paddingなしのtoken列に対して、embedding/norm、pre-norm Moder
 - training / distillation / RLCD / learned act head
 - 初期化時間・warm推論・stable save込みのinstruction計測
 - mainnet運用可能なモデル管理GUI
+
+## 実checkpointの調査結果
+
+上流checkpointの実際のtensor名・shape・dtype・special token・校正温度を取得して確認した結果を[MODEL_PORT_FINDINGS.md](MODEL_PORT_FINDINGS.md)に記録した。想定canonical名の大半が実物と異なり、mask token idもfixtureと異なる。draft mappingは`tools/laya_port_bridge.py discover`で再生成できる。
