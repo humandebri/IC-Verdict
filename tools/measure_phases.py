@@ -83,9 +83,11 @@ def encoder_macs(config: dict, tokens: int) -> int:
         3 * inter * h    wi (2*inter*h: gate and up) + wo (inter*h)
         2 * window * h   QK^T + weighted sum inside the sliding window
 
-    `wo.weight` is [hidden, intermediate], so charging `2*inter*h` for wi *and* wo
-    overstates the denominator by 4/3; the previous version did that on top of a
-    hardcoded 128-token length.
+    `wo.weight` is [hidden, intermediate], so charging `2*inter*h` for wi *and* wo was
+    wrong, but only in the MLP term: the other terms were right, so the denominator was
+    overstated by 1.242x at hidden 512 / intermediate 2048 (not 4/3 -- the MLP is about
+    73% of the total, which dilutes a 25% error in that term). The previous version did
+    that on top of a hardcoded 128-token length.
     """
     h = config["hidden_size"]
     inter = config["intermediate_size"]

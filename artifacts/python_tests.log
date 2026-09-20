@@ -1,3 +1,8 @@
+test_attention_window_is_bounded_by_tokens (test_measure_phases.EncoderMacs.test_attention_window_is_bounded_by_tokens) ... ok
+test_documented_efficiency (test_measure_phases.EncoderMacs.test_documented_efficiency) ... ok
+test_documented_totals (test_measure_phases.EncoderMacs.test_documented_totals) ... ok
+test_mlp_counts_three_projections (test_measure_phases.EncoderMacs.test_mlp_counts_three_projections) ... ok
+test_update_budget_is_the_ic_ceiling (test_measure_phases.EncoderMacs.test_update_budget_is_the_ic_ceiling) ... ok
 test_architecture_guard (test_pack_export.PackExporterTests.test_architecture_guard) ... ok
 test_explicit_qkv_concat (test_pack_export.PackExporterTests.test_explicit_qkv_concat) ... ok
 test_explicit_transpose (test_pack_export.PackExporterTests.test_explicit_transpose) ... ok
@@ -45,6 +50,6 @@ test_unknown_then_bad_fee (test_reference.TransactionOracleTests.test_unknown_th
 test_unknown_then_too_old (test_reference.TransactionOracleTests.test_unknown_then_too_old) ... ok
 
 ----------------------------------------------------------------------
-Ran 45 tests in 0.090s
+Ran 50 tests in 0.037s
 
 OK

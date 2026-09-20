@@ -22,7 +22,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 1 test
 test tiny_wordlevel_adapter ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
 
 
 running 0 tests
@@ -31,65 +31,65 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 57 tests
-test calibration_must_cover_whole_workflow_expiry ... ok
-test changed_evidence_stale ... ok
-test caller_must_own_grant ... ok
-test budget_failure_does_not_partially_reserve_operation ... ok
-test business_duplicate_blocked ... ok
-test count_bounds ... ok
 test cached_result_cannot_bypass_active_model_change ... ok
 test all_primitives_reach_ready ... ok
+test business_duplicate_blocked ... ok
+test budget_failure_does_not_partially_reserve_operation ... ok
+test calibration_must_cover_whole_workflow_expiry ... ok
+test caller_must_own_grant ... ok
+test count_bounds ... ok
+test changed_evidence_stale ... ok
 test compiled_three_schemas ... ok
 test display_tie_is_first ... ok
 test duplicate_options_rejected ... ok
 test budget_reserved_before_send ... ok
-test definitive_first_error_releases ... ok
-test dedup_expiry_blocks_blind_retry ... ok
-test engine_transport_retry_same_id ... ok
-test golden_vectors ... ok
-test engine_deduplicates ... ok
-test forged_derived_score_rejected ... ok
-test huge_logits_stable ... ok
 test engine_namespace_not_public ... ok
+test forged_derived_score_rejected ... ok
+test engine_deduplicates ... ok
+test huge_logits_stable ... ok
+test golden_vectors ... ok
+test definitive_first_error_releases ... ok
 test duplicate_success_accounts_once ... ok
+test engine_transport_retry_same_id ... ok
 test marker_tamper_rejected ... ok
 test forged_snapshot_never_passes ... ok
-test exact_length_limit ... ok
-test late_reply_after_cancel_ignored ... ok
 test no_normalization_of_bad_input ... ok
 test live_mode_is_closed ... ok
+test exact_length_limit ... ok
+test late_reply_after_cancel_ignored ... ok
+test dedup_expiry_blocks_blind_retry ... ok
 test no_silent_option_truncation ... ok
 test ordinal_units ... ok
 test noul_order_fixed ... ok
-test nonce_replay_returns_same ... ok
-test ppm_sum_and_tie ... ok
 test nonce_cannot_skip ... ok
-test rejects_malformed_distribution ... ok
+test ppm_sum_and_tie ... ok
 test late_error_does_not_revert_success ... ok
 test reject_special_token_injection ... ok
+test rejects_malformed_distribution ... ok
 test rejects_nonfinite ... ok
 test rejects_temperature ... ok
+test nonce_replay_returns_same ... ok
 test nonce_payload_conflict ... ok
+test same_mean_different_tail ... ok
 test partial_signals_cannot_authorize ... ok
 test mock_requires_registered_ledger ... ok
-test same_mean_different_tail ... ok
-test report_only_does_not_reserve ... ok
 test three_primitives_exist ... ok
 test parallel_advance_busy ... ok
-test snapshot_envelope_integrity ... ok
-test ttl_enforced ... ok
 test revoke_during_inference ... ok
+test ttl_enforced ... ok
+test report_only_does_not_reserve ... ok
+test snapshot_envelope_integrity ... ok
 test revoke_stops_retry_not_reconciliation ... ok
 test unauthorized_mode_change ... ok
-test typed_view_rejects_forged_receipt_stamp ... ok
 test typed_score_exposes_tail_and_rejects_other_schema ... ok
+test typed_view_rejects_forged_receipt_stamp ... ok
 test unknown_cannot_cancel ... ok
-test unknown_then_badfee_is_still_unknown ... ok
-test upgrade_retains_unknown_budget ... ok
 test unknown_keeps_reservation ... ok
+test upgrade_retains_unknown_budget ... ok
+test unknown_then_badfee_is_still_unknown ... ok
 test many_ledger_event_sequences_preserve_invariants ... ok
 
-test result: ok. 57 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 57 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
 
 
 running 0 tests
@@ -140,7 +140,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 1 test
 test crates/ic-laya-core/src/workflow.rs - workflow::AuthorizedTransfer (line 105) - compile fail ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
 
 
 running 0 tests
@@ -173,8 +173,9 @@ warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug
   = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
   = help: consider changing their names to be unique or compiling them separately
    Compiling hf-tokenizer v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/hf-tokenizer)
+   Compiling laya-candle v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/laya-candle)
    Compiling ic-laya-core v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/ic-laya-core)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.32s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.81s
      Running unittests src/lib.rs (target/debug/deps/canister_common-f98a6ae2897f3d81)
      Running unittests src/lib.rs (target/debug/deps/decision_engine-32c41061c44990e8)
      Running unittests src/lib.rs (target/debug/deps/executor-db6228a530c8540a)

@@ -3,6 +3,10 @@
 /.dfx/
 /.venv/
 /checkpoints/
+# Downloaded checkpoints and scratch ICP homes. Large binaries that must never be
+# committed: models/verdict-151m is a 540 MB safetensors file.
+/models/
+/.icphome/
 # Sized synthetic packs for perf measurement. Regenerable in seconds via
 # `python tools/generate_fixtures.py --tier <name>`; measure-m alone is 81 MiB.
 /fixtures/measure-*/

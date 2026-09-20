@@ -99,15 +99,33 @@ error[E0433]: cannot find type `CurrentCpuF16` in this scope   (x38, candle-core
 `.cargo/config.toml` ではこのflagを**意図的に**設定していない。
 
 **matmulがこの理由でscalarになっているわけではない。** candleのf32 matmulは `gemm` crateを
-通り、gemmのwasm32 SIMDマイクロカーネルはビルドに含まれ実行時に選択される
-（candleがgemmの `wasm-simd128-enable` を有効化しており `get_wasm_simd128()` の既定はtrue）。
-flagで失っているのはcandle自身のwasm SIMD（要素演算・正規化）で、内訳では数%のshareである。
-したがって**このflagは第一のレバーではない**。レバーはmatmulカーネルそのもので、
-下の4.1〜4.9 instructions/MACを0.5以下に落とす仕事（ADR-017のINT8/SIMD計画）である。
+通り、gemmのwasm32 SIMDマイクロカーネルはビルドに含まれ、`get_wasm_simd128()` の既定
+（candleが有効化する `wasm-simd128-enable` により **true**）で選択される。
+flagで失っているのはcandle自身のwasm SIMD（要素演算・正規化）だけで、内訳では数%のshareである。
+したがって**このflagは第一のレバーではない**。
 
-> **未確定（次の最優先）**: gemmのwasm SIMDカーネルがこの形状（m=128）で実際に選ばれて
-> いるかを、`gemm::set_wasm_simd128(true/false)` を挟んだ命令数A/Bで確認していない。
-> 実測が3つのmatmulフェーズで揃って4前後なのはscalarカーネル（4〜6命令/MAC）の挙動と整合する。
+### gemmのSIMDカーネルは実際に効いている（実測A/B）
+
+独立したbench canister（`gemm` を直接、candleと同じ引数・同じ形状
+`m=128, n=4096, k=512` = measure-mの `wi` 射影で呼ぶ）で命令数を測った:
+
+| gemmのカーネル | instructions | instructions/MAC |
+|---|---|---|
+| wasm32 simd128（`set_wasm_simd128(true)`） | 669,805,104 | **2.50** |
+| scalar（`false`） | 2,912,265,769 | **10.85** |
+
+**4.35倍**の差があり、`DEFAULT_WASM_SIMD128` も実行時の既定値も `true` である。
+IC-Layaは既にSIMDカーネルの側にいる。フェーズ実測が3.9〜4.2 instr/MACなのは、
+純粋なmatmul 2.50にnormと重み転置コピーの分が乗った値として整合する。
+
+> **測定上の落とし穴（実際に踏んだ）**: gemmは最初の呼び出しで選んだカーネルを
+> `static GEMM_PTR: AtomicPtr` に固定して以後再利用する。`set_wasm_simd128` を後から
+> 呼んでも切り替わらないため、A/Bは**canisterを再installしてから**フラグを設定し、
+> そのinstanceで最初のgemm呼び出しを行う必要がある。最初の計測はこれを踏んで
+> 両方10.85になり、差が出なかった。
+
+残る余地は「gemmのSIMDカーネル 2.50」から「f32x4の下限 0.5〜1.0」までの**約2.5〜5倍**で、
+これはADR-017のINT8カーネル計画の担当領域である。
 
 ## フェーズ別の内訳（実測）
 
@@ -150,7 +168,7 @@ ADR-010の「hot linearへINT8/SIMDを適用する」という判断は、**こ�
 - `rendered_tokens` を必ず記録する
 - 短い入力と128-token入力を**両方**測る（attentionはtoken数に対して二次、他は線形なので区別が必要）
 
-### 誤り3: MLPのMACを4/3過大に数えていた
+### 誤り3: MLPのMACを過大に数えていた（measure-mの条件で1.242倍）
 
 `theoretical_macs_encoder` は wi と wo の**両方**に `2*inter*h` を課していた。
 `expected_tensors` の `wo.weight` は `[hidden, intermediate]` なので、1 token あたりは
@@ -158,9 +176,12 @@ ADR-010の「hot linearへINT8/SIMDを適用する」という判断は、**こ�
 - wi（gate + up）= `2*inter*h`
 - wo = `inter*h`
 
-で、MLPは `3*inter*h` が正しい。分母が 4/3 大きすぎた分だけ instructions/MAC が
-過小に出ていた。`encoder_macs` は1 tokenあたり
+で、MLPは `3*inter*h` が正しい。`encoder_macs` は1 tokenあたり
 `4*h*h + 3*inter*h + 2*window*h` で計算する。
+
+**ただし過大だったのはMLP項だけで、他の項は正しかった。** したがって分母全体の過大は
+4/3（1.333）ではなく、MLP項が全体に占める割合（measure-mで約73%）のぶんだけ希釈されて
+**1.242倍**になる。MLP項だけを4/3にすると全体は1.242倍、という関係である。
 
 3つの誤りは**同じ向き**（分母を大きくする）に効いていた。つまり訂正前の数値はすべて
 「実装はもっと効率的」に見える方向に歪んでいた。
@@ -270,6 +291,31 @@ encoder共有が効けばさらに3.7秒程度。
 **注意**: この表のINT8行はまだ**外挿**である。実測は「6層 h768 F32 = 36.2B」まで。
 INT8カーネルの実装と再測定が次の作業である。
 
+## 層数を増やす方向の候補は、コストの観点で逆効果
+
+`models/verdict-151m`（GLiClassModel、encoderはModernBERT-base）が置かれている。
+Jev系のオープン実装であり、校正temperatureを持つ点は参考になる。ただし**この問題に対しては
+逆方向**である:
+
+| | 6層h768（適合候補） | verdict-151m |
+|---|---|---|
+| encoder層 | **6** | **22** |
+| hidden | 768 | 768 |
+| intermediate | 1968 | 1152 |
+| vocab | 4,096 | **50,370** |
+| params | 53M | 151M |
+
+層数が3.7倍、vocabが12倍なので、MLP項がやや小さいことを差し引いてもコストは数倍になる。
+6層h768で既に128-token profileは上限40Bの2.0倍なので、**22層では届かない**。
+
+また head の形も異なる: verdictは `class_token_index` と `scope: restricted_5_candidate_selection` を
+持つ**単一クラストークン方式**で、5候補の選択に特化している。一方この設計が必要とするのは
+Choice/Noul/**Score（尺度付き順序）**の3primitiveで、Scoreは順序尺度と分布を要求する。
+加えて**校正はschema単位**である必要がある（`Calibration` は `schema` に束縛される）。
+
+したがって verdict-151m は「backboneの候補」ではなく、**別の設計の既成モデル**として扱う。
+採用するなら、三primitiveと尺度を満たすヘッドを改めて学習することになり、蒸留と同じ評価負担になる。
+
 ## 壁時計時間: ここが本質的な制約
 
 公式ドキュメント（[Resource limits](https://docs.internetcomputer.org/references/resource-limits/)）:
@@ -352,3 +398,47 @@ python tools/measure_inference.py --tier measure-s --tier measure-m --chunk-kib 
 ```
 
 `--chunk-kib` はCLIの引数長制約に対する回避策であり、canisterの上限（`upload_chunk` は1 MiBまで）とは別物である。
+
+## 付録: gemmのカーネルA/B（この文書の2.50 / 10.85の出所）
+
+`gemm` を直接呼ぶ最小のcanisterを別途立て、candleと同じ引数・同じ形状で命令数を測った。
+依存は `gemm = { version = "0.19.0", features = ["wasm-simd128-enable"] }` と `ic-cdk` だけ。
+（実際に使ったcanisterは下と同じ呼び出しにchecksumと`instructions/MAC`を足して返す。）
+
+```rust
+#[ic_cdk::update]
+fn bench(m: u32, n: u32, k: u32, iters: u32, simd: bool) -> (u64, u64) {
+    gemm::set_wasm_simd128(simd);
+    let (m, n, k) = (m as usize, n as usize, k as usize);
+    let lhs = vec![1.0f32; m * k];
+    let rhs = vec![1.0f32; k * n];
+    let mut dst = vec![0.0f32; m * n];
+    let start = ic_cdk::api::instruction_counter();
+    for _ in 0..iters.max(1) {
+        unsafe {
+            gemm::gemm(m, n, k,
+                       dst.as_mut_ptr(), 1, n as isize, false,
+                       lhs.as_ptr(), 1, k as isize,
+                       rhs.as_ptr(), 1, n as isize,
+                       0.0, 1.0, false, false, false,
+                       gemm::Parallelism::None);
+        }
+    }
+    (ic_cdk::api::instruction_counter() - start, m as u64 * n as u64 * k as u64)
+}
+```
+
+**フラグはcanisterの再install後に、そのinstanceで最初のgemm呼び出しを行う前に設定する。**
+gemmは最初の呼び出しで選んだカーネルを `static GEMM_PTR: AtomicPtr` に固定するため、
+後から `set_wasm_simd128` を呼んでも切り替わらない（最初の計測はこれを踏んで両方10.85になった）:
+
+```bash
+icp canister install <bench> -e local -y -m reinstall --wasm bench.wasm --args '()'
+icp canister call <bench> set_flag '(true)' -e local --candid bench.did
+icp canister call <bench> bench '(128 : nat32, 4096 : nat32, 512 : nat32, 1 : nat32, true)' \
+  -e local --candid bench.did
+```
+
+`m=128, n=4096, k=512` は measure-m の `wi`（`[2*inter, h]` = `[4096, 512]`）と128-token入力を
+そのまま写したもので、candleの `MatMul::f`（`candle-core/src/cpu_backend/mod.rs`）が渡す
+引数・stride・alpha/beta をそのまま使っている。

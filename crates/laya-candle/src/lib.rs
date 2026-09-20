@@ -35,14 +35,16 @@ impl ModelConfig {
     }
 }
 #[derive(Clone)]
-struct Linear { weight:Tensor,bias:Option<Tensor> }
+pub struct Linear { weight:Tensor,bias:Option<Tensor> }
 impl Linear {
-    fn forward(&self,x:&Tensor)->CResult<Tensor>{let y=x.matmul(&self.weight.t()?.contiguous()?)?;match &self.bias{Some(b)=>y.broadcast_add(b),None=>Ok(y)}}
+    pub fn new(weight:Tensor,bias:Option<Tensor>)->Self{Self{weight,bias}}
+    pub fn forward(&self,x:&Tensor)->CResult<Tensor>{let y=x.matmul(&self.weight.t()?.contiguous()?)?;match &self.bias{Some(b)=>y.broadcast_add(b),None=>Ok(y)}}
 }
 #[derive(Clone)]
-struct Norm { weight:Tensor,bias:Option<Tensor>,eps:f64 }
+pub struct Norm { weight:Tensor,bias:Option<Tensor>,eps:f64 }
 impl Norm {
-    fn forward(&self,x:&Tensor)->CResult<Tensor>{
+    pub fn new(weight:Tensor,bias:Option<Tensor>,eps:f64)->Self{Self{weight,bias,eps}}
+    pub fn forward(&self,x:&Tensor)->CResult<Tensor>{
         let mean=x.mean_keepdim(D::Minus1)?;
         let centered=x.broadcast_sub(&mean)?;
         let var=centered.sqr()?.mean_keepdim(D::Minus1)?;
@@ -51,7 +53,7 @@ impl Norm {
     }
 }
 #[derive(Clone)]
-struct Attention { qkv:Linear,out:Linear,heads:usize }
+pub struct Attention { qkv:Linear,out:Linear,heads:usize }
 fn softmax_last(x:&Tensor)->CResult<Tensor>{let e=x.broadcast_sub(&x.max_keepdim(D::Minus1)?)?.exp()?;e.broadcast_div(&e.sum_keepdim(D::Minus1)?)}
 fn rope(x:&Tensor,theta:f64)->CResult<Tensor>{
     let (_,t,d)=x.dims3()?;let half=d/2;
@@ -64,7 +66,8 @@ fn rope(x:&Tensor,theta:f64)->CResult<Tensor>{
     Tensor::cat(&[&left,&right],2)
 }
 impl Attention {
-    fn forward(&self,x:&Tensor,rotary:Option<f64>,max_distance:Option<usize>)->CResult<Tensor>{
+    pub fn new(qkv:Linear,out:Linear,heads:usize)->Self{Self{qkv,out,heads}}
+    pub fn forward(&self,x:&Tensor,rotary:Option<f64>,max_distance:Option<usize>)->CResult<Tensor>{
         let (t,h)=x.dims2()?;let d=h/self.heads;let y=self.qkv.forward(x)?;
         let mut q=y.narrow(1,0,h)?.reshape((t,self.heads,d))?.transpose(0,1)?.contiguous()?;
         let mut k=y.narrow(1,h,h)?.reshape((t,self.heads,d))?.transpose(0,1)?.contiguous()?;
@@ -80,9 +83,12 @@ impl Attention {
     }
 }
 #[derive(Clone)]
-struct EncoderLayer { attention_norm:Option<Norm>,attention:Attention,mlp_norm:Norm,wi:Linear,wo:Linear,theta:f64,distance:Option<usize> }
+pub struct EncoderLayer { attention_norm:Option<Norm>,attention:Attention,mlp_norm:Norm,wi:Linear,wo:Linear,theta:f64,distance:Option<usize> }
 impl EncoderLayer {
-    fn forward(&self,x:&Tensor)->CResult<Tensor>{self.forward_marked(x,&mut |_|{})}
+    pub fn new(attention_norm:Option<Norm>,attention:Attention,mlp_norm:Norm,wi:Linear,wo:Linear,theta:f64,distance:Option<usize>)->Self{
+        Self{attention_norm,attention,mlp_norm,wi,wo,theta,distance}
+    }
+    pub fn forward(&self,x:&Tensor)->CResult<Tensor>{self.forward_marked(x,&mut |_|{})}
     /// Same computation, with a marker after each sub-phase.
     ///
     /// The split matters because the two halves have different fixes: the attention
@@ -245,5 +251,27 @@ impl InferenceBackend for LayaModel {
         for &p in &input.markers {if input.input_ids.get(p as usize)!=Some(&self.config.mask_token_id) || prev.is_some_and(|v|p<=v){return Err(Error::Invalid("option markers".into()));}prev=Some(p);}
         let v=self.forward_tensor(input).and_then(|t|t.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
         if v.iter().any(|x|!x.is_finite()){return Err(Error::Numeric);}Ok(v)
+    }
+}
+
+/// Shared ModernBERT encoder surface.
+///
+/// `verdict-candle` (the openJev/GLiClass backend) reuses this instead of a
+/// second encoder implementation, so both backends run identical encoder
+/// kernels and differ only in their heads.
+pub mod encoder {
+    use super::{CResult,EncoderLayer,Norm,Tensor};
+    /// ModernBERT = token embeddings + pre-norm layers + final norm.
+    pub struct ModernBert { pub embedding:Tensor,pub embedding_norm:Norm,pub layers:Vec<EncoderLayer>,pub final_norm:Norm }
+    impl ModernBert {
+        pub fn new(embedding:Tensor,embedding_norm:Norm,layers:Vec<EncoderLayer>,final_norm:Norm)->Self{
+            Self{embedding,embedding_norm,layers,final_norm}
+        }
+        /// `input_ids` is a 1-D token id tensor; the result is `[tokens, hidden]`.
+        pub fn forward(&self,input_ids:&Tensor)->CResult<Tensor>{
+            let mut x=self.embedding_norm.forward(&self.embedding.index_select(input_ids,0)?)?;
+            for layer in &self.layers{x=layer.forward(&x)?;}
+            self.final_norm.forward(&x)
+        }
     }
 }
