@@ -62,7 +62,6 @@ FIXTURE_BUNDLE = b"TEST-ONLY-STATE-INDEPENDENT-FIXTURE-v1"
 FIXTURE_TOKENIZER = b"TEST-ONLY-WHITESPACE-TOKENIZER-v1"
 AMOUNT = 100
 FEE = 10
-CHARGE = AMOUNT + FEE
 
 
 class Failure(Exception):
@@ -236,7 +235,7 @@ class Icp:
         self.did = {name: str(BUILD / f"{name}.did") for name in
                     ("decision-engine", "executor", "mock-ledger")}
 
-    def run(self, args: list[str], expect_ok: bool = True, identity: bool = True) -> str:
+    def run(self, args: list[str], expect_ok: bool = True, identity: "bool | str" = True) -> str:
         command = ["icp", *args, "--project-root-override", str(self.root)]
         environment = dict(os.environ)
         # Only some subcommands accept --identity; `network` manages the replica
@@ -331,7 +330,8 @@ def ensure_canister(icp: "Icp", name: str) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--keep", action="store_true", help="leave the local network running for inspection")
+    parser.add_argument("--keep", action="store_true",
+                        help="leave the local network running after this invocation")
     parser.add_argument("--env", default="local")
     parser.add_argument("--identity", default="ic-laya-local-test",
                         help="fixed test identity, created if absent (never the ambient default)")
@@ -350,6 +350,7 @@ def main() -> int:
             raise Failure(f"missing build/{wasm}.wasm; run bash tools/build_one.sh {wasm} first")
 
     icp = Icp(ROOT, args.env, args.identity)
+    require_local_network(icp)
     # Do not start a network that is already up, and do not stop one we did not
     # start: another project may be using it deliberately.
     status = network_status(icp)
@@ -375,16 +376,45 @@ def main() -> int:
 
 
 def network_status(icp: "Icp") -> dict | None:
-    """Return the running network's status, or None when it is not up."""
+    """Return the running *local* network's status, or None when it is not up.
+
+    Requires `managed: true`, which icp-cli sets only for a locally launched
+    replica, so a real network is never treated as usable. `require_local_network`
+    turns the resulting "not running" into an explicit refusal.
+    """
+    status = any_network_status(icp)
+    if not status or not status.get("managed") or not status.get("api_url"):
+        return None
+    return status
+
+
+def any_network_status(icp: "Icp") -> dict | None:
+    """Return the configured environment's status, local or not."""
     raw = icp.run(["network", "status", "-e", icp.env, "--json"], expect_ok=False)
     start = raw.find("{")
     if start < 0:
         return None
     try:
-        status = json.loads(raw[start:])
+        return json.loads(raw[start:])
     except ValueError:
         return None
-    return status if status.get("api_url") else None
+
+
+def require_local_network(icp: "Icp") -> None:
+    """Refuse anything that could touch a real network.
+
+    This test mints cycles, installs canisters, and reinstalls them. Pointed at a
+    connected network it would attempt exactly that, and a fresh `--identity`
+    means the operator would not even notice their own identity was not used. The
+    `managed` flag is the only reliable local/remote discriminator, so it is
+    enforced here rather than left to the docstring.
+    """
+    status = any_network_status(icp)
+    if status and not status.get("managed"):
+        raise Failure(
+            f"environment '{icp.env}' points at {status.get('api_url')}, which is not a local "
+            f"network. This test mints cycles, installs canisters, and wipes state, so it only "
+            f"runs against a locally launched replica.")
 
 
 def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> int:
@@ -491,26 +521,14 @@ def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> in
                              "(record { ledger = %s; from_subaccount = %s; to = %s; amount = 1 : nat; fee = 1 : nat })"
                              % (principal(ledger), blob(bytes(32)),
                                 "(record { owner = %s; subaccount = %s })" % (principal(stranger), blob(bytes(32))))))
+    # Registration itself must succeed; only request creation is refused. If this
+    # failed, the Denied below would come from NotFound and prove nothing.
+    check("Ok" in registered, "operation outside the allowlist is still registrable")
     # A rejected submit does NOT consume the nonce: `g.eligible` runs before the
     # counter advances, so the workflow below still starts at nonce 0.
     denied = icp.call("executor", "submit",
                       f"({blob(outside_id)}, {blob(grant_id)}, 0 : nat64)")
     check("Denied" in denied, "submit for a non-allowlisted recipient is denied")
-
-    # 2. A grant is bound to one delegate. A different but valid principal that
-    #    holds a grant must not be able to spend the first grant's authority, so a
-    #    second grant delegated to the engine principal is registered and used to
-    #    confirm the delegate check is per-grant rather than global.
-    other_grant = sha256(b"TEST-ONLY-grant-2")
-    icp.call("executor", "register_grant",
-             "(record { id = %s; revision = 1 : nat64; delegate = %s; plan = %s; ledger = %s; "
-             "from_subaccount = %s; recipients = vec { record { owner = %s; subaccount = %s } }; "
-             "max_amount = 1000 : nat; max_fee = 10 : nat; total_cap = 1000 : nat; window_cap = 500 : nat; "
-             "window_ns = 60_000_000_000 : nat64; expires_at_ns = %d : nat64; revoked = false; "
-             "total = record { spent = 0 : nat; reserved = 0 : nat }; windows = vec {} })"
-             % (blob(other_grant), principal(engine), blob(plan_id), principal(ledger),
-                blob(bytes(32)), principal(owner), blob(bytes(32)), now_ns))
-    check(True, "second grant delegated to a different principal is registered")
 
     # 3. Callers outside the grant are refused. Two distinct reasons are covered:
     #    anonymous fails the executor's admission check, and a valid but unrelated
@@ -629,13 +647,12 @@ def leave_unknown_for_upgrade(icp: "Icp", grant_id: bytes, ledger: str, owner: s
 def verify_upgrade_guard(icp: "Icp", install_args: str) -> int:
     """Assert the upgrade guard refuses to upgrade over an unresolved transfer.
 
-    `pre_upgrade` traps when any request is stil Submitted or OutcomeUnknown, so a
+    `pre_upgrade` traps when any request is still Submitted or OutcomeUnknown, so a
     normal upgrade must fail and leave the reservation intact rather than silently
-    discarding an in-flight transfer. This is checked directly here, then the
-    same canister is upgraded again after the transfer is out of the way.
+    discarding an in-flight transfer.
 
-    Note this must run in the same process/run as the workflow: `icp network
-    start` recreates the replica, so a fresh run starts with no canisters at all.
+    This must run in the same invocation as the workflow: `icp network start`
+    recreates the replica, so canisters never survive into a separate run.
     """
     print("verifying the unresolved-transfer upgrade guard ...")
     blocked = icp.run(["canister", "install", "executor", "-e", icp.env, "-y", "-m", "upgrade",

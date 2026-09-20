@@ -45,6 +45,6 @@ test_unknown_then_bad_fee (test_reference.TransactionOracleTests.test_unknown_th
 test_unknown_then_too_old (test_reference.TransactionOracleTests.test_unknown_then_too_old) ... ok
 
 ----------------------------------------------------------------------
-Ran 45 tests in 0.041s
+Ran 45 tests in 0.083s
 
 OK

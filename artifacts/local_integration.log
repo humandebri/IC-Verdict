@@ -17,8 +17,8 @@ configuring engine and executor ...
   PASS  trusted operation registered
   PASS  grant registered
 checking rejection paths ...
+  PASS  operation outside the allowlist is still registrable
   PASS  submit for a non-allowlisted recipient is denied
-  PASS  second grant delegated to a different principal is registered
   PASS  principal outside the grant is unauthorized (ets52-blwab-...): (variant { Err = variant { Unauthorized } })
   PASS  anonymous caller is unauthorized: (variant { Err = variant { Unauthorized } })
   PASS  mock ledger registered and executor in Mock mode
