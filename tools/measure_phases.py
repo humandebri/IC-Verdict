@@ -3,10 +3,12 @@
 
 Why: the acceptance targets are instruction budgets, and the only figure available
 so far was a single total per question. `measure_inference.py` measured 4.73B
-instructions for a 13M-parameter tier, against roughly 151M theoretical MACs, so
-about 31 instructions per MAC. Until the breakdown is known there is no basis for
-choosing what to optimise, and ADR-017 explicitly refuses to start on kernels
-before this measurement exists.
+instructions for a 13M-parameter tier. This script reports the same runs split by
+phase and normalised by the arithmetic they contain, so the next optimisation step
+is chosen from the breakdown (encoder matmuls dominate) rather than from intuition
+about which op looks expensive. `instructions_per_mac` is the software-stack cost
+coefficient: it is a property of the kernel path, not of the hardware, which is why
+the SIMD dispatch has to be verified in the built Wasm and not assumed.
 
 It loads a sized pack, registers the three schemas, and calls the engine's
 `measure_phases` (measurement-only; it bypasses the cache and cannot move funds).
@@ -45,19 +47,53 @@ def parse_phases(output: str) -> list[dict]:
     return entries
 
 
+def build_state(prefix_tokens: int, profile_tokens: int) -> str:
+    """Fill the state so the rendered input reaches the Compact128 profile.
+
+    The short STATE below renders to only 27-38 tokens under the fixture tokenizer,
+    which is not the length the design budgets for. Measuring at both lengths matters
+    because attention is quadratic in tokens while everything else is linear.
+    """
+    filler = ("The customer reports a duplicate payment and requests a refund for the "
+              "second charge on the same invoice reference number")
+    words = filler.split()
+    budget = profile_tokens - prefix_tokens - 1     # one trailing separator
+    if budget <= 0:
+        raise RuntimeError("profile too small for this schema")
+    out = []
+    index = 0
+    while len(out) < budget:
+        out.append(words[index % len(words)])
+        index += 1
+    return " ".join(out[:budget])
+
+
 def measure_tier(icp: Icp, tier: str, args) -> dict:
     record, manifest_raw = upload_pack(icp, tier, args.chunk_kib, args.timeout)
     tokenizer_raw = (ROOT / "fixtures" / tier / "tokenizer.json").read_bytes()
     compiled, bundle, now_ns = register_schemas(icp, manifest_raw, tokenizer_raw, SCHEMAS, args.timeout)
 
     phases_per_schema = []
+    # The rendered length is measured, never assumed. A previous version divided by a
+    # hardcoded 128-token profile while the actual inputs were 27-38 tokens, which
+    # understated instructions/MAC by about 4x.
+    rendered_tokens = []
     for schema in compiled:
         evaluation_id = sha256(f"phases-{tier}-{schema['schema_id']}".encode())
-        request = decision_request(schema, bundle, evaluation_id, STATE, now_ns)
+        state = build_state(len(schema["prefix"]), args.profile_tokens) if args.full_profile else STATE
+        request = decision_request(schema, bundle, evaluation_id, state, now_ns)
         started = time.monotonic()
         out = icp.call("decision-engine", "measure_phases", request,
                        timeout=args.timeout, expect_ok=False)
         wall = round(time.monotonic() - started, 3)
+        probe = icp.call("decision-engine", "evaluate",
+                         decision_request(schema, bundle, sha256(b"len-" + evaluation_id),
+                                          state, now_ns),
+                         timeout=args.timeout, expect_ok=False)
+        import re as _re
+        found = _re.search(r"input_tokens = ([\d_]+) : nat32", probe)
+        if found:
+            rendered_tokens.append(int(found.group(1).replace("_", "")))
         phases = parse_phases(out)
         if not phases:
             phases_per_schema.append({"schema": schema["schema_id"], "error": out.strip()[:400]})
@@ -80,17 +116,26 @@ def measure_tier(icp: Icp, tier: str, args) -> dict:
         print(f"    {schema['schema_id']:<18} total={total:>12,}  " +
               "  ".join(f"{p['name']}={p['share']:.0%}" for p in detailed))
 
-    # What the arithmetic alone would cost, for an efficiency ratio.
+    # What the arithmetic alone would cost. Uses the *measured* rendered length; the
+    # Compact128 profile is what the design allows, not what this harness sends.
     config = record["config"]
     layers = config["layers"]
-    tokens = 128
     hidden = config["hidden_size"]
+    record["rendered_tokens"] = rendered_tokens or None
+    record["profile_tokens"] = args.profile_tokens if args.full_profile else None
+    if not rendered_tokens:
+        record["theoretical_macs_encoder"] = None
+        record["phases"] = phases_per_schema
+        return record
+    tokens = max(rendered_tokens)
     window = min(tokens, config["local_attention"])
     per_layer = (4 * tokens * hidden * hidden                      # qkv + out projections
                  + 2 * tokens * 2 * config["intermediate_size"] * hidden  # wi + wo
                  + 2 * tokens * window * hidden)                   # attention scores + weighted sum
     theoretical_macs = per_layer * layers
     record["theoretical_macs_encoder"] = theoretical_macs
+    record["notes"] = (f"instructions_per_mac uses the measured rendered length "
+                       f"({tokens} tokens), not the 128-token profile")
     record["phases"] = phases_per_schema
     record["phase_names_observed"] = len({p["name"] for e in phases_per_schema for p in e.get("phases", [])})
     for entry in phases_per_schema:
@@ -108,6 +153,10 @@ def main() -> int:
     parser.add_argument("--timeout", type=int, default=1800)
     parser.add_argument("--chunk-kib", type=int, default=256)
     parser.add_argument("--skip-build", action="store_true")
+    parser.add_argument("--full-profile", action="store_true",
+                        help="pad the state so the rendered input reaches --profile-tokens "
+                             "(the short STATE only renders to 27-38 tokens)")
+    parser.add_argument("--profile-tokens", type=int, default=128)
     args = parser.parse_args()
     tiers = args.tier or ["measure-s", "measure-m"]
 
