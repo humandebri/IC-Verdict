@@ -6,7 +6,7 @@
 
 > **検証状態 (v0.2):** Rust toolchainのある環境で実際にビルド・テストしました。`cargo test --workspace`は**62件PASS**、`cargo check -p decision-engine --features candle`はPASS、**3 canister分のWasmとCandidを生成済み**（Candle込みで4.8 MiB）、Python参照テスト45件もPASSです。`tools/verify.py --rust --require-rust`は実行可能な8項目すべてPASSです。
 >
-> ただし**実Laya checkpointのparity、ICP上のinstructions/heap実測、実ledger送金は未検証**です。`fixtures/`はランダムweightで言語理解を証明しません。ビルド成功を性能・品質の証拠とは扱っていません。
+> ただし**実Laya checkpointのparity、heap実測、実ledger送金は未検証**です。実checkpointのinstructionsは実測からの外挿で494B〜567B（40B上限の12〜14倍）と判明しており、INT8 + SIMDカーネルで削る方針を[ADR-017](docs/design-v2/adr/ADR-017.md)に記録しました。`fixtures/`はランダムweightで言語理解を証明しません。ビルド成功を性能・品質の証拠とは扱っていません。
 >
 > v0.1の「cargoが無くRust未確認」という記述は誤りでした。実際にビルドした結果、`tools/build_one.sh`のbash 3.2非互換、`CARGO_TARGET_DIR`無視、Candle Wasmの`getrandom`欠落という3件の実バグが出たため修正しています。詳細は[docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md)。
 

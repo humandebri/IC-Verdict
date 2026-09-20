@@ -57,7 +57,7 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 | Human review承認再開 | NeedsReviewで停止する。承認endpointは未実装 |
 | temperature fitとholdout校正 | 受入機構のみ。**上流はprimitive別・候補数別のtemperatureを持つ**が現行型はスカラー。仕様判断が未解決 |
 | stable table / compaction | bounded snapshotのみ。削除なし、上限で停止 |
-| INT8 / SIMD専用kernel / 蒸留 | 未実装 |
+| INT8 / SIMD専用kernel | **実装中**。ADR-017で方針確定（SIMDはICPで実行可能と実測済み）。蒸留は後段 |
 
 ## 性能について
 
@@ -71,5 +71,16 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 これを実checkpoint（28層・hidden 1024・128 tokens）へ外挿すると **494B〜567B instructions**。**設計目標20Bの25〜28倍、ICPのupdate上限40Bの12〜14倍**である。
 
 つまり **F32のままでは実checkpointは載らない**。必要な削減は最低12倍で、INT8化で見込める4倍では足りない。INT8と蒸留の併用、または層数・hiddenの再検討が必要になる。ただし「Scoreを削る」「尺度説明を短縮する」「入力を切る」といった意味を削る最適化は、この結果を理由にしても認められない。
+
+**内訳を実測した**（`artifacts/phase_measurements.json`）: encoderが**83%**、decisionが16%、
+softmax/norm/活性化/gather/decodeは合計1%未満。ADR-010の「hot linearへ適用」は裏付けられた。
+
+**ただし効率はすでに最適に近い**: encoder **1.43** instructions/MAC、decision **0.92**。
+スカラーなら3〜4、SIMDなら1前後が下限なので、**現状は下限から1.4倍以内**である。
+したがって INT8/SIMD の現実的な伸びは**最大3〜4倍**で、×4を当てても421Mは127B（40Bの**3.2倍超過**）。
+
+**結論: INT8/SIMDだけでは本番基準に届かない。蒸留が必須。**
+正しい順序は「蒸留で規模を落とし、その上でINT8/SIMD」で、8層/h768 + INT8×3 で約28B（40B以内）。
+[ADR-017](design-v2/adr/ADR-017.md)に記録した。
 
 **未測定**: heap使用量（`warm 2.5GiB` / `cold peak 3.0GiB`）はcanisterのheapを読む口がなく未測定。1.57 GiB packの投入も未実施（CLI経由のアップロードはargv長制約で256 KiB chunkが上限、約6400回の呼び出しになり非現実的。これはcanister側ではなくクライアント側の制約）。

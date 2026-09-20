@@ -18,3 +18,4 @@
 | [ADR-014](ADR-014.md) | Score/Choice後回しの決定を撤回する | 置換 |
 | [ADR-015](ADR-015.md) | Scoreはrubricと分布を正本にする | 新規 |
 | [ADR-016](ADR-016.md) | Compact128・1評価1問・最大3slotを固定する | 新規 |
+| [ADR-017](ADR-017.md) | INT8/SIMD最適化の実行計画を実測で確定する | 新規（ADR-010の追補） |
