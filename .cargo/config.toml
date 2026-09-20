@@ -14,6 +14,28 @@
 # Scope is limited to the wasm32 target so native builds and the executor /
 # mock-ledger canisters (whose graphs contain no getrandom) are unaffected.
 #
+# `-C target-feature=+simd128` is deliberately NOT set here.
+#
+# simd128 is not a default of this target: `rustc --target wasm32-unknown-unknown
+# --print cfg` lists bulk-memory, multivalue, mutable-globals, nontrapping-fptoint,
+# reference-types and sign-ext, but not simd128. Turning it on nevertheless does not
+# build today; it fails inside the dependency:
+#
+#   error[E0433]: cannot find type `CurrentCpuF16` in this scope   (x38, candle-core)
+#
+# candle-core 0.11.0 gates vec_dot helpers in src/cpu/mod.rs on
+# `any(target_feature = "neon", target_feature = "avx2", target_feature = "simd128")`,
+# but its wasm32 module src/cpu/simd128.rs defines only `CurrentCpu`: the x86 (`avx`)
+# and arm (`neon`) modules each also export a `CurrentCpuF16`, wasm32 does not.
+#
+# This does not switch off the matmul kernel. candle's f32 matmul goes through the
+# `gemm` crate, whose wasm32 SIMD microkernels are compiled and selected at runtime
+# (candle enables gemm's `wasm-simd128-enable` feature). What the missing target
+# feature disables is candle's own wasm SIMD code for element-wise and normalisation
+# work, which the phase breakdown measures as a small share. Enabling the flag is
+# therefore gated on fixing or upgrading candle-core, not on this file. See
+# docs/PERFORMANCE_MEASUREMENTS.md for the measurement behind the matmul cost.
+#
 # Note: a RUSTFLAGS environment variable overrides this table. Build canisters for
 # wasm through tools/build_one.sh so the setting is always applied.
 [target.wasm32-unknown-unknown]

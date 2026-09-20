@@ -30,487 +30,111 @@
       },
       "upload": {
         "ok": true,
-        "seconds": 0.25,
+        "seconds": 0.27,
         "chunks": 325
       },
       "warmup": {
         "ok": true,
         "tensors": 0,
-        "seconds": 18.24
+        "seconds": 16.09
       },
-      "rendered_tokens": [
-        128,
-        128,
-        128
-      ],
-      "profile_tokens": 128,
-      "theoretical_macs_encoder": 2751463424,
-      "notes": "instructions_per_mac uses the measured rendered length (128 tokens), not the 128-token profile",
-      "phases": [
+      "sweep": [
         {
-          "schema": "RefundRequested",
-          "primitive": "Noul",
-          "wall_seconds": 2.509,
-          "total": 10946018414,
-          "phases": [
-            {
-              "name": "embedding",
-              "instructions": 7836696,
-              "share": 0.0007
-            },
-            {
-              "name": "layer.attn_norm",
-              "instructions": 19261891,
-              "share": 0.0018
-            },
-            {
-              "name": "layer.attn",
-              "instructions": 2537967497,
-              "share": 0.2319
-            },
-            {
-              "name": "layer.attn_resid",
-              "instructions": 5815924,
-              "share": 0.0005
-            },
-            {
-              "name": "layer.mlp_up",
-              "instructions": 4180511015,
-              "share": 0.3819
-            },
-            {
-              "name": "layer.mlp_act",
-              "instructions": 264111396,
-              "share": 0.0241
-            },
-            {
-              "name": "layer.mlp_down",
-              "instructions": 2081953034,
-              "share": 0.1902
-            },
-            {
-              "name": "encoder",
-              "instructions": 6684,
-              "share": 0.0
-            },
-            {
-              "name": "final_norm",
-              "instructions": 7861136,
-              "share": 0.0007
-            },
-            {
-              "name": "decision",
-              "instructions": 1797645397,
-              "share": 0.1642
-            },
-            {
-              "name": "scorer",
-              "instructions": 43041419,
-              "share": 0.0039
-            },
-            {
-              "name": "decode",
-              "instructions": 6325,
-              "share": 0.0
-            }
-          ],
-          "instructions_per_mac": 4.0
+          "requested": 32,
+          "rendered": 32,
+          "total": 5018315905,
+          "phases": {
+            "embedding": 2083668,
+            "layer.attn_norm": 1645646,
+            "layer.attn": 266088001,
+            "layer.attn_resid": 357277,
+            "layer.mlp_up": 505612888,
+            "layer.mlp_act": 16556666,
+            "layer.mlp_down": 252330487,
+            "encoder": 7039,
+            "final_norm": 2008180,
+            "decision": 788246265,
+            "scorer": 45804331,
+            "decode": 6585
+          }
         },
         {
-          "schema": "PaymentAction",
-          "primitive": "Choice",
-          "wall_seconds": 5.673,
-          "total": 10947036273,
-          "phases": [
-            {
-              "name": "embedding",
-              "instructions": 7836859,
-              "share": 0.0007
-            },
-            {
-              "name": "layer.attn_norm",
-              "instructions": 19584043,
-              "share": 0.0018
-            },
-            {
-              "name": "layer.attn",
-              "instructions": 2537842882,
-              "share": 0.2318
-            },
-            {
-              "name": "layer.attn_resid",
-              "instructions": 5656225,
-              "share": 0.0005
-            },
-            {
-              "name": "layer.mlp_up",
-              "instructions": 4180312555,
-              "share": 0.3819
-            },
-            {
-              "name": "layer.mlp_act",
-              "instructions": 264123752,
-              "share": 0.0241
-            },
-            {
-              "name": "layer.mlp_down",
-              "instructions": 2082113121,
-              "share": 0.1902
-            },
-            {
-              "name": "encoder",
-              "instructions": 6169,
-              "share": 0.0
-            },
-            {
-              "name": "final_norm",
-              "instructions": 7862677,
-              "share": 0.0007
-            },
-            {
-              "name": "decision",
-              "instructions": 1797873731,
-              "share": 0.1642
-            },
-            {
-              "name": "scorer",
-              "instructions": 43817727,
-              "share": 0.004
-            },
-            {
-              "name": "decode",
-              "instructions": 6532,
-              "share": 0.0
-            }
-          ],
-          "instructions_per_mac": 4.0
+          "requested": 48,
+          "rendered": 48,
+          "total": 6007196304,
+          "phases": {
+            "embedding": 3069292,
+            "layer.attn_norm": 2442459,
+            "layer.attn": 323293479,
+            "layer.attn_resid": 533247,
+            "layer.mlp_up": 599104496,
+            "layer.mlp_act": 24789023,
+            "layer.mlp_down": 298834973,
+            "encoder": 6585,
+            "final_norm": 2982830,
+            "decision": 950394094,
+            "scorer": 45807387,
+            "decode": 6337
+          }
         },
         {
-          "schema": "PaymentRisk",
-          "primitive": "Score",
-          "wall_seconds": 2.742,
-          "total": 10949301465,
-          "phases": [
-            {
-              "name": "embedding",
-              "instructions": 7837166,
-              "share": 0.0007
-            },
-            {
-              "name": "layer.attn_norm",
-              "instructions": 19587614,
-              "share": 0.0018
-            },
-            {
-              "name": "layer.attn",
-              "instructions": 2537843914,
-              "share": 0.2318
-            },
-            {
-              "name": "layer.attn_resid",
-              "instructions": 5656117,
-              "share": 0.0005
-            },
-            {
-              "name": "layer.mlp_up",
-              "instructions": 4180311042,
-              "share": 0.3818
-            },
-            {
-              "name": "layer.mlp_act",
-              "instructions": 264153463,
-              "share": 0.0241
-            },
-            {
-              "name": "layer.mlp_down",
-              "instructions": 2082113500,
-              "share": 0.1902
-            },
-            {
-              "name": "encoder",
-              "instructions": 6995,
-              "share": 0.0
-            },
-            {
-              "name": "final_norm",
-              "instructions": 7862169,
-              "share": 0.0007
-            },
-            {
-              "name": "decision",
-              "instructions": 1798135352,
-              "share": 0.1642
-            },
-            {
-              "name": "scorer",
-              "instructions": 45787341,
-              "share": 0.0042
-            },
-            {
-              "name": "decode",
-              "instructions": 6792,
-              "share": 0.0
-            }
-          ],
-          "instructions_per_mac": 4.0
+          "requested": 64,
+          "rendered": 64,
+          "total": 6967632832,
+          "phases": {
+            "embedding": 4095259,
+            "layer.attn_norm": 3238504,
+            "layer.attn": 380875667,
+            "layer.attn_resid": 709298,
+            "layer.mlp_up": 688042044,
+            "layer.mlp_act": 32989520,
+            "layer.mlp_down": 343028547,
+            "encoder": 6913,
+            "final_norm": 3960447,
+            "decision": 1110660544,
+            "scorer": 45803986,
+            "decode": 7267
+          }
+        },
+        {
+          "requested": 96,
+          "rendered": 96,
+          "total": 8931010028,
+          "phases": {
+            "embedding": 5947203,
+            "layer.attn_norm": 4833770,
+            "layer.attn": 502737190,
+            "layer.attn_resid": 1061742,
+            "layer.mlp_up": 865920069,
+            "layer.mlp_act": 49466596,
+            "layer.mlp_down": 431416545,
+            "encoder": 9026,
+            "final_norm": 5911621,
+            "decision": 1444824417,
+            "scorer": 45786471,
+            "decode": 6496
+          }
+        },
+        {
+          "requested": 128,
+          "rendered": 128,
+          "total": 10949465117,
+          "phases": {
+            "embedding": 7795486,
+            "layer.attn_norm": 6425203,
+            "layer.attn": 633610271,
+            "layer.attn_resid": 1414051,
+            "layer.mlp_up": 1043795407,
+            "layer.mlp_act": 66081838,
+            "layer.mlp_down": 519803922,
+            "encoder": 8613,
+            "final_norm": 7864179,
+            "decision": 1798154941,
+            "scorer": 45789073,
+            "decode": 7011
+          }
         }
-      ],
-      "phase_names_observed": 12
-    },
-    {
-      "tier": "measure-6l768",
-      "pack_bytes": 211970052,
-      "tensors": 69,
-      "config": {
-        "vocab_size": 4096,
-        "hidden_size": 768,
-        "layers": 6,
-        "attention_heads": 16,
-        "intermediate_size": 1968,
-        "norm_eps": 1e-05,
-        "global_every": 3,
-        "local_attention": 128,
-        "global_rope_theta": 160000.0,
-        "local_rope_theta": 10000.0,
-        "first_layer_attention_norm": false,
-        "decision_layers": 2,
-        "decision_heads": 16,
-        "decision_ff": 1024,
-        "decision_norm_eps": 1e-05,
-        "decision_norm_first": true,
-        "decision_activation": "Relu",
-        "scorer_norm_eps": 1e-05,
-        "qtypes": 3,
-        "mask_token_id": 3
-      },
-      "upload": {
-        "ok": true,
-        "seconds": 0.16,
-        "chunks": 809
-      },
-      "warmup": {
-        "ok": true,
-        "tensors": 0,
-        "seconds": 18.66
-      },
-      "rendered_tokens": [
-        128,
-        128,
-        128
-      ],
-      "profile_tokens": 128,
-      "theoretical_macs_encoder": 6606028800,
-      "notes": "instructions_per_mac uses the measured rendered length (128 tokens), not the 128-token profile",
-      "phases": [
-        {
-          "schema": "RefundRequested",
-          "primitive": "Noul",
-          "wall_seconds": 4.391,
-          "total": 26585076637,
-          "phases": [
-            {
-              "name": "embedding",
-              "instructions": 11730339,
-              "share": 0.0004
-            },
-            {
-              "name": "layer.attn_norm",
-              "instructions": 47779347,
-              "share": 0.0018
-            },
-            {
-              "name": "layer.attn",
-              "instructions": 8124295247,
-              "share": 0.3056
-            },
-            {
-              "name": "layer.attn_resid",
-              "instructions": 12712581,
-              "share": 0.0005
-            },
-            {
-              "name": "layer.mlp_up",
-              "instructions": 9050187618,
-              "share": 0.3404
-            },
-            {
-              "name": "layer.mlp_act",
-              "instructions": 435741577,
-              "share": 0.0164
-            },
-            {
-              "name": "layer.mlp_down",
-              "instructions": 4492564286,
-              "share": 0.169
-            },
-            {
-              "name": "encoder",
-              "instructions": 9120,
-              "share": 0.0
-            },
-            {
-              "name": "final_norm",
-              "instructions": 11738620,
-              "share": 0.0004
-            },
-            {
-              "name": "decision",
-              "instructions": 4301802243,
-              "share": 0.1618
-            },
-            {
-              "name": "scorer",
-              "instructions": 96508050,
-              "share": 0.0036
-            },
-            {
-              "name": "decode",
-              "instructions": 7609,
-              "share": 0.0
-            }
-          ],
-          "instructions_per_mac": 4.0
-        },
-        {
-          "schema": "PaymentAction",
-          "primitive": "Choice",
-          "wall_seconds": 4.369,
-          "total": 26586892916,
-          "phases": [
-            {
-              "name": "embedding",
-              "instructions": 11690269,
-              "share": 0.0004
-            },
-            {
-              "name": "layer.attn_norm",
-              "instructions": 47812105,
-              "share": 0.0018
-            },
-            {
-              "name": "layer.attn",
-              "instructions": 8124266584,
-              "share": 0.3056
-            },
-            {
-              "name": "layer.attn_resid",
-              "instructions": 12711780,
-              "share": 0.0005
-            },
-            {
-              "name": "layer.mlp_up",
-              "instructions": 9050102652,
-              "share": 0.3404
-            },
-            {
-              "name": "layer.mlp_act",
-              "instructions": 436104958,
-              "share": 0.0164
-            },
-            {
-              "name": "layer.mlp_down",
-              "instructions": 4492562890,
-              "share": 0.169
-            },
-            {
-              "name": "encoder",
-              "instructions": 9050,
-              "share": 0.0
-            },
-            {
-              "name": "final_norm",
-              "instructions": 11698568,
-              "share": 0.0004
-            },
-            {
-              "name": "decision",
-              "instructions": 4301803820,
-              "share": 0.1618
-            },
-            {
-              "name": "scorer",
-              "instructions": 98122686,
-              "share": 0.0037
-            },
-            {
-              "name": "decode",
-              "instructions": 7554,
-              "share": 0.0
-            }
-          ],
-          "instructions_per_mac": 4.0
-        },
-        {
-          "schema": "PaymentRisk",
-          "primitive": "Score",
-          "wall_seconds": 5.702,
-          "total": 26591419150,
-          "phases": [
-            {
-              "name": "embedding",
-              "instructions": 11690254,
-              "share": 0.0004
-            },
-            {
-              "name": "layer.attn_norm",
-              "instructions": 47778361,
-              "share": 0.0018
-            },
-            {
-              "name": "layer.attn",
-              "instructions": 8124434104,
-              "share": 0.3055
-            },
-            {
-              "name": "layer.attn_resid",
-              "instructions": 12709956,
-              "share": 0.0005
-            },
-            {
-              "name": "layer.mlp_up",
-              "instructions": 9050090902,
-              "share": 0.3403
-            },
-            {
-              "name": "layer.mlp_act",
-              "instructions": 436190125,
-              "share": 0.0164
-            },
-            {
-              "name": "layer.mlp_down",
-              "instructions": 4492560462,
-              "share": 0.1689
-            },
-            {
-              "name": "encoder",
-              "instructions": 8232,
-              "share": 0.0
-            },
-            {
-              "name": "final_norm",
-              "instructions": 11698552,
-              "share": 0.0004
-            },
-            {
-              "name": "decision",
-              "instructions": 4301962147,
-              "share": 0.1618
-            },
-            {
-              "name": "scorer",
-              "instructions": 102288268,
-              "share": 0.0038
-            },
-            {
-              "name": "decode",
-              "instructions": 7787,
-              "share": 0.0
-            }
-          ],
-          "instructions_per_mac": 4.0
-        }
-      ],
-      "phase_names_observed": 12
+      ]
     }
   ]
 }

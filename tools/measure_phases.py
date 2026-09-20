@@ -68,16 +68,88 @@ def build_state(prefix_tokens: int, profile_tokens: int) -> str:
     return " ".join(out[:budget])
 
 
+# IC per-update-call instruction ceiling (docs.internetcomputer.org, resource limits).
+# The forum's in-consensus inference study reports capacity as tokens per call against
+# this same ceiling, so reporting it makes the two directly comparable.
+UPDATE_INSTRUCTION_LIMIT = 40_000_000_000
+
+
+def encoder_macs(config: dict, tokens: int) -> int:
+    """MACs for one encoder pass over `tokens` rendered tokens.
+
+    Shapes come from `laya_candle::expected_tensors`; one token costs
+
+        4 * h * h        qkv (3*h*h) + out (h*h)
+        3 * inter * h    wi (2*inter*h: gate and up) + wo (inter*h)
+        2 * window * h   QK^T + weighted sum inside the sliding window
+
+    `wo.weight` is [hidden, intermediate], so charging `2*inter*h` for wi *and* wo
+    overstates the denominator by 4/3; the previous version did that on top of a
+    hardcoded 128-token length.
+    """
+    h = config["hidden_size"]
+    inter = config["intermediate_size"]
+    window = min(tokens, config["local_attention"])
+    return (4 * h * h + 3 * inter * h + 2 * window * h) * tokens * config["layers"]
+
+
+def sweep_arguments(args) -> list[int]:
+    if not args.token_sweep:
+        return [args.profile_tokens] if args.full_profile else [0]
+    return [int(x) for x in args.token_sweep.split(",") if x.strip()]
+
+
+def measure_sweep(icp: Icp, tier: str, args, record: dict, compiled, bundle: bytes,
+                  now_ns: int) -> dict:
+    """Measure one schema at several rendered lengths.
+
+    The short-input measurements suggested most of the cost was per-token, but fitting
+    two points implies a large constant: 3.1B instructions per question at the 13M
+    tier, 66% of the total at 27 tokens. Three lengths are needed to tell a genuine
+    constant from an artifact of the fit, and token length is a design parameter, so
+    the distinction has to be measured rather than modelled.
+    """
+    schema = compiled[2]          # Score, the widest option set
+    points = []
+    for length in sweep_arguments(args):
+        state = build_state(len(schema["prefix"]), length)
+        evaluation_id = sha256(f"sweep-{tier}-{length}".encode())
+        out = icp.call("decision-engine", "measure_phases",
+                       decision_request(schema, bundle, evaluation_id, state, now_ns),
+                       timeout=args.timeout, expect_ok=False)
+        probe = icp.call("decision-engine", "evaluate",
+                         decision_request(schema, bundle, sha256(b"len-" + evaluation_id),
+                                          state, now_ns),
+                         timeout=args.timeout, expect_ok=False)
+        import re as _re
+        found = _re.search(r"input_tokens = ([\d_]+) : nat32", probe)
+        rendered = int(found.group(1).replace("_", "")) if found else None
+        phases = parse_phases(out)
+        if not phases or rendered is None:
+            points.append({"requested": length, "error": out.strip()[:200]})
+            continue
+        total = sum(p["instructions"] for p in phases)
+        points.append({"requested": length, "rendered": rendered, "total": total,
+                       "phases": {p["name"]: p["instructions"] for p in phases}})
+        print(f"    rendered={rendered:<4} total={total:>14,}")
+    record["sweep"] = points
+    return record
+
+
 def measure_tier(icp: Icp, tier: str, args) -> dict:
     record, manifest_raw = upload_pack(icp, tier, args.chunk_kib, args.timeout)
     tokenizer_raw = (ROOT / "fixtures" / tier / "tokenizer.json").read_bytes()
     compiled, bundle, now_ns = register_schemas(icp, manifest_raw, tokenizer_raw, SCHEMAS, args.timeout)
 
+    if len(sweep_arguments(args)) > 1:
+        return measure_sweep(icp, tier, args, record, compiled, bundle, now_ns)
+
     phases_per_schema = []
     # The rendered length is measured, never assumed. A previous version divided by a
     # hardcoded 128-token profile while the actual inputs were 27-38 tokens, which
-    # understated instructions/MAC by about 4x.
-    rendered_tokens = []
+    # understated instructions/MAC by about 4x. The three schemas differ from each
+    # other, so the length is keyed per schema rather than reduced to one number.
+    rendered_tokens: dict[str, int] = {}
     for schema in compiled:
         evaluation_id = sha256(f"phases-{tier}-{schema['schema_id']}".encode())
         state = build_state(len(schema["prefix"]), args.profile_tokens) if args.full_profile else STATE
@@ -93,7 +165,7 @@ def measure_tier(icp: Icp, tier: str, args) -> dict:
         import re as _re
         found = _re.search(r"input_tokens = ([\d_]+) : nat32", probe)
         if found:
-            rendered_tokens.append(int(found.group(1).replace("_", "")))
+            rendered_tokens[schema["schema_id"]] = int(found.group(1).replace("_", ""))
         phases = parse_phases(out)
         if not phases:
             phases_per_schema.append({"schema": schema["schema_id"], "error": out.strip()[:400]})
@@ -116,31 +188,38 @@ def measure_tier(icp: Icp, tier: str, args) -> dict:
         print(f"    {schema['schema_id']:<18} total={total:>12,}  " +
               "  ".join(f"{p['name']}={p['share']:.0%}" for p in detailed))
 
-    # What the arithmetic alone would cost. Uses the *measured* rendered length; the
-    # Compact128 profile is what the design allows, not what this harness sends.
+    # What the arithmetic alone would cost. Uses each evaluation's *measured* rendered
+    # length; the Compact128 profile is what the design allows, not what this sends.
     config = record["config"]
-    layers = config["layers"]
-    hidden = config["hidden_size"]
     record["rendered_tokens"] = rendered_tokens or None
     record["profile_tokens"] = args.profile_tokens if args.full_profile else None
-    if not rendered_tokens:
-        record["theoretical_macs_encoder"] = None
-        record["phases"] = phases_per_schema
-        return record
-    tokens = max(rendered_tokens)
-    window = min(tokens, config["local_attention"])
-    per_layer = (4 * tokens * hidden * hidden                      # qkv + out projections
-                 + 2 * tokens * 2 * config["intermediate_size"] * hidden  # wi + wo
-                 + 2 * tokens * window * hidden)                   # attention scores + weighted sum
-    theoretical_macs = per_layer * layers
-    record["theoretical_macs_encoder"] = theoretical_macs
-    record["notes"] = (f"instructions_per_mac uses the measured rendered length "
-                       f"({tokens} tokens), not the 128-token profile")
     record["phases"] = phases_per_schema
     record["phase_names_observed"] = len({p["name"] for e in phases_per_schema for p in e.get("phases", [])})
+    if not rendered_tokens:
+        return record
+    record["notes"] = ("instructions_per_mac, instructions_per_token and "
+                       "tokens_per_update_budget use each evaluation's own measured "
+                       "rendered length, not the 128-token profile")
     for entry in phases_per_schema:
-        if "total" in entry and theoretical_macs:
-            entry["instructions_per_mac"] = round(entry["total"] / theoretical_macs, 1)
+        tokens = rendered_tokens.get(entry.get("schema"))
+        if "total" not in entry or not tokens:
+            continue
+        macs = encoder_macs(config, tokens)
+        per_token = entry["total"] / tokens
+        # Encoder-only as well as the whole call: the decision head and scorer are
+        # included in `total` but are not in the MAC denominator, so the two ratios
+        # answer different questions ("cost of the budget" vs "cost of the kernel").
+        encoder = sum(p["instructions"] for p in entry["phases"]
+                      if p["name"].startswith("layer.") or p["name"] in ("embedding", "final_norm", "encoder"))
+        entry["tokens"] = tokens
+        entry["macs"] = macs
+        entry["encoder_instructions"] = encoder
+        entry["instructions_per_mac"] = round(entry["total"] / macs, 2)
+        entry["instructions_per_mac_encoder"] = round(encoder / macs, 2)
+        entry["instructions_per_token"] = round(per_token, 1)
+        # tokens per update call, i.e. the capacity the DFINITY forum's study reports:
+        # how many tokens of this model fit under the 40B instruction ceiling.
+        entry["tokens_per_update_budget"] = round(UPDATE_INSTRUCTION_LIMIT / per_token, 1)
     return record
 
 
@@ -157,6 +236,10 @@ def main() -> int:
                         help="pad the state so the rendered input reaches --profile-tokens "
                              "(the short STATE only renders to 27-38 tokens)")
     parser.add_argument("--profile-tokens", type=int, default=128)
+    parser.add_argument("--token-sweep", default=None,
+                        help="comma-separated rendered lengths to sweep (e.g. 32,64,128). "
+                             "Two lengths cannot separate a constant per-call cost from a "
+                             "per-token one; three can. Implies --full-profile.")
     args = parser.parse_args()
     tiers = args.tier or ["measure-s", "measure-m"]
 

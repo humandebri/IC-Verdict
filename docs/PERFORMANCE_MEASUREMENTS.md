@@ -72,6 +72,43 @@ probeは `std::arch::wasm32` のintrinsicを使い、wasmがSIMD必須である�
 したがって**INT8カーネルは「i8→i16拡張 + `i32x4.dot_i16x8`」の経路で書ける**（4 MAC/命令）。
 これはADR-010の方針が実行可能であることの確認であり、同時にADR-017として記録した。
 
+### ただし `+simd128` は今は有効にできない（candle-core 0.11.0 のブロッカー）
+
+上のprobeが確認したのは「wasm SIMD命令をICが実行できる」ことであって、
+**この依存グラフをSIMD有効でビルドできる**ことではない。実際にはできない。
+
+`simd128` は wasm32-unknown-unknown の既定機能ではない（実測）:
+
+```
+$ rustc --target wasm32-unknown-unknown --print cfg | grep target_feature
+bulk-memory / multivalue / mutable-globals / nontrapping-fptoint /
+reference-types / sign-ext                    # simd128 は無い
+```
+
+`.cargo/config.toml` に `-C target-feature=+simd128` を足すと、**candle-core 0.11.0 が
+コンパイルできない**（実測、`IC_LAYA_CANDLE=1 cargo build --target wasm32-unknown-unknown`）:
+
+```
+error[E0433]: cannot find type `CurrentCpuF16` in this scope   (x38, candle-core)
+```
+
+原因は上流の不整合である。`candle-core` の `src/cpu/mod.rs` は `vec_dot` 系ヘルパを
+`any(target_feature = "neon", target_feature = "avx2", target_feature = "simd128")` で
+ゲートしているのに、`src/cpu/simd128.rs` は `CurrentCpu` しか定義していない
+（`avx` と `neon` は `CurrentCpuF16` も export している）。そのため
+`.cargo/config.toml` ではこのflagを**意図的に**設定していない。
+
+**matmulがこの理由でscalarになっているわけではない。** candleのf32 matmulは `gemm` crateを
+通り、gemmのwasm32 SIMDマイクロカーネルはビルドに含まれ実行時に選択される
+（candleがgemmの `wasm-simd128-enable` を有効化しており `get_wasm_simd128()` の既定はtrue）。
+flagで失っているのはcandle自身のwasm SIMD（要素演算・正規化）で、内訳では数%のshareである。
+したがって**このflagは第一のレバーではない**。レバーはmatmulカーネルそのもので、
+下の4.1〜4.9 instructions/MACを0.5以下に落とす仕事（ADR-017のINT8/SIMD計画）である。
+
+> **未確定（次の最優先）**: gemmのwasm SIMDカーネルがこの形状（m=128）で実際に選ばれて
+> いるかを、`gemm::set_wasm_simd128(true/false)` を挟んだ命令数A/Bで確認していない。
+> 実測が3つのmatmulフェーズで揃って4前後なのはscalarカーネル（4〜6命令/MAC）の挙動と整合する。
+
 ## フェーズ別の内訳（実測）
 
 `measure_phases`（測定専用endpoint。cacheを迂回し、資金移動経路に触れない）で内訳を測った。
@@ -84,9 +121,9 @@ probeは `std::arch::wasm32` のintrinsicを使い、wasmがSIMD必須である�
 **encoderが支配的**で、softmax・norm・活性化・gather・decodeは合計1%未満である。
 ADR-010の「hot linearへINT8/SIMDを適用する」という判断は、**この内訳で裏付けられた**。
 
-## 測定の不整合（2度の誤り。訂正済み）
+## 測定の不整合（3度の誤り。訂正済み）
 
-この文書は efficiency について**2度誤った**。どちらも測定ツール側の欠陥である。
+この文書は efficiency について**3度誤った**。いずれも測定ツール側の欠陥である。
 
 ### 誤り1: token長を128と仮定していた
 
@@ -113,18 +150,34 @@ ADR-010の「hot linearへINT8/SIMDを適用する」という判断は、**こ�
 - `rendered_tokens` を必ず記録する
 - 短い入力と128-token入力を**両方**測る（attentionはtoken数に対して二次、他は線形なので区別が必要）
 
+### 誤り3: MLPのMACを4/3過大に数えていた
+
+`theoretical_macs_encoder` は wi と wo の**両方**に `2*inter*h` を課していた。
+`expected_tensors` の `wo.weight` は `[hidden, intermediate]` なので、1 token あたりは
+
+- wi（gate + up）= `2*inter*h`
+- wo = `inter*h`
+
+で、MLPは `3*inter*h` が正しい。分母が 4/3 大きすぎた分だけ instructions/MAC が
+過小に出ていた。`encoder_macs` は1 tokenあたり
+`4*h*h + 3*inter*h + 2*window*h` で計算する。
+
+3つの誤りは**同じ向き**（分母を大きくする）に効いていた。つまり訂正前の数値はすべて
+「実装はもっと効率的」に見える方向に歪んでいた。
+
 ## 訂正後の効率: カーネルはむしろ非効率である
 
-128-token profile での実測（`--full-profile`、いずれも `rendered_tokens = [128,128,128]`）:
+128-token profile での実測（`--full-profile`、いずれも `rendered_tokens = [128,128,128]`）。
+分母は誤り3の訂正後の `encoder_macs`:
 
-| tier | 1質問合計 | 理論MAC（encoder） | instructions/MAC（全体÷encoder MAC） |
-|---|---|---|---|
-| measure-m | 10,946,018,414 | 2,751,463,424 | 4.0 |
-| measure-6l768 | 26,585,076,637 | 6,606,028,800 | 4.0 |
+| tier | 1質問合計 | 理論MAC（encoder） | instructions/MAC（全体） | encoder単独 |
+|---|---|---|---|---|
+| measure-m | 10,946,018,414 | 2,214,592,512 | 4.94 | 4.11 |
+| measure-6l768 | 26,585,076,637 | 5,445,255,168 | 4.88 | 4.10 |
 
-encoder単独では（encoderが83%として）**約4.8〜5.2 instructions/MAC**。
-
-**f32x4 SIMDの理論下限は0.25 instructions/MAC**なので、**現状は下限の約20倍**である。
+**f32x4 SIMD の下限は 0.5 instructions/MAC**（wasm SIMD に FMA が無いため `f32x4.mul` +
+`f32x4.add` の2命令で4 MAC。gemm 自身の wasm カーネルも `add(c, mul(a,b))` で実装している）。
+したがって**現状は下限の約10倍**である。INT8（`i32x4.dot_i16x8` は 4 MAC/命令）なら更に下がる。
 
 したがって以前の結論:
 
@@ -136,6 +189,45 @@ encoder単独では（encoderが83%として）**約4.8〜5.2 instructions/MAC**
 
 原因の候補（未確定）: matmul が f32x4 を使い切れていない、`Tensor` の中間生成と
 メモリ往復、per-op オーバーヘッド。**どれが支配的かはまだ測っていない。**
+
+## 律速の最終分解: カーネルは良い、オーバーヘッドが悪い
+
+token長を振って測った（`--token-sweep`、`measure-m`）。
+
+| 質問 | instructions |
+|---|---|
+| T=32 | 5,018,315,905 |
+| T=48 | 6,007,196,304 |
+| T=64 | 6,967,632,832 |
+| T=96 | 8,931,010,028 |
+| T=128 | 10,949,465,117 |
+
+`instr ≈ 3,119,969,913 + 59,088,767·T + 16,021.81·T²`（最大残差0.13%）。
+**token長に依存しない固定項が3.12B**あり、これはT=32で全体の62%、T=128でも28%を占める。
+
+### 成分ごとの効率（T=128）
+
+| 成分 | 理論MAC | 実測instructions | instr/MAC | 判定 |
+|---|---|---|---|---|
+| layer.mlp_up | 1,073,741,824 | 1,043,795,407 | **0.97** | **最適**（理論下限0.25の4倍） |
+| layer.mlp_down | 536,870,912 | 519,803,922 | **0.97** | **最適** |
+| layer.attn | 603,979,776 | 633,610,271 | **1.05** | **最適** |
+| layer.mlp_act（GeLU） | 2,097,152 | 66,081,838 | 31.51 | 非効率（ただし小さい） |
+| **decision head** | 805,306,368 | 1,798,154,941 | **2.23** | **約2倍のオーバーヘッド** |
+
+**encoderのmatmulは理論下限の約4倍で、f32としては妥当に最適化されている。**
+つまり「行列積そのものを書き直す」余地は小さい（既に約1.0 instr/MAC）。
+以前「下限の約20倍」と書いたのは、MACを**全フェーズ合計**で割っていたためである。
+
+一方で:
+
+- **decision headが2.23 instr/MAC**で、MAC比の2倍以上を消費している（約0.85Bの無駄）
+- **固定項3.12B**の正体は未解明。T→0へ外挿した値であり、per-opオーバーヘッド、
+  中間`Tensor`の生成、層ごとの固定費などが候補だが**特定していない**
+- GeLUは31.5 instr/MACと非効率だが、絶対量は小さい
+
+**したがって「効率の悪いところ」は実在する。ただし場所はmatmulではなく、
+decision head と、token長に依存しない固定費である。** この2つで約4B/質問（T=128の36%）を占める。
 
 ## 目標構成の実測: 6層 / hidden 768
 
