@@ -9,9 +9,9 @@ PASS     shell_syntax
 PASS     rust_workspace_tests
 PASS     rust_candle_canister_native_check
 PASS     wasm_build
-NOT_RUN  icp_canister_integration
 NOT_RUN  upstream_laya_checkpoint_parity
 NOT_RUN  real_ledger_transfer
+PASS     icp_canister_integration
 
 Rust test functions written: 62; not a passed-test count.
 Synthetic weights have no language-understanding capability. Python reference tests do not execute Rust.

@@ -40,17 +40,18 @@
 
 ## 継続リスク
 
-- 実Laya checkpointとのtensor/tokenizer/qtype対応は未確認。数値参照同士が一致しても、両方が共有するarchitectureの仮定が実Layaと異なる可能性がある。
-- **ICP上のinstructions/heap/cyclesは未測定。** ビルドが通ったことは性能目標の達成を意味しない。
+- 上流checkpointのtensor/tokenizer/qtypeは名前とshapeが全206件で一致したが、**数値parityは未確認**。QKV行順・RoPE適用位置・sliding windowの意味・prompt形式が違えば、名前が全部合っていてもlogitsは別物になる。
+- **ICP上のinstructions/heap/cyclesは未測定。** local replicaで動作したことは、20B instructions / 2.5GiB heapの達成を意味しない。
 - カスタムgetrandom backendは暗号学的乱数ではない。現状その用途は無いが、将来secret生成に流用してはならない。
+- local統合試験のledgerはテストダブル。実asset・本番fee・ledger upgradeは未検証。
+- `temperature`が上流ではprimitive別・候補数別なのに、現行Candidはスカラー1個。潰すと校正の意味が変わるため、型の設計判断が未解決。
 - full snapshotは書込増幅があり、認可済み主体による大量要求に対する本番DoS対策は未完了。
 - `allow_caller`のquota再登録やmode変更はowner権限。controller/ownerの侵害を防ぐものではない。
 - calibration metadataは信頼するownerの申告を受ける。正しく評価したartifactであることをコード単体は証明しない。
 - mock識別文字列は暗号学的な監査証明ではない。指定するmock canisterとownerを信頼するローカル開発用のguardである。
-- 専用treasuryの外部実残高照合・本番fee管理・ledger upgrade対応は実装していない。
 - Human review endpoint、量子化、compactionなどの目標仕様との差分はIMPLEMENTATION_STATUSを参照。
 
 ## 次のレビュー
 
-`cargo test --workspace`とCandle featureのWasm buildは通過した。次は元checkpointから生成したgolden input/logitsでのparity、PocketIC/replicaでのmessage boundary・commit後callback trap・二重process・失効・upgrade試験、そしてICP上のinstruction/heap実測である。ビルド成功を性能や品質の証拠にしない。
+`cargo test --workspace`、Candle featureのWasm build、local replica統合試験は通過した。残るのは元checkpointから生成したgolden input/logitsでのparity、**ICP上のinstruction/heap実測**、実ledger接続である。ビルドとlocal動作の成功を、性能や品質の証拠にしない。
 

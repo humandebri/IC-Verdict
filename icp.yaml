@@ -1,0 +1,32 @@
+# icp-cli project config.
+#
+# dfx.json is retained for reference, but dfx is not used here: the SDK is not
+# installed in this environment and icp-cli is. This file exists so the built
+# Wasm can be driven against a local replica.
+#
+# The build step is intentionally a no-op. Wasm artifacts come from
+# tools/build_one.sh, which also generates the Candid interface as
+# build/<name>.did; duplicating the cargo invocation here would let the two
+# drift. tools/local_integration.py installs each canister with an explicit
+# --wasm and --args.
+#
+# `init_args` is deliberately absent on every canister. All three take a
+# principal at init, and the executor additionally needs the engine's principal,
+# which only exists after the engine canister is created, so it cannot be
+# written here truthfully.
+canisters:
+  - name: decision-engine
+    build:
+      steps:
+        - type: script
+          command: echo "use tools/build_one.sh; this step only satisfies the manifest"
+  - name: executor
+    build:
+      steps:
+        - type: script
+          command: echo "use tools/build_one.sh; this step only satisfies the manifest"
+  - name: mock-ledger
+    build:
+      steps:
+        - type: script
+          command: echo "use tools/build_one.sh; this step only satisfies the manifest"

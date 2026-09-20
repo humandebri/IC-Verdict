@@ -9,6 +9,8 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--rust",action="store_true",help="also execute cargo test/check if available")
     p.add_argument("--require-rust",action="store_true",help="return failure if Rust tests cannot run")
+    p.add_argument("--local-integration",action="store_true",
+                   help="also run tools/local_integration.py (starts a local replica and installs the three canisters)")
     args=p.parse_args();records=[]
     artifacts=ROOT/"artifacts";artifacts.mkdir(exist_ok=True)
     def run(name,cmd,log,timeout=300):
@@ -55,8 +57,14 @@ def main():
         records.append(dict(check="rust_workspace_tests",status="NOT_RUN",reason=why))
         records.append(dict(check="rust_candle_canister_native_check",status="NOT_RUN",reason=why))
         records.append(dict(check="wasm_build",status="NOT_RUN",reason=why))
-    for check in ["icp_canister_integration","upstream_laya_checkpoint_parity","real_ledger_transfer"]:
+    for check in ["upstream_laya_checkpoint_parity","real_ledger_transfer"]:
         records.append(dict(check=check,status="NOT_RUN",reason="Not performed by this validation script"))
+    # Opt-in: this starts a local replica and installs canisters into it.
+    if args.local_integration:
+        run("icp_canister_integration",[sys.executable,"tools/local_integration.py"],"local_integration.log",1500)
+    else:
+        records.append(dict(check="icp_canister_integration",status="NOT_RUN",
+          reason="Pass --local-integration to run it (starts a local replica via icp CLI)"))
     versions={}
     for name in ["torch","numpy","safetensors"]:
         try:versions[name]=importlib.metadata.version(name)

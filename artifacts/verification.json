@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-09-20T02:21:22.576402+00:00",
+  "timestamp_utc": "2026-09-20T03:02:01.477262+00:00",
   "scope": "Source delivery validation, NOT proof of Rust/ICP/pretrained-model operation",
   "python": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
   "packages": {
@@ -107,11 +107,6 @@
       "returncode": 0
     },
     {
-      "check": "icp_canister_integration",
-      "status": "NOT_RUN",
-      "reason": "Not performed by this validation script"
-    },
-    {
       "check": "upstream_laya_checkpoint_parity",
       "status": "NOT_RUN",
       "reason": "Not performed by this validation script"
@@ -120,6 +115,16 @@
       "check": "real_ledger_transfer",
       "status": "NOT_RUN",
       "reason": "Not performed by this validation script"
+    },
+    {
+      "check": "icp_canister_integration",
+      "status": "PASS",
+      "command": [
+        "/private/tmp/iclaya-venv/bin/python",
+        "tools/local_integration.py"
+      ],
+      "log": "local_integration.log",
+      "returncode": 0
     }
   ]
 }

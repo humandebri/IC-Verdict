@@ -3,6 +3,8 @@
 /.dfx/
 /.venv/
 /checkpoints/
+# icp-cli local network state: replica cache and canister id mappings.
+/.icp/
 __pycache__/
 *.pyc
 # Cargo.lock is intentionally NOT ignored. Generate, review, and commit it.

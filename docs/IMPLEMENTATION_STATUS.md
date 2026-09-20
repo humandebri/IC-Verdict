@@ -15,8 +15,22 @@ v0.1からの差分: Rust toolchainのある環境でビルドとテストを実
 | `IC_LAYA_CANDLE=1 bash tools/build_one.sh decision-engine` | **PASS** (Wasm 4.8 MiB, Candle込み) |
 | `cargo run -p ic-laya-core --example mock_workflow` | **PASS**。三primitive逐次評価 → mock送金 → `Succeeded`, reserved=0/spent=110 |
 | `cargo run -p laya-candle --bin laya-infer -- fixtures/tiny-prenorm ...` | **PASS**。合成weightでlogitsを出力 |
+| `tools/local_integration.py`（local replicaで3 canister実行） | **PASS**。下記のworkflow全体を実機で確認 |
 | Python unittest | **PASS 45件** |
 | `tools/verify.py --rust --require-rust` | 下表参照 |
+
+### local replica統合試験で確認したこと
+
+`icp` CLI の管理networkに3 canisterをinstallし、実際のmessage boundary越しに動作を確認した。
+
+1. engine fixture mode、executorのcaller登録、schema 3件のcompile、calibration 3件、plan、operation、grant、mock ledger handshakeがすべて成立。
+2. 最大3質問の逐次評価が通り、3件目のScoreまで揃って`ReadyToDispatch`に到達。
+3. mock ledgerの**`CommitThenCallbackTrap`**（commit後にmessage boundaryを跨いでreplyを失う故障）を撃ち、executorは`Submitted`のままでも成功扱いでもなく**`OutcomeUnknown`**へ遷移。予約は保持。
+4. 同じfrozen payloadでretryし、ledgerが重複として検出。`committed_transfers`は**1のまま**（二重送金なし）で、requestは`Succeeded`に確定。
+
+これは「結果不明を失敗扱いして新しいtimestampで送り直さない」という設計主張が、実replica上で成立することを示す。`cargo test`では到達できない領域である。
+
+**注意:** 使用したledgerはテストダブルであり、実assetは動いていない。`LimitedLive`は依然コードで拒否される。
 
 `AuthorizedTransfer`が生成Candidに一切現れないことを確認した。`dispatch`はidのみを受け取り内部で再認可するため、型による誤接続防止は実際のAPI境界でも成立している。
 
@@ -34,14 +48,14 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 
 | 項目 | 状態 / 次の作業 |
 |---|---|
-| 実Laya weights | 未同梱・未ロード。ライセンス確認とimmutable取得を利用者環境で実施 |
-| upstream tensor/tokenizer/qtype一致 | 未確認。`python tools/pack_checkpoint.py inspect`で対応表を作る必要がある |
+| 実Laya weights | 未同梱・未ロード。**構造の突き合わせは完了**（[MODEL_PORT_FINDINGS.md](MODEL_PORT_FINDINGS.md)）。803 MiBの取得とexportは未実施 |
+| upstream tensor/tokenizer/qtype一致 | **名前とshapeは全206 tensorで一致**。ただしQKV順・RoPE・prompt形式など数値parityの前提は未確認 |
 | 実checkpoint inference品質 | 未測定。`fixtures/`はランダムweightで言語理解を証明しない |
-| ICP heap/instructions/cycles | **未測定**。20B instructions / 2.5GiB heapの受入目標は未検証 |
-| local replica / PocketIC | 未実行。`dfx`はこの環境に無い（`icp` CLI 1.0.2は存在）。`tools/local_demo.py`はdfx前提 |
+| ICP heap/instructions/cycles | **未測定**。20B instructions / 2.5GiB heapの受入目標は未検証。F32 pack 1.57 GiBは実測済み |
+| local replica / PocketIC | **PASS**。`tools/local_integration.py`が`icp` CLIの管理networkで3 canisterを実行 |
 | 本番ledger / live transfer | `LimitedLive`はコードで拒否。実asset接続機能は未有効化 |
 | Human review承認再開 | NeedsReviewで停止する。承認endpointは未実装 |
-| temperature fitとholdout校正 | 受入機構のみ。fitツール/本番artifactは未作成 |
+| temperature fitとholdout校正 | 受入機構のみ。**上流はprimitive別・候補数別のtemperatureを持つ**が現行型はスカラー。仕様判断が未解決 |
 | stable table / compaction | bounded snapshotのみ。削除なし、上限で停止 |
 | INT8 / SIMD専用kernel / 蒸留 | 未実装 |
 
