@@ -59,6 +59,9 @@ impl Grant {
         p.validate()?; Ok(())
     }
     fn reserve(&mut self,charge:u128,epoch:u64)->Result<()> {
+        // Drop windows that are over and hold no reservation. Without this the 64-entry
+        // cap retired the grant permanently once that many epochs had passed.
+        self.windows.retain(|&e,u|e>=epoch||u.reserved>0);
         if !self.windows.contains_key(&epoch)&&self.windows.len()>=64{return Err(Error::Capacity);}
         let window=self.windows.get(&epoch).cloned().unwrap_or_default();
         let total=self.total.spent.checked_add(self.total.reserved).and_then(|x|x.checked_add(charge)).ok_or(Error::Budget)?;
@@ -148,6 +151,19 @@ impl ExecutorState {
         if !self.plans.contains_key(&g.plan){return Err(Error::NotFound);}
         if self.grants.contains_key(&g.id){return Err(Error::IdConflict);}
         if self.grants.len()>=MAX_REGISTRY{return Err(Error::Capacity);}self.grants.insert(g.id,g);Ok(())
+    }
+    /// Drop a caller's nonce high-water mark, so a delegate that no longer has requests
+    /// or grants does not occupy one of the `MAX_REGISTRY` slots forever.
+    ///
+    /// Only allowed when the caller has no request and no grant: replay protection reads
+    /// the stored request for `nonce < next`, so removing the mark while any record
+    /// exists would let an old nonce through again.
+    pub fn release_caller(&mut self,caller:Principal,target:Principal)->Result<()> {
+        self.assert_owner(caller)?;
+        if target==Principal::anonymous(){return Err(Error::Invalid("caller".into()));}
+        if self.requests.values().any(|r|r.caller==target)||self.grants.values().any(|g|g.delegate==target){return Err(Error::Transition);}
+        if self.next_nonce.remove(&target).is_none(){return Err(Error::NotFound);}
+        Ok(())
     }
     pub fn revoke(&mut self,caller:Principal,id:Digest)->Result<()> {self.assert_owner(caller)?;let g=self.grants.get_mut(&id).ok_or(Error::NotFound)?;let rev=g.revision.checked_add(1).ok_or(Error::Capacity)?;g.revoked=true;g.revision=rev;Ok(())}
     fn request_id(&self,caller:Principal,nonce:u64)->Digest {let mut h=Canonical::new("ic-laya/workflow/v1");h.bytes(self.instance.as_slice()).bytes(caller.as_slice()).u64(nonce);h.finish()}
@@ -250,6 +266,14 @@ impl ExecutorState {
     }
     pub fn authorize(&self,caller:Principal,id:Digest,now:u64)->Result<AuthorizedTransfer> {
         let r=self.owned(caller,&id)?;self.current(&r,now)?;
+        // `Mode::LimitedLive` is refused outright by `set_mode` today, so this is the
+        // check that would otherwise be missing the day it is enabled: a receipt backed
+        // by the synthetic fixture must never authorize a real transfer. This is also
+        // what enforces the intent behind `Calibration::test_only`, which is advisory
+        // data the executor cannot see.
+        if self.mode==Mode::LimitedLive && r.receipts.iter().any(|v|v.stamp.backend==BackendKind::SyntheticFixture){
+            return Err(Error::Denied("fixture backend cannot authorize a live transfer".into()));
+        }
         if r.status!=Status::ReadyToDispatch || r.pending.is_some(){return Err(Error::Transition);}
         let p=self.plans.get(&r.plan).ok_or(Error::NotFound)?;
         if r.receipts.len()!=p.signals.len(){return Err(Error::BindingMismatch);}
@@ -330,7 +354,24 @@ impl ExecutorState {
         }
         self.paused=true;
     }
+    /// Cheap subset of [`Self::check_invariants`] for the per-mutation path: the
+    /// reservation totals per grant and the request/operation agreement. The full method
+    /// is O(grants x requests), which is why `mutate` no longer runs it on every call.
+    pub fn check_invariants_light(&self)->Result<()> {
+        for g in self.grants.values(){
+            let expected=self.requests.values().filter(|r|r.grant==g.id).filter_map(|r|r.reservation.as_ref()).try_fold(0u128,|a,r|a.checked_add(r.charge).ok_or(Error::Budget))?;
+            if expected!=g.total.reserved{return Err(Error::Storage);}
+            if g.total.spent.checked_add(g.total.reserved).ok_or(Error::Budget)?>g.total_cap{return Err(Error::Budget);}
+        }
+        for r in self.requests.values(){
+            let op=self.operations.get(&r.operation).ok_or(Error::Storage)?;
+            if r.reservation.is_some() && (op.status!=OperationStatus::Reserved(r.id) || !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_))){return Err(Error::Storage);}
+            if matches!(r.status,Status::Succeeded(_)) && (r.reservation.is_some() || op.status!=OperationStatus::Consumed(r.id)){return Err(Error::Storage);}
+        }
+        Ok(())
+    }
     pub fn check_invariants(&self)->Result<()> {
+        self.check_invariants_light()?;
         for g in self.grants.values(){
             let expected=self.requests.values().filter(|r|r.grant==g.id).filter_map(|r|r.reservation.as_ref()).try_fold(0u128,|a,r|a.checked_add(r.charge).ok_or(Error::Budget))?;
             if expected!=g.total.reserved{return Err(Error::Storage);}
@@ -339,12 +380,68 @@ impl ExecutorState {
                 let actual=self.requests.values().filter(|r|r.grant==g.id).filter_map(|r|r.reservation.as_ref()).filter(|r|r.epoch==epoch).map(|r|r.charge).sum::<u128>();
                 if u.reserved!=actual || u.spent.checked_add(u.reserved).ok_or(Error::Budget)?>g.window_cap{return Err(Error::Storage);}
             }
+            // Every live reservation must name a window that still exists.
+            for r in self.requests.values().filter(|r|r.grant==g.id){
+                if let Some(res)=&r.reservation{if !g.windows.contains_key(&res.epoch){return Err(Error::Storage);}}
+            }
         }
         for r in self.requests.values(){
-            let op=self.operations.get(&r.operation).ok_or(Error::Storage)?;
-            if r.reservation.is_some() && (op.status!=OperationStatus::Reserved(r.id) || !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_))){return Err(Error::Storage);}
-            if matches!(r.status,Status::Succeeded(_)) && (r.reservation.is_some() || op.status!=OperationStatus::Consumed(r.id)){return Err(Error::Storage);}
             if self.next_nonce.get(&r.caller).copied().unwrap_or(0)<=r.nonce{return Err(Error::Storage);}
+            if let Some(p)=self.plans.get(&r.plan){if r.receipts.len()>p.signals.len(){return Err(Error::Storage);}}
+            else{return Err(Error::Storage);}
         }Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn grant()->Grant{
+        Grant{id:[1;32],revision:1,delegate:Principal::from_slice(&[1,9]),plan:[2;32],
+            ledger:Principal::from_slice(&[1,3]),from_subaccount:[0;32],recipients:Vec::new(),
+            max_amount:1_000,max_fee:10,total_cap:1_000_000,window_cap:1_000_000,window_ns:1,
+            expires_at_ns:u64::MAX,revoked:false,total:Usage::default(),windows:BTreeMap::new()}
+    }
+
+    /// Closed windows with no live reservation must be pruned, or the 64-entry cap
+    /// retired the grant permanently after that many epochs.
+    #[test]
+    fn reserve_prunes_closed_windows() {
+        let mut g=grant();
+        for epoch in 0..200u64 {
+            g.reserve(1,epoch).expect("reserve");
+            g.settle(1,epoch,true).expect("settle");
+        }
+        assert!(g.windows.len()<64,"windows should be pruned, got {}",g.windows.len());
+        assert_eq!(g.total.spent,200);
+    }
+
+    /// A window that still holds a reservation is never pruned, so `settle` can always
+    /// find it; the cap therefore still bounds outstanding reservations.
+    #[test]
+    fn reserve_keeps_windows_that_hold_reservations() {
+        let mut g=grant();
+        for epoch in 0..64u64 { g.reserve(1,epoch).expect("reserve"); }
+        assert_eq!(g.windows.len(),64);
+        assert_eq!(g.reserve(1,64),Err(Error::Capacity));
+    }
+
+    #[test]
+    fn release_caller_needs_an_owner_and_a_clean_record() {
+        let owner=Principal::from_slice(&[1,1]);
+        let who=Principal::from_slice(&[1,9]);
+        let mut s=ExecutorState::new(Principal::from_slice(&[1,5]),owner,Principal::from_slice(&[1,4]));
+        s.next_nonce.insert(who,1);
+        assert_eq!(s.release_caller(who,who),Err(Error::Unauthorized));
+        assert!(s.release_caller(owner,who).is_ok());
+        assert!(!s.next_nonce.contains_key(&who));
+        // With a record on file the mark is replay protection and must stay.
+        s.next_nonce.insert(who,1);
+        s.requests.insert([7;32],RequestRecord{id:[7;32],caller:who,nonce:0,operation:[0;32],
+            grant:[0;32],plan:[0;32],operation_revision:0,grant_revision:0,snapshot:[0;32],
+            expires_at_ns:1,status:Status::Received,receipts:Vec::new(),pending:None,
+            reservation:None,frozen:None,ledger_attempt:0,ever_unknown:false});
+        assert_eq!(s.release_caller(owner,who),Err(Error::Transition));
     }
 }

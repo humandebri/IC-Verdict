@@ -10,7 +10,7 @@ fn admitted()->Result<()> {
     let caller=ic_cdk::api::msg_caller();
     read(|s|if caller!=Principal::anonymous() && (caller==s.owner || s.grants.values().any(|g|g.delegate==caller)){Ok(())}else{Err(Error::Unauthorized)})
 }
-fn mutate<R>(f:impl FnOnce(&mut ExecutorState)->R)->R{STATE.with(|x|{let mut s=x.borrow_mut();let s=s.as_mut().expect("initialized");let r=f(s);if let Err(e)=s.check_invariants(){ic_cdk::trap(&format!("invariant: {e}"));}canister_common::persist_or_trap(s);r})}
+fn mutate<R>(f:impl FnOnce(&mut ExecutorState)->R)->R{STATE.with(|x|{let mut s=x.borrow_mut();let s=s.as_mut().expect("initialized");let r=f(s);if let Err(e)=s.check_invariants_light(){ic_cdk::trap(&format!("invariant: {e}"));}canister_common::persist_or_trap(s);r})}
 #[ic_cdk::init]
 fn init(owner:Principal,engine:Principal){
     if [owner,engine].iter().any(|&p|p==Principal::anonymous()||p==Principal::management_canister()){ic_cdk::trap("invalid principal");}
@@ -31,6 +31,11 @@ fn register_operation(operation:Operation)->Result<()>{let caller=ic_cdk::api::m
 fn revise_evidence(operation:Digest,evidence:String)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.revise_operation(caller,operation,evidence))}
 #[ic_cdk::update]
 fn register_grant(grant:Grant)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.install_grant(caller,grant))}
+/// Recompute every redundant field (O(grants x requests)); owner-only, read-only.
+#[ic_cdk::update]
+fn audit()->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|{s.assert_owner(caller)?;s.check_invariants()})}
+#[ic_cdk::update]
+fn release_caller(target:Principal)->Result<()>{let caller=ic_cdk::api::msg_caller();mutate(|s|s.release_caller(caller,target))}
 #[ic_cdk::update]
 fn revoke_grant(grant:Digest)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.revoke(caller,grant))}
 #[ic_cdk::update]

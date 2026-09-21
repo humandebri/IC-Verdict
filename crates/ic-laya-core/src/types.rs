@@ -7,6 +7,9 @@ pub const PPM: u32 = 1_000_000;
 pub const MAX_TOKENS: usize = 128;
 pub const MAX_PREFIX: usize = 64;
 pub const MAX_STATE_BYTES: usize = 16 * 1024;
+/// Longest acceptance window a caller may request, and therefore the longest a cached
+/// result stays eligible for eviction.
+pub const MAX_EVALUATION_WINDOW_NS: u64 = 600_000_000_000;
 pub const MAX_SLOTS: usize = 3;
 pub const PROFILE: &str = "Compact128-v1";
 pub type Digest = [u8; 32];

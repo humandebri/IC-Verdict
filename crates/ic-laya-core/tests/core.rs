@@ -118,3 +118,46 @@ fn typed_view_rejects_forged_receipt_stamp() {
     let mut expected=receipt.stamp.clone();expected.model=hash(b"expected-other-model");
     assert!(ic_laya_core::sdk::Score::<RiskSchema>::try_from_receipt(schema,receipt,&expected).is_err());
 }
+
+/// The cache used to be a lifetime cap: once `max_cache_entries` distinct evaluations
+/// existed, every new one returned `Capacity` forever. Entries older than the longest
+/// acceptance window are now evicted first.
+#[test] fn cache_evicts_entries_older_than_the_acceptance_window(){
+    let(mut e,mut n,o,g)=setup().unwrap();
+    let id=e.submit(actor(2),0,o,g,NOW).unwrap();
+    let base=e.begin_evaluation(actor(2),id,NOW).unwrap();
+    let mut b=FixtureBackend::default();
+    let capacity=n.max_cache_entries as u64;
+    // One evaluation per quota epoch, so the per-minute quota resets each time.
+    for i in 0..capacity {
+        let now=NOW+i*60_000_000_000;
+        let mut req=base.clone();
+        req.evaluation_id=hash(&i.to_be_bytes());
+        req.expires_at_ns=now+60_000_000_000;
+        // No calibration: the fixture one expires long before this simulated schedule.
+        req.calibration=None;
+        n.evaluate(e.instance,req,now,&FixtureTokenizer,&mut b).unwrap();
+    }
+    assert_eq!(n.cache.len() as u64,capacity);
+    // Every entry is now older than MAX_EVALUATION_WINDOW_NS, so a new evaluation must
+    // be accepted rather than refused for capacity.
+    let now=NOW+capacity*60_000_000_000;
+    let mut fresh=base.clone();
+    fresh.evaluation_id=hash(b"fresh");
+    fresh.expires_at_ns=now+60_000_000_000;
+    fresh.calibration=None;
+    assert!(n.evaluate(e.instance,fresh,now,&FixtureTokenizer,&mut b).is_ok(),"eviction should free room");
+}
+
+/// The fixture backend must never authorize a live transfer. `set_mode` refuses
+/// `LimitedLive` today, so the state is forced here to exercise the check that would
+/// protect the day it is enabled.
+#[test] fn fixture_backend_cannot_authorize_a_live_transfer(){
+    let(mut e,_,_,_,id)=ready();
+    e.set_mode(actor(1),Mode::Mock).unwrap();
+    e.mode=Mode::LimitedLive;
+    match e.authorize(actor(2),id,NOW+4){
+        Err(Error::Denied(m))=>assert!(m.contains("fixture backend"),"unexpected message: {m}"),
+        _=>panic!("a fixture-backed receipt must not authorize a live transfer"),
+    }
+}

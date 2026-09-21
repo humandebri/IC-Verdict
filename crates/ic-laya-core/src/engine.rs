@@ -10,7 +10,7 @@ pub trait InferenceBackend {
     fn infer(&mut self,input:&TokenInput)->Result<Vec<f32>>;
 }
 #[derive(Debug,Clone,Serialize,Deserialize,CandidType)]
-pub struct Cached { pub fingerprint:Digest, pub result:Result<Receipt> }
+pub struct Cached { pub fingerprint:Digest, pub result:Result<Receipt>, pub stored_at:u64 }
 #[derive(Debug,Clone,Serialize,Deserialize,CandidType)]
 pub struct CallerQuota { pub epoch:u64,pub used:u32,pub max_per_minute:u32 }
 #[derive(Debug,Clone,Serialize,Deserialize,CandidType)]
@@ -47,7 +47,7 @@ impl EngineState {
         if !self.callers.contains_key(&caller){return Err(Error::Unauthorized);}
         if req.state.len()>MAX_STATE_BYTES || req.state.is_empty(){return Err(Error::TooLong);}
         // Bound expiration to avoid permanent attacker-selected cache lifetimes.
-        if req.expires_at_ns<=now || req.expires_at_ns-now>600_000_000_000{return Err(Error::Expired);}
+        if req.expires_at_ns<=now || req.expires_at_ns-now>MAX_EVALUATION_WINDOW_NS{return Err(Error::Expired);}
         let key=(caller,req.evaluation_id);let fingerprint=req.digest();
         if req.model!=self.active_model || backend.bundle_id()!=req.model{return Err(Error::BindingMismatch);}
         let s=self.schemas.get(&req.schema_hash).cloned().ok_or(Error::NotFound)?;
@@ -57,7 +57,15 @@ impl EngineState {
             if req.expires_at_ns>c.expires_at_ns{return Err(Error::Uncalibrated);} c.temperature
         }else{1.0};
         if let Some(c)=self.cache.get(&key){return if c.fingerprint==fingerprint{c.result.clone()}else{Err(Error::IdConflict)};}
-        if self.cache.len()>=self.max_cache_entries as usize{return Err(Error::Capacity);}
+        if self.cache.len()>=self.max_cache_entries as usize{
+            // Without eviction the cap was a lifetime limit: after `max_cache_entries`
+            // distinct evaluations the engine refused every new one forever. Results
+            // older than the longest acceptable acceptance window are dropped first;
+            // inside that window the cache keeps its idempotency guarantee.
+            let cutoff=now.saturating_sub(MAX_EVALUATION_WINDOW_NS);
+            self.cache.retain(|_,c|c.stored_at>=cutoff);
+            if self.cache.len()>=self.max_cache_entries as usize{return Err(Error::Capacity);}
+        }
         // Render before expensive inference. Never silently truncate.
         let input=schema::render(&s,tokenizer,&req.state)?;
         let quota=self.callers.get_mut(&caller).ok_or(Error::Unauthorized)?;
@@ -72,6 +80,6 @@ impl EngineState {
             Ok(Receipt{stamp,outcome:EvaluationOutcome::Assessed(math::value(&s.schema,&d)?),diagnostics:Some(d.diagnostics()),input_tokens:input.input_ids.len() as u32,measured_instructions:0})
         })();
         // Cache failures too: a bad backend cannot force unlimited retries under one ID.
-        self.cache.insert(key,Cached{fingerprint,result:result.clone()});result
+        self.cache.insert(key,Cached{fingerprint,stored_at:now,result:result.clone()});result
     }
 }
