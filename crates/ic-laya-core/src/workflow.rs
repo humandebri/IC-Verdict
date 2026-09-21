@@ -319,7 +319,7 @@ impl ExecutorState {
         if r.frozen.as_ref()!=Some(&cmd.transfer) || cmd.attempt==0 || cmd.attempt>r.ledger_attempt{return Err(Error::BindingMismatch);}
         // Terminal successes cannot be undone by a late error callback.
         if matches!(r.status,Status::Succeeded(_)){return Ok(r.status);}
-        if !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_)){return Err(Error::Transition);}
+        if !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_)|Status::NeedsReview(_)){return Err(Error::Transition);}
         match outcome {
             LedgerOutcome::Success(index)|LedgerOutcome::Duplicate(index)=>{
                 if index.is_empty() || index.len()>128 || !index.bytes().all(|c|c.is_ascii_digit()){return Err(Error::Invalid("block index".into()));}
@@ -334,11 +334,28 @@ impl ExecutorState {
     /// Mock-only identical-payload retry; never releases or doubles the reservation.
     pub fn retry_unknown(&mut self,caller:Principal,id:Digest,now:u64)->Result<DispatchCommand> {
         let mut r=self.owned(caller,&id)?;self.current(&r,now)?;
-        if self.mode!=Mode::Mock || !matches!(r.status,Status::OutcomeUnknown(_)) || r.ledger_attempt>=2{return Err(Error::Transition);}
+        if self.mode!=Mode::Mock || !matches!(r.status,Status::OutcomeUnknown(_)|Status::NeedsReview(_)) || r.ledger_attempt>=2{return Err(Error::Transition);}
         let frozen=r.frozen.clone().ok_or(Error::Storage)?;
         if now<frozen.created_at_time_ns || now-frozen.created_at_time_ns>MOCK_DEDUP_WINDOW_NS{return Err(Error::Expired);}
         r.ledger_attempt+=1;r.status=Status::Submitted;
         let cmd=DispatchCommand{request:id,attempt:r.ledger_attempt,transfer:frozen};self.requests.insert(id,r);Ok(cmd)
+    }
+    /// Owner-only: move an unresolved transfer to `NeedsReview` while keeping its
+    /// reservation.
+    ///
+    /// `pre_upgrade` refuses to run while any request is `Submitted`/`OutcomeUnknown`
+    /// ("reconcile before ordinary upgrade"). Without a way out that gate could block
+    /// upgrades forever, because the reservation can only be released by a definitive
+    /// ledger answer. Abandoning clears the gate, records why, and leaves the money
+    /// accounted for: the reservation stays, and a later `finish_ledger` still settles it.
+    pub fn abandon_unknown(&mut self,caller:Principal,id:Digest,reason:String)->Result<Status> {
+        self.assert_owner(caller)?;
+        let reason=reason.trim().to_string();
+        if reason.is_empty()||reason.len()>512{return Err(Error::Invalid("reason".into()));}
+        let mut r=self.requests.get(&id).cloned().ok_or(Error::NotFound)?;
+        if !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_)){return Err(Error::Transition);}
+        r.status=Status::NeedsReview(format!("abandoned: {reason}"));
+        let status=r.status.clone();self.requests.insert(id,r);Ok(status)
     }
     pub fn cancel(&mut self,caller:Principal,id:Digest)->Result<()> {
         let mut r=self.owned(caller,&id)?;
@@ -365,7 +382,7 @@ impl ExecutorState {
         }
         for r in self.requests.values(){
             let op=self.operations.get(&r.operation).ok_or(Error::Storage)?;
-            if r.reservation.is_some() && (op.status!=OperationStatus::Reserved(r.id) || !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_))){return Err(Error::Storage);}
+            if r.reservation.is_some() && (op.status!=OperationStatus::Reserved(r.id) || !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_)|Status::NeedsReview(_))){return Err(Error::Storage);}
             if matches!(r.status,Status::Succeeded(_)) && (r.reservation.is_some() || op.status!=OperationStatus::Consumed(r.id)){return Err(Error::Storage);}
         }
         Ok(())

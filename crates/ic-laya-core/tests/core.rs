@@ -161,3 +161,26 @@ fn typed_view_rejects_forged_receipt_stamp() {
         _=>panic!("a fixture-backed receipt must not authorize a live transfer"),
     }
 }
+
+/// `pre_upgrade` refuses while a transfer is unresolved, and only a definitive ledger
+/// answer can release the reservation. Abandoning must clear that gate without dropping
+/// the money: the reservation stays and a late success still settles it.
+#[test] fn abandon_unknown_clears_the_upgrade_gate_and_keeps_the_reservation(){
+    let(mut e,_,id,cmd)=dispatched();
+    let before=e.requests[&id].reservation.clone().expect("dispatched holds a reservation");
+    e.abandon_unknown(actor(1),id,"operator decision".into()).unwrap();
+    let gate=e.requests.values().any(|r|matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_)));
+    assert!(!gate,"an ordinary upgrade must be possible after abandoning");
+    assert_eq!(e.requests[&id].reservation.as_ref(),Some(&before),"the reservation must survive");
+    e.check_invariants().unwrap();
+    e.finish_ledger(&cmd,LedgerOutcome::Success("7".into())).unwrap();
+    assert!(matches!(e.requests[&id].status,Status::Succeeded(_)),"a late success still settles");
+}
+
+#[test] fn abandon_unknown_requires_the_owner_and_an_unresolved_transfer(){
+    let(mut e,_,_,_,id)=ready();
+    assert_eq!(e.abandon_unknown(actor(2),id,"x".into()),Err(Error::Unauthorized));
+    assert_eq!(e.abandon_unknown(actor(1),id,"x".into()),Err(Error::Transition));
+    let(mut e,_,id,_)=dispatched();
+    assert_eq!(e.abandon_unknown(actor(1),id,"  ".into()),Err(Error::Invalid("reason".into())));
+}

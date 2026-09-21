@@ -31,6 +31,11 @@ fn register_operation(operation:Operation)->Result<()>{let caller=ic_cdk::api::m
 fn revise_evidence(operation:Digest,evidence:String)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.revise_operation(caller,operation,evidence))}
 #[ic_cdk::update]
 fn register_grant(grant:Grant)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.install_grant(caller,grant))}
+/// Owner-only: park an unresolved transfer so an ordinary upgrade can proceed. The
+/// reservation stays held; a later ledger answer (or `retry_mock_transfer`) still settles
+/// it. See `ExecutorState::abandon_unknown`.
+#[ic_cdk::update]
+fn abandon_unknown(id:Digest,reason:String)->Result<Status>{let caller=ic_cdk::api::msg_caller();mutate(|s|s.abandon_unknown(caller,id,reason))}
 /// Recompute every redundant field (O(grants x requests)); owner-only, read-only.
 #[ic_cdk::update]
 fn audit()->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|{s.assert_owner(caller)?;s.check_invariants()})}

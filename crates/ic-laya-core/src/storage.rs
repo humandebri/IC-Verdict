@@ -2,7 +2,13 @@
 use crate::*;
 use serde::{Serialize,de::DeserializeOwned};
 use bincode::Options;
-const MAGIC:&[u8;8]=b"ICLAYA01";
+/// Snapshot format magic. It doubles as the version: the bytes after it are bincode
+/// and are not self-describing, so a state-format change must bump this and ship as a
+/// reinstall (the canisters hold local-test state only). `ICLAYA02` added a field to
+/// `engine::Cached`.
+pub const MAGIC:&[u8;8]=b"ICLAYA02";
+/// Header size of an encoded snapshot: magic + length + checksum.
+pub const BLOCK_HEADER:usize=48;
 pub const MAX_SNAPSHOT:usize=16*1024*1024;
 pub fn encode<T:Serialize>(value:&T)->Result<Vec<u8>> {
     let bytes=bincode::DefaultOptions::new().with_fixint_encoding().serialize(value).map_err(|_|Error::Storage)?;
