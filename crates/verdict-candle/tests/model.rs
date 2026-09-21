@@ -15,7 +15,7 @@ fn cfg()->VerdictConfig{
         norm_eps:1e-5,global_every:2,local_attention:4,
         global_rope_theta:160000.0,local_rope_theta:10000.0,first_layer_attention_norm:false,
         cls_token_id:1,sep_token_id:2,class_token_id:3,max_classes:4,
-        projector_activation:laya_candle::Activation::Gelu,
+        projector_activation:modernbert_candle::Activation::Gelu,
     }
 }
 

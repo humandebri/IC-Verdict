@@ -63,7 +63,6 @@ def main():
     else:
         records.append(dict(check="manifest_integrity",status="NOT_RUN",
           reason="Pass --manifest (regenerate with tools/manifest.py --write after the last edit)"))
-    run("synthetic_pytorch_numpy",[sys.executable,"tools/generate_fixtures.py"],"synthetic_generation.log")
     run("python_reference_and_export_tests",[sys.executable,"-m","unittest","discover","-s","tests","-v"],"python_tests.log")
     errors=[]
     for path in ROOT.rglob("*.py"):
@@ -134,7 +133,7 @@ def main():
     else:
         records.append(dict(check="openjev_canister_instructions",status="NOT_RUN",
           reason="Pass --verdict-canister with a warm local replica; see docs/VERDICT_ENGINE.md"))
-    for check in ["upstream_laya_checkpoint_parity","real_ledger_transfer"]:
+    for check in ["real_ledger_transfer"]:
         records.append(dict(check=check,status="NOT_RUN",reason="Not performed by this validation script"))
     # Opt-in: this starts a local replica and installs canisters into it.
     if args.local_integration:

@@ -15,7 +15,7 @@
 //!   * `normalize_features=false`, so the checkpoint's scalar `logit_scale` is NOT
 //!     applied. It is deliberately absent from the pack and from the expected set.
 //!
-//! The encoder is `laya_candle::encoder::ModernBert` (HF ModernBERT-base semantics:
+//! The encoder is `modernbert_candle::encoder::ModernBert` (HF ModernBERT-base semantics:
 //! pre-norm with layer 0 attention norm omitted, GeGLU with `act(first)*second`,
 //! NeoX-style RoPE on the full head dimension, sliding window of
 //! `local_attention/2` on every layer that is not global).
@@ -23,8 +23,8 @@
 pub mod pack;
 use candle_core::{DType,Device,Tensor,D};
 use ic_laya_core::{engine::InferenceBackend,BackendKind,Digest,Error,Result,TokenInput};
-use laya_candle::encoder::ModernBert;
-use laya_candle::{Activation,Attention,EncoderLayer,Linear,Norm};
+use modernbert_candle::encoder::ModernBert;
+use modernbert_candle::{Activation,Attention,EncoderLayer,Linear,Norm};
 use serde::{Deserialize,Serialize};
 use std::collections::BTreeMap;
 
@@ -103,17 +103,17 @@ pub fn expected_tensors(c:&VerdictConfig)->Result<BTreeMap<String,Vec<usize>>> {
 
 fn tensor(m:&BTreeMap<String,Tensor>,name:&str)->Result<Tensor>{m.get(name).cloned().ok_or_else(||Error::Invalid(format!("missing tensor: {name}")))}
 /// Quantised dense weights, keyed by the same tensor names the pack uses.
-pub type QuantMap=BTreeMap<String,laya_candle::QuantWeight>;
+pub type QuantMap=BTreeMap<String,modernbert_candle::QuantWeight>;
 /// int8 weights straight from the `[out, in]` tensor the pack stores, which is the
 /// layout the kernel wants. Measured 1.605 instructions/MAC against gemm's 2.501
 /// (docs/VERDICT_ENGINE.md 5.1.6), and it drops the f32 copy of the weight entirely.
 #[cfg(feature="int8")]
-fn quantized(m:&BTreeMap<String,Tensor>,name:&str)->Result<laya_candle::QuantWeight>{
+fn quantized(m:&BTreeMap<String,Tensor>,name:&str)->Result<modernbert_candle::QuantWeight>{
     let t=tensor(m,name)?;
     let (out_features,in_features)=t.dims2().map_err(|e|Error::Invalid(e.to_string()))?;
     let flat=t.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
     let (w,scales)=verdict_simd::quantize_rows_i8(&flat,out_features,in_features);
-    Ok(laya_candle::QuantWeight{w,scales,out_features,in_features})
+    Ok(modernbert_candle::QuantWeight{w,scales,out_features,in_features})
 }
 /// True for the weight matrices that reach a `Linear`: the four encoder projections of
 /// each layer and the four head-projector matrices. Norms are 1-D and the embedding is a
@@ -279,7 +279,7 @@ impl VerdictModel {
                     else {self.encoder.rope_tables(tokens,hidden,&mut |_|{})}
                     .map_err(|e|Error::ModelUnavailable(e.to_string()))?;
         for layer in &self.encoder.layers {
-            let table=laya_candle::table_for(&tables,layer.theta()).clone();
+            let table=modernbert_candle::table_for(&tables,layer.theta()).clone();
             h=if detailed {layer.forward_marked(&h,&table,mark).map_err(|e|Error::ModelUnavailable(e.to_string()))?}
               else {layer.forward(&h,&table).map_err(|e|Error::ModelUnavailable(e.to_string()))?};
         }

@@ -56,7 +56,7 @@ impl Builder {
             let (out_features,in_features)=match e.shape.as_slice(){[o,i]=>(*o,*i),_=>return Err(Error::Invalid("dense weight shape".into()))};
             let flat:Vec<f32>=bytes.chunks_exact(4).map(|b|f32::from_le_bytes([b[0],b[1],b[2],b[3]])).collect();
             let (w,scales)=verdict_simd::quantize_rows_i8(&flat,out_features,in_features);
-            self.quant.insert(e.name.clone(),laya_candle::QuantWeight{w,scales,out_features,in_features});
+            self.quant.insert(e.name.clone(),modernbert_candle::QuantWeight{w,scales,out_features,in_features});
             self.next+=1;return Ok(());
         }
         let tensor=Tensor::from_raw_buffer(bytes,DType::F32,&e.shape,&Device::Cpu).map_err(|x|Error::ModelUnavailable(x.to_string()))?;

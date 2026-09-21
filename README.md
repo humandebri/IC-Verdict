@@ -4,9 +4,9 @@
 
 設計だけではなく、Rust workspace、推論演算、canister adapter、テスト、checkpoint変換ツールを実装したソースパッケージです。
 
-> **検証状態 (v0.2):** Rust toolchainのある環境で実際にビルド・テストしました。`cargo test --workspace`は**62件PASS**、`cargo check -p decision-engine --features candle`はPASS、**3 canister分のWasmとCandidを生成済み**（Candle込みで4.8 MiB）、Python参照テスト45件もPASSです。`tools/verify.py --rust --require-rust`は実行可能な8項目すべてPASSです。
+> **検証状態 (v0.2):** Rust toolchainのある環境で実際にビルド・テストしました。`cargo test --workspace`は**78件PASS**、**4 canister分のWasmとCandidを生成済み**、Python参照テストもPASSです。`tools/verify.py --rust --require-rust`は実行可能な8項目すべてPASSです。
 >
-> ただし**実Laya checkpointのparity、heap実測、実ledger送金は未検証**です。実checkpointのinstructionsは実測からの外挿で494B〜567B（40B上限の12〜14倍）と判明しており、INT8 + SIMDカーネルで削る方針を[ADR-017](docs/design-v2/adr/ADR-017.md)に記録しました。`fixtures/`はランダムweightで言語理解を証明しません。ビルド成功を性能・品質の証拠とは扱っていません。
+> **Layaバックエンドは削除しました。** 実Laya checkpointは一度もロードしておらず（weightは未取得）、合成weightからの外挿では40B上限の12〜14倍だったためです（記録は[docs/archive/PERFORMANCE_MEASUREMENTS.md](docs/archive/PERFORMANCE_MEASUREMENTS.md)）。判断バックエンドはopenJev 151M（GLiClass）に置き換え、実checkpointで実測しています: 著者記録の1000件とargmax 1000/1000一致、120トークンで1決定14.6e9 instructions（[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md)）。実heap・実ledger送金は引き続き未検証で、`fixtures/`はランダムweightです。
 >
 > v0.1の「cargoが無くRust未確認」という記述は誤りでした。実際にビルドした結果、`tools/build_one.sh`のbash 3.2非互換、`CARGO_TARGET_DIR`無視、Candle Wasmの`getrandom`欠落という3件の実バグが出たため修正しています。詳細は[docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md)。
 
@@ -30,14 +30,17 @@
 ```text
 crates/
   ic-laya-core/       # 型、数学、schema、engine契約、policy、状態機械
-  laya-candle/        # batch=1 F32推論、canonical model pack
+  modernbert-candle/  # 共有ModernBERTエンコーダ（attention/RoPE/Linear）
+  verdict-candle/     # openJev GLiClassバックエンド（int8対応）
+  verdict-simd/       # wasm SIMDカーネル（f32x4 / i32x4.dot_i16x8）
   hf-tokenizer/      # tokenizersのRust adapter
   canister-common/   # stable snapshot、ICRC-1 argument adapter
 canisters/
-  decision-engine/   # 推論。defaultはモデル未ロード
+  decision-engine/   # schema/calibration/engine（fixtureモード）
+  verdict-engine/    # openJev推論canister（pack upload + warm-up + decide）
   executor/          # 委任・workflow・予算・mock dispatch
   mock-ledger/       # 転送、重複、結果不明のテスト用
-fixtures/            # 小さいランダムweight。実Layaではない
+fixtures/            # 小さいランダムweight（verdict-tiny、トークナイザ）
 tools/              # 数値参照、export、ビルド、ローカル起動
 tests/              # Python参照・exportのテスト
 artifacts/           # 実行ログと検証状態
@@ -66,12 +69,10 @@ python tools/verify.py
 cargo generate-lockfile
 cargo test --workspace
 cargo run -p ic-laya-core --example mock_workflow
-cargo run -p laya-candle --bin laya-infer -- \
-  fixtures/tiny-prenorm fixtures/tiny-prenorm/input.json
-cargo check -p decision-engine --features candle
 ```
 
-`mock_workflow`は三primitiveを固定のスコアで返し、Unknown→Duplicate成功までの状態遷移を試す例です。**英語を理解するモデルではありません。** `laya-infer`の同梱fixtureも、ランダムweightのニューラル演算テストです。
+`mock_workflow`は三primitiveを固定のスコアで返し、Unknown→Duplicate成功までの状態遷移を試す例です。**英語を理解するモデルではありません。**
+openJevバックエンドの実測・再現手順は[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md)にあります。
 
 実行できた最初の環境で`Cargo.lock`と`rustc --version`等を記録し、lockをレビュー・commitしてください。この環境では依存解決すら実行できないため、架空のlockfileを作成していません。CIも最初にlockを生成する構成です。
 
@@ -116,26 +117,14 @@ IC_LAYA_CANDLE=1 bash tools/build_one.sh decision-engine
 
 Candle/tokenizersのWasm依存経路は未検証です。ブラウザWasm対応をICP互換性の証拠にしていません。CIではこのビルドも必須にして、不適合を隠さない設定にしています。
 
-## 6. 実Layaを接続する場所
+## 6. 判断バックエンド
 
-F32推論演算は書いてありますが、**公開checkpointを読み込んだ実測はありません**。本パッケージのcanonical tensor名を、元checkpointの実際の名前だと見なさないでください。元実装とconfigから、QKV順、RoPE、norm、GeGLU、decision head、scorer、qtype順、入力token列を確認して対応表を作ります。
+判断バックエンドは**openJev 151M（GLiClass uni-encoder）**です。canonical tensor名・prompt形式・headの意味は
+[docs/GLICLASS_FORWARD_SPEC.md](docs/GLICLASS_FORWARD_SPEC.md)、実測（instructions・parity・コスト削減）は
+[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md)に記録しています。
 
-```bash
-python tools/pack_checkpoint.py inspect /path/to/checkpoint
-python tools/pack_checkpoint.py export \
-  --source /path/to/checkpoint \
-  --config reviewed-runtime-config.json \
-  --mapping reviewed-tensor-map.json \
-  --tokenizer /path/to/tokenizer.json \
-  --repo convaiinnovations/laya-typed-decisions \
-  --revision ACTUAL_40_CHARACTER_COMMIT \
-  --qtypes 0 1 2 \
-  --out checkpoints/laya-f32
-```
-
-上記qtype順は**形式例であり未確認の値**です。元コードで確認した順に置き換えてください。`--revision`も実在するimmutable revisionを入力します。exporterはこの値の形式は検査しますが、HFへ問い合わせて真正性を確認しません。
-
-対応表はcanonical name→source nameのJSONで、明示的transposeまたはaxis-0結合も指定できます。自動推測・任意Python式・pickle・remote code実行はしません。詳細は[MODEL_PORT.md](docs/MODEL_PORT.md)に記載しました。
+かつて計画していたLaya checkpointの接続は**削除しました**（weightは未取得で、合成weightからの外挿が40B上限の
+12〜14倍だったため）。経緯と外挿の根拠は[docs/archive/](docs/archive/)に残しています。
 
 ## 7. 実送金を閉じている理由と残作業
 
@@ -155,7 +144,7 @@ Layaの代わりに **openJev-verdict 系の151Mモデル**（`heman10x/rlcd-mod
 
 | 追加物 | 役割 |
 |---|---|
-| `crates/verdict-candle` | GLiClass uni-encoder の forward（encoder は `laya-candle` と共有） |
+| `crates/verdict-candle` | GLiClass uni-encoder の forward（encoder は `modernbert-candle` と共有） |
 | `canisters/verdict-engine` | pack投入・warm-up・`infer_tokens`・`decide` と instructions 実測 |
 | `tools/pack_verdict.py` | HF checkpoint → canonical F32 pack（142テンソル、605,512,704 B） |
 | `tools/make_verdict_fixture.py` | canisterスモーク用の小型pack（同一カーネル） |

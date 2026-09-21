@@ -23,9 +23,9 @@ Laya（421M、F32、128トークンで494〜567B）と同じ結論だが、151M�
 
 | 追加物 | 中身 |
 |---|---|
-| `crates/verdict-candle` | GLiClass uni-encoder forward。encoder は `laya-candle::encoder::ModernBert` を共有し、head だけが違う |
+| `crates/verdict-candle` | GLiClass uni-encoder forward。encoder は `modernbert-candle::encoder::ModernBert` を共有し、head だけが違う |
 | `canisters/verdict-engine` | `begin_upload` / `upload_chunk` / `start_warmup` / `warmup_next` / `infer_tokens` / **`infer_profiled`**（owner専用の位相別命令数） / `decide` / `info` / `allow_caller` / `set_max_input_tokens` |
-| `crates/laya-candle`（変更） | encoder の公開面を追加（型と `forward` の可視性、`new`、`pub mod encoder`）。既存57テストは green |
+| `crates/modernbert-candle`（変更） | encoder の公開面を追加（型と `forward` の可視性、`new`、`pub mod encoder`）。既存57テストは green |
 | `tools/pack_verdict.py` | safetensors → canonical F32 pack（142テンソル、605,512,704 B、SHA-256検証つき） |
 | `tools/make_verdict_fixture.py` | canisterスモーク用の32次元2層pack（同一カーネル、重みは乱数） |
 | `tools/verdict-upload` | agent経由でpack投入＋warm-up＋`infer_tokens`（`icp canister call` のargv制限を回避） |
@@ -437,7 +437,7 @@ k連続なら重みベクトルをそのままロードできる（f32経路は 
   **argmax が実データで保たれるかは未検証**（golden 1000件での確認には、pack/モデルへの配線が必要）。
 
 **モデルへの配線と end-to-end 実測**: `verdict-candle` の dense 重み（encoder 4種＋projector）を
-int8 化し（`laya-candle::Linear` に量子化重みを持たせ、`verdict_simd::matmul_i8` を呼ぶ）、
+int8 化し（`modernbert-candle::Linear` に量子化重みを持たせ、`verdict_simd::matmul_i8` を呼ぶ）、
 canister で実測した。
 
 | 構成 | T=120 の instructions | 対 f32 |
@@ -609,7 +609,7 @@ candle の `softmax_last_dim` は `max_keepdim` → `broadcast_sub` → `exp` �
 - `exp` は libm 呼び出しのままで、3.8M要素 × 約40単位 ≈ 152M が下限の大半を占める
   （残りはロード/ストアとスカラーexpループ）。**多項式近似に置き換えれば更に削れるが
   数値が変わり parity gate に影響するため実施していない**（要判断）。
-- 精度: laya-candle の PyTorch 一致テスト、verdict-candle の profiled/plain 一致テストは通過。
+- 精度: modernbert-candle の PyTorch 一致テスト、verdict-candle の profiled/plain 一致テストは通過。
 
 ### 5.2 位相別の内訳とボトルネック（`infer_profiled`、T=120、実checkpoint）
 

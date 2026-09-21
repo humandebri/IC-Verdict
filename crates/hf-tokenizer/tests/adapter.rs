@@ -1,6 +1,6 @@
 use ic_laya_core::{schema::*,*};
 #[test]fn tiny_wordlevel_adapter(){
-    let bytes=include_bytes!("../../../fixtures/tiny-prenorm/tokenizer.json");
+    let bytes=include_bytes!("../../../fixtures/tiny-tokenizer.json");
     let special=SpecialTokens{cls:1,sep:2,mask:3,pad:0,literals:vec!["[PAD]".into(),"[CLS]".into(),"[SEP]".into(),"[MASK]".into()]};
     let t=hf_tokenizer::HfTokenizer::from_bytes(bytes,special).unwrap();
     assert_eq!(t.encode_piece("t5 t7").unwrap(),vec![5,7]);

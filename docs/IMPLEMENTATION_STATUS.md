@@ -8,13 +8,10 @@ v0.1からの差分: Rust toolchainのある環境でビルドとテストを実
 
 | 検証 | 結果 |
 |---|---|
-| `cargo test --workspace` | **PASS 62件** (ic-laya-core 57 / laya-candle parity 4 / compile_fail doctest 1) |
-| `cargo check -p decision-engine --features candle` (native) | **PASS** |
-| `cargo build -p decision-engine --features candle --target wasm32-unknown-unknown` | **PASS** |
-| `bash tools/build_one.sh` × decision-engine / executor / mock-ledger | **PASS**。Candid 3件と Wasm 3件を生成 |
-| `IC_LAYA_CANDLE=1 bash tools/build_one.sh decision-engine` | **PASS** (Wasm 4.8 MiB, Candle込み) |
+| `cargo test --workspace` | **PASS 78件**（Layaバックエンド削除後。decision-engine は fixture モード） |
+| `bash tools/build_one.sh` × decision-engine / executor / mock-ledger / verdict-engine | **PASS**。Candid 4件と Wasm 4件を生成 |
+| `IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine` | **PASS**（int8 dense重み＋8行カーネル込み） |
 | `cargo run -p ic-laya-core --example mock_workflow` | **PASS**。三primitive逐次評価 → mock送金 → `Succeeded`, reserved=0/spent=110 |
-| `cargo run -p laya-candle --bin laya-infer -- fixtures/tiny-prenorm ...` | **PASS**。合成weightでlogitsを出力 |
 | `tools/local_integration.py`（local replicaで3 canister実行） | **PASS**。下記のworkflow全体を実機で確認 |
 | Python unittest | **PASS 45件** |
 | `tools/verify.py --rust --require-rust` | 下表参照 |
@@ -48,8 +45,7 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 
 | 項目 | 状態 / 次の作業 |
 |---|---|
-| 実Laya weights | 未同梱・未ロード。**構造の突き合わせは完了**（[MODEL_PORT_FINDINGS.md](MODEL_PORT_FINDINGS.md)）。803 MiBの取得とexportは未実施 |
-| upstream tensor/tokenizer/qtype一致 | **名前とshapeは全206 tensorで一致**。ただしQKV順・RoPE・prompt形式など数値parityの前提は未確認 |
+| Layaバックエンド | **削除済み**（`laya-candle` crate・decision-engine の `candle` feature・Laya計測ツール）。weightは未取得のままで、合成weightからの外挿が40B上限の12〜14倍だった。記録は[archive/](archive/)に退避 |
 | 実checkpoint inference品質 | Layaは未測定（`fixtures/`はランダムweight）。**openJev 151Mは著者記録の1000件でargmax 1000/1000一致**（[VERDICT_ENGINE.md](VERDICT_ENGINE.md) 3.1節） |
 | ICP heap/instructions/cycles | **instructionsは実測済み**（Laya合成pack、openJev実checkpoint）。heap（warm 2.5GiB / cold peak 3.0GiB）はcanisterのheapを読む口がなく**未測定** |
 | openJev 151Mの実測上限 | **T=120トークンが成功、T=126が40B上限で拒否**（[VERDICT_ENGINE.md](VERDICT_ENGINE.md) 5.1.1節）。実benchmarkの入力長は**中央値95トークン**で、**1000件中975件（97.5%）が予算内**。超過は121〜150の25件のみ |
@@ -62,7 +58,7 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 
 ## 性能について
 
-**測定した。** `tools/measure_inference.py` がlocal replica上で合成packの `measured_instructions` を実測した（詳細は[PERFORMANCE_MEASUREMENTS.md](PERFORMANCE_MEASUREMENTS.md)）。
+**測定した。** `tools/measure_inference.py` がlocal replica上で合成packの `measured_instructions` を実測した（詳細は[PERFORMANCE_MEASUREMENTS.md](archive/PERFORMANCE_MEASUREMENTS.md)）。
 
 | tier | hidden | 層 | 質問あたり instructions |
 |---|---|---|---|
@@ -70,6 +66,8 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 | measure-m | 512 | 4 | 4.73B〜5.43B |
 
 これを実checkpoint（28層・hidden 1024・128 tokens）へ外挿すると **494B〜567B instructions**。**設計目標20Bの25〜28倍、ICPのupdate上限40Bの12〜14倍**である。
+
+> **履歴**: この外挿を根拠にLayaバックエンドは削除した。ただし外挿は当時の効率（gemm f32）が前提で、現在のカーネル最適化（int8 8行カーネル＋softmax融合、実測 −60.8%）を当てると約194〜222B（128 tokens時）まで縮む。
 
 つまり **F32のままでは実checkpointは載らない**。必要な削減は最低12倍で、INT8化で見込める4倍では足りない。INT8と蒸留の併用、または層数・hiddenの再検討が必要になる。ただし「Scoreを削る」「尺度説明を短縮する」「入力を切る」といった意味を削る最適化は、この結果を理由にしても認められない。
 
@@ -144,4 +142,4 @@ decision head 16%、その他 約2%。
 
 [ADR-017](design-v2/adr/ADR-017.md)に記録した。
 
-**未測定**: heap使用量（`warm 2.5GiB` / `cold peak 3.0GiB`）はcanisterのheapを読む口がなく未測定。1.57 GiB packの投入も未実施（CLI経由のアップロードはargv長制約で256 KiB chunkが上限、約6400回の呼び出しになり非現実的。これはcanister側ではなくクライアント側の制約）。
+**heap**: wasm32の線形メモリ上限は4 GiB。`canisters/verdict-engine` に `heap_bytes` query を追加したので測れる（実checkpoint warmで**1.02 GiB**）。Layaの1.57 GiB packは未投入のまま削除した。

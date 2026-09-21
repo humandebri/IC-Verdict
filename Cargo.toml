@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/ic-laya-core", "crates/laya-candle", "crates/verdict-candle", "crates/verdict-simd", "crates/hf-tokenizer", "crates/canister-common", "canisters/decision-engine", "canisters/verdict-engine", "canisters/executor", "canisters/mock-ledger", "tools/verdict-upload"]
+members = ["crates/ic-laya-core", "crates/modernbert-candle", "crates/verdict-candle", "crates/verdict-simd", "crates/hf-tokenizer", "crates/canister-common", "canisters/decision-engine", "canisters/verdict-engine", "canisters/executor", "canisters/mock-ledger", "tools/verdict-upload"]
 default-members = ["crates/ic-laya-core"]
 exclude = ["tools/simd-probe"]
 
@@ -21,7 +21,7 @@ candle-core = { version = "=0.11.0", default-features = false }
 candle-nn = { version = "=0.11.0", default-features = false }
 tokenizers = { version = "=0.22.0", default-features = false, features = ["fancy-regex"] }
 ic-laya-core = { path = "crates/ic-laya-core" }
-laya-candle = { path = "crates/laya-candle" }
+modernbert-candle = { path = "crates/modernbert-candle" }
 verdict-candle = { path = "crates/verdict-candle" }
 verdict-simd = { path = "crates/verdict-simd" }
 hf-tokenizer = { path = "crates/hf-tokenizer" }

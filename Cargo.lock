@@ -710,10 +710,8 @@ dependencies = [
  "candid",
  "canister-common",
  "getrandom 0.3.4",
- "hf-tokenizer",
  "ic-cdk",
  "ic-laya-core",
- "laya-candle",
  "rand_chacha 0.9.0",
  "serde",
  "serde_json",
@@ -1943,17 +1941,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "laya-candle"
-version = "0.1.0"
-dependencies = [
- "candle-core",
- "ic-laya-core",
- "serde",
- "serde_json",
- "verdict-simd",
-]
-
-[[package]]
 name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2072,6 +2059,15 @@ dependencies = [
  "ic-laya-core",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "modernbert-candle"
+version = "0.1.0"
+dependencies = [
+ "candle-core",
+ "serde",
+ "verdict-simd",
 ]
 
 [[package]]
@@ -3536,7 +3532,7 @@ dependencies = [
  "candle-core",
  "hf-tokenizer",
  "ic-laya-core",
- "laya-candle",
+ "modernbert-candle",
  "serde",
  "serde_json",
  "verdict-simd",
