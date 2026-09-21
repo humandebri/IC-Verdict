@@ -1,6 +1,26 @@
 use ic_laya_core::{engine::InferenceBackend,TokenInput,BackendKind,Error};
 use std::path::PathBuf;
 fn dir(name:&str)->PathBuf{PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures").join(name)}
+/// Tolerance for the only numeric comparison `cargo test` runs by default.
+///
+/// The previous value was `1e-3 + 1e-3*|b|`. The fixture logits are ~6e-3, so that
+/// absolute term was 13-17% of the value and 33-43x the largest *within-case class
+/// spread* (2.3e-5..3.0e-5). A tolerance above the class spread cannot distinguish a
+/// correct encoder from one whose axes are wrong: interleaved RoPE, a
+/// `local_attention`-wide window, swapped GeGLU operands or `1/sqrt(hidden)` scaling
+/// all shift the logits by 1e-6..2e-4, i.e. they passed.
+///
+/// Measured on arm64 (2026-09-21) against both fixtures: max |Rust - fixture| =
+/// 1.118e-8. `5e-7` leaves ~45x headroom for a different SIMD kernel on x86_64 CI
+/// while staying ~47x below the smallest class spread, and the assertion in the test
+/// keeps it that way if the fixtures are ever regenerated.
+const ATOL:f32=5e-7;
+const RTOL:f32=1e-5;
+fn spread(expected:&[f32])->f32{
+    let max=expected.iter().copied().fold(f32::NEG_INFINITY,f32::max);
+    let min=expected.iter().copied().fold(f32::INFINITY,f32::min);
+    max-min
+}
 #[test]
 fn synthetic_pytorch_logits_match_candle(){
     for folder in ["tiny-prenorm","tiny-postnorm"]{
@@ -11,7 +31,14 @@ fn synthetic_pytorch_logits_match_candle(){
             let input:TokenInput=serde_json::from_value(case["input"].clone()).unwrap();
             let expected:Vec<f32>=serde_json::from_value(case["expected_logits"].clone()).unwrap();
             let output=model.infer(&input).unwrap();assert_eq!(expected.len(),output.len());
-            for (a,b) in output.iter().zip(expected.iter()) {assert!((a-b).abs()<=1e-3+1e-3*b.abs(),"{folder}: {a} versus {b}");}
+            // Fail loudly if the fixture is regenerated with a smaller spread: a
+            // tolerance this wide would make the rest of this test unable to detect
+            // the axis errors it exists for.
+            let spread=spread(&expected);
+            assert!(expected.iter().all(|b|ATOL+RTOL*b.abs()<spread/10.0),
+                "{folder}: tolerance {:e}+{:e}*|b| is not discriminating (class spread {spread:e})",ATOL,RTOL);
+            for (a,b) in output.iter().zip(expected.iter()) {
+                assert!((a-b).abs()<=ATOL+RTOL*b.abs(),"{folder}: {a} versus {b}");}
         }
     }
 }

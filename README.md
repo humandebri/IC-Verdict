@@ -144,3 +144,32 @@ python tools/pack_checkpoint.py export \
 現状は安全側の有限容量PoCです。512 workflow、64 registry、engine cache1024件で、削除・compactionは実装していません。上限で停止し、古いnonceや不明Txを消して処理を続けることはしません。stable storageはbounded snapshotで、全量再保存のコストがあり、本番の高頻度処理にはstable table化が必要です。人間reviewの承認再開endpoint、INT8、蒸留、実ledger adapterの有効化も未実装です。
 
 次の着手順は、**Rustのビルド修正 → 合成fixtureでCandle照合 → 実Layaのtensor/tokenizer/logit照合 → ICP性能 → fault injection**です。[実装状況](docs/IMPLEMENTATION_STATUS.md)と[自己レビュー](docs/IMPLEMENTATION_REVIEW.md)を先に確認してください。
+
+## 8. openJev（GLiClass / ModernBERT-151M）バックエンド
+
+Layaの代わりに **openJev-verdict 系の151Mモデル**（`heman10x/rlcd-modernbert-151m`、Apache-2.0）を
+同じcanister実行モデルで動かす実装を追加しました。設計判断の根拠（40B命令予算に対してパラメータ数が
+唯一のレバーであること、151Mなら短い入力は量子化なしでも予算内に入ること）と移植仕様は
+[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md) と [docs/GLICLASS_FORWARD_SPEC.md](docs/GLICLASS_FORWARD_SPEC.md)
+にあります。
+
+| 追加物 | 役割 |
+|---|---|
+| `crates/verdict-candle` | GLiClass uni-encoder の forward（encoder は `laya-candle` と共有） |
+| `canisters/verdict-engine` | pack投入・warm-up・`infer_tokens`・`decide` と instructions 実測 |
+| `tools/pack_verdict.py` | HF checkpoint → canonical F32 pack（142テンソル、605,512,704 B） |
+| `tools/make_verdict_fixture.py` | canisterスモーク用の小型pack（同一カーネル） |
+| `tools/verdict-upload` | agent経由のpack転送（`icp canister call` では600 MiBを運べない） |
+| `tools/verdict_canister.py` | ローカルreplicaで作成→install→投入→推論までを実行 |
+| `tools/measure_verdict.py` | 実benchmark入力をtokenizeし、長さを振って40B予算の上限を実測 |
+
+検証は次の2つに分かれています。**実checkpointの一致**は
+`cargo test --release -p verdict-candle --test golden -- --ignored`（605 MiB packが必要）、
+**canister上での実行とinstructions実測**は `python3 tools/verdict_canister.py` です。
+
+**上限は外挿ではなく実測で押さえました。** `tools/measure_verdict.py` が実benchmarkの1件
+（自然長118トークン）を測り、**T=120（39.57B instructions）が成功、T=126がreplicaの40B上限で拒否**
+されるところまで確認しています（[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md) 5.1.1節、
+`artifacts/verdict_sweep.json`）。151Mは量子化なしでも短い入力は1 callに収まりますが、
+JevBench平均383トークンは約3.2倍超過します。量子化なし、校正は同梱artifactの5候補用temperatureのみ、
+という制約はそのまま残っています。

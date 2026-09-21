@@ -1,0 +1,44 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test agrees_with_the_authors_recorded_decisions ... ignored, requires models/verdict-pack (605 MiB) and models/verdict-parity
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 11 tests
+test pack_rejects_tensor_set_mismatch ... ok
+test every_label_marker_contributes_one_slot_in_order ... ok
+test profiled_forward_keeps_the_same_rejections ... ok
+test refuses_non_finite_and_out_of_vocab_ids ... ok
+test refuses_more_classes_than_the_checkpoint_scores ... ok
+test logits_are_one_per_class_token_in_order ... ok
+test profiled_forward_returns_the_same_logits ... ok
+test detailed_profiling_only_adds_repeated_markers ... ok
+test head_matches_an_independent_recomputation_from_the_encoder_output ... ok
+test same_input_gives_the_same_logits ... ok
+test pack_round_trip_reproduces_the_model ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling verdict-candle v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-candle)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.74s
+     Running unittests src/lib.rs (target/debug/deps/verdict_candle-9dfb4d49dd782ae1)
+     Running unittests src/bin/verdict_infer.rs (target/debug/deps/verdict_infer-367f7c3716900ff8)
+     Running tests/golden.rs (target/debug/deps/golden-f313109678ff793b)
+     Running tests/model.rs (target/debug/deps/model-f3a1d8bdc0d30eab)
+   Doc-tests verdict_candle

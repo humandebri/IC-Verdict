@@ -38,20 +38,35 @@ impl Manifest {
     }
 }
 /// Incremental warm-up helper shared by native and canister adapters.
-pub struct Builder {pub manifest:Manifest,pub bundle:Digest,pub next:usize,tensors:BTreeMap<String,Tensor>}
+pub struct Builder {pub manifest:Manifest,pub bundle:Digest,pub next:usize,tensors:BTreeMap<String,Tensor>,
+    /// Dense weights quantised as they arrive (`int8` feature). Quantising them all at
+    /// once in the final warm-up call exceeded the 40B instruction limit (IC0522).
+    #[cfg(feature="int8")]
+    quant:crate::QuantMap}
 impl Builder {
-    pub fn new(raw:&[u8])->Result<Self>{Ok(Self{manifest:Manifest::parse(raw)?,bundle:hash(raw),next:0,tensors:BTreeMap::new()})}
+    pub fn new(raw:&[u8])->Result<Self>{Ok(Self{manifest:Manifest::parse(raw)?,bundle:hash(raw),next:0,tensors:BTreeMap::new(),
+        #[cfg(feature="int8")] quant:BTreeMap::new()})}
     pub fn next_entry(&self)->Option<&TensorEntry>{self.manifest.tensors.get(self.next)}
     pub fn push(&mut self,bytes:&[u8])->Result<()> {
         let e=self.next_entry().ok_or(Error::Transition)?.clone();
         if bytes.len() as u64!=e.length || hash(bytes)!=e.sha256{return Err(Error::Invalid("tensor integrity".into()));}
         if bytes.chunks_exact(4).any(|b|!f32::from_le_bytes([b[0],b[1],b[2],b[3]]).is_finite()){return Err(Error::Numeric);}
+        #[cfg(feature="int8")]
+        if crate::is_dense_weight(&e.name) {
+            let (out_features,in_features)=match e.shape.as_slice(){[o,i]=>(*o,*i),_=>return Err(Error::Invalid("dense weight shape".into()))};
+            let flat:Vec<f32>=bytes.chunks_exact(4).map(|b|f32::from_le_bytes([b[0],b[1],b[2],b[3]])).collect();
+            let (w,scales)=verdict_simd::quantize_rows_i8(&flat,out_features,in_features);
+            self.quant.insert(e.name.clone(),laya_candle::QuantWeight{w,scales,out_features,in_features});
+            self.next+=1;return Ok(());
+        }
         let tensor=Tensor::from_raw_buffer(bytes,DType::F32,&e.shape,&Device::Cpu).map_err(|x|Error::ModelUnavailable(x.to_string()))?;
         self.tensors.insert(e.name,tensor);self.next+=1;Ok(())
     }
     pub fn finish(self)->Result<VerdictModel>{
         if self.next!=self.manifest.tensors.len(){return Err(Error::Transition);}
         let kind=if self.manifest.test_only{BackendKind::SyntheticFixture}else{BackendKind::Checkpoint};
+        #[cfg(feature="int8")]
+        if !self.quant.is_empty(){return VerdictModel::from_quantized(self.manifest.config,self.bundle,kind,self.tensors,self.quant);}
         VerdictModel::from_tensors(self.manifest.config,self.bundle,kind,self.tensors)
     }
 }

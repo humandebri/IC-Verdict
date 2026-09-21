@@ -1,0 +1,87 @@
+{
+ "version": "1.0",
+ "truncation": null,
+ "padding": null,
+ "added_tokens": [
+  {
+   "id": 0,
+   "content": "[PAD]",
+   "single_word": false,
+   "lstrip": false,
+   "rstrip": false,
+   "normalized": false,
+   "special": true
+  },
+  {
+   "id": 1,
+   "content": "[CLS]",
+   "single_word": false,
+   "lstrip": false,
+   "rstrip": false,
+   "normalized": false,
+   "special": true
+  },
+  {
+   "id": 2,
+   "content": "[SEP]",
+   "single_word": false,
+   "lstrip": false,
+   "rstrip": false,
+   "normalized": false,
+   "special": true
+  },
+  {
+   "id": 3,
+   "content": "<<LABEL>>",
+   "single_word": false,
+   "lstrip": false,
+   "rstrip": false,
+   "normalized": false,
+   "special": true
+  },
+  {
+   "id": 4,
+   "content": "[MASK]",
+   "single_word": false,
+   "lstrip": false,
+   "rstrip": false,
+   "normalized": false,
+   "special": true
+  },
+  {
+   "id": 5,
+   "content": "<<SEP>>",
+   "single_word": false,
+   "lstrip": false,
+   "rstrip": false,
+   "normalized": false,
+   "special": true
+  }
+ ],
+ "normalizer": null,
+ "pre_tokenizer": {
+  "type": "Whitespace"
+ },
+ "post_processor": null,
+ "decoder": null,
+ "model": {
+  "type": "WordLevel",
+  "vocab": {
+   "[PAD]": 0,
+   "[CLS]": 1,
+   "[SEP]": 2,
+   "<<LABEL>>": 3,
+   "[MASK]": 4,
+   "<<SEP>>": 5,
+   "[UNK]": 6,
+   "insufficient": 7,
+   "evidence": 8,
+   "Question:": 9,
+   "Context:": 10,
+   "hello": 11,
+   "true": 12,
+   "false": 13
+  },
+  "unk_token": "[UNK]"
+ }
+}

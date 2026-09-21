@@ -1,0 +1,8 @@
+    Blocking waiting for file lock on package cache
+    Updating crates.io index
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling verdict-simd v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-simd)
+   Compiling verdict-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/verdict-engine)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 17.75s

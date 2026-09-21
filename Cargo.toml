@@ -1,7 +1,8 @@
 [workspace]
 resolver = "2"
-members = ["crates/ic-laya-core", "crates/laya-candle", "crates/hf-tokenizer", "crates/canister-common", "canisters/decision-engine", "canisters/executor", "canisters/mock-ledger"]
+members = ["crates/ic-laya-core", "crates/laya-candle", "crates/verdict-candle", "crates/verdict-simd", "crates/hf-tokenizer", "crates/canister-common", "canisters/decision-engine", "canisters/verdict-engine", "canisters/executor", "canisters/mock-ledger", "tools/verdict-upload"]
 default-members = ["crates/ic-laya-core"]
+exclude = ["tools/simd-probe"]
 
 [workspace.package]
 version = "0.1.0"
@@ -21,6 +22,8 @@ candle-nn = { version = "=0.11.0", default-features = false }
 tokenizers = { version = "=0.22.0", default-features = false, features = ["fancy-regex"] }
 ic-laya-core = { path = "crates/ic-laya-core" }
 laya-candle = { path = "crates/laya-candle" }
+verdict-candle = { path = "crates/verdict-candle" }
+verdict-simd = { path = "crates/verdict-simd" }
 hf-tokenizer = { path = "crates/hf-tokenizer" }
 canister-common = { path = "crates/canister-common" }
 
@@ -29,4 +32,9 @@ opt-level = 3
 lto = "thin"
 codegen-units = 1
 panic = "abort"
-overflow-checks = true
+# Measured: `overflow-checks = true` makes every index computation in the hot
+# matmul loops (including gemm's, which is compiled with this profile) emit a
+# checked multiply/add plus a panic path. See docs/VERDICT_ENGINE.md 5.1.6.
+# Reverted to the default (off) for the canister profile; the wasm build still
+# aborts on panic (`panic = "abort"`).
+overflow-checks = false

@@ -1,0 +1,87 @@
+{
+  "case_id": "test_in_00665",
+  "natural_tokens": 118,
+  "budget": 40000000000,
+  "points": [
+    {
+      "requested_tokens": 120,
+      "over_budget": false,
+      "instructions": 39568154800,
+      "input_tokens": 120,
+      "instructions_per_token": 329734623.3333333
+    }
+  ],
+  "max_tokens_within_budget": null,
+  "profile": {
+    "tokens": 120,
+    "measured_instructions": 39568735612,
+    "phases": [
+      {
+        "name": "embedding",
+        "instructions": 12829247,
+        "percent": 0.0
+      },
+      {
+        "name": "layer.attn_norm",
+        "instructions": 188324586,
+        "percent": 0.5
+      },
+      {
+        "name": "attn.pre",
+        "instructions": 13050393833,
+        "percent": 33.0
+      },
+      {
+        "name": "attn.core",
+        "instructions": 2685295641,
+        "percent": 6.8
+      },
+      {
+        "name": "layer.attn",
+        "instructions": 4140907026,
+        "percent": 10.5
+      },
+      {
+        "name": "layer.attn_resid",
+        "instructions": 43701665,
+        "percent": 0.1
+      },
+      {
+        "name": "layer.mlp_up",
+        "instructions": 12636107754,
+        "percent": 31.9
+      },
+      {
+        "name": "layer.mlp_act",
+        "instructions": 502436293,
+        "percent": 1.3
+      },
+      {
+        "name": "layer.mlp_down",
+        "instructions": 6251963430,
+        "percent": 15.8
+      },
+      {
+        "name": "encoder",
+        "instructions": 8955680,
+        "percent": 0.0
+      },
+      {
+        "name": "text_projector",
+        "instructions": 28358693,
+        "percent": 0.1
+      },
+      {
+        "name": "class_projector",
+        "instructions": 19316499,
+        "percent": 0.0
+      },
+      {
+        "name": "dot_decode",
+        "instructions": 145265,
+        "percent": 0.0
+      }
+    ]
+  },
+  "note": "measured on a local replica through the canister's own measured_instructions; lengths above the case's natural length are the same prompt padded with neutral filler, so they price a longer sequence, not a longer document"
+}

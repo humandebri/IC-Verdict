@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-package="${1:?usage: tools/build_one.sh decision-engine|executor|mock-ledger}"
-case "$package" in decision-engine|executor|mock-ledger) ;; *) echo "unsupported package" >&2; exit 2;; esac
+package="${1:?usage: tools/build_one.sh decision-engine|verdict-engine|executor|mock-ledger}"
+case "$package" in decision-engine|verdict-engine|executor|mock-ledger) ;; *) echo "unsupported package" >&2; exit 2;; esac
 command -v cargo >/dev/null || { echo 'cargo is required; Rust builds were not verified in the delivery environment.' >&2; exit 1; }
 mkdir -p build
 # Pass the feature flag through run(), not via a features=() array: bash 3.2 (the
@@ -11,6 +11,8 @@ mkdir -p build
 run() {
   if [[ "$package" == decision-engine && "${IC_LAYA_CANDLE:-0}" == 1 ]]; then
     cargo "$@" --features candle
+  elif [[ "$package" == verdict-engine && "${IC_VERDICT_INT8:-0}" == 1 ]]; then
+    cargo "$@" --features int8
   else
     cargo "$@"
   fi

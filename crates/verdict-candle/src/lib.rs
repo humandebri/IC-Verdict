@@ -40,13 +40,16 @@ pub const CLS_POSITION:usize=0;
 /// Hard architectural bound for one forward pass. The canister profile applies a
 /// tighter cap at its own API boundary; this one only stops absurd inputs.
 pub const MAX_SEQUENCE:usize=1024;
+/// `max_num_classes` of the shipped checkpoint: 24 substantive options + 1
+/// abstention slot. More label tokens than this cannot be scored in one pass.
+pub const MAX_CLASSES:usize=25;
 
 #[derive(Debug,Clone,Serialize,Deserialize)]
 pub struct VerdictConfig {
     pub vocab_size:usize,pub hidden_size:usize,pub layers:usize,pub attention_heads:usize,
     pub intermediate_size:usize,pub norm_eps:f64,pub global_every:usize,pub local_attention:usize,
     pub global_rope_theta:f64,pub local_rope_theta:f64,pub first_layer_attention_norm:bool,
-    pub cls_token_id:u32,pub class_token_id:u32,pub max_classes:usize,
+    pub cls_token_id:u32,pub sep_token_id:u32,pub class_token_id:u32,pub max_classes:usize,
     pub projector_activation:Activation,
 }
 impl VerdictConfig {
@@ -58,7 +61,8 @@ impl VerdictConfig {
             || self.global_every==0 || self.local_attention==0
             || self.max_classes==0 || self.max_classes>64
             || self.cls_token_id as usize>=self.vocab_size || self.class_token_id as usize>=self.vocab_size
-            || self.cls_token_id==self.class_token_id {
+            || self.sep_token_id as usize>=self.vocab_size
+            || self.cls_token_id==self.class_token_id || self.sep_token_id==self.class_token_id {
             return Err(Error::Invalid("unsupported verdict config".into()));
         }
         if !self.norm_eps.is_finite() || self.norm_eps<=0.0 || self.norm_eps>1.0 {return Err(Error::Numeric);}
@@ -98,8 +102,62 @@ pub fn expected_tensors(c:&VerdictConfig)->Result<BTreeMap<String,Vec<usize>>> {
 }
 
 fn tensor(m:&BTreeMap<String,Tensor>,name:&str)->Result<Tensor>{m.get(name).cloned().ok_or_else(||Error::Invalid(format!("missing tensor: {name}")))}
-fn linear(m:&BTreeMap<String,Tensor>,p:&str)->Result<Linear>{
-    Ok(Linear::new(tensor(m,&format!("{p}.weight"))?,Some(tensor(m,&format!("{p}.bias"))?)))
+/// Quantised dense weights, keyed by the same tensor names the pack uses.
+pub type QuantMap=BTreeMap<String,laya_candle::QuantWeight>;
+/// int8 weights straight from the `[out, in]` tensor the pack stores, which is the
+/// layout the kernel wants. Measured 1.605 instructions/MAC against gemm's 2.501
+/// (docs/VERDICT_ENGINE.md 5.1.6), and it drops the f32 copy of the weight entirely.
+#[cfg(feature="int8")]
+fn quantized(m:&BTreeMap<String,Tensor>,name:&str)->Result<laya_candle::QuantWeight>{
+    let t=tensor(m,name)?;
+    let (out_features,in_features)=t.dims2().map_err(|e|Error::Invalid(e.to_string()))?;
+    let flat=t.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+    let (w,scales)=verdict_simd::quantize_rows_i8(&flat,out_features,in_features);
+    Ok(laya_candle::QuantWeight{w,scales,out_features,in_features})
+}
+/// True for the weight matrices that reach a `Linear`: the four encoder projections of
+/// each layer and the four head-projector matrices. Norms are 1-D and the embedding is a
+/// lookup, so neither is quantised.
+#[must_use]
+pub fn is_dense_weight(name:&str)->bool{
+    if !name.ends_with(".weight"){return false;}
+    if name.starts_with("encoder.")&&(name.ends_with(".qkv.weight")||name.ends_with(".out.weight")||name.ends_with(".wi.weight")||name.ends_with(".wo.weight")){return true;}
+    name=="text_projector.linear_1.weight"||name=="text_projector.linear_2.weight"
+        ||name=="classes_projector.linear_1.weight"||name=="classes_projector.linear_2.weight"
+}
+/// Weights arrive as `[out, in]`. Transposing once here removes a per-call copy of
+/// the whole weight matrix from `forward`, which measured 1.77e10 instructions per
+/// canister call regardless of token count (see docs/VERDICT_ENGINE.md 5.1).
+fn pretransposed(t:&Tensor)->Result<Tensor>{
+    t.t().and_then(|x|x.contiguous()).map_err(|e|Error::ModelUnavailable(e.to_string()))
+}
+/// Encoder projections carry no bias (`attention_bias`/`mlp_bias` are false).
+///
+/// With the `int8` feature the weight comes from `q` when the pack pre-quantised it
+/// (that is where the canister gets it: quantising every dense weight inside a single
+/// warm-up call exceeded the 40B instruction limit, IC0522), and from the f32 tensor
+/// otherwise.
+fn linear(m:&BTreeMap<String,Tensor>,q:&QuantMap,p:&str)->Result<Linear>{
+    let key=format!("{p}.weight");
+    #[cfg(feature="int8")]
+    {
+        if let Some(qw)=q.get(&key){return Ok(Linear::new_quantized(qw.clone(),None));}
+        return Ok(Linear::new_quantized(quantized(m,&key)?,None));
+    }
+    #[cfg(not(feature="int8"))]
+    {let _=(q,key);Ok(Linear::new_transposed(pretransposed(&tensor(m,&format!("{p}.weight"))?)?,None))}
+}
+/// The head projectors do carry biases, which stay in f32.
+fn linear_biased(m:&BTreeMap<String,Tensor>,q:&QuantMap,p:&str)->Result<Linear>{
+    let key=format!("{p}.weight");
+    let bias=Some(tensor(m,&format!("{p}.bias"))?);
+    #[cfg(feature="int8")]
+    {
+        if let Some(qw)=q.get(&key){return Ok(Linear::new_quantized(qw.clone(),bias));}
+        return Ok(Linear::new_quantized(quantized(m,&key)?,bias));
+    }
+    #[cfg(not(feature="int8"))]
+    {let _=(q,key);Ok(Linear::new_transposed(pretransposed(&tensor(m,&format!("{p}.weight"))?)?,bias))}
 }
 fn norm(m:&BTreeMap<String,Tensor>,p:&str,eps:f64)->Result<Norm>{Ok(Norm::new(tensor(m,&format!("{p}.weight"))?,None,eps))}
 
@@ -110,11 +168,24 @@ pub struct VerdictModel {
 fn activate(x:&Tensor,kind:Activation)->CResult<Tensor>{match kind{Activation::Relu=>x.relu(),Activation::Gelu=>x.gelu_erf()}}
 impl VerdictModel {
     pub fn from_tensors(c:VerdictConfig,bundle:Digest,kind:BackendKind,m:BTreeMap<String,Tensor>)->Result<Self>{
+        Self::assemble(c,bundle,kind,m,&QuantMap::new())
+    }
+    /// Build from a pack that already quantised its dense weights, so warm-up never pays
+    /// the quantisation cost (it is spread over the pack's per-tensor pushes instead).
+    #[cfg(feature="int8")]
+    pub fn from_quantized(c:VerdictConfig,bundle:Digest,kind:BackendKind,m:BTreeMap<String,Tensor>,q:QuantMap)->Result<Self>{
+        Self::assemble(c,bundle,kind,m,&q)
+    }
+    fn assemble(c:VerdictConfig,bundle:Digest,kind:BackendKind,m:BTreeMap<String,Tensor>,q:&QuantMap)->Result<Self>{
         let expected=expected_tensors(&c)?;
-        if expected.len()!=m.len(){return Err(Error::Invalid("unexpected tensor set".into()));}
+        // A dense weight is supplied exactly once: either as f32 or as int8.
+        if expected.len()!=m.len()+q.len(){return Err(Error::Invalid("unexpected tensor set".into()));}
         for (name,shape) in &expected {
-            let t=m.get(name).ok_or_else(||Error::Invalid(format!("missing {name}")))?;
-            if t.dims()!=shape.as_slice() || t.dtype()!=DType::F32{return Err(Error::Invalid(format!("shape/dtype: {name}")));}
+            if let Some(t)=m.get(name){
+                if t.dims()!=shape.as_slice() || t.dtype()!=DType::F32{return Err(Error::Invalid(format!("shape/dtype: {name}")));}
+            }else if let Some(qw)=q.get(name){
+                if shape.len()!=2 || qw.out_features!=shape[0] || qw.in_features!=shape[1]{return Err(Error::Invalid(format!("quantised shape: {name}")));}
+            }else{return Err(Error::Invalid(format!("missing {name}")));}
         }
         let mut layers=Vec::new();
         for i in 0..c.layers {
@@ -122,16 +193,16 @@ impl VerdictModel {
             let attention_norm=if i>0 || c.first_layer_attention_norm {Some(norm(&m,&format!("{p}.attn_norm"),c.norm_eps)?)} else {None};
             layers.push(EncoderLayer::new(
                 attention_norm,
-                Attention::new(linear(&m,&format!("{p}.qkv"))?,linear(&m,&format!("{p}.out"))?,c.attention_heads),
+                Attention::new(linear(&m,q,&format!("{p}.qkv"))?,linear(&m,q,&format!("{p}.out"))?,c.attention_heads),
                 norm(&m,&format!("{p}.mlp_norm"),c.norm_eps)?,
-                linear(&m,&format!("{p}.wi"))?,linear(&m,&format!("{p}.wo"))?,
+                linear(&m,q,&format!("{p}.wi"))?,linear(&m,q,&format!("{p}.wo"))?,
                 if local{c.local_rope_theta}else{c.global_rope_theta},
                 if local{Some(c.local_attention/2)}else{None},
             ));
         }
         let encoder=ModernBert::new(tensor(&m,"embeddings.weight")?,norm(&m,"embeddings.norm",c.norm_eps)?,layers,norm(&m,"final_norm",c.norm_eps)?);
-        Ok(Self{text_1:linear(&m,"text_projector.linear_1")?,text_2:linear(&m,"text_projector.linear_2")?,
-            class_1:linear(&m,"classes_projector.linear_1")?,class_2:linear(&m,"classes_projector.linear_2")?,
+        Ok(Self{text_1:linear_biased(&m,q,"text_projector.linear_1")?,text_2:linear_biased(&m,q,"text_projector.linear_2")?,
+            class_1:linear_biased(&m,q,"classes_projector.linear_1")?,class_2:linear_biased(&m,q,"classes_projector.linear_2")?,
             encoder,config:c,bundle,backend_kind:kind})
     }
     /// Positions of the `<<LABEL>>` tokens, in order. These are the class slots.
@@ -172,6 +243,62 @@ impl VerdictModel {
             .map_err(|e|Error::ModelUnavailable(e.to_string()))?;
         let logits=classes.broadcast_mul(&text).and_then(|x|x.sum(D::Minus1)).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
         let v=logits.to_vec1::<f32>().map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        if v.iter().any(|x|!x.is_finite()){return Err(Error::Numeric);}
+        Ok(v)
+    }
+}
+
+/// One phase of a profiled inference. Measurement only; never part of a receipt.
+#[derive(Debug,Clone,PartialEq,Eq,Serialize,Deserialize)]
+pub struct PhaseCost{pub name:&'static str,pub instructions:u64}
+
+impl VerdictModel {
+    /// `logits` with a callback at each phase boundary.
+    ///
+    /// The split exists because the phases have different fixes: the encoder layers
+    /// are dense matmuls (quantisation territory), the gather and the dot product are
+    /// O(classes) and would need a different treatment entirely. A phase breakdown
+    /// that only said "the model costs N" could not tell those apart.
+    ///
+    /// `detailed` additionally marks the sub-phases of every encoder layer, which
+    /// repeat once per layer; callers aggregate by name.
+    pub fn logits_profiled(&self,ids:&[u32],mark:&mut dyn FnMut(&'static str),detailed:bool)->Result<Vec<f32>>{
+        let positions=self.class_positions(ids);
+        self.config.check_class_count(positions.len())?;
+        if ids.is_empty() || ids.len()>MAX_SEQUENCE {return Err(Error::Invalid("token input".into()));}
+        if ids.iter().any(|&v|v as usize>=self.config.vocab_size){return Err(Error::Invalid("token id".into()));}
+        let device=candle_core::Device::Cpu;
+        let tokens=Tensor::from_vec(ids.to_vec(),ids.len(),&device).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        let mut h=self.encoder.embedding_norm.forward(&self.encoder.embedding.index_select(&tokens,0).map_err(|e|Error::ModelUnavailable(e.to_string()))?)
+            .map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        mark("embedding");
+        let tokens=h.dim(0).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        let hidden=h.dim(1).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        // Only the detailed profile exposes the rope phases.
+        let tables=if detailed {self.encoder.rope_tables(tokens,hidden,mark)}
+                    else {self.encoder.rope_tables(tokens,hidden,&mut |_|{})}
+                    .map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        for layer in &self.encoder.layers {
+            let table=laya_candle::table_for(&tables,layer.theta()).clone();
+            h=if detailed {layer.forward_marked(&h,&table,mark).map_err(|e|Error::ModelUnavailable(e.to_string()))?}
+              else {layer.forward(&h,&table).map_err(|e|Error::ModelUnavailable(e.to_string()))?};
+        }
+        h=self.encoder.final_norm.forward(&h).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        mark("encoder");
+        let tlen=h.dim(0).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        if tlen!=ids.len(){return Err(Error::Invalid("encoder output shape".into()));}
+        let cls=h.narrow(0,CLS_POSITION,1).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        let text=Self::projector(&self.text_1,&self.text_2,self.config.projector_activation,&cls)
+            .map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        mark("text_projector");
+        let idx=Tensor::from_vec(positions.clone(),positions.len(),&device).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        let selected=h.index_select(&idx,0).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        let classes=Self::projector(&self.class_1,&self.class_2,self.config.projector_activation,&selected)
+            .map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        mark("class_projector");
+        let logits=classes.broadcast_mul(&text).and_then(|x|x.sum(D::Minus1)).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        let v=logits.to_vec1::<f32>().map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        mark("dot_decode");
         if v.iter().any(|x|!x.is_finite()){return Err(Error::Numeric);}
         Ok(v)
     }

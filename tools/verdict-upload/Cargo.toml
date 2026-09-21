@@ -1,12 +1,17 @@
 [package]
-name = "laya-candle"
+name = "verdict-upload"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+
+[[bin]]
+name = "verdict-upload"
+path = "src/main.rs"
+
 [dependencies]
 ic-laya-core.workspace = true
-candle-core.workspace = true
-verdict-simd.workspace = true
+candid = "0.10"
 serde.workspace = true
 serde_json.workspace = true
-[dev-dependencies]
+ic-agent = "0.49"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }

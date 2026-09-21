@@ -1,0 +1,10 @@
+starting the local network ...
+  network: http://127.0.0.1:8000/
+  canister: 4caro-hl777-77775-aaaba-cai  owner: 7kgje-alv7l-wmor5-wpty5-plova-rtql3-i6a4f-giwmg-erft7-cmtkx-gqe
+
+FAILED: icp canister call verdict-engine info () -e local --candid /Volumes/KINGSTON/ICP/IC-Laya/build/verdict-engine.did --project-root-override /Volumes/KINGSTON/ICP/IC-Laya --identity ic-verdict-local
+Error: direct update call failed: The replica returned a rejection error: reject code CanisterError, reject message Requested canister has no wasm module, error code Some("IC0537")
+
+Caused by:
+    The replica returned a rejection error: reject code CanisterError, reject message Requested canister has no wasm module, error code Some("IC0537")
+

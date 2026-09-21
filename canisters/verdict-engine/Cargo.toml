@@ -1,0 +1,34 @@
+[package]
+name = "verdict-engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[lib]
+crate-type = ["cdylib", "rlib"]
+[dependencies]
+ic-laya-core.workspace = true
+canister-common.workspace = true
+ic-cdk.workspace = true
+candid.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+verdict-candle.workspace = true
+hf-tokenizer.workspace = true
+candle-core.workspace = true
+verdict-simd.workspace = true
+
+# Same wasm-only getrandom backend as decision-engine; the module is shared by
+# path rather than copied, because `getrandom` is non-optional in the graph:
+#   candle-core -> rand -> rand_core -> getrandom
+#   tokenizers  -> ahash            -> getrandom
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.3", default-features = false }
+rand_chacha = { version = "0.9", default-features = false }
+sha2.workspace = true
+
+[features]
+default = []
+# int8 dense weights for the openJev model: -27.2% instructions per decision, at the
+# cost of a small number of changed decisions (994/1000 golden agreement with plain i8
+# activations; see docs/VERDICT_ENGINE.md 5.1.6). Off by default.
+int8 = ["verdict-candle/int8"]

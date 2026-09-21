@@ -14,7 +14,16 @@
 # Scope is limited to the wasm32 target so native builds and the executor /
 # mock-ledger canisters (whose graphs contain no getrandom) are unaffected.
 #
-# `-C target-feature=+simd128` is deliberately NOT set here.
+# `-C target-feature=+simd128` is deliberately NOT set here, and that is now a
+# measurement rather than an assumption. Enabling it module-wide (with a vendored
+# candle-core whose f16/bf16 gates drop simd128, so the crate compiles) was measured
+# on the local replica against the real checkpoint: end-to-end T=120 went from
+# 39,567,477,066 to 38,736,773,563 instructions (-2.1%), while the dense matmuls —
+# 91% of the cost — stayed at 2.65 instructions/MAC, because gemm's wasm SIMD
+# microkernel (gemm-f32-0.19.0/src/microkernel.rs:504 uses core::arch::wasm32
+# intrinsics) is selected without the flag. The 1.9 MiB vendored dependency
+# was therefore not worth keeping. Cross-target logits agreed to 1e-5, so the effect
+# is real but too small to matter. See docs/VERDICT_ENGINE.md 5.1.3.
 #
 # simd128 is not a default of this target: `rustc --target wasm32-unknown-unknown
 # --print cfg` lists bulk-memory, multivalue, mutable-globals, nontrapping-fptoint,

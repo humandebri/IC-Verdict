@@ -20,6 +20,11 @@ canisters:
       steps:
         - type: script
           command: echo "use tools/build_one.sh; this step only satisfies the manifest"
+  - name: verdict-engine
+    build:
+      steps:
+        - type: script
+          command: echo "use tools/build_one.sh; this step only satisfies the manifest"
   - name: executor
     build:
       steps:
