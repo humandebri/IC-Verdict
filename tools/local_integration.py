@@ -510,8 +510,10 @@ def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> in
     check("Ok" in registered, "operation outside the allowlist is still registrable")
     # A rejected submit does NOT consume the nonce: `g.eligible` runs before the
     # counter advances, so the workflow below still starts at nonce 0.
+    # `expect_ok=False`: this call *wants* the Candid `Err`, and `Icp.call` otherwise
+    # raises before the assertion below can see it.
     denied = icp.call("executor", "submit",
-                      f"({blob(outside_id)}, {blob(grant_id)}, 0 : nat64)")
+                      f"({blob(outside_id)}, {blob(grant_id)}, 0 : nat64)", expect_ok=False)
     check("Denied" in denied, "submit for a non-allowlisted recipient is denied")
 
     # 3. Callers outside the grant are refused. Two distinct reasons are covered:
@@ -625,7 +627,8 @@ def leave_unknown_for_upgrade(icp: "Icp", grant_id: bytes, ledger: str, owner: s
     icp.call("executor", "dispatch", f"({blob(second)})", expect_ok=False)
     state = icp.call("executor", "get_request", f"({blob(second)})")
     check("OutcomeUnknown" in state, "second request is stranded in OutcomeUnknown for the upgrade")
-    print(f"  stranded request {second.hex()[:16]}...")
+    # Full hex: the id is needed to abandon the transfer before an upgrade.
+    print(f"  stranded request {second.hex()}")
 
 
 def verify_upgrade_guard(icp: "Icp", install_args: str) -> int:
