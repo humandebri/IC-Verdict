@@ -7,9 +7,6 @@
 # committed: models/verdict-151m is a 540 MB safetensors file.
 /models/
 /.icphome/
-# Sized synthetic packs for perf measurement. Regenerable in seconds via
-# `python tools/generate_fixtures.py --tier <name>`; measure-m alone is 81 MiB.
-/fixtures/measure-*/
 # icp-cli local network state: replica cache and canister id mappings.
 /.icp/
 __pycache__/

@@ -92,20 +92,24 @@ def main():
     want_rust=args.rust or args.require_rust
     if want_rust and binaries["cargo"] and binaries["rustc"]:
         run("rust_workspace_tests",["cargo","test","--workspace"],"rust_workspace_tests.log",900)
-        run("rust_candle_canister_native_check",["cargo","check","-p","decision-engine","--features","candle"],"rust_candle_check.log",900)
         # Debug, not release: this records that the wasm32 target still compiles and
         # links (including the getrandom custom backend). Release artifacts and
         # Candid come from tools/build_one.sh.
-        run("wasm_build",["cargo","build","--target","wasm32-unknown-unknown","-p","decision-engine","--lib","--features","candle"],"wasm_build.log",900)
+        run("wasm_build",["cargo","build","--target","wasm32-unknown-unknown","-p","decision-engine","--lib"],"wasm_build.log",900)
         run("verdict_candle_tests",["cargo","test","-p","verdict-candle"],"verdict_candle_tests.log",900)
+        # The quantised dense path is opt-in at deploy time, so the default test run
+        # would never compile it. Both feature configurations are required here.
+        run("verdict_candle_int8_tests",["cargo","test","-p","verdict-candle","--features","int8"],"verdict_int8_tests.log",900)
         run("verdict_engine_wasm_build",["cargo","build","--target","wasm32-unknown-unknown","-p","verdict-engine","--lib"],"verdict_wasm_build.log",900)
+        run("verdict_engine_int8_wasm_build",["cargo","build","--target","wasm32-unknown-unknown","-p","verdict-engine","--lib","--features","int8"],"verdict_int8_wasm_build.log",900)
     else:
         why="Rust toolchain not installed" if not binaries["cargo"] or not binaries["rustc"] else "Pass --rust to run Rust checks"
         records.append(dict(check="rust_workspace_tests",status="NOT_RUN",reason=why))
-        records.append(dict(check="rust_candle_canister_native_check",status="NOT_RUN",reason=why))
         records.append(dict(check="wasm_build",status="NOT_RUN",reason=why))
         records.append(dict(check="verdict_candle_tests",status="NOT_RUN",reason=why))
+        records.append(dict(check="verdict_candle_int8_tests",status="NOT_RUN",reason=why))
         records.append(dict(check="verdict_engine_wasm_build",status="NOT_RUN",reason=why))
+        records.append(dict(check="verdict_engine_int8_wasm_build",status="NOT_RUN",reason=why))
     # Opt-in: needs the 605 MiB pack (tools/pack_verdict.py) and the release binary.
     parity_pack=ROOT/"models"/"verdict-pack"
     parity_bin=ROOT/"target"/"release"/"verdict-infer"
@@ -151,8 +155,9 @@ def main():
     # whose verdict was "PASS" and exited 0 -- exactly the failure mode this file exists
     # to prevent. The no-flag invocation still exits 0: it is explicitly a
     # source-delivery validation, and it now says so out loud.
-    requested={"rust_workspace_tests":want_rust,"rust_candle_canister_native_check":want_rust,
-      "wasm_build":want_rust,"verdict_candle_tests":want_rust,"verdict_engine_wasm_build":want_rust,
+    requested={"rust_workspace_tests":want_rust,"wasm_build":want_rust,
+      "verdict_candle_tests":want_rust,"verdict_candle_int8_tests":want_rust,
+      "verdict_engine_wasm_build":want_rust,"verdict_engine_int8_wasm_build":want_rust,
       "openjev_checkpoint_parity":args.verdict,"openjev_canister_instructions":args.verdict_canister,
       "icp_canister_integration":args.local_integration,"manifest_integrity":args.manifest}
     def reason_for(name):

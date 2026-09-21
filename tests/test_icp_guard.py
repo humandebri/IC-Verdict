@@ -3,9 +3,8 @@
 Before this guard existed, `tools/verdict_canister.py` and
 `tools/measure_verdict.py` ran `icp token transfer`, `icp cycles mint` and
 `icp canister install -m reinstall` against whatever `--env` named, and
-`--replica` was handed straight to ic-agent. `tools/local_integration.py` and
-`tools/measure_inference.py` had their own copies of the check; the two that mint
-cycles and wipe canisters did not.
+`--replica` was handed straight to ic-agent. The scripts that mint cycles and
+wipe canisters now route every state-changing call through `icp_guard`.
 
 These tests do not need the `icp` CLI or a network: `subprocess.run` is replaced,
 so the assertion is exactly "the state-changing command was never executed".

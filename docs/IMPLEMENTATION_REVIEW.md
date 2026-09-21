@@ -8,7 +8,7 @@
 |---|---|
 | `tools/build_one.sh`がmacOSのbash 3.2で全滅する | `features=()`の空配列展開が`set -u`下でunboundになる。`run()`経由の条件分岐へ変更 |
 | `build_one.sh`が`CARGO_TARGET_DIR`を無視してartifactを取り違える | `cargo metadata`の`target_directory`を解決してから`cp` |
-| `--features candle`のWasmビルドが不可能 | `getrandom 0.3`が`wasm32-unknown-unknown`でbackendを持たない。`.cargo/config.toml`でcustom backendを選択し、`getrandom_ic.rs`で`__getrandom_v03_custom`を実装 |
+| （歴史）`--features candle`のWasmビルドが不可能 | `getrandom 0.3`が`wasm32-unknown-unknown`でbackendを持たない。`.cargo/config.toml`でcustom backendを選択し、`getrandom_ic.rs`で`__getrandom_v03_custom`を実装。**このfeatureはLayaバックエンド削除とともに撤去済み** |
 | toolchainによってnativeビルドが成否する | `candle-core 0.11.0`の`stdarch_neon_f16`は1.93.0で未安定。`rust-toolchain.toml`で1.97.1に固定 |
 | カスタムRNGが暗号学的乱数と誤解される | `getrandom_ic.rs`のdocコメントに、`raw_rand`の代用ではなくtensor初期化とhash seed専用であることを明記。鍵・nonce生成に使わない |
 

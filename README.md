@@ -56,7 +56,6 @@ docs/               # 最終設計、16 ADR、実装状況、レビュー
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-dev.txt
-python tools/generate_fixtures.py
 python -m unittest discover -s tests -v
 python tools/verify.py
 ```
@@ -109,13 +108,13 @@ python tools/local_demo.py
 
 CandidはRustの`export_candid!()`から生成して`build/*.did`へ置きます。未コンパイルの段階で手書きのDIDを正本として同梱していません。
 
-実推論featureのビルド候補:
+量子化dense重み（int8）のビルド候補:
 
 ```bash
-IC_LAYA_CANDLE=1 bash tools/build_one.sh decision-engine
+IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine
 ```
 
-Candle/tokenizersのWasm依存経路は未検証です。ブラウザWasm対応をICP互換性の証拠にしていません。CIではこのビルドも必須にして、不適合を隠さない設定にしています。
+int8は配備時のopt-inで、既定ビルドはF32推論です。CIでは両方の構成をビルド・テストして不適合を隠さない設定にしています。
 
 ## 6. 判断バックエンド
 

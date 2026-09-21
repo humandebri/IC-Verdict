@@ -3,11 +3,9 @@
 Why this exists as one module: `icp canister create/install/top-up/call`,
 `icp token transfer` and `icp cycles mint` are irreversible or spend real value.
 Pointed at a connected network they do exactly that, and a fresh `--identity`
-means the operator would not even notice their own identity was not used. Two
-scripts (`local_integration.py`, `measure_inference.py`) grew their own copy of
-this check; `verdict_canister.py` and `measure_verdict.py`, which *also* mint
-cycles and `-m reinstall` canisters, had none. The copies are gone and the check
-lives here.
+means the operator would not even notice their own identity was not used. The
+scripts that mint cycles or `-m reinstall` canisters (`verdict_canister.py`,
+`measure_verdict.py`, `local_integration.py`) all route through this check.
 
 `managed: true` is the only reliable local/remote discriminator -- icp-cli sets it
 for an environment it launched itself. There is deliberately no override flag:

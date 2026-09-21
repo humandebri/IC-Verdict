@@ -43,7 +43,8 @@ jobs:
       - run: bash tools/build_one.sh mock-ledger
       - run: bash tools/build_one.sh verdict-engine
       # This is a required check, not continue-on-error. Incompatibility must surface.
-      - run: IC_LAYA_CANDLE=1 bash tools/build_one.sh decision-engine
+      # The quantised dense path is opt-in at deploy time; CI must still build it.
+      - run: IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -3,8 +3,8 @@
 # Why it is pinned rather than "stable": candle-core 0.11.0 uses the
 # `stdarch_neon_f16` intrinsics (float16x8_t) in cpu/neon.rs whenever the
 # aarch64 target advertises the `fp16` feature, which Apple Silicon does by
-# default. That library feature is still unstable on Rust 1.93.0, so
-# `laya-candle` and `decision-engine --features candle` fail with E0658 there:
+# default. That library feature is still unstable on Rust 1.93.0, so native
+# builds of the candle-backed crates fail with E0658 there:
 #
 #     error[E0658]: use of unstable library feature `stdarch_neon_f16`
 #        --> candle-core-0.11.0/src/cpu/neon.rs:160:30
@@ -15,8 +15,9 @@
 #
 # Raising or changing this pin requires re-running:
 #   cargo test --workspace
-#   cargo check -p decision-engine --features candle
-#   IC_LAYA_CANDLE=1 bash tools/build_one.sh decision-engine
+#   cargo test -p verdict-candle --features int8
+#   bash tools/build_one.sh verdict-engine
+#   IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine
 [toolchain]
 channel = "1.97.1"
 targets = ["wasm32-unknown-unknown"]
