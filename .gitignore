@@ -22,5 +22,3 @@ fixtures/verdict-tiny/manifest.json
 # reference implementation. Neither is project source.
 /.cache/
 /.axtmp/
-# Standalone wasm codegen probe (tools/simd-probe); build products only.
-/tools/simd-probe/target/

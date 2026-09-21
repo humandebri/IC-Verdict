@@ -2,7 +2,6 @@
 resolver = "2"
 members = ["crates/ic-laya-core", "crates/modernbert-candle", "crates/verdict-candle", "crates/verdict-simd", "crates/hf-tokenizer", "crates/canister-common", "canisters/decision-engine", "canisters/verdict-engine", "canisters/executor", "canisters/mock-ledger", "tools/verdict-upload"]
 default-members = ["crates/ic-laya-core"]
-exclude = ["tools/simd-probe"]
 
 [workspace.package]
 version = "0.1.0"

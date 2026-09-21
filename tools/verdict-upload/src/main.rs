@@ -41,7 +41,6 @@ struct Args {
     profile_detailed: bool,
     decide: bool,
     bench: Option<String>,
-    simd: Option<String>,
     quant: Option<String>,
     int8: Option<String>,
     f16: Option<String>,
@@ -92,13 +91,6 @@ struct QuantBenchReply {
     m: u32, n: u32, k: u32, iterations: u32, dtype: String, quantize_instructions: u64,
     instructions: u64, per_iteration: u64, instructions_per_mac: f64, max_abs_diff_vs_f32: f32,
 }
-/// Mirror of the canister's `SimdBenchReply`.
-#[derive(candid::Deserialize, candid::CandidType)]
-struct SimdBenchReply {
-    m: u32, n: u32, k: u32, iterations: u32, simd_used: bool, instructions: u64,
-    per_iteration: u64, instructions_per_mac: f64, max_abs_diff_vs_scalar: f32,
-    scalar_instructions: u64, scalar_instructions_per_mac: f64,
-}
 /// Mirror of the canister's `BenchReply`.
 #[derive(candid::Deserialize, candid::CandidType)]
 struct BenchReply {
@@ -146,7 +138,6 @@ fn parse_args() -> Result<Args, String> {
     let mut infer = None;
     let mut decide = false;
     let mut bench = None;
-    let mut simd = None;
     let mut quant = None;
     let mut int8 = None;
     let mut f16 = None;
@@ -175,7 +166,6 @@ fn parse_args() -> Result<Args, String> {
             "--infer" => infer = Some(value()?),
             "--decide" => decide = true,
             "--bench" => bench = Some(value()?),
-            "--simd" => simd = Some(value()?),
             "--quant" => quant = Some(value()?),
             "--int8" => int8 = Some(value()?),
             "--f16" => f16 = Some(value()?),
@@ -206,7 +196,6 @@ fn parse_args() -> Result<Args, String> {
         profile_detailed,
         decide,
         bench,
-        simd,
         quant,
         int8,
         f16,
@@ -447,28 +436,6 @@ async fn run() -> Result<(), String> {
         );
     }
 
-    if let Some(shape) = &args.simd {
-        let parts: Vec<u64> = shape.split(',').map(|v| v.trim().parse().unwrap_or(0)).collect();
-        if parts.len() != 4 { return Err("--simd wants m,n,k,iterations".into()); }
-        let reply = agent
-            .update(&canister, "bench_simd")
-            .with_arg(Encode!(&(parts[0] as u32), &(parts[1] as u32), &(parts[2] as u32), &(parts[3] as u32))
-                .map_err(|e| e.to_string())?)
-            .call_and_wait()
-            .await
-            .map_err(|e| format!("bench_simd: {e}"))?;
-        let reply = Decode!(&reply, Result<SimdBenchReply, ic_laya_core::Error>)
-            .map_err(|e| format!("bench_simd reply: {e}"))?
-            .map_err(|e| format!("bench_simd rejected: {e:?}"))?;
-        println!(
-            "SIMD m={} n={} k={} used={} instr_per_mac={:.3} scalar_instr_per_mac={:.3} speedup={:.2}x max_abs_diff={:.6}",
-            reply.m, reply.n, reply.k, reply.simd_used, reply.instructions_per_mac,
-            reply.scalar_instructions_per_mac,
-            if reply.instructions > 0 { reply.scalar_instructions as f64 / reply.instructions as f64 } else { 0.0 },
-            reply.max_abs_diff_vs_scalar
-        );
-    }
-
     if let Some(spec) = &args.quant {
         // --quant m,n,k,iterations,q8_0
         let parts: Vec<&str> = spec.split(',').map(|v| v.trim()).collect();
@@ -494,12 +461,11 @@ async fn run() -> Result<(), String> {
 
     if let Some(spec) = &args.int8 {
         let parts: Vec<&str> = spec.split(',').map(|v| v.trim()).collect();
-        let source = parts.get(4).copied().unwrap_or("crate").to_string();
-        if parts.len() < 4 { return Err("--int8 wants m,n,k,iterations[,crate|rlib]".into()); }
+        if parts.len() != 4 { return Err("--int8 wants m,n,k,iterations".into()); }
         let reply = agent
             .update(&canister, "bench_int8")
             .with_arg(Encode!(&parts[0].parse::<u32>().unwrap_or(0), &parts[1].parse::<u32>().unwrap_or(0),
-                              &parts[2].parse::<u32>().unwrap_or(0), &parts[3].parse::<u32>().unwrap_or(0), &source)
+                              &parts[2].parse::<u32>().unwrap_or(0), &parts[3].parse::<u32>().unwrap_or(0))
                 .map_err(|e| e.to_string())?)
             .call_and_wait()
             .await
@@ -508,7 +474,7 @@ async fn run() -> Result<(), String> {
             .map_err(|e| format!("bench_int8 reply: {e}"))?
             .map_err(|e| format!("bench_int8 rejected: {e:?}"))?;
         println!(
-            "INT8[{}] m={} n={} k={} iters={} simd={} instr_per_mac={:.3} quant_w={} quant_a={} max_abs={:.4} max_rel={:.4}", source,
+            "INT8 m={} n={} k={} iters={} simd={} instr_per_mac={:.3} quant_w={} quant_a={} max_abs={:.4} max_rel={:.4}",
             reply.m, reply.n, reply.k, reply.iterations, reply.simd_used, reply.instructions_per_mac,
             reply.quantize_weights_instructions, reply.quantize_activations_instructions,
             reply.max_abs_diff_vs_f32, reply.max_rel_diff_vs_f32

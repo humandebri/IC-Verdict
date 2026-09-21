@@ -27,14 +27,6 @@ use std::collections::BTreeMap;
 #[path = "../../decision-engine/src/getrandom_ic.rs"]
 mod getrandom_ic;
 
-/// The same kernel source, compiled *inside this crate* rather than consumed as an
-/// rlib dependency. Measured reason: as a dependency the v128 instructions never
-/// reached the artifact (the function body stayed scalar, 6 SIMD ops), while the
-/// identical source in a `cdylib` crate does vectorise (tools/simd-probe: 57-77
-/// SIMD ops). Including it here is the cheapest way to test that boundary.
-#[path = "../../../crates/verdict-simd/src/lib.rs"]
-mod verdict_kernel;
-
 /// Refuse inputs longer than this. It is a policy bound; the *budget* guard is
 /// `estimated_cost`, which uses the measured cost model below.
 pub const MAX_INPUT_TOKENS:u32=128;
@@ -217,47 +209,6 @@ fn bench_matmul(m:u32,n:u32,k:u32,iterations:u32)->Result<BenchReply>{
 }
 
 #[derive(CandidType,Serialize,Deserialize,Clone)]
-pub struct SimdBenchReply{pub m:u32,pub n:u32,pub k:u32,pub iterations:u32,
-    pub simd_used:bool,pub instructions:u64,pub per_iteration:u64,pub instructions_per_mac:f64,
-    pub max_abs_diff_vs_scalar:f32,pub scalar_instructions:u64,pub scalar_instructions_per_mac:f64}
-/// MEASUREMENT ONLY. Compares the hand-written f32x4 kernel with the scalar
-/// reference on identical data, inside the canister, and reports both costs plus
-/// the maximum absolute difference between them.
-///
-/// The scalar number is the honest baseline: it is what the two paths differ by
-/// after everything else (allocation, caching, instruction counting) is held
-/// equal. `bench_matmul` separately reports what `candle`'s gemm costs on the same
-/// shape, which is what the model actually uses today.
-#[ic_cdk::update]
-fn bench_simd(m:u32,n:u32,k:u32,iterations:u32)->Result<SimdBenchReply>{
-    owner()?;
-    if m==0||n==0||k==0||m>512||n>4096||k>4096||iterations==0||iterations>64{return Err(Error::Invalid("bench shape".into()));}
-    let (m,n,k,iters)=(m as usize,n as usize,k as usize,iterations as usize);
-    let a=verdict_kernel::AlignedF32::from_slice(&(0..m*k).map(|i|(((i%251) as f32)-125.0)*0.0007).collect::<Vec<f32>>());
-    let b=verdict_kernel::AlignedF32::from_slice(&(0..k*n).map(|i|(((i%97) as f32)-48.0)*0.0011).collect::<Vec<f32>>());
-    let mut out=verdict_kernel::AlignedF32::zeros(m*n);
-    let mut reference=verdict_kernel::AlignedF32::zeros(m*n);
-    let simd_used=verdict_kernel::matmul_nt(a.as_slice(),b.as_slice(),m,k,n,out.as_mut_slice());
-    verdict_kernel::matmul_scalar(a.as_slice(),b.as_slice(),m,k,n,reference.as_mut_slice());
-    let max_abs_diff=out.as_slice().iter().zip(reference.as_slice().iter())
-        .fold(0.0f32,|acc,(x,y)|acc.max((x-y).abs()));
-    // Warm-up outside both measurements.
-    let _=verdict_kernel::matmul_nt(a.as_slice(),b.as_slice(),m,k,n,out.as_mut_slice());
-    let before=ic_cdk::api::instruction_counter();
-    for _ in 0..iters { let _=verdict_kernel::matmul_nt(a.as_slice(),b.as_slice(),m,k,n,out.as_mut_slice()); }
-    let instructions=ic_cdk::api::instruction_counter().saturating_sub(before);
-    let before=ic_cdk::api::instruction_counter();
-    for _ in 0..iters { verdict_kernel::matmul_scalar(a.as_slice(),b.as_slice(),m,k,n,reference.as_mut_slice()); }
-    let scalar_instructions=ic_cdk::api::instruction_counter().saturating_sub(before);
-    let macs=(m*n*k*iters) as f64;
-    Ok(SimdBenchReply{m:m as u32,n:n as u32,k:k as u32,iterations:iters as u32,simd_used,instructions,
-        per_iteration:instructions/iters as u64,
-        instructions_per_mac:if macs>0.0{instructions as f64/macs}else{0.0},
-        max_abs_diff_vs_scalar:max_abs_diff,scalar_instructions,
-        scalar_instructions_per_mac:if macs>0.0{scalar_instructions as f64/macs}else{0.0}})
-}
-
-#[derive(CandidType,Serialize,Deserialize,Clone)]
 pub struct QuantBenchReply{pub m:u32,pub n:u32,pub k:u32,pub iterations:u32,pub dtype:String,
     pub quantize_instructions:u64,pub instructions:u64,pub per_iteration:u64,
     pub instructions_per_mac:f64,pub max_abs_diff_vs_f32:f32}
@@ -316,7 +267,7 @@ pub struct Int8BenchReply{pub m:u32,pub n:u32,pub k:u32,pub iterations:u32,
 /// activations once per call (that is a real per-call cost), and both are reported
 /// separately so the numbers can be read against the f32 path's 2.5 instructions/MAC.
 #[ic_cdk::update]
-fn bench_int8(m:u32,n:u32,k:u32,iterations:u32,source:String)->Result<Int8BenchReply>{
+fn bench_int8(m:u32,n:u32,k:u32,iterations:u32)->Result<Int8BenchReply>{
     owner()?;
     if m==0||n==0||k==0||m>512||n>4096||k>4096||iterations==0||iterations>64||k%8!=0{return Err(Error::Invalid("bench shape".into()));}
     let (m,n,k)=(m as usize,n as usize,k as usize);
@@ -324,21 +275,13 @@ fn bench_int8(m:u32,n:u32,k:u32,iterations:u32,source:String)->Result<Int8BenchR
     let w=bench_matrix(n,k)?.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
     let x=bench_matrix(m,k)?.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
     let before=ic_cdk::api::instruction_counter();
-    let (wq,wsx)=verdict_kernel::quantize_rows_i8(&w,n,k);
+    let (wq,wsx)=verdict_simd::quantize_rows_i8(&w,n,k);
     let quantize_weights_instructions=ic_cdk::api::instruction_counter().saturating_sub(before);
     let before=ic_cdk::api::instruction_counter();
-    let (xq,xsx)=verdict_kernel::quantize_acts_i16(&x,m,k);
+    let (xq,xsx)=verdict_simd::quantize_acts_i16(&x,m,k);
     let quantize_activations_instructions=ic_cdk::api::instruction_counter().saturating_sub(before);
     let mut out=vec![0f32;m*n];
-    // `crate` runs the copy compiled inside this canister crate; `rlib` runs the
-    // identical source compiled as a dependency. The f32 kernel needed the former to
-    // vectorise at all, so the int8 path is measured both ways before it is wired in.
-    let rlib = source=="rlib";
-    let run = |xq:&[i16], wq:&[i8], xsx:&[f32], wsx:&[f32], out:&mut [f32]| -> bool {
-        if rlib { verdict_simd::matmul_i8(xq,wq,xsx,wsx,m,k,n,out) }
-        else { verdict_kernel::matmul_i8(xq,wq,xsx,wsx,m,k,n,out) }
-    };
-    let simd_used=run(&xq,&wq,&xsx,&wsx,&mut out);
+    let simd_used=verdict_simd::matmul_i8(&xq,&wq,&xsx,&wsx,m,k,n,&mut out);
     // Reference: f32 product with the same layout ([n,k] weights transposed conceptually).
     let mut want=vec![0f32;m*n];
     for i in 0..m { for j in 0..n {
@@ -353,7 +296,7 @@ fn bench_int8(m:u32,n:u32,k:u32,iterations:u32,source:String)->Result<Int8BenchR
         max_rel=max_rel.max(d);
     }
     let before=ic_cdk::api::instruction_counter();
-    for _ in 0..iterations { run(&xq,&wq,&xsx,&wsx,&mut out); }
+    for _ in 0..iterations { let _=verdict_simd::matmul_i8(&xq,&wq,&xsx,&wsx,m,k,n,&mut out); }
     let instructions=ic_cdk::api::instruction_counter().saturating_sub(before);
     let macs=(m*n*k*iterations as usize) as f64;
     Ok(Int8BenchReply{m:m as u32,n:n as u32,k:k as u32,iterations:iterations as u32,simd_used,instructions,
