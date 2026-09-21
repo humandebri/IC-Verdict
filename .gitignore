@@ -4,7 +4,7 @@
 /.venv/
 /checkpoints/
 # Downloaded checkpoints and scratch ICP homes. Large binaries that must never be
-# committed: models/verdict-151m is a 540 MB safetensors file.
+# committed: models/verdict-151m is a 605 MB (577 MiB) safetensors file.
 /models/
 /.icphome/
 # icp-cli local network state: replica cache and canister id mappings.

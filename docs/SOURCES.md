@@ -1,5 +1,9 @@
 # 一次資料と確認範囲
 
+> **履歴**: 以下の「weights未取得・実モデル推論/Rustビルド/ICP deploy未実施」は2026-09-19時点の記録で、
+> 現行ツリーには当てはまらない。openJev 151Mの実checkpointを投入してparityを確認し、4 canisterをビルドし、
+> ローカルreplicaで統合試験を実施済み（出典は [VERDICT_ENGINE.md](VERDICT_ENGINE.md) と artifacts/）。
+
 確認日: 2026-09-19（JST）。以下のURLは確認した公開資料。main/stableは変わり得るため、実装時はcheckpoint、ソース、toolchainのrevisionとhashを固定する。今回はweightsの取得・実モデル推論・Rust/Wasm build・ICP deployは実施していない。
 
 | ID | 資料 | 確認範囲 |

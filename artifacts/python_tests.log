@@ -23,6 +23,6 @@ test_the_fixture_check_validates_instead_of_regenerating (test_verify_contract.V
 test_verdict_requested_without_the_pack_is_not_a_pass (test_verify_contract.VerifyContractTests.test_verdict_requested_without_the_pack_is_not_a_pass) ... ok
 
 ----------------------------------------------------------------------
-Ran 23 tests in 0.207s
+Ran 23 tests in 0.206s
 
 OK

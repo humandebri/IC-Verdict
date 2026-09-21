@@ -43,7 +43,7 @@
 # feature disables is candle's own wasm SIMD code for element-wise and normalisation
 # work, which the phase breakdown measures as a small share. Enabling the flag is
 # therefore gated on fixing or upgrading candle-core, not on this file. See
-# docs/PERFORMANCE_MEASUREMENTS.md for the measurement behind the matmul cost.
+# docs/archive/PERFORMANCE_MEASUREMENTS.md for the measurement behind the matmul cost.
 #
 # Note: a RUSTFLAGS environment variable overrides this table. Build canisters for
 # wasm through tools/build_one.sh so the setting is always applied.

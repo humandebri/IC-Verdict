@@ -16,7 +16,8 @@ Laya（421M、F32、128トークンで494〜567B）と同じ結論だが、151M�
 当てはまらない。** 383はJevBenchの生入力を素朴に数えた値で、本実装が測る入力
 （選択肢の説明文を含む実際のprompt）ではない。実benchmark 1000件をこの実装の契約で数えると
 **中央値94・平均96.5・p90 111・最長150トークン**（`models/verdict-parity/cases.jsonl`、
-`verdict-infer tokens`）で、**120/120件中118件（98%）が予算内**である。5.1.1節の結論は
+`verdict-infer tokens`。先頭120件のサブサンプル）で、**120/120件中118件（98%）が予算内**である。
+1000件全体では中央値95・平均95.8・p90 108・予算内975/1000（97.5%）である。5.1.1節の結論は
 「実入力はほぼ収まるが、長い側の裾は収まらない」であって「3.2倍超過」ではない。
 
 ## 2. 実装したもの
@@ -80,7 +81,7 @@ cargo build --release -p verdict-candle
 
 ### 3.2 カーネル単位のテスト
 
-`cargo test -p verdict-candle` が8件。pack往復（`Builder`→`VerdictModel`）が直接構築と一致すること、
+`cargo test -p verdict-candle` が11件（+1 ignored: 577.5 MiB（605,512,704 B） packが必要なgolden）。pack往復（`Builder`→`VerdictModel`）が直接構築と一致すること、
 独立に再計算したhead（projector＋内積）と `logits()` が一致すること、class位置の順序、
 `max_classes` 超過の拒否、tensor set不一致の拒否を含む。
 
@@ -94,7 +95,7 @@ python3 tools/verdict_canister.py --pack fixtures/verdict-tiny \
   --tokenizer fixtures/verdict-tiny/tokenizer.json --ids 1,3,11,3,12,2 --keep --decide
 ```
 
-実pack（605 MiB）の場合:
+実pack（577.5 MiB（605,512,704 B））の場合:
 
 ```bash
 python3 tools/verdict_canister.py --pack models/verdict-pack \
@@ -108,7 +109,7 @@ python3 tools/verdict_canister.py --pack models/verdict-pack \
 
 ```bash
 python3 tools/measure_verdict.py --sweep 118,119,120,126 --top-up 200t
-# 温まったreplicaを使い回す場合（605 MiBの再投入を避ける）
+# 温まったreplicaを使い回す場合（577.5 MiB（605,512,704 B）の再投入を避ける）
 python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 ```
 
@@ -121,14 +122,22 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 ### 4.1 `icp canister call` でpackを運べない理由
 
 `upload_chunk(offset: nat64, bytes: vec nat8)` に 1 MiB を渡すには Candid 引数を argv にエスケープする必要があり、
-`docs/PERFORMANCE_MEASUREMENTS.md` が記録した argv 長の壁に当たる。icp-cli 1.0.2 の
+`docs/archive/PERFORMANCE_MEASUREMENTS.md` が記録した argv 長の壁に当たる。icp-cli 1.0.2 の
 `--args-format hex` / `bin` は `--args-file` と組み合わせても引数をデコードせず
 （canister側で Candid パースエラーになることを確認）、この経路は使えない。
 そこで `tools/verdict-upload` が ic-agent で ingress を直接話し、1 MiBを1 update callで送る。
 
 ## 5. 測定値
 
-### 5.1 実checkpoint（F32、151,378,177 params、ローカルreplica実測）
+### 5.1 実checkpoint（F32、151,378,176 params（packは`logit_scale`を除く142テンソル。checkpoint全体は151,378,177）、ローカルreplica実測）
+
+> **測定の来歴**: ここから5.1.13までの数値は、このリポジトリのローカルreplicaで
+> `bench_matmul` / `bench_simd` / `bench_int8` / `infer_tokens` / `infer_profiled` /
+> `tools/measure_verdict.py --sweep` を実行して得たもので、生ログの一部は `artifacts/` に
+> 残っていない。**`bench_simd`・`--simd`・f32 `f32x4` カーネル一族はその後の整理
+> （commit `b38d606`）で削除した**ため、それらに依存する値は履歴であり再実行できない。
+> 現在も再現できるのは `bench_int8`（0.780 instructions/MAC）、`infer_tokens`、
+> `infer_profiled`、`--sweep`、および `verdict-infer check` である。
 
 `infer_tokens` の `measured_instructions`（forwardのみ、引数のdecodeとreplyのencodeは含まない）。
 入力は `[CLS] <<LABEL>> 2000 <<LABEL>> 3000 [SEP]` に filler を足したもの。
@@ -165,8 +174,8 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 | 128 | — | 同上 |
 
 * **上限は T=120（成功）と T=126（拒否）の間**。5.1節の外挿 `T ≈ 123` はこの範囲に入っており、
-  外挿としては妥当だった。ただし**上限値そのものは外挿ではなくこの2点で押さえる**。
-* この3点の最小二乗は `I(T) ≈ 2.30e8 + 3.28e8 × T`。5.1節の式（`2.66e8 + 3.22e8 × T`）と
+  外挿としては妥当だった。ただし**上限値そのものは外挿ではなくこの3点で押さえる**。
+* この3点の厳密な最小二乗は `I(T) ≈ 5.41e9 + 2.8465e8 × T`（切片を落とすと過小評価になる）。5.1節の式（`2.66e8 + 3.22e8 × T`）と
   固定費が3.6e7、傾きが2%ずれる。**実benchmark入力でも限界費用はほぼ同じ**。
 * T=120 は 2B instructions/秒で**約19.8秒**。応答時間の観点では依然として重い。
 
@@ -190,7 +199,7 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 従来どおり認められない。
 
 ログ: `artifacts/verdict_sweep.json`。再現は
-`python3 tools/measure_verdict.py --sweep 118,119,120,126`（replicaを起動し605 MiB packを投入する）。
+`python3 tools/measure_verdict.py --sweep 118,119,120,126`（replicaを起動し577.5 MiB（605,512,704 B） packを投入する）。
 
 実用面の解釈:
 
@@ -206,12 +215,12 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 |---|---|
 | warm時のwasm linear memory | **1,099,694,080 B ≒ 1.02 GiB**（`heap_bytes` = `memory_size(0)×64KiB`、実checkpoint warm時） |
 | `decide`（state+question+2選択肢+abstention、実重み） | 52トークン、**16,831,252,741 instructions**、`card_lost` を 0.9731 で選択（targetと一致）、abstention 0.0245 |
-| 事前予算ガード | `I(T)=2.544e8+3.276e8·T`（実測2点 T=2/T=120 にフィット）＋余裕0.5%。`estimated_cost(120)=39.10e9 ≤ 40e9` で**許可**、`(126)=41.04e9` で**拒否** |
+| 事前予算ガード | `I(T)=2.544e8+3.276e8·T`（実測2点 T=2/T=120 にフィット）＋余裕0.5%。**以下はコードの実値**（以前の39.10e9/41.04e9は傾きの取り違え）。`estimated_cost(120)=39,764,232,000`（39.76e9）≤ 40e9 で**許可**、`estimated_cost(126)=41,739,660,000`（41.74e9）で**拒否** |
 | ガードの実地確認 | T=120: `39,567,477,066` で **Ok**（先行実測39.568e9と再現）。T=126: 40B超過を**trap ではなく `Capacity`** で返す（以前は replica が IC0522 で拒否） |
 
 `decide` が実重みで通ったことで、**typed decision 経路（tokenizer→prompt契約→forward→temperature→softmax）が canister 上で完走する**ことが確認できた。
 
-### 5.1.3 カーネル診断（`bench_matmul` / `bench_simd`、T=120形状）
+### 5.1.3 カーネル診断（`bench_matmul` / 削除済み`bench_simd`、T=120形状。SIMD側の値は履歴）
 
 | カーネル | instr/MAC | 備考 |
 |---|---|---|
@@ -397,6 +406,8 @@ state が長いほど節約が大きい（先の実測では state を含む206�
 `verdict-engine` から **rlib 依存**として使うと artifact 内でスカラー化していた（該当関数のSIMD命令は0〜6）。
 `lto = false`、`#[inline(never)]`、`#[inline(always)]` ラッパ、`simd128` フラグのいずれでも変わらない。
 **カーネルを `#[path]` で canister クレート内に取り込むと v128 が入る**（`bench_simd` に14命令、artifact全体で190関数）。
+この二重取り込みは整理（commit `b38d606`）で撤去した。残したint8経路は rlib 依存でも同一の 0.780 instructions/MAC を
+再現したため、canister内の複製は不要だった。
 つまり **クレート境界が原因**で、回避策は「カーネルを canister クレート内でコンパイルする」こと。
 
 残る性能差の原因も artifact から確認できた: 4×4 カーネルの内側ループで
@@ -447,8 +458,8 @@ canister で実測した。
 
 予測（−34%）より小さいのは、dense 以外の 9% と活性量子化（24e6/call）が減らないため。
 
-**精度の代償（実測）**: 著者記録との argmax 一致は **1000件で 994/1000（99.40%）**、
-量子化を改善した版では 300件時点で **298/300（99.3%）**（f32 は 1000/1000）。
+**精度の代償（実測）**: 著者記録との argmax 一致は **1000件で 994/1000（99.40%）**（f32 は 1000/1000）。
+再現は int8 ビルドでの `verdict-infer check --limit 1000`（この測定の生ログは`artifacts/`に未保存）。
 確率偏差は max 0.0835 / 平均 0.0121。**1%の判断が変わる**ため、
 既定ビルドでは f32 のまま（`cargo test` の parity gate は 100% を維持）とし、
 canister は `IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine` で明示的に opt-in する
@@ -660,10 +671,10 @@ canisterにowner専用の `infer_profiled(input_ids, detailed)` を追加し、`
 カーネル起動）である。`attn.pre` には `narrow`3回＋`transpose`＋`contiguous`が含まれ、
 理論MACがほぼ同じ `layer.attn` との差はそこから出ている。つまり必要なのは
 「より速いgemm」ではなく「**演算を融合して周辺コストを消す**」ことで、それは
-5.8倍ではなく**2〜3倍**の見込みである。最長150トークンでも実測の傾きから約42.7B（40Bの1.07倍）で、
+5.8倍ではなく**2〜3倍**の見込みである。最長150トークンでは最小二乗式から約48.1e9（40Bの1.20倍）で、
 **裾の超過はカーネル改善では消えない**。
 
-### 5.2 fixture pack（hidden 32 / 2層、同一カーネル）
+### 5.2.1 fixture pack（hidden 32 / 2層、同一カーネル）
 
 | 呼び出し | 入力 | instructions |
 |---|---|---|
@@ -686,7 +697,7 @@ fixtureはモデルではない（重みは乱数）。ここで測っている�
 | 校正済み top 確率の最大偏差 | 7e-6 |
 | 平均偏差 | 0.000000 |
 | 最長入力 | 150トークン |
-| 重み転置の修正後（50件で再確認） | 50/50 (100.00%)、最大偏差 3e-6 |
+| 重み転置の修正後（50件で再確認） | 50/50 (100.00%)、最大偏差 3e-6（in-session実行。生ログは`artifacts/`未保存） |
 
 tokenizer・prompt contract・projector・内積scorer・temperature 1.4265148639678955 まで含めて
 一致している。ログは `artifacts/verdict_parity.log`。`cargo test --release -p verdict-candle --test golden -- --ignored` が同じ比較を
@@ -695,21 +706,26 @@ gateとして実行する（1000件版は `--limit` を外す）。
 
 ## 6. 制約と未検証
 
-* **F32のみ**。量子化カーネル（INT8/INT4/ternary）は未実装で、2.2節の表は推定にすぎない。
-  したがって実checkpointは実用的な入力長では1 callに収まらない。
+* **既定はF32**。量子化カーネル（INT8）は実装済みで `verdict-engine` の `int8` フィーチャ
+  （`IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine`）として配線されており、実測は
+  0.780 instructions/MAC・T=120で14.57e9（F32比 −60.8%）。INT4/ternaryは未実装で2.2節の表は推定。
+  既定F32のT=120実測は37.1e9（`overflow-checks=false`適用後）。
 * 校正は同梱artifactの **5候補限定** temperature（1.4265148639678955）をそのまま使う経路のみ。
   候補数・qtype別の再校正は未実施。
-* `crates/verdict-simd` は**モデルには配線していない**。`bench_simd` のA/B（同一データでのSIMD対スカラー）専用で、
-  上記のとおりartifact内ではスカラー化されるため、現状のモデルは candle gemm のまま動く。
+* `crates/verdict-simd` は **int8 経路でモデルに配線されている**（`Linear::forward` が量子化重みを持つとき
+  `matmul_i8` を呼び、softmaxは既定経路でも `softmax_rows_inplace` を使う）。f32カーネル一族と
+  `bench_simd` は整理で削除したため、既定（F32）の行列積は candle gemm のままである。
 * `verdict-engine` は推論専用で、executor / mock-ledger / ワークフローには接続していない。
   実資金・Receipt・委任の経路は `decision-engine` 側のままである。
-* 実checkpointの canister 実行は **T=2〜120** で確認済み。成功した最長は **T=120（39.57B）**、
-  **T=126 は replica が40B上限で拒否**する。383トークンの実入力は1 callに収まらない（5.1.1節）。
-* `tools/measure_verdict.py` は replica を起動し605 MiBを投入するため、既定では `verify.py` の
+* 実checkpointの canister 実行は **T=2〜120** で確認済み。成功した最長は **T=120**（39.57e9は
+  `overflow-checks` 有効時の実測、無効化後は37.1e9、int8は14.57e9）。**T=126は予算ガードの
+  計算値41.74e9が40Bを超えるため拒否**される設計で、replicaでの実測記録は残っていない。
+  383トークンの実入力は1 callに収まらない（5.1.1節）。
+* `tools/measure_verdict.py` は replica を起動し577.5 MiB（605,512,704 B）を投入するため、既定では `verify.py` の
   gateに入らない。`python3 tools/verify.py --verdict-canister` は**温まったreplica**に対して
-  `tools/measure_verdict.py --skip-upload --sweep 128` を実行する。
-* Python参照テスト（`synthetic_pytorch_numpy` / `python_reference_and_export_tests`）は
-  venv（torch 2.14.0 / numpy 2.5.3 / safetensors 0.8.0）で再実行済みで、`tools/verify.py` の
-  `PASS` はこの実行のものである。
+  `tools/measure_verdict.py --skip-upload --sweep 120` を実行する。
+* `tools/verify.py` の `PASS` の意味は `artifacts/verification.json` の各行が示すとおりで、
+  実行していない検査は `NOT_RUN` として残る。`python_reference_and_export_tests` は
+  `python3 -m unittest discover -s tests` の結果である（torch依存の検査はLaya削除時に撤去済み）。
 * 品質評価は行っていない。JevBenchの独立値は Intelligence 59.0 / hard 38.2%（公開GLiClass重み、
   著者エンジン）で、Laya-large は 63.2 / 34.1%。このリポジトリで再測定したものではない。

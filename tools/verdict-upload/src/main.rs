@@ -1,6 +1,6 @@
 //! Upload a canonical verdict pack to a canister over the IC HTTP interface.
 //!
-//! Why this exists: `docs/PERFORMANCE_MEASUREMENTS.md` records that a 1.57 GiB pack
+//! Why this exists: `docs/archive/PERFORMANCE_MEASUREMENTS.md` records that a 1.57 GiB pack
 //! cannot be pushed through `icp canister call`, because Candid arguments have to
 //! be escaped into argv (and this CLI version does not decode `--args-format
 //! hex`/`bin` for a multi-argument method). An agent speaking the ingress protocol

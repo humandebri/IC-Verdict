@@ -4,9 +4,9 @@
 
 設計だけではなく、Rust workspace、推論演算、canister adapter、テスト、checkpoint変換ツールを実装したソースパッケージです。
 
-> **検証状態 (v0.2):** Rust toolchainのある環境で実際にビルド・テストしました。`cargo test --workspace`は**78件PASS**、**4 canister分のWasmとCandidを生成済み**、Python参照テストもPASSです。`tools/verify.py --rust --require-rust`は実行可能な8項目すべてPASSです。
+> **検証状態 (v0.2):** Rust toolchainのある環境で実際にビルド・テストしました。`cargo test --workspace`は**88件PASS**、`python3 -m unittest discover -s tests`は**23件PASS**、**4 canister分のWasmとCandidを生成済み**です。`tools/verify.py --rust --require-rust --manifest`は実行した**12項目すべてPASS**（`artifacts/verification.json`。opt-inの`--verdict`/`--verdict-canister`/`--local-integration`は未指定なら`NOT_RUN`として残る）。
 >
-> **Layaバックエンドは削除しました。** 実Laya checkpointは一度もロードしておらず（weightは未取得）、合成weightからの外挿では40B上限の12〜14倍だったためです（記録は[docs/archive/PERFORMANCE_MEASUREMENTS.md](docs/archive/PERFORMANCE_MEASUREMENTS.md)）。判断バックエンドはopenJev 151M（GLiClass）に置き換え、実checkpointで実測しています: 著者記録の1000件とargmax 1000/1000一致、120トークンで1決定14.6e9 instructions（[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md)）。実heap・実ledger送金は引き続き未検証で、`fixtures/`はランダムweightです。
+> **Layaバックエンドは削除しました。** 実Laya checkpointは一度もロードしておらず（weightは未取得）、合成weightからの外挿では40B上限の12〜14倍だったためです（記録は[docs/archive/PERFORMANCE_MEASUREMENTS.md](docs/archive/PERFORMANCE_MEASUREMENTS.md)）。判断バックエンドはopenJev 151M（GLiClass）に置き換え、実checkpointで実測しています: 著者記録の1000件とargmax 1000/1000一致、120トークンで1決定は既定F32が37.1e9、int8が14.6e9 instructions（[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md)）。実heap・実ledger送金は引き続き未検証で、`fixtures/`はランダムweightです。
 >
 > v0.1の「cargoが無くRust未確認」という記述は誤りでした。実際にビルドした結果、`tools/build_one.sh`のbash 3.2非互換、`CARGO_TARGET_DIR`無視、Candle Wasmの`getrandom`欠落という3件の実バグが出たため修正しています。詳細は[docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md)。
 
@@ -18,9 +18,9 @@
 | schema固定、prefix上限64・全体128tokens、特殊token拒否 | Rust core / HF tokenizer adapter | Rustテストを用意。未実行 |
 | workflow最大3質問、snapshot照合、失効、予算、nonce、業務重複 | Rust core | Python抽象状態機械は検証。Rustは未実行 |
 | unknown時の予約保持、同一payload再送、遅延成功・upgrade扱い | Rust core / canister adapter | 同上。ICPのmessage境界は未実行 |
-| ModernBERT + decision Transformer + marker scorer | Candle F32演算を実装 | 合成weightのPyTorch/NumPy一致のみ。Candle・実Layaは未確認 |
+| openJev GLiClass（ModernBERT-151M） | Candle F32演算＋int8カーネルを実装 | **実checkpointで著者記録とargmax 1000/1000一致**（int8は994/1000） |
 | モデルpack・分割アップロード・段階warm-up | Rust loader / engine canister / Python exporter | Python exporterを合成weightで検証 |
-| engine / executor / mock ledger | Rustの3 canister | ソースのみ。Wasm未ビルド |
+| engine / executor / mock ledger | Rustの4 canister | Wasm/Candidをビルド済み。ローカルreplicaで統合試験PASS |
 | native例、Candid生成、ローカルmock bootstrap、CI | スクリプト・設定を同梱 | CIとdfx手順は未実行 |
 
 **実資金の送金は無効です。** `LimitedLive`を指定しても`LiveDisabled`を返します。実装したoutcallは、専用のmock識別APIを確認したledgerだけに向けます。mock ledgerは残高を模擬するテストダブルで、実在の資産を扱いません。
@@ -129,9 +129,9 @@ int8は配備時のopt-inで、既定ビルドはF32推論です。CIでは両�
 
 未完了なのは実モデルparity、用途別calibration、Rust/Wasmビルド、ICP instruction/heap実測、非同期障害試験、対象本番ledgerの確認です。実装済みコードがあることは、これらを通過したことを意味しません。
 
-現状は安全側の有限容量PoCです。512 workflow、64 registry、engine cache1024件で、削除・compactionは実装していません。上限で停止し、古いnonceや不明Txを消して処理を続けることはしません。stable storageはbounded snapshotで、全量再保存のコストがあり、本番の高頻度処理にはstable table化が必要です。人間reviewの承認再開endpoint、INT8、蒸留、実ledger adapterの有効化も未実装です。
+現状は安全側の有限容量PoCです。512 workflow、64 registryの上限は残り、compactionは未実装です。ただし決定キャッシュは受付窓より古い結果を追い出し、grantの窓は予約の無いものをpruneし、callerスロットはowner専用`release_caller`で解放できます（以前はどれも上限到達で恒久停止しました）。stable storageはbounded snapshotで、全量再保存のコストがあり、本番の高頻度処理にはstable table化が必要です。人間reviewの承認再開endpoint、INT8、蒸留、実ledger adapterの有効化も未実装です。
 
-次の着手順は、**Rustのビルド修正 → 合成fixtureでCandle照合 → 実Layaのtensor/tokenizer/logit照合 → ICP性能 → fault injection**です。[実装状況](docs/IMPLEMENTATION_STATUS.md)と[自己レビュー](docs/IMPLEMENTATION_REVIEW.md)を先に確認してください。
+次の着手順は、**残るopt-in検査（`--verdict`/`--verdict-canister`/`--local-integration`）のCI常時実行 → int8の精度改善（ブロック量子化） → 用途別calibration → 実ledger adapter**です。[実装状況](docs/IMPLEMENTATION_STATUS.md)と[検証記録](artifacts/verification.json)を先に確認してください。
 
 ## 8. openJev（GLiClass / ModernBERT-151M）バックエンド
 
@@ -156,8 +156,8 @@ Layaの代わりに **openJev-verdict 系の151Mモデル**（`heman10x/rlcd-mod
 **canister上での実行とinstructions実測**は `python3 tools/verdict_canister.py` です。
 
 **上限は外挿ではなく実測で押さえました。** `tools/measure_verdict.py` が実benchmarkの1件
-（自然長118トークン）を測り、**T=120（39.57B instructions）が成功、T=126がreplicaの40B上限で拒否**
-されるところまで確認しています（[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md) 5.1.1節、
+（自然長118トークン）を測り、**T=120（39.57e9 instructions、`overflow-checks`有効時の実測。無効化後は37.1e9、int8は14.6e9）が成功**
+するところまで確認しています。T=126は予算ガードの計算値41.74e9が40Bを超えるため拒否される設計です（記録された実測点はT=120のみ）（[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md) 5.1.1節、
 `artifacts/verdict_sweep.json`）。151Mは量子化なしでも短い入力は1 callに収まりますが、
-JevBench平均383トークンは約3.2倍超過します。量子化なし、校正は同梱artifactの5候補用temperatureのみ、
+JevBench生入力は中央値95・平均95.8トークンで、予算外は上側2.5%のみです（「平均383トークンで3.2倍超過」は誤りと判明済み）。量子化なし、校正は同梱artifactの5候補用temperatureのみ、
 という制約はそのまま残っています。

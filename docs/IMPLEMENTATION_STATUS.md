@@ -4,16 +4,16 @@ v0.1からの差分: Rust toolchainのある環境でビルドとテストを実
 
 ## この環境で実際に実行した検証
 
-実行環境: macOS 26.5.2 (arm64), rustc/cargo 1.97.1, `wasm32-unknown-unknown`, Python 3.14.7 + torch 2.14.0。
+実行環境: macOS (arm64), rustc/cargo 1.97.1, `wasm32-unknown-unknown`, Python 3.12.14（torchは未導入。依存していた検査はLaya削除時に撤去済み）。
 
 | 検証 | 結果 |
 |---|---|
-| `cargo test --workspace` | **PASS 78件**（Layaバックエンド削除後。decision-engine は fixture モード） |
+| `cargo test --workspace` | **PASS 88件**（Layaバックエンド削除後。decision-engine は fixture モード） |
 | `bash tools/build_one.sh` × decision-engine / executor / mock-ledger / verdict-engine | **PASS**。Candid 4件と Wasm 4件を生成 |
 | `IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine` | **PASS**（int8 dense重み＋8行カーネル込み） |
 | `cargo run -p ic-laya-core --example mock_workflow` | **PASS**。三primitive逐次評価 → mock送金 → `Succeeded`, reserved=0/spent=110 |
 | `tools/local_integration.py`（local replicaで3 canister実行） | **PASS**。下記のworkflow全体を実機で確認 |
-| Python unittest | **PASS 45件** |
+| Python unittest | **PASS 23件** |
 | `tools/verify.py --rust --require-rust` | 下表参照 |
 
 ### local replica統合試験で確認したこと
@@ -73,7 +73,7 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 
 ### openJev 151Mは外挿ではなく実測で上限を押さえた
 
-`tools/measure_verdict.py` が**実checkpoint（605 MiB pack、151M params）**を投入し、
+`tools/measure_verdict.py` が**実checkpoint（577.5 MiB pack、151,378,176 params）**を投入し、
 実benchmarkの1件（自然長118トークン）を118/119/120/126/128トークンで測った:
 
 | T | instructions | 判定 |
@@ -111,15 +111,15 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 （tensor確保、`narrow`/`transpose`/`contiguous`のコピー、カーネル起動）である。
 理論MACがほぼ同じ `attn.pre`(2.79) と `layer.attn`(2.66) の差がその証拠で、
 必要なのは「速いgemm」ではなく「**演算の融合**」であり、見込みは**2〜3倍**である。
-最長150トークンは実測の傾き（2.85e8/token）から**約42.7B instructions（40Bの1.07倍）**で、
+最長150トークンは最小二乗式（切片込み、2.8465e8/token）から**約48.1e9 instructions（40Bの1.20倍）**で、
 裾は約7%の超過にとどまる。それでも**裾を消すにはカーネル改善ではなくINT8・蒸留・入力契約の設計が要る**。
 
 **内訳を実測した**（`artifacts/phase_measurements.json`）: encoderが**83%**、decisionが16%、
 softmax/norm/活性化/gather/decodeは合計1%未満。ADR-010の「hot linearへ適用」は裏付けられた。
 
-**ただし効率はすでに最適に近い**: encoder **1.43** instructions/MAC、decision **0.92**。
+**効率（現行の実測）**: gemm **2.501**、int8カーネル **0.780** instructions/MAC。以前の「encoder 1.43」は分母の取り違えで撤回済み（`docs/archive/PERFORMANCE_MEASUREMENTS.md`）。
 スカラーなら3〜4、SIMDなら1前後が下限なので、**現状は下限から1.4倍以内**である。
-したがって INT8/SIMD の現実的な伸びは**最大3〜4倍**で、×4を当てても421Mは127B（40Bの**3.2倍超過**）。
+INT8は実装済みで、T=120の実測は **14.57e9**（F32比 −60.8%）。T=126以上は予算ガードで拒否される。
 
 **サブフェーズまで特定した**（128-token profile、6層h768）: **MLP 51%**、attention 31%、
 decision head 16%、その他 約2%。

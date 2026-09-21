@@ -1,6 +1,9 @@
 # IC-Laya — 最終仕様 v2.0
 
 **確定日: 2026-09-19（JST）**  
+> **履歴（Laya時代）**: 本文は削除済みのLayaバックエンドを前提とした記録である。現行バックエンドは
+> openJev 151M（GLiClass / ModernBERT）で、Layaのcrate・pack形式・headは commit `dbc5b7a` で削除した。
+
 **設計状態: 機能・API・責務分離を固定。モデル品質・ICP性能・本番Txは受入試験前。**  
 **対象: 英語 / Rust / ICP内推論 / Choice・Noul・Score / 型付き関数連携 / 制約付きTx**
 

@@ -1,6 +1,9 @@
 # 実装自己レビュー
 
-独立監査ではない。v0.2ではRust compilerによる確認を行った。以下はsourceと参照計算、および実際のビルドで出た指摘・修正。
+独立監査ではない。v0.2ではRust compilerによる確認を行った。> **履歴（Laya時代）**: 本文は削除済みのLayaバックエンドを前提とした記録である。現行バックエンドは
+> openJev 151M（GLiClass / ModernBERT）で、Layaのcrate・pack形式・headは commit `dbc5b7a` で削除した。
+
+以下はsourceと参照計算、および実際のビルドで出た指摘・修正。
 
 ## ビルドして初めて判明した不具合（v0.2）
 
