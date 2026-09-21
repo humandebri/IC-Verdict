@@ -39,6 +39,8 @@ def main():
                    help="also check MANIFEST.sha256 (regenerate it with tools/manifest.py --write)")
     p.add_argument("--verdict",action="store_true",
                    help="also run the openJev/GLiClass parity check against the pack in models/verdict-pack")
+    p.add_argument("--real-ledger-evidence",default="",
+        help="log file from a manual real-ledger transfer to record as evidence")
     p.add_argument("--verdict-canister",action="store_true",
                    help="also sweep the openJev canister on an already-warm local replica (tools/measure_verdict.py --skip-upload)")
     args=p.parse_args();records=[]
@@ -78,16 +80,20 @@ def main():
     records.append(dict(check="python_toml_json_syntax",status="FAIL" if errors else "PASS",errors=errors,note="Does not parse or compile Rust source."))
     link_errors=[]
     for path in ROOT.rglob("*.md"):
-        if skipped(path):continue
+        # Archived documents are a record of what was true when they were written and
+        # legitimately point at files that have since moved; the live documents are what
+        # this check protects.
+        if skipped(path) or "docs/archive" in path.as_posix():continue
         for link in re.findall(r"\]\(([^)]+)\)",path.read_text()):
             if link.startswith(("http://","https://","#","mailto:")):continue
             if not (path.parent/link.split("#",1)[0]).exists():link_errors.append(f"{path.relative_to(ROOT)}: {link}")
     records.append(dict(check="local_markdown_links",status="FAIL" if link_errors else "PASS",errors=link_errors))
     run("shell_syntax",["bash","-n","tools/build_one.sh"],"shell_syntax.log")
-    # Regenerates the tiny openJev fixture, which exercises tools/pack_verdict.py end
-    # to end without the 605 MiB checkpoint. The weights are random: this proves the
-    # pack pipeline, never the model.
-    run("openjev_fixture_pack",[sys.executable,"tools/make_verdict_fixture.py"],"verdict_fixture.log")
+    # Validates the committed fixture pack (manifest against model.bin) rather than
+    # regenerating it: a check that rebuilds the bytes it is checking cannot fail.
+    # The weights are deterministic random values, so this proves the pack pipeline and
+    # never anything about the model.
+    run("openjev_fixture_pack",[sys.executable,"tools/make_verdict_fixture.py","--check"],"verdict_fixture.log")
     binaries={name:shutil.which(name) for name in ["cargo","rustc","rustup","dfx"]}
     want_rust=args.rust or args.require_rust
     if want_rust and binaries["cargo"] and binaries["rustc"]:
@@ -137,8 +143,23 @@ def main():
     else:
         records.append(dict(check="openjev_canister_instructions",status="NOT_RUN",
           reason="Pass --verdict-canister with a warm local replica; see docs/VERDICT_ENGINE.md"))
-    for check in ["real_ledger_transfer"]:
-        records.append(dict(check=check,status="NOT_RUN",reason="Not performed by this validation script"))
+    # A real-ledger transfer cannot be claimed by default, but it must be possible to
+    # *request* it: otherwise this row is permanently NOT_RUN and can never fail.
+    if args.real_ledger_evidence:
+        # The repository has no automated real-ledger path: this canister set is
+        # mock-only by design. A manual transfer can still be recorded, but only against
+        # evidence, so the row can pass, fail or stay unrun instead of being a
+        # permanent NOT_RUN that can never fail.
+        evidence=Path(args.real_ledger_evidence)
+        if evidence.is_file() and evidence.stat().st_size>0:
+            records.append(dict(check="real_ledger_transfer",status="PASS",evidence=str(evidence)))
+        else:
+            records.append(dict(check="real_ledger_transfer",status="FAIL",
+              errors=[f"evidence file missing or empty: {evidence}"]))
+    else:
+        records.append(dict(check="real_ledger_transfer",status="NOT_RUN",
+          reason="No automated real-ledger path exists (the canisters are mock-only); pass "
+                 "--real-ledger-evidence <log> to record a manual transfer"))
     # Opt-in: this starts a local replica and installs canisters into it.
     if args.local_integration:
         run("icp_canister_integration",[sys.executable,"tools/local_integration.py"],"local_integration.log",1500)
@@ -159,7 +180,8 @@ def main():
       "verdict_candle_tests":want_rust,"verdict_candle_int8_tests":want_rust,
       "verdict_engine_wasm_build":want_rust,"verdict_engine_int8_wasm_build":want_rust,
       "openjev_checkpoint_parity":args.verdict,"openjev_canister_instructions":args.verdict_canister,
-      "icp_canister_integration":args.local_integration,"manifest_integrity":args.manifest}
+      "icp_canister_integration":args.local_integration,"manifest_integrity":args.manifest,
+      "real_ledger_transfer":bool(args.real_ledger_evidence)}
     def reason_for(name):
         return next((r.get("reason","") for r in records
                      if r.get("check")==name and r["status"]!="PASS"),"")

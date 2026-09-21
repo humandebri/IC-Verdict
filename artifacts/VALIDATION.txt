@@ -2,22 +2,21 @@ IC-Laya validation report
 Source delivery validation, NOT proof of Rust/ICP/pretrained-model operation
 
 PASS     manifest_integrity
-FAIL     synthetic_pytorch_numpy
-FAIL     python_reference_and_export_tests
+PASS     python_reference_and_export_tests
 PASS     python_toml_json_syntax
 PASS     local_markdown_links
 PASS     shell_syntax
 PASS     openjev_fixture_pack
 NOT_RUN  rust_workspace_tests
-NOT_RUN  rust_candle_canister_native_check
 NOT_RUN  wasm_build
 NOT_RUN  verdict_candle_tests
+NOT_RUN  verdict_candle_int8_tests
 NOT_RUN  verdict_engine_wasm_build
+NOT_RUN  verdict_engine_int8_wasm_build
 NOT_RUN  openjev_checkpoint_parity
 NOT_RUN  openjev_canister_instructions
-NOT_RUN  upstream_laya_checkpoint_parity
 NOT_RUN  real_ledger_transfer
 NOT_RUN  icp_canister_integration
 
-Rust test functions written: 78; not a passed-test count.
+Rust test functions written: 88; not a passed-test count.
 Synthetic weights have no language-understanding capability. Python reference tests do not execute Rust.

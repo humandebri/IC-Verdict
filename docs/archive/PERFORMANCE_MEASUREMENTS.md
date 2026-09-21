@@ -142,7 +142,7 @@ nativeで測った（nativeなので絶対値はICP命令ではない。**形状
 `attn.pre`(2.79) と `layer.attn`(2.66)・`mlp_down`(2.68) の比は1.05しかない。
 つまり**位相間の差の主因はgemm形状ではなく、位相ごとの周辺コスト**（`narrow`・`transpose`・
 `contiguous`・tensor確保）である。これは「速いgemmを書く」より「演算を融合する」方が
-効くことを意味する。詳細は [VERDICT_ENGINE.md](VERDICT_ENGINE.md) 5.2節。
+効くことを意味する。詳細は [VERDICT_ENGINE.md](../VERDICT_ENGINE.md) 5.2節。
 
 ## フェーズ別の内訳（実測）
 

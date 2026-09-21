@@ -13,6 +13,7 @@ Writes `fixtures/verdict-tiny/{config.json,tokenizer.json,manifest.json,model.bi
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import subprocess
 import sys
@@ -77,7 +78,47 @@ TOKENIZER = {
 }
 
 
+def check() -> int:
+    """Validate the committed fixture without writing anything.
+
+    Rebuilding it (the default) would make the integrity check regenerate the very
+    bytes it claims to check: `config.json`/`tokenizer.json` are pinned by
+    MANIFEST.sha256, and a generator trivially reproduces its own output.
+    """
+    manifest_path = OUT / "manifest.json"
+    blob_path = OUT / "model.bin"
+    if not manifest_path.exists() or not blob_path.exists():
+        print(f"fixture missing under {OUT}; build it with `python3 {sys.argv[0]}`", file=sys.stderr)
+        return 1
+    manifest = json.loads(manifest_path.read_text())
+    blob = blob_path.read_bytes()
+    if manifest.get("total_bytes") != len(blob):
+        print(f"manifest total_bytes={manifest.get('total_bytes')} but model.bin is {len(blob)}", file=sys.stderr)
+        return 1
+    offset = 0
+    for tensor in manifest["tensors"]:
+        if tensor["offset"] != offset:
+            print(f"{tensor['name']}: offset {tensor['offset']} != {offset}", file=sys.stderr)
+            return 1
+        chunk = blob[offset:offset + tensor["length"]]
+        if len(chunk) != tensor["length"]:
+            print(f"{tensor['name']}: truncated at {offset}", file=sys.stderr)
+            return 1
+        if list(hashlib.sha256(chunk).digest()) != tensor["sha256"]:
+            print(f"{tensor['name']}: sha256 mismatch", file=sys.stderr)
+            return 1
+        offset += tensor["length"]
+    for name in ("config.json", "tokenizer.json"):
+        if not (OUT / name).exists():
+            print(f"fixture is missing {name}", file=sys.stderr)
+            return 1
+    print(f"fixture verified: {OUT} tensors={len(manifest['tensors'])} bytes={len(blob)}")
+    return 0
+
+
 def main() -> int:
+    if "--check" in sys.argv[1:]:
+        return check()
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "config.json").write_text(json.dumps(CONFIG, indent=1))
     (OUT / "tokenizer.json").write_text(json.dumps(TOKENIZER, indent=1))

@@ -59,11 +59,15 @@ class NetworkGuardTests(unittest.TestCase):
         with self.assertRaises(StubFailure):
             icp_guard.require_local_network(icp, StubFailure)
 
-    def test_unknown_status_is_not_treated_as_remote(self) -> None:
-        # A stopped local environment reports nothing; the script starts it and the
-        # next state-changing command re-checks. Silence must not block `network start`.
+    def test_unknown_status_is_refused(self) -> None:
+        # Fails closed: an unreadable status is not evidence of a local replica. `network
+        # start` is not a guarded command, so starting a stopped replica still works.
         icp = StubIcp("local", "no json here")
-        self.assertIsNone(icp_guard.local_network_violation(icp))
+        violation = icp_guard.local_network_violation(icp)
+        self.assertIsNotNone(violation)
+        self.assertIn("cannot confirm", violation)
+        with self.assertRaises(StubFailure):
+            icp_guard.require_local_network(icp, StubFailure)
 
     def test_state_changing_commands_are_guarded_once(self) -> None:
         icp = StubIcp("local", LOCAL)
@@ -72,9 +76,12 @@ class NetworkGuardTests(unittest.TestCase):
         for args in (["token", "transfer", "100", "p", "-e", "local"],
                      ["cycles", "mint", "--cycles", "100t", "-e", "local"],
                      ["canister", "install", "x", "-e", "local", "-m", "reinstall"],
+                     ["canister", "delete", "x", "-e", "local"],
+                     ["canister", "settings", "update", "x", "-e", "local"],
+                     ["canister", "snapshot", "create", "x", "-e", "local"],
                      ["canister", "call", "x", "info", "-e", "local"]):
             icp_guard.guard_command(icp, args)
-        # One probe, not four: the decision is memoised per Icp instance.
+        # One probe, not six: the decision is memoised per Icp instance.
         self.assertEqual(len(icp.calls), 1)
         self.assertEqual(icp.calls[0][:2], ["network", "status"])
 

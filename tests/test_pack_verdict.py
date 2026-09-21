@@ -15,6 +15,7 @@ The exporter is driven as a subprocess, the way the tools call it.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import struct
 import subprocess
@@ -99,21 +100,46 @@ def safetensors(path: Path, shorten: str | None = None) -> None:
 
 
 class PackVerdictTests(unittest.TestCase):
-    def _run(self, config: dict, *extra: str) -> subprocess.CompletedProcess:
+    def _run(self, config: dict, *extra: str, verify=None) -> subprocess.CompletedProcess:
         with tempfile.TemporaryDirectory() as directory:
             tmp = Path(directory)
             (tmp / "config.json").write_text(json.dumps(config))
             (tmp / "tokenizer.json").write_text("{}")
             safetensors(tmp / "model.safetensors")
-            return subprocess.run(
+            result = subprocess.run(
                 [sys.executable, str(PACK), "--safetensors", str(tmp / "model.safetensors"),
                  "--config", str(tmp / "config.json"), "--tokenizer", str(tmp / "tokenizer.json"),
                  "--out", str(tmp / "pack"), "--source-repo", "local-test",
                  "--source-revision", "a" * 40, *extra],
                 capture_output=True, text=True, cwd=ROOT)
+            if verify is not None and result.returncode == 0:
+                verify(tmp / "pack")
+            return result
 
     def test_valid_checkpoint_exports_a_self_consistent_pack(self) -> None:
-        result = self._run(CONFIG)
+        # The pack is checked by reading it back: the manifest's offsets, lengths and
+        # checksums must describe the bytes in model.bin. Asserting only the exit code
+        # would not notice a manifest that disagrees with its own blob, which is the
+        # failure mode that used to reach the 600 MiB upload.
+        def verify(pack: Path) -> None:
+            manifest = json.loads((pack / "manifest.json").read_text())
+            blob = (pack / "model.bin").read_bytes()
+            self.assertEqual(manifest["format"], "ic-verdict-f32-pack-v1")
+            self.assertEqual({t["name"] for t in manifest["tensors"]}, set(inventory()))
+            self.assertEqual(manifest["total_bytes"], len(blob))
+            offset = 0
+            for tensor in manifest["tensors"]:
+                self.assertEqual(tensor["offset"], offset, tensor["name"])
+                length = 4
+                for dim in tensor["shape"]:
+                    length *= dim
+                self.assertEqual(tensor["length"], length, tensor["name"])
+                chunk = blob[offset:offset + tensor["length"]]
+                self.assertEqual(list(hashlib.sha256(chunk).digest()), tensor["sha256"], tensor["name"])
+                offset += tensor["length"]
+            self.assertEqual(offset, len(blob))
+
+        result = self._run(CONFIG, verify=verify)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("tensors=22", result.stdout)
 

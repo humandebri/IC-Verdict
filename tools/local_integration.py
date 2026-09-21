@@ -324,6 +324,12 @@ def ensure_cycles(icp: "Icp", amount: str = "10t") -> None:
     if match and int(match.group(1).replace("_", "")) > 0:
         return
     print(f"  funding the test identity with {amount} cycles (local replica only)")
+    # A fresh identity holds no ICP either, and `cycles mint` spends ICP. Top the
+    # account up from the replica's anonymous faucet first, exactly as
+    # tools/verdict_canister.py does; both steps are local-replica-only.
+    target = known_identities(icp).get(icp.identity)
+    if target:
+        icp.run(["token", "transfer", "100", target, "-e", icp.env], expect_ok=False, identity=False)
     icp.run(["cycles", "mint", "--cycles", amount, "-e", icp.env])
 
 
@@ -426,20 +432,31 @@ def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> in
              "--args", f"({principal(owner)}, {principal(engine)})"])
     icp.run(["canister", "install", "mock-ledger", "-e", icp.env, "-y", "-m", mode,
              "--wasm", str(BUILD / "mock-ledger.wasm"), "--args", f"({principal(owner)})"])
-    check(True, f"all three canisters installed ({mode})")
+    for name in ("decision-engine", "executor", "mock-ledger"):
+        raw = icp.run(["canister", "status", name, "-e", icp.env, "--json"], expect_ok=False)
+        start = raw.find("{")
+        status = json.loads(raw[start:]) if start >= 0 else {}
+        check(bool(status.get("module_hash")) and status.get("status") == "Running",
+              f"{name} is running with an installed module ({mode})")
 
     print("configuring engine and executor ...")
     bundle = sha256(FIXTURE_BUNDLE)
     out = icp.call("decision-engine", "enable_synthetic_fixture")
     check(bundle in decode_blobs(out), "engine reports the fixture bundle id")
-    icp.call("decision-engine", "allow_caller", f"({principal(executor)}, 1000)")
-    check(True, "executor admitted as an engine caller")
+    admitted = icp.call("decision-engine", "allow_caller", f"({principal(executor)}, 1000)")
+    check("Ok" in admitted, f"executor admitted as an engine caller: {admitted.strip()[:120]}")
 
     compiled = [dict(compile_schema(s, s["tag"]), rule=s["rule"]) for s in schemas()]
+    last_schema_arg = ""
     for schema in compiled:
-        icp.call("decision-engine", "register_schema",
-                 f"({candid_schema(schema['schema'])}, {schema['qtype_id']})")
-    check(True, "three schemas registered and compiled")
+        last_schema_arg = f"({candid_schema(schema['schema'])}, {schema['qtype_id']})"
+        icp.call("decision-engine", "register_schema", last_schema_arg)
+    info = icp.call("decision-engine", "info")
+    check("schemas = 3" in info, f"engine reports three compiled schemas: {info.strip()[:160]}")
+    icp.call("decision-engine", "register_schema", last_schema_arg)
+    after = icp.call("decision-engine", "info")
+    check("schemas = 3" in after,
+          f"re-registering an identical schema is idempotent: {after.strip()[:160]}")
 
     now_ns = 4_000_000_000_000_000_000  # far future so expiry never races the test
     calibrations = []
@@ -451,7 +468,12 @@ def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> in
                % (blob(calibration_id), blob(bundle), blob(schema["schema_hash"]),
                   blob(schema["tokenizer_hash"]), now_ns, blob(sha256(b"SYNTHETIC-NOT-REAL-HOLDOUT"))))
         icp.call("decision-engine", "register_calibration", arg)
-    check(True, "three calibrations registered")
+        last_calibration_arg = arg
+    icp.call("decision-engine", "register_calibration", last_calibration_arg)
+    taken = icp.call("decision-engine", "register_calibration",
+                     last_calibration_arg.replace("temperature = 1.0", "temperature = 2.0"),
+                     expect_ok=False)
+    check("IdConflict" in taken, f"a changed calibration cannot reuse its id: {taken.strip()[:120]}")
 
     plan_id = sha256(b"TEST-ONLY-refund-plan-v1")
     operation_id = sha256(b"trusted-demo-invoice-1")
@@ -463,30 +485,37 @@ def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> in
             "(record { schema = %s; calibration = %s; rule = %s })"
             % (candid_compiled(schema), blob(calibration_id), candid_rule(schema["rule"]))
         )
-    icp.call("executor", "register_plan",
-             "(record { id = %s; version = 1 : nat64; model = %s; signals = vec { %s } })"
-             % (blob(plan_id), blob(bundle), "; ".join(signals)))
-    check(True, "plan registered")
+    plan_arg = ("(record { id = %s; version = 1 : nat64; model = %s; signals = vec { %s } })"
+                % (blob(plan_id), blob(bundle), "; ".join(signals)))
+    icp.call("executor", "register_plan", plan_arg)
+    taken = icp.call("executor", "register_plan",
+                     plan_arg.replace("version = 1 : nat64", "version = 2 : nat64", 1), expect_ok=False)
+    check("IdConflict" in taken, f"the plan id is already taken: {taken.strip()[:120]}")
 
     evidence = "The customer reports a duplicate payment and requests a refund."
-    icp.call("executor", "register_operation",
-             "(record { id = %s; revision = 1 : nat64; evidence = %s; proposal = %s; status = variant { Available } })"
-             % (blob(operation_id), json.dumps(evidence),
-                "(record { ledger = %s; from_subaccount = %s; to = %s; amount = %d : nat; fee = %d : nat })"
-                % (principal(ledger), blob(bytes(32)),
-                   "(record { owner = %s; subaccount = %s })" % (principal(owner), blob(bytes(32))),
-                   AMOUNT, FEE)))
-    check(True, "trusted operation registered")
+    operation_arg = (
+        "(record { id = %s; revision = 1 : nat64; evidence = %s; proposal = %s; status = variant { Available } })"
+        % (blob(operation_id), json.dumps(evidence),
+           "(record { ledger = %s; from_subaccount = %s; to = %s; amount = %d : nat; fee = %d : nat })"
+           % (principal(ledger), blob(bytes(32)),
+              "(record { owner = %s; subaccount = %s })" % (principal(owner), blob(bytes(32))),
+              AMOUNT, FEE)))
+    icp.call("executor", "register_operation", operation_arg)
+    taken = icp.call("executor", "register_operation",
+                     operation_arg.replace("revision = 1 : nat64", "revision = 2 : nat64", 1), expect_ok=False)
+    check("IdConflict" in taken, f"the operation id is already taken: {taken.strip()[:120]}")
 
-    icp.call("executor", "register_grant",
-             "(record { id = %s; revision = 1 : nat64; delegate = %s; plan = %s; ledger = %s; "
+    grant_arg = ("(record { id = %s; revision = 1 : nat64; delegate = %s; plan = %s; ledger = %s; "
              "from_subaccount = %s; recipients = vec { record { owner = %s; subaccount = %s } }; "
              "max_amount = 1000 : nat; max_fee = 10 : nat; total_cap = 1000 : nat; window_cap = 500 : nat; "
              "window_ns = 60_000_000_000 : nat64; expires_at_ns = %d : nat64; revoked = false; "
              "total = record { spent = 0 : nat; reserved = 0 : nat }; windows = vec {} })"
              % (blob(grant_id), principal(owner), blob(plan_id), principal(ledger), blob(bytes(32)),
                 principal(owner), blob(bytes(32)), now_ns))
-    check(True, "grant registered")
+    icp.call("executor", "register_grant", grant_arg)
+    taken = icp.call("executor", "register_grant",
+                     grant_arg.replace("revision = 1 : nat64", "revision = 2 : nat64", 1), expect_ok=False)
+    check("IdConflict" in taken, f"the grant id is already taken: {taken.strip()[:120]}")
 
     # --- rejection cases -------------------------------------------------------
     # These run before any request exists so they cannot disturb the workflow below.
@@ -536,15 +565,21 @@ def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> in
     check("Unauthorized" in anonymous, f"anonymous caller is unauthorized: {anonymous.strip()[:200]}")
 
     icp.call("mock-ledger", "ic_laya_mock_profile")
-    icp.call("executor", "register_mock_ledger", f"({principal(ledger)})")
-    icp.call("executor", "set_mode", "(variant { Mock })")
-    check(True, "mock ledger registered and executor in Mock mode")
+    mock_reply = icp.call("executor", "register_mock_ledger", f"({principal(ledger)})")
+    mode_reply = icp.call("executor", "set_mode", "(variant { Mock })")
+    check("Ok" in mock_reply and "Ok" in mode_reply,
+          f"mock ledger registered and executor in Mock mode: {mode_reply.strip()[:120]}")
+    live = icp.call("executor", "set_mode", "(variant { LimitedLive })", expect_ok=False)
+    check("LiveDisabled" in live, f"live mode is refused, so only the mock ledger can move funds: {live.strip()[:120]}")
 
     # `post_upgrade` runs even for a first `install`, and recover_after_upgrade()
     # sets paused=true. That is the intended fail-safe, so the test unpauses
     # explicitly rather than the canister assuming a fresh install is safe.
-    icp.call("executor", "pause", "(false)")
-    check(True, "executor unpaused by the owner")
+    unpaused = icp.call("executor", "pause", "(false)")
+    absent = icp.call("executor", "get_request",
+                      f"({blob(sha256(b'TEST-ONLY-absent-request'))})", expect_ok=False)
+    check("Ok" in unpaused and "NotFound" in absent,
+          f"executor unpaused by the owner and answering queries: {absent.strip()[:120]}")
 
     print("running the workflow ...")
     submitted = icp.call("executor", "submit", f"({blob(operation_id)}, {blob(grant_id)}, 0 : nat64)")
@@ -588,15 +623,15 @@ def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> in
     # Always strand a second request in OutcomeUnknown. A following run with
     # --keep-state then upgrades the canister while that transfer is unresolved,
     # which is what pre_upgrade/post_upgrade exist for.
-    leave_unknown_for_upgrade(icp, grant_id, ledger, owner)
+    second = leave_unknown_for_upgrade(icp, grant_id, ledger, owner)
     print("\nALL LOCAL INTEGRATION CHECKS PASSED")
     if verify_upgrade:
         owner_args = f"({principal(owner)}, {principal(owner)})"
-        return verify_upgrade_guard(icp, owner_args)
+        return verify_upgrade_guard(icp, owner_args, second)
     return 0
 
 
-def leave_unknown_for_upgrade(icp: "Icp", grant_id: bytes, ledger: str, owner: str) -> None:
+def leave_unknown_for_upgrade(icp: "Icp", grant_id: bytes, ledger: str, owner: str) -> bytes:
     """Submit a second request and strand it in OutcomeUnknown.
 
     The next `--keep-state` run upgrades the canister with this transfer
@@ -629,9 +664,10 @@ def leave_unknown_for_upgrade(icp: "Icp", grant_id: bytes, ledger: str, owner: s
     check("OutcomeUnknown" in state, "second request is stranded in OutcomeUnknown for the upgrade")
     # Full hex: the id is needed to abandon the transfer before an upgrade.
     print(f"  stranded request {second.hex()}")
+    return second
 
 
-def verify_upgrade_guard(icp: "Icp", install_args: str) -> int:
+def verify_upgrade_guard(icp: "Icp", install_args: str, stranded: bytes) -> int:
     """Assert the upgrade guard refuses to upgrade over an unresolved transfer.
 
     `pre_upgrade` traps when any request is still Submitted or OutcomeUnknown, so a
@@ -647,7 +683,9 @@ def verify_upgrade_guard(icp: "Icp", install_args: str) -> int:
                       expect_ok=False)
     check("unresolved transfer" in blocked,
           f"upgrade is refused while a transfer is unresolved: {blocked.strip()[-160:]}")
-    check(True, "the unresolved reservation therefore survives the refused upgrade")
+    after = icp.call("executor", "get_request", f"({blob(stranded)})")
+    check("OutcomeUnknown" in after and "reservation = opt" in after and "reservation = null" not in after,
+          f"the unresolved reservation survives the refused upgrade: {after.strip()[:160]}")
     print("\nUPGRADE GUARD CHECKS PASSED")
     return 0
 

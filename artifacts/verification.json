@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-09-21T02:34:22.001237+00:00",
+  "timestamp_utc": "2026-09-21T11:01:00.141895+00:00",
   "scope": "Source delivery validation, NOT proof of Rust/ICP/pretrained-model operation",
   "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
   "packages": {
@@ -13,8 +13,8 @@
     "rustup": "/Users/0xhude/.cargo/bin/rustup",
     "dfx": "/Users/0xhude/Library/Application Support/org.dfinity.dfx/bin/dfx"
   },
-  "rust_source_files": 36,
-  "rust_test_functions_written": 78,
+  "rust_source_files": 32,
+  "rust_test_functions_written": 88,
   "rust_test_functions_executed_here": null,
   "requested_but_not_verified": [],
   "checks": [
@@ -30,18 +30,8 @@
       "returncode": 0
     },
     {
-      "check": "synthetic_pytorch_numpy",
-      "status": "FAIL",
-      "command": [
-        "/Users/0xhude/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "tools/generate_fixtures.py"
-      ],
-      "log": "synthetic_generation.log",
-      "returncode": 1
-    },
-    {
       "check": "python_reference_and_export_tests",
-      "status": "FAIL",
+      "status": "PASS",
       "command": [
         "/Users/0xhude/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
         "-m",
@@ -52,7 +42,7 @@
         "-v"
       ],
       "log": "python_tests.log",
-      "returncode": 1
+      "returncode": 0
     },
     {
       "check": "python_toml_json_syntax",
@@ -81,18 +71,14 @@
       "status": "PASS",
       "command": [
         "/Users/0xhude/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "tools/make_verdict_fixture.py"
+        "tools/make_verdict_fixture.py",
+        "--check"
       ],
       "log": "verdict_fixture.log",
       "returncode": 0
     },
     {
       "check": "rust_workspace_tests",
-      "status": "NOT_RUN",
-      "reason": "Pass --rust to run Rust checks"
-    },
-    {
-      "check": "rust_candle_canister_native_check",
       "status": "NOT_RUN",
       "reason": "Pass --rust to run Rust checks"
     },
@@ -107,7 +93,17 @@
       "reason": "Pass --rust to run Rust checks"
     },
     {
+      "check": "verdict_candle_int8_tests",
+      "status": "NOT_RUN",
+      "reason": "Pass --rust to run Rust checks"
+    },
+    {
       "check": "verdict_engine_wasm_build",
+      "status": "NOT_RUN",
+      "reason": "Pass --rust to run Rust checks"
+    },
+    {
+      "check": "verdict_engine_int8_wasm_build",
       "status": "NOT_RUN",
       "reason": "Pass --rust to run Rust checks"
     },
@@ -122,14 +118,9 @@
       "reason": "Pass --verdict-canister with a warm local replica; see docs/VERDICT_ENGINE.md"
     },
     {
-      "check": "upstream_laya_checkpoint_parity",
-      "status": "NOT_RUN",
-      "reason": "Not performed by this validation script"
-    },
-    {
       "check": "real_ledger_transfer",
       "status": "NOT_RUN",
-      "reason": "Not performed by this validation script"
+      "reason": "No automated real-ledger path exists (the canisters are mock-only); pass --real-ledger-evidence <log> to record a manual transfer"
     },
     {
       "check": "icp_canister_integration",

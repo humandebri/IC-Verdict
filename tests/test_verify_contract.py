@@ -96,6 +96,32 @@ class VerifyContractTests(unittest.TestCase):
         self.assertIn("NOTHING VERIFIED", out)
         self.assertEqual(report["requested_but_not_verified"], [])
 
+    def test_real_ledger_row_can_pass_fail_or_stay_unrun(self) -> None:
+        # The row used to be an unconditional NOT_RUN that could never fail. It now needs
+        # evidence, so a requested-but-missing attestation is a failure.
+        _, _, report, _, _ = self._main([])
+        statuses = {c["check"]: c["status"] for c in report["checks"]}
+        self.assertEqual(statuses["real_ledger_transfer"], "NOT_RUN")
+        code, out, report, _, _ = self._main(["--real-ledger-evidence", "/nonexistent/ledger.log"])
+        self.assertEqual(code, 1, out)
+        statuses = {c["check"]: c["status"] for c in report["checks"]}
+        self.assertEqual(statuses["real_ledger_transfer"], "FAIL")
+        with tempfile.TemporaryDirectory() as directory:
+            log = Path(directory) / "transfer.log"
+            log.write_text("block 7 -> recipient\n")
+            code, out, report, _, _ = self._main(["--real-ledger-evidence", str(log)])
+            self.assertEqual(code, 0, out)
+            statuses = {c["check"]: c["status"] for c in report["checks"]}
+            self.assertEqual(statuses["real_ledger_transfer"], "PASS")
+
+    def test_the_fixture_check_validates_instead_of_regenerating(self) -> None:
+        # A check that rebuilds the bytes it is checking cannot fail, so the fixture
+        # step must only read them back.
+        _, _, _, _, recorded = self._main([])
+        commands = [" ".join(c) for c in recorded]
+        self.assertTrue(any("make_verdict_fixture.py --check" in c for c in commands), commands)
+        self.assertFalse(any(c.endswith("make_verdict_fixture.py") for c in commands), commands)
+
     def test_rust_requested_with_a_toolchain_runs_the_checks(self) -> None:
         code, out, report, _, recorded = self._main(["--rust"], toolchain_available=True)
         self.assertEqual(code, 0, out)

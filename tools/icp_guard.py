@@ -24,10 +24,19 @@ from urllib.parse import urlparse
 LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1", "[::1]"}
 # `icp <group> <verb>` pairs that can spend ICP/cycles or overwrite canister state.
 STATE_CHANGING = {
-    ("canister", "create"),
-    ("canister", "install"),
-    ("canister", "top-up"),
+    # Every `icp canister` verb that writes state, spends cycles or moves the canister
+    # (verified against `icp canister --help`): `list`, `logs`, `metadata` and `status`
+    # are read-only and stay unguarded.
     ("canister", "call"),
+    ("canister", "create"),
+    ("canister", "delete"),
+    ("canister", "install"),
+    ("canister", "migrate-id"),
+    ("canister", "settings"),
+    ("canister", "snapshot"),
+    ("canister", "start"),
+    ("canister", "stop"),
+    ("canister", "top-up"),
     ("token", "transfer"),
     ("cycles", "mint"),
 }
@@ -50,9 +59,20 @@ def any_network_status(icp) -> dict | None:
 
 
 def local_network_violation(icp) -> str | None:
-    """Explain why `icp.env` must not be used, or None when it is a local replica."""
+    """Explain why `icp.env` must not be used, or None when it is a local replica.
+
+    Fails closed: an unreadable or unparsable `network status` is not evidence of a
+    local replica. Treating it as one (the previous behaviour) meant that a change in
+    the CLI's output format silently disarmed the only barrier in front of
+    `token transfer`, `cycles mint` and `canister install`. `network start` is not a
+    guarded command, so a stopped replica can still be started.
+    """
     status = any_network_status(icp)
-    if status and not status.get("managed"):
+    if status is None:
+        return (f"cannot confirm that environment '{icp.env}' is a locally launched replica: "
+                f"`network status --json` was unreadable or did not parse. State-changing commands "
+                f"are refused rather than run against an unverified network.")
+    if not status.get("managed"):
         return (f"environment '{icp.env}' points at {status.get('api_url')}, which is not a local "
                 f"network. This tool mints cycles, installs canisters, and wipes state, so it only "
                 f"runs against a locally launched replica.")
