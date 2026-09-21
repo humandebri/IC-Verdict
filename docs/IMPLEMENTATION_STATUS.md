@@ -140,6 +140,6 @@ decision head 16%、その他 約2%。
 6層h768は128-token profileで**79.8B（約40秒）**。単独では上限40Bも超える。
 **カーネル改善（×5）とINT8（×3）の併用**で数秒台に入る見込み。
 
-[ADR-017](design-v2/adr/ADR-017.md)に記録した。
+ADR-017（当時の設計記録。本文書とともに削除済みで、git履歴に残る）に記録した。
 
 **heap**: wasm32の線形メモリ上限は4 GiB。`canisters/verdict-engine` に `heap_bytes` query を追加したので測れる（実checkpoint warmで**1.02 GiB**）。Layaの1.57 GiB packは未投入のまま削除した。

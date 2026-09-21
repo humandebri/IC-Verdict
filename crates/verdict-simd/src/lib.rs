@@ -24,13 +24,12 @@
 //! `simd128` instructions are accepted by the IC's Wasm validator and execute on
 //! ICP: gemm's SIMD functions are already in the deployed module, and this
 //! repository's wasm-feature probe called `i32x4.mul` / `i32x4.dot_i16x8` /
-//! `i16x8.extend_low_i8x16` on a local replica ([ADR-017],
-//! `docs/PERFORMANCE_MEASUREMENTS.md`). The intrinsic calls are `unsafe` only
+//! `i16x8.extend_low_i8x16` on a local replica (ADR-017 and the performance
+//! measurements, both since removed; they remain in the git history at the commit
+//! before `refactor!: drop the Laya backend`). The intrinsic calls are `unsafe` only
 //! because Rust requires that for `core::arch` intrinsics; the call sites are
 //! wrapped once, in `matmul_nt`, and the pointer arithmetic there is bounded by the
 //! slice lengths it is given.
-//!
-//! [ADR-017]: ../../docs/design-v2/adr/ADR-017.md
 #![deny(unsafe_op_in_unsafe_fn)]
 
 /// `#[inline(always)]` wrappers around the intrinsics.
