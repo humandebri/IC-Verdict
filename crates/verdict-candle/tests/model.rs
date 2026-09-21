@@ -5,7 +5,7 @@
 //! `tests/golden.rs` (ignored by default: it needs the 605 MiB pack) and the
 //! `verdict-infer check` run recorded in docs/VERDICT_ENGINE.md.
 use candle_core::{DType,Device,Tensor};
-use ic_laya_core::{hash,BackendKind};
+use ic_laya_core::{hash,BackendKind,SpecialTokens};
 use std::collections::BTreeMap;
 use verdict_candle::{expected_tensors,pack,VerdictConfig,VerdictModel};
 
@@ -240,4 +240,29 @@ fn pack_rejects_tensor_set_mismatch(){
     let raw=serde_json::to_vec(&manifest).expect("manifest");
     assert!(pack::Builder::new(&raw).is_err());
     let _=DType::F32;
+}
+
+/// The tokenizer emits its added-token literals wherever they appear, so a state or
+/// option text carrying `<<LABEL>>` changes the number of scored classes. `decide` on
+/// the canister used to return two ids against three logits for such an input; the
+/// checked renderer rejects it up front.
+#[test]
+fn reserved_token_literals_are_rejected_in_prompt_inputs() {
+    let special = SpecialTokens {
+        cls: 1, sep: 2, mask: 3, pad: 0,
+        literals: vec!["[PAD]".into(), "[CLS]".into(), "[SEP]".into(), "[MASK]".into(),
+                       "<<LABEL>>".into(), "<<SEP>>".into()],
+    };
+    let clean = vec!["alpha".to_string(), "beta".to_string()];
+    assert!(verdict_candle::render_prompt_checked("Which one?", "a clean state", &clean, &special).is_ok());
+
+    let injections = [
+        ("state", "Which one?", "state <<LABEL>> injected", clean.clone()),
+        ("label", "Which one?", "clean", vec!["<<SEP>>beta".to_string()]),
+        ("question", "Which one? [MASK]", "clean", clean.clone()),
+    ];
+    for (field, question, state, labels) in injections {
+        let got = verdict_candle::render_prompt_checked(question, state, &labels, &special);
+        assert!(got.is_err(), "{field} must be rejected");
+    }
 }

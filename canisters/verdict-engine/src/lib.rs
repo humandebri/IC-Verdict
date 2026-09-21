@@ -6,9 +6,8 @@
 //! fund movement: it loads a pack, runs a forward pass and reports the measured
 //! instruction count with the logits.
 //!
-//! The model side is `verdict-candle`; the encoder it uses is the same
-//! `laya-candle` ModernBERT code path the Laya backend uses, so the two backends
-//! differ only in their heads.
+//! The model side is `verdict-candle`; its encoder is `modernbert-candle`, the shared
+//! ModernBERT implementation.
 //!
 //! Sizing: F32 weights are 151M x 4 B = 605 MiB, which fits the 4 GiB wasm heap
 //! with room for activations. Instructions, not memory, are the binding limit:
@@ -186,8 +185,9 @@ fn bench_matrix(rows:usize,cols:usize)->Result<Tensor>{
 ///
 /// This exists to separate "the gemm kernel is slow" from "the code around it is
 /// slow": the phase profile says 91% of a real forward pass is four dense matmuls
-/// running at ~2.7 instructions/MAC, while a hand-written f32x4 kernel should reach
-/// 0.5-1.0. Owner-only, never reachable from an inference path, no state written.
+/// and gemm runs them at 2.501 instructions/MAC. The quantised kernel in
+/// `crates/verdict-simd` reaches 0.780 (docs/VERDICT_ENGINE.md 5.1). Owner-only, never
+/// reachable from an inference path, no state written.
 #[ic_cdk::update]
 fn bench_matmul(m:u32,n:u32,k:u32,iterations:u32)->Result<BenchReply>{
     owner()?;
@@ -342,10 +342,8 @@ fn bench_f16(m:u32,n:u32,k:u32,iterations:u32)->Result<F16BenchReply>{
         instructions_per_mac:if macs>0.0{instructions as f64/macs}else{0.0},max_abs_diff_vs_f32})
 }
 
-/// MEASUREMENT ONLY. What the instruction counter charges for one wasm SIMD operator.
-///
-/// The kernel work is planned against `instr_per_mac`, so knowing the per-operator
-/// weights separates "the backend is slow" from "there is nothing left to remove".
+/// Start a pack upload: validate the manifest, bind the CLS id and reset the builder.
+/// The blob is written by `upload_chunk` and consumed by `warmup_next`.
 #[ic_cdk::update]
 fn begin_upload(manifest:Vec<u8>,tokenizer_length:u64,special:SpecialTokens)->Result<Digest>{
     owner()?;
@@ -522,7 +520,14 @@ fn decide(req:DecideRequest)->Result<DecideReply>{
     let mut labels:Vec<String>=req.options.iter().map(|o|o.text.clone()).collect();
     if req.abstention {ids.push("__insufficient_evidence__".into());labels.push(ABSTENTION_DESC.into());}
     if ids.len()>verdict_candle::MAX_CLASSES{return Err(Error::TooLong);}
-    let prompt=verdict_candle::render_prompt(&req.question,&req.state,&labels);
+    {let mut seen=std::collections::BTreeSet::new();for id in &ids{if !seen.insert(id.clone()){return Err(Error::Invalid("duplicate option id".into()));}}}
+    // The tokenizer's own added tokens include `<<LABEL>>`/`<<SEP>>`, and it emits the
+    // special id wherever that literal appears. An injected state or option text would
+    // therefore add a class slot with no id (measured: 2 ids, 3 logits), and the argmax
+    // could index past the id list. `ic-laya-core`'s schema path rejects these literals.
+    let special=TOKENIZER.with(|t|t.borrow().as_ref().map(|t|t.special_tokens()))
+        .ok_or_else(||Error::ModelUnavailable("warm-up required".into()))?;
+    let prompt=verdict_candle::render_prompt_checked(&req.question,&req.state,&labels,&special)?;
     TOKENIZER.with(|t|MODEL.with(|m|{
         let t=t.borrow();let mut m=m.borrow_mut();
         let (t,model)=match (t.as_ref(),m.as_mut()){(Some(t),Some(m))=>(t,m),_=>return Err(Error::ModelUnavailable("warm-up required".into()))};
@@ -533,9 +538,10 @@ fn decide(req:DecideRequest)->Result<DecideReply>{
         guard_budget(&read(|s|s.clone()),input.len())?;
         let before=ic_cdk::api::instruction_counter();
         let logits=model.logits(&input)?;
+        if logits.len()!=ids.len(){return Err(Error::BindingMismatch);}
         let measured=ic_cdk::api::instruction_counter().saturating_sub(before);
         let scaled:Vec<f32>=logits.iter().map(|x|(*x as f64/req.temperature) as f32).collect();
-        let probs=softmax(&scaled);
+        let probs=softmax(&scaled)?;
         let best=probs.iter().enumerate().fold((0usize,f32::NEG_INFINITY),|a,(i,p)|if *p>a.1{(i,*p)}else{a});
         Ok(DecideReply{
             model:model.bundle_id(),ids:ids.clone(),logits,probabilities:probs.clone(),
@@ -578,8 +584,15 @@ fn decide_batch(req:BatchRequest)->Result<BatchReply>{
         counts.push(n);
     }
     if ids.len()>verdict_candle::MAX_CLASSES{return Err(Error::TooLong);}
+    {let mut seen=std::collections::BTreeSet::new();for id in &ids{if !seen.insert(id.clone()){return Err(Error::Invalid("duplicate option id".into()));}}}
     let question=req.questions.iter().map(|q|q.question.clone()).collect::<Vec<_>>().join(" | ");
-    let prompt=verdict_candle::render_prompt(&question,&req.state,&labels);
+    // The tokenizer's own added tokens include `<<LABEL>>`/`<<SEP>>`, and it emits the
+    // special id wherever that literal appears. An injected state or option text would
+    // therefore add a class slot with no id (measured: 2 ids, 3 logits), and the argmax
+    // could index past the id list. `ic-laya-core`'s schema path rejects these literals.
+    let special=TOKENIZER.with(|t|t.borrow().as_ref().map(|t|t.special_tokens()))
+        .ok_or_else(||Error::ModelUnavailable("warm-up required".into()))?;
+    let prompt=verdict_candle::render_prompt_checked(&question,&req.state,&labels,&special)?;
     TOKENIZER.with(|t|MODEL.with(|m|{
         let t=t.borrow();let mut m=m.borrow_mut();
         let (t,model)=match (t.as_ref(),m.as_mut()){(Some(t),Some(m))=>(t,m),_=>return Err(Error::ModelUnavailable("warm-up required".into()))};
@@ -590,9 +603,10 @@ fn decide_batch(req:BatchRequest)->Result<BatchReply>{
         guard_budget(&read(|s|s.clone()),input.len())?;
         let before=ic_cdk::api::instruction_counter();
         let logits=model.logits(&input)?;
+        if logits.len()!=ids.len(){return Err(Error::BindingMismatch);}
         let measured=ic_cdk::api::instruction_counter().saturating_sub(before);
         let scaled:Vec<f32>=logits.iter().map(|x|(*x as f64/req.temperature) as f32).collect();
-        let probabilities=softmax(&scaled);
+        let probabilities=softmax(&scaled)?;
         let mut out=Vec::new();let mut offset=0usize;
         for (q,count) in req.questions.iter().zip(counts.iter()) {
             let end=offset+count;
@@ -608,12 +622,18 @@ fn decide_batch(req:BatchRequest)->Result<BatchReply>{
     }))
 }
 
-fn softmax(xs:&[f32])->Vec<f32>{
+/// Softmax over the option logits.
+///
+/// Returns an error instead of a fabricated distribution. The previous version returned
+/// an all-zero vector when the sum was 0 or NaN, which `decide` then reported as "first
+/// option selected, confidence 0.0": a wrong answer with no signal.
+fn softmax(xs:&[f32])->Result<Vec<f32>>{
     let m=xs.iter().cloned().fold(f32::NEG_INFINITY,f32::max);
+    if !m.is_finite(){return Err(Error::Numeric);}
     let e:Vec<f32>=xs.iter().map(|x|(x-m).exp()).collect();
     let s:f32=e.iter().sum();
-    if !(s>0.0) {return vec![0.0;xs.len()];}
-    e.iter().map(|x|x/s).collect()
+    if !s.is_finite()||s<=0.0{return Err(Error::Numeric);}
+    Ok(e.iter().map(|x|x/s).collect())
 }
 ic_cdk::export_candid!();
 pub fn candid_interface()->String{__export_service()}

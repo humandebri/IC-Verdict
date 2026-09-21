@@ -22,7 +22,7 @@
 #![forbid(unsafe_code)]
 pub mod pack;
 use candle_core::{DType,Device,Tensor,D};
-use ic_laya_core::{engine::InferenceBackend,BackendKind,Digest,Error,Result,TokenInput};
+use ic_laya_core::{engine::InferenceBackend,BackendKind,Digest,Error,Result,SpecialTokens,TokenInput};
 use modernbert_candle::encoder::ModernBert;
 use modernbert_candle::{Activation,Attention,EncoderLayer,Linear,Norm};
 use serde::{Deserialize,Serialize};
@@ -313,8 +313,36 @@ impl InferenceBackend for VerdictModel {
     fn infer(&mut self,input:&TokenInput)->Result<Vec<f32>>{self.logits(&input.input_ids)}
 }
 
+/// Rejects prompt inputs that contain one of the tokenizer's own special-token
+/// literals.
+///
+/// Measured on the canister: the tokenizer emits `<<LABEL>>` (id 50368) wherever the
+/// literal appears, so a state or option text containing it adds a class slot that has
+/// no entry in the option list. A two-label `decide` then returned `ids` with two
+/// entries and `logits`/`probabilities` with three, and `ids[argmax]` could index past
+/// the list and trap. `ic-laya-core`'s schema path rejects these literals in
+/// `schema::render`; this is the same check for the openJev path.
+pub fn validate_prompt_inputs(question:&str,context:&str,labels:&[String],special:&SpecialTokens)->Result<()>{
+    let fields=std::iter::once(("question",question))
+        .chain(std::iter::once(("state",context)))
+        .chain(labels.iter().map(|l|("label",l.as_str())));
+    for (name,text) in fields {
+        if let Some(hit)=special.literals.iter().find(|lit|!lit.is_empty()&&text.contains(lit.as_str())){
+            return Err(Error::Invalid(format!("{name} contains the reserved token {hit:?}")));
+        }
+    }
+    Ok(())
+}
+/// [`render_prompt`] after the reserved-token check. Adapters must use this one.
+pub fn render_prompt_checked(question:&str,context:&str,labels:&[String],special:&SpecialTokens)->Result<String>{
+    validate_prompt_inputs(question,context,labels,special)?;
+    Ok(render_prompt(question,context,labels))
+}
 /// Reference-side prompt renderer, mirroring the checkpoint's `core/formatting.py`.
 /// Kept here so the canister and the parity tool cannot drift from each other.
+///
+/// This is a pure formatter and does **not** check for injected special tokens:
+/// adapters must call [`render_prompt_checked`].
 pub fn render_prompt(question:&str,context:&str,labels:&[String])->String{
     let prefix: String = labels.iter().map(|l|format!("{LABEL_MARKER}{l}")).collect();
     let text=if question.is_empty(){context.to_string()}else{format!("Question: {question}\n\nContext:\n{context}")};
