@@ -49,8 +49,12 @@
 /// Outliers then clip to +-127. Measured effect on the golden gate is in
 /// docs/VERDICT_ENGINE.md 5.1.6.
 pub fn quantize_rows_i8(src: &[f32], rows: usize, cols: usize) -> (Vec<i8>, Vec<f32>) {
+    assert!(src.len() >= rows * cols, "input shorter than rows*cols");
     let mut q = vec![0i8; rows * cols];
     let mut scales = vec![1.0f32; rows];
+    if rows == 0 || cols == 0 {
+        return (q, scales);
+    }
     let mut scratch = vec![0.0f32; cols];
     for r in 0..rows {
         let row = &src[r * cols..r * cols + cols];
@@ -76,16 +80,27 @@ pub fn quantize_rows_i8(src: &[f32], rows: usize, cols: usize) -> (Vec<i8>, Vec<
 pub const ACTIVATION_RANGE: f32 = 8192.0;
 
 pub fn quantize_acts_i16(src: &[f32], rows: usize, cols: usize) -> (Vec<i16>, Vec<f32>) {
+    assert!(src.len() >= rows * cols, "input shorter than rows*cols");
     let mut q = vec![0i16; rows * cols];
     let mut scales = vec![1.0f32; rows];
+    if rows == 0 || cols == 0 {
+        return (q, scales);
+    }
+    // The i32 accumulator has to hold `sum |a*w| <= range * 127 * cols`. 8192 is the
+    // precision the kernel was measured at for k=768/1152 (0.780 instructions/MAC);
+    // a larger contraction gets a smaller range instead of wrapping silently.
+    let range = ACTIVATION_RANGE
+        .min(((i32::MAX as f32) / (127.0 * cols as f32)).floor())
+        .max(1.0);
     for r in 0..rows {
         let row = &src[r * cols..r * cols + cols];
         let max = row.iter().fold(0.0f32, |acc, v| acc.max(v.abs()));
         // Dividing by the scale costs a full division per element and measured 167
         // instructions per element; multiplying by the reciprocal and rounding with
-        // `f32x4.nearest` in blocks of eight is a small fraction of that.
-        let inv_scale = if max > 0.0 { ACTIVATION_RANGE / max } else { 1.0 };
-        scales[r] = if max > 0.0 { max / ACTIVATION_RANGE } else { 1.0 };
+        // `f32x4.nearest` in blocks of eight is a small fraction of that. The scalar
+        // path uses `round_ties_even` so both paths round identically.
+        let inv_scale = if max > 0.0 { range / max } else { 1.0 };
+        scales[r] = if max > 0.0 { max / range } else { 1.0 };
         let out = &mut q[r * cols..r * cols + cols];
         #[cfg(target_arch = "wasm32")]
         if cols % 8 == 0 {
@@ -95,7 +110,7 @@ pub fn quantize_acts_i16(src: &[f32], rows: usize, cols: usize) -> (Vec<i16>, Ve
             continue;
         }
         for (i, v) in row.iter().enumerate() {
-            out[i] = (v * inv_scale).round().clamp(-ACTIVATION_RANGE, ACTIVATION_RANGE) as i16;
+            out[i] = (v * inv_scale).round_ties_even().clamp(-range, range) as i16;
         }
     }
     (q, scales)
@@ -196,52 +211,52 @@ unsafe fn matmul_i8_simd_k2<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 let xb1 = unsafe { v128_load(xb.add(8).cast()) };
                 let xb2 = unsafe { v128_load(xb.add(16).cast()) };
                 let xb3 = unsafe { v128_load(xb.add(24).cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(xa0, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(xb0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(8).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(xa1, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(xb1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(16).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(xa2, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(xb2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(24).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(xa3, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(xb3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xa0, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xb0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 8).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xa1, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xb1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 16).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xa2, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xb2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 24).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xa3, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xb3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(xa0, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(xb0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 8).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(xa1, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(xb1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 16).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(xa2, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(xb2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 24).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(xa3, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(xb3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(xa0, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(xb0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 8).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(xa1, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(xb1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 16).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(xa2, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(xb2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 24).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(xa3, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(xb3, wv));
                 xa = unsafe { xa.add(32) };
@@ -252,16 +267,16 @@ unsafe fn matmul_i8_simd_k2<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
             while p < K {
                 let xav = unsafe { v128_load(xa.cast()) };
                 let xbv = unsafe { v128_load(xb.cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(xav, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(xbv, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xav, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xbv, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(xav, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(xbv, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(xav, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(xbv, wv));
                 xa = unsafe { xa.add(8) };
@@ -359,82 +374,82 @@ unsafe fn matmul_i8_simd_k4<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 let x3_1 = unsafe { v128_load(xp[3].add(8).cast()) };
                 let x3_2 = unsafe { v128_load(xp[3].add(16).cast()) };
                 let x3_3 = unsafe { v128_load(xp[3].add(24).cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_0, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_0, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_0, wv));
                 c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 8).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_1, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_1, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_1, wv));
                 c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 16).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_2, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_2, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_2, wv));
                 c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 24).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_3, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_3, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_3, wv));
                 c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_0, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_0, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_0, wv));
                 c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 8).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_1, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_1, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_1, wv));
                 c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 16).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_2, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_2, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_2, wv));
                 c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 24).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_3, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_3, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_3, wv));
                 c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_0, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_0, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_0, wv));
                 c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 8).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_1, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_1, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_1, wv));
                 c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 16).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_2, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_2, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_2, wv));
                 c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 24).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_3, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_3, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_3, wv));
                 c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_0, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_0, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_0, wv));
                 c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 8).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_1, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_1, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_1, wv));
                 c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 16).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_2, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_2, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_2, wv));
                 c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 24).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_3, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_3, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_3, wv));
@@ -448,22 +463,22 @@ unsafe fn matmul_i8_simd_k4<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 let x1v = unsafe { v128_load(xp[1].cast()) };
                 let x2v = unsafe { v128_load(xp[2].cast()) };
                 let x3v = unsafe { v128_load(xp[3].cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0v, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1v, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2v, wv));
                 c30 = i32x4_add(c30, i32x4_dot_i16x8(x3v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0v, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1v, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2v, wv));
                 c31 = i32x4_add(c31, i32x4_dot_i16x8(x3v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0v, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1v, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2v, wv));
                 c32 = i32x4_add(c32, i32x4_dot_i16x8(x3v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0v, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1v, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2v, wv));
@@ -573,7 +588,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 let x7_1 = unsafe { v128_load(xp[7].add(8).cast()) };
                 let x7_2 = unsafe { v128_load(xp[7].add(16).cast()) };
                 let x7_3 = unsafe { v128_load(xp[7].add(24).cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_0, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_0, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_0, wv));
@@ -582,7 +597,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c50 = i32x4_add(c50, i32x4_dot_i16x8(x5_0, wv));
                 c60 = i32x4_add(c60, i32x4_dot_i16x8(x6_0, wv));
                 c70 = i32x4_add(c70, i32x4_dot_i16x8(x7_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 8).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_1, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_1, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_1, wv));
@@ -591,7 +606,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c50 = i32x4_add(c50, i32x4_dot_i16x8(x5_1, wv));
                 c60 = i32x4_add(c60, i32x4_dot_i16x8(x6_1, wv));
                 c70 = i32x4_add(c70, i32x4_dot_i16x8(x7_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 16).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_2, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_2, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_2, wv));
@@ -600,7 +615,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c50 = i32x4_add(c50, i32x4_dot_i16x8(x5_2, wv));
                 c60 = i32x4_add(c60, i32x4_dot_i16x8(x6_2, wv));
                 c70 = i32x4_add(c70, i32x4_dot_i16x8(x7_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 24).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_3, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_3, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_3, wv));
@@ -609,7 +624,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c50 = i32x4_add(c50, i32x4_dot_i16x8(x5_3, wv));
                 c60 = i32x4_add(c60, i32x4_dot_i16x8(x6_3, wv));
                 c70 = i32x4_add(c70, i32x4_dot_i16x8(x7_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_0, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_0, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_0, wv));
@@ -618,7 +633,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c51 = i32x4_add(c51, i32x4_dot_i16x8(x5_0, wv));
                 c61 = i32x4_add(c61, i32x4_dot_i16x8(x6_0, wv));
                 c71 = i32x4_add(c71, i32x4_dot_i16x8(x7_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 8).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_1, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_1, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_1, wv));
@@ -627,7 +642,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c51 = i32x4_add(c51, i32x4_dot_i16x8(x5_1, wv));
                 c61 = i32x4_add(c61, i32x4_dot_i16x8(x6_1, wv));
                 c71 = i32x4_add(c71, i32x4_dot_i16x8(x7_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 16).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_2, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_2, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_2, wv));
@@ -636,7 +651,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c51 = i32x4_add(c51, i32x4_dot_i16x8(x5_2, wv));
                 c61 = i32x4_add(c61, i32x4_dot_i16x8(x6_2, wv));
                 c71 = i32x4_add(c71, i32x4_dot_i16x8(x7_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 24).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_3, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_3, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_3, wv));
@@ -645,7 +660,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c51 = i32x4_add(c51, i32x4_dot_i16x8(x5_3, wv));
                 c61 = i32x4_add(c61, i32x4_dot_i16x8(x6_3, wv));
                 c71 = i32x4_add(c71, i32x4_dot_i16x8(x7_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_0, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_0, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_0, wv));
@@ -654,7 +669,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c52 = i32x4_add(c52, i32x4_dot_i16x8(x5_0, wv));
                 c62 = i32x4_add(c62, i32x4_dot_i16x8(x6_0, wv));
                 c72 = i32x4_add(c72, i32x4_dot_i16x8(x7_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 8).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_1, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_1, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_1, wv));
@@ -663,7 +678,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c52 = i32x4_add(c52, i32x4_dot_i16x8(x5_1, wv));
                 c62 = i32x4_add(c62, i32x4_dot_i16x8(x6_1, wv));
                 c72 = i32x4_add(c72, i32x4_dot_i16x8(x7_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 16).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_2, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_2, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_2, wv));
@@ -672,7 +687,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c52 = i32x4_add(c52, i32x4_dot_i16x8(x5_2, wv));
                 c62 = i32x4_add(c62, i32x4_dot_i16x8(x6_2, wv));
                 c72 = i32x4_add(c72, i32x4_dot_i16x8(x7_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 24).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_3, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_3, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_3, wv));
@@ -681,7 +696,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c52 = i32x4_add(c52, i32x4_dot_i16x8(x5_3, wv));
                 c62 = i32x4_add(c62, i32x4_dot_i16x8(x6_3, wv));
                 c72 = i32x4_add(c72, i32x4_dot_i16x8(x7_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_0, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_0, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_0, wv));
@@ -690,7 +705,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c53 = i32x4_add(c53, i32x4_dot_i16x8(x5_0, wv));
                 c63 = i32x4_add(c63, i32x4_dot_i16x8(x6_0, wv));
                 c73 = i32x4_add(c73, i32x4_dot_i16x8(x7_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 8).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_1, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_1, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_1, wv));
@@ -699,7 +714,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c53 = i32x4_add(c53, i32x4_dot_i16x8(x5_1, wv));
                 c63 = i32x4_add(c63, i32x4_dot_i16x8(x6_1, wv));
                 c73 = i32x4_add(c73, i32x4_dot_i16x8(x7_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 16).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_2, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_2, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_2, wv));
@@ -708,7 +723,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c53 = i32x4_add(c53, i32x4_dot_i16x8(x5_2, wv));
                 c63 = i32x4_add(c63, i32x4_dot_i16x8(x6_2, wv));
                 c73 = i32x4_add(c73, i32x4_dot_i16x8(x7_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 24).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_3, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_3, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_3, wv));
@@ -730,7 +745,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 let x5v = unsafe { v128_load(xp[5].cast()) };
                 let x6v = unsafe { v128_load(xp[6].cast()) };
                 let x7v = unsafe { v128_load(xp[7].cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(0).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(x0v, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(x1v, wv));
                 c20 = i32x4_add(c20, i32x4_dot_i16x8(x2v, wv));
@@ -739,7 +754,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c50 = i32x4_add(c50, i32x4_dot_i16x8(x5v, wv));
                 c60 = i32x4_add(c60, i32x4_dot_i16x8(x6v, wv));
                 c70 = i32x4_add(c70, i32x4_dot_i16x8(x7v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(1 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(x0v, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(x1v, wv));
                 c21 = i32x4_add(c21, i32x4_dot_i16x8(x2v, wv));
@@ -748,7 +763,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c51 = i32x4_add(c51, i32x4_dot_i16x8(x5v, wv));
                 c61 = i32x4_add(c61, i32x4_dot_i16x8(x6v, wv));
                 c71 = i32x4_add(c71, i32x4_dot_i16x8(x7v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(2 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
                 c02 = i32x4_add(c02, i32x4_dot_i16x8(x0v, wv));
                 c12 = i32x4_add(c12, i32x4_dot_i16x8(x1v, wv));
                 c22 = i32x4_add(c22, i32x4_dot_i16x8(x2v, wv));
@@ -757,7 +772,7 @@ unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 c52 = i32x4_add(c52, i32x4_dot_i16x8(x5v, wv));
                 c62 = i32x4_add(c62, i32x4_dot_i16x8(x6v, wv));
                 c72 = i32x4_add(c72, i32x4_dot_i16x8(x7v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load(wp.add(3 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
                 c03 = i32x4_add(c03, i32x4_dot_i16x8(x0v, wv));
                 c13 = i32x4_add(c13, i32x4_dot_i16x8(x1v, wv));
                 c23 = i32x4_add(c23, i32x4_dot_i16x8(x2v, wv));
@@ -833,10 +848,10 @@ unsafe fn dot4_i8(i8w: *const i8, x0: core::arch::wasm32::v128, x1: core::arch::
     // four k-chunks instead of once per load. Measured: this is what took the kernel
     // from 1.605 to 0.9 instructions/MAC (docs/VERDICT_ENGINE.md 5.1.7).
     let mut a = acc;
-    a = i32x4_add(a, i32x4_dot_i16x8(x0, i16x8_extend_low_i8x16(unsafe { v128_load(i8w.cast()) })));
-    a = i32x4_add(a, i32x4_dot_i16x8(x1, i16x8_extend_low_i8x16(unsafe { v128_load(i8w.add(8).cast()) })));
-    a = i32x4_add(a, i32x4_dot_i16x8(x2, i16x8_extend_low_i8x16(unsafe { v128_load(i8w.add(16).cast()) })));
-    a = i32x4_add(a, i32x4_dot_i16x8(x3, i16x8_extend_low_i8x16(unsafe { v128_load(i8w.add(24).cast()) })));
+    a = i32x4_add(a, i32x4_dot_i16x8(x0, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(i8w.cast()) })));
+    a = i32x4_add(a, i32x4_dot_i16x8(x1, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(i8w.add(8).cast()) })));
+    a = i32x4_add(a, i32x4_dot_i16x8(x2, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(i8w.add(16).cast()) })));
+    a = i32x4_add(a, i32x4_dot_i16x8(x3, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(i8w.add(24).cast()) })));
     a
 }
 
@@ -882,10 +897,10 @@ unsafe fn matmul_i8_simd(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, 
             }
             while p < k {
                 let xv = unsafe { v128_load(xp.cast()) };
-                acc0 = unsafe { i32x4_add(acc0, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load(p0.cast()) }))) };
-                acc1 = unsafe { i32x4_add(acc1, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load(p1.cast()) }))) };
-                acc2 = unsafe { i32x4_add(acc2, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load(p2.cast()) }))) };
-                acc3 = unsafe { i32x4_add(acc3, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load(p3.cast()) }))) };
+                acc0 = unsafe { i32x4_add(acc0, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p0.cast()) }))) };
+                acc1 = unsafe { i32x4_add(acc1, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p1.cast()) }))) };
+                acc2 = unsafe { i32x4_add(acc2, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p2.cast()) }))) };
+                acc3 = unsafe { i32x4_add(acc3, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p3.cast()) }))) };
                 xp = unsafe { xp.add(8) };
                 p0 = unsafe { p0.add(8) };
                 p1 = unsafe { p1.add(8) };
@@ -1049,6 +1064,39 @@ mod tests {
                 assert!((x - y).abs() / scale < 1e-4, "shape {m}x{k}x{n}: {x} vs {y}");
             }
         }
+    }
+
+    #[test]
+    fn activation_range_shrinks_for_large_contractions() {
+        // The accumulator is i32: `range * 127 * cols` must stay below i32::MAX.
+        // k=1152 keeps the tuned range; a 16k contraction gets a smaller one.
+        for cols in [1152usize, 4096, 16384] {
+            let row: Vec<f32> = (0..cols).map(|i| if i % 2 == 0 { 1.0 } else { -1.0 }).collect();
+            let (q, scales) = quantize_acts_i16(&row, 1, cols);
+            let bound = ((i32::MAX as f32) / (127.0 * cols as f32)).floor().max(1.0);
+            assert!(q.iter().all(|v| (*v as f32).abs() <= bound.min(ACTIVATION_RANGE) + 1.0), "cols={cols}");
+            assert!(scales[0] >= 1.0 / bound, "cols={cols}");
+            // The worst-case product still fits: no silent wrap is possible.
+            let worst = (bound.min(ACTIVATION_RANGE) * 127.0 * cols as f32) as f64;
+            assert!(worst <= i32::MAX as f64 + 1.0, "cols={cols}: {worst}");
+        }
+    }
+
+    #[test]
+    fn degenerate_quantisation_inputs_do_not_panic() {
+        let (q, scales) = quantize_rows_i8(&[], 0, 0);
+        assert!(q.is_empty() && scales.is_empty());
+        let (q, scales) = quantize_acts_i16(&[], 0, 0);
+        assert!(q.is_empty() && scales.is_empty());
+        // rows > 0 with cols == 0 is the case that used to underflow `cols - 1`.
+        let (q, scales) = quantize_rows_i8(&[], 3, 0);
+        assert!(q.is_empty() && scales.len() == 3);
+    }
+
+    #[test]
+    #[should_panic(expected = "input shorter than rows*cols")]
+    fn quantisation_rejects_a_short_slice() {
+        let _ = quantize_rows_i8(&[1.0, 2.0], 2, 4);
     }
 
     #[test]
