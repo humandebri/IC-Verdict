@@ -31,9 +31,9 @@ from measure_common import (BUILD, ROOT, decision_request, register_schemas,  # 
                             sha256, upload_pack)
 # The replica plumbing and the schema/state fixtures live in measure_inference; it
 # has a __main__ guard, so importing it is side-effect free.
+from icp_guard import require_local_network  # noqa: E402
 from measure_inference import (SCHEMAS, STATE, Failure, Icp, ensure_canister,  # noqa: E402
-                               ensure_cycles, ensure_identity, network_status, principal,
-                               require_local_network)
+                               ensure_cycles, ensure_identity, network_status, principal)
 
 
 def parse_phases(output: str) -> list[dict]:
@@ -77,22 +77,39 @@ UPDATE_INSTRUCTION_LIMIT = 40_000_000_000
 def encoder_macs(config: dict, tokens: int) -> int:
     """MACs for one encoder pass over `tokens` rendered tokens.
 
-    Shapes come from `laya_candle::expected_tensors`; one token costs
+    Shapes come from `laya_candle::expected_tensors`. Per token the dense terms are
 
         4 * h * h        qkv (3*h*h) + out (h*h)
         3 * inter * h    wi (2*inter*h: gate and up) + wo (inter*h)
-        2 * window * h   QK^T + weighted sum inside the sliding window
 
-    `wo.weight` is [hidden, intermediate], so charging `2*inter*h` for wi *and* wo was
-    wrong, but only in the MLP term: the other terms were right, so the denominator was
-    overstated by 1.242x at hidden 512 / intermediate 2048 (not 4/3 -- the MLP is about
-    73% of the total, which dilutes a 25% error in that term). The previous version did
-    that on top of a hardcoded 128-token length.
+    Attention is per layer, not per token: `2 * h` MACs per (query, visible key). Only
+    the layers with `i % global_every != 0` are windowed, and a windowed query sees the
+    keys within `distance = local_attention // 2` inclusive -- up to `2*distance + 1`
+    keys, fewer at the sequence edges -- because the runtime mask is
+    `abs(q - k) > distance -> masked`. A global layer (`i % global_every == 0`) sees
+    every key.
+
+    Three versions of this denominator were wrong, all in the same direction (the kernel
+    looked more efficient than it is): `wo.weight` is [hidden, intermediate], so the MLP
+    costs `3*inter*h` and not `4*inter*h`; the window was charged to *every* layer even
+    though only `i % global_every != 0` layers are windowed; and the key count was
+    `local_attention` rather than the `2*(local_attention//2) + 1` keys the mask allows.
     """
     h = config["hidden_size"]
     inter = config["intermediate_size"]
-    window = min(tokens, config["local_attention"])
-    return (4 * h * h + 3 * inter * h + 2 * window * h) * tokens * config["layers"]
+    layers = config["layers"]
+    every = config["global_every"]
+    distance = config["local_attention"] // 2
+    dense = (4 * h * h + 3 * inter * h) * tokens * layers
+    attention = 0
+    for layer in range(layers):
+        if layer % every == 0:
+            attention += 2 * h * tokens * tokens
+        else:
+            for query in range(tokens):
+                visible = min(tokens, query + distance + 1) - max(0, query - distance)
+                attention += 2 * h * visible
+    return dense + attention
 
 
 def sweep_arguments(args) -> list[int]:
@@ -255,7 +272,7 @@ def main() -> int:
         raise Failure("build/decision-engine.wasm missing")
 
     icp = Icp(ROOT, args.env, args.identity)
-    require_local_network(icp)
+    require_local_network(icp, Failure)
     started_here = network_status(icp) is None
     if started_here:
         print("starting local network ...")
@@ -290,6 +307,12 @@ def main() -> int:
                     "cannot move funds. instructions are counted by the canister",
             "tiers": results}, indent=2) + "\n")
         print(f"\nwrote {out.relative_to(ROOT)}")
+        failed = [r["tier"] for r in results if "harness_error" in r]
+        if failed:
+            # The artifact records the failure, but the exit code must too: a run in which
+            # no tier measured anything is not a successful measurement.
+            print(f"FAILED tiers: {', '.join(failed)}", file=sys.stderr)
+            return 1
     finally:
         if started_here:
             print("stopping local network ...")

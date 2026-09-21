@@ -119,11 +119,26 @@ ASSUMED_DELTAS = [
 
 
 def fetch(url: str, limit: int | None = None) -> bytes:
+    """Fetch at most `limit` bytes and insist on an exact 206 range response.
+
+    The caller reads a ~21 KiB header out of an 803 MiB file over HTTP Range. A server or
+    CDN that ignores Range answers 200 with the whole body; reading that here would pull
+    hundreds of MiB into memory and only fail later inside `json.loads`. The read is
+    capped at `limit` and the status and length are checked instead of assumed.
+    """
     request = urllib.request.Request(url, headers={"User-Agent": "ic-laya-port-bridge"})
     if limit is not None:
         request.add_header("Range", f"bytes=0-{limit - 1}")
     with urllib.request.urlopen(request, timeout=120) as response:
-        return response.read()
+        if limit is None:
+            return response.read()
+        body = response.read(limit)
+        if response.status != 206:
+            raise SystemExit(f"{url}: server answered {response.status} to a Range request; "
+                             f"refusing to read the whole file")
+        if len(body) != limit:
+            raise SystemExit(f"{url}: requested {limit} bytes, received {len(body)}")
+        return body
 
 
 def safetensors_header(source: str | Path) -> dict:
@@ -144,9 +159,14 @@ def safetensors_header(source: str | Path) -> dict:
 def translate_config(upstream: dict, agent: dict) -> dict:
     """Map upstream ModernBERT+Laya config onto IC-Laya's ModelConfig fields."""
     rope = upstream["rope_parameters"]
-    # `hidden_activation` is the encoder MLP activation; the decision head's
-    # activation is not separately named upstream, and upstream defaults to GELU.
-    activation = str(upstream.get("hidden_activation", "gelu")).capitalize()
+    # The decision head is a PyTorch `TransformerEncoderLayer` built without an explicit
+    # activation, so it uses PyTorch's default ReLU (docs/FINAL_SPEC.v2.md:187;
+    # design-v2/ALL_IN_ONE.md V2-R11 lists "port the head activation as GELU" as the error
+    # to avoid). `hidden_activation` describes the *encoder* MLP (gelu), which
+    # `laya-candle` hardcodes as `gelu_erf`; feeding it into the head was that mistake.
+    # If upstream ever names a head activation explicitly, that value wins.
+    upstream_head = upstream.get("decision_activation") or upstream.get("head_activation")
+    activation = str(upstream_head).capitalize() if upstream_head else "Relu"
     canonical = {
         "vocab_size": upstream["vocab_size"],
         "hidden_size": upstream["hidden_size"],
@@ -309,6 +329,9 @@ def main() -> int:
             "RoPE layout and whether rotary is applied to Q/K after the head split",
             "Sliding-window semantics: upstream `local_attention=128` vs canonical window of local_attention/2",
             "Decision head is post-norm upstream pre-LN; confirm norm placement against source",
+            "Decision head activation: canonical config assumes PyTorch's default ReLU "
+            "(docs/FINAL_SPEC.v2.md:187, ALL_IN_ONE V2-R11) because upstream does not name one; "
+            "if the checkpoint was built with an explicit GELU head this is wrong",
             "Whether the decision head sees the CLS row, pooled row, or mask-marker rows only",
             "What `head_max_len=256` and `max_prefixes=6` imply for the 128-token Compact128 profile",
             "act_head/escalate must be kept as an output branch; it is not read by the loader yet",

@@ -167,7 +167,15 @@ def upload_pack(icp, tier: str, chunk_kib: int, timeout: int) -> tuple[dict, byt
     started = time.monotonic()
     done = 0
     total = read_int(warm) or 0
+    # `warmup_next` answers (false) until every tensor is resident. The loop is bounded by
+    # the tensor count so a canister that keeps answering false cannot hang the harness,
+    # and completion is read from the boolean rather than from `"true" in step`, which
+    # would also match an unrelated field or an error message.
+    call_limit = max(2 * total, 1000)
     while True:
+        if done >= call_limit:
+            raise RuntimeError(f"warmup_next never reported completion after {done} calls "
+                               f"(expected {total} tensors)")
         step = icp.call("decision-engine", "warmup_next", "()", timeout=timeout, expect_ok=False)
         if "Err" in step:
             entry = manifest["tensors"][done] if done < len(manifest["tensors"]) else None
@@ -177,7 +185,8 @@ def upload_pack(icp, tier: str, chunk_kib: int, timeout: int) -> tuple[dict, byt
                                 "response": step.strip()[:200]}
             raise RuntimeError(f"warmup_next failed at tensor {done} ({entry['name'] if entry else '?'})")
         done += 1
-        if "true" in step:
+        stripped = step.strip()
+        if stripped == "(true)" or "Ok = true" in stripped or "Ok=true" in stripped:
             break
     record["warmup"] = {"ok": True, "tensors": total, "seconds": round(time.monotonic() - started, 2)}
     return record, manifest_raw

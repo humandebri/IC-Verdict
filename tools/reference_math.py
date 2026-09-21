@@ -86,10 +86,19 @@ class ReservationOracle:
         return self.frozen
 
     def invariant(self) -> None:
-        assert self.reserved in (0, 110)
-        assert self.spent in (0, 110)
-        assert self.reserved + self.spent <= 110
-        if self.status in ("Submitted", "OutcomeUnknown"):
-            assert self.reserved == 110
-        if self.status == "Succeeded":
-            assert self.reserved == 0 and self.spent == 110
+        """Raise on a broken reservation invariant.
+
+        `assert` would be stripped by `python -O`, and this method is the only check in
+        the 625-trace enumeration, so the enforcement is explicit.
+        """
+        state = f"reserved={self.reserved} spent={self.spent} status={self.status}"
+        if self.reserved not in (0, 110):
+            raise ValueError(f"reserved must be 0 or the full charge: {state}")
+        if self.spent not in (0, 110):
+            raise ValueError(f"spent must be 0 or the full charge: {state}")
+        if self.reserved + self.spent > 110:
+            raise ValueError(f"reserved+spent exceeds the charge: {state}")
+        if self.status in ("Submitted", "OutcomeUnknown") and self.reserved != 110:
+            raise ValueError(f"an in-flight transfer must hold the reservation: {state}")
+        if self.status == "Succeeded" and not (self.reserved == 0 and self.spent == 110):
+            raise ValueError(f"a success must settle exactly once: {state}")

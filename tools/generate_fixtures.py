@@ -3,18 +3,23 @@
 
 Default behaviour (no `--tier`) writes exactly the two tiny fixtures and the
 numeric vectors that the test suite depends on. Output for those paths must stay
-byte-identical; `MANIFEST.sha256` and `tests/test_reference.py` pin them.
+byte-identical: they use the literal seed 19 below, and `tests/test_reference.py`
+re-checks every offset, length and sha256 of the committed packs (there is no
+separate hash manifest to consult).
 
 `--tier` additionally writes sized synthetic packs under `fixtures/<tier>/` for
 performance measurement. Those are random weights of the same architecture at a
 larger scale, NOT Laya, and they say nothing about decision quality; they exist
 so `tools/measure_inference.py` can measure instruction cost through the real
-`laya-candle` code path without the 803 MiB upstream checkpoint.
+`laya-candle` code path without the 803 MiB upstream checkpoint. Their seed is
+derived from the tier name with `zlib.crc32`, not `hash()`: Python salts `hash()`
+per process, which made a tier's bytes differ on every run.
 """
 from __future__ import annotations
 import argparse
 import hashlib
 import json
+import zlib
 from pathlib import Path
 import numpy as np
 import torch
@@ -200,7 +205,7 @@ def generate_tier(name: str) -> dict:
         raise SystemExit(f"unknown tier {name}; choose from {', '.join(TIERS)}")
     torch.set_num_threads(1)
     cfg = TIERS[name]
-    weights = build_weights(cfg, seed=hash(name) % (2 ** 31))
+    weights = build_weights(cfg, seed=zlib.crc32(name.encode("utf-8")))
     tokenizer_raw = build_tokenizer(cfg["vocab_size"])
     directory = ROOT / "fixtures" / name
     total = write_pack(directory, cfg, weights, tokenizer_raw, f"tier-{name}")

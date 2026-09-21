@@ -22,7 +22,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 1 test
 test tiny_wordlevel_adapter ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
 
 
 running 0 tests
@@ -31,65 +31,65 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 57 tests
-test cached_result_cannot_bypass_active_model_change ... ok
-test all_primitives_reach_ready ... ok
-test business_duplicate_blocked ... ok
-test budget_failure_does_not_partially_reserve_operation ... ok
-test calibration_must_cover_whole_workflow_expiry ... ok
 test caller_must_own_grant ... ok
+test calibration_must_cover_whole_workflow_expiry ... ok
 test count_bounds ... ok
-test changed_evidence_stale ... ok
+test business_duplicate_blocked ... ok
+test all_primitives_reach_ready ... ok
 test compiled_three_schemas ... ok
 test display_tie_is_first ... ok
-test duplicate_options_rejected ... ok
+test budget_failure_does_not_partially_reserve_operation ... ok
 test budget_reserved_before_send ... ok
-test engine_namespace_not_public ... ok
-test forged_derived_score_rejected ... ok
+test dedup_expiry_blocks_blind_retry ... ok
+test changed_evidence_stale ... ok
+test duplicate_options_rejected ... ok
+test cached_result_cannot_bypass_active_model_change ... ok
 test engine_deduplicates ... ok
-test huge_logits_stable ... ok
-test golden_vectors ... ok
-test definitive_first_error_releases ... ok
+test forged_derived_score_rejected ... ok
 test duplicate_success_accounts_once ... ok
+test definitive_first_error_releases ... ok
+test huge_logits_stable ... ok
+test engine_namespace_not_public ... ok
 test engine_transport_retry_same_id ... ok
-test marker_tamper_rejected ... ok
 test forged_snapshot_never_passes ... ok
-test no_normalization_of_bad_input ... ok
+test golden_vectors ... ok
+test late_reply_after_cancel_ignored ... ok
 test live_mode_is_closed ... ok
 test exact_length_limit ... ok
-test late_reply_after_cancel_ignored ... ok
-test dedup_expiry_blocks_blind_retry ... ok
-test no_silent_option_truncation ... ok
-test ordinal_units ... ok
+test marker_tamper_rejected ... ok
+test no_normalization_of_bad_input ... ok
 test noul_order_fixed ... ok
 test nonce_cannot_skip ... ok
-test ppm_sum_and_tie ... ok
+test nonce_payload_conflict ... ok
+test nonce_replay_returns_same ... ok
+test no_silent_option_truncation ... ok
+test ordinal_units ... ok
 test late_error_does_not_revert_success ... ok
+test ppm_sum_and_tie ... ok
 test reject_special_token_injection ... ok
+test partial_signals_cannot_authorize ... ok
+test mock_requires_registered_ledger ... ok
+test parallel_advance_busy ... ok
 test rejects_malformed_distribution ... ok
 test rejects_nonfinite ... ok
 test rejects_temperature ... ok
-test nonce_replay_returns_same ... ok
-test nonce_payload_conflict ... ok
 test same_mean_different_tail ... ok
-test partial_signals_cannot_authorize ... ok
-test mock_requires_registered_ledger ... ok
 test three_primitives_exist ... ok
-test parallel_advance_busy ... ok
 test revoke_during_inference ... ok
-test ttl_enforced ... ok
 test report_only_does_not_reserve ... ok
-test snapshot_envelope_integrity ... ok
+test ttl_enforced ... ok
 test revoke_stops_retry_not_reconciliation ... ok
-test unauthorized_mode_change ... ok
 test typed_score_exposes_tail_and_rejects_other_schema ... ok
-test typed_view_rejects_forged_receipt_stamp ... ok
-test unknown_cannot_cancel ... ok
-test unknown_keeps_reservation ... ok
-test upgrade_retains_unknown_budget ... ok
+test unauthorized_mode_change ... ok
 test unknown_then_badfee_is_still_unknown ... ok
+test typed_view_rejects_forged_receipt_stamp ... ok
+test snapshot_envelope_integrity ... ok
+test unknown_keeps_reservation ... ok
+test unknown_cannot_cancel ... ok
+test upgrade_retains_unknown_budget ... ok
 test many_ledger_event_sequences_preserve_invariants ... ok
 
-test result: ok. 57 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 57 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
 
 
 running 0 tests
@@ -103,13 +103,63 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 
 running 5 tests
-test corrupted_tensor_rejected ... ok
 test rejects_unknown_qtype ... ok
+test corrupted_tensor_rejected ... ok
 test rejects_missing_option_markers ... ok
 test synthetic_pytorch_logits_match_candle ... ok
 test profiled_inference_matches_plain_inference ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test agrees_with_the_authors_recorded_decisions ... ignored, requires models/verdict-pack (605 MiB) and models/verdict-parity
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 11 tests
+test profiled_forward_keeps_the_same_rejections ... ok
+test pack_rejects_tensor_set_mismatch ... ok
+test refuses_more_classes_than_the_checkpoint_scores ... ok
+test every_label_marker_contributes_one_slot_in_order ... ok
+test refuses_non_finite_and_out_of_vocab_ids ... ok
+test logits_are_one_per_class_token_in_order ... ok
+test same_input_gives_the_same_logits ... ok
+test profiled_forward_returns_the_same_logits ... ok
+test head_matches_an_independent_recomputation_from_the_encoder_output ... ok
+test detailed_profiling_only_adds_repeated_markers ... ok
+test pack_round_trip_reproduces_the_model ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test tests::scalar_matmul_matches_a_hand_computed_dot ... ok
+test tests::aligned_buffer_reports_an_aligned_base ... ok
+test tests::matmul_nt_returns_the_same_result_as_the_reference ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
 
 running 0 tests
@@ -140,7 +190,22 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 1 test
 test crates/ic-laya-core/src/workflow.rs - workflow::AuthorizedTransfer (line 105) - compile fail ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
 
 running 0 tests
@@ -172,21 +237,35 @@ warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug
   = note: the example target `export` in package `mock-ledger v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/mock-ledger)` has the same output filename as the example target `export` in package `executor v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/executor)`
   = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
   = help: consider changing their names to be unique or compiling them separately
-   Compiling hf-tokenizer v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/hf-tokenizer)
-   Compiling laya-candle v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/laya-candle)
-   Compiling ic-laya-core v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/ic-laya-core)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.81s
-     Running unittests src/lib.rs (target/debug/deps/canister_common-f98a6ae2897f3d81)
-     Running unittests src/lib.rs (target/debug/deps/decision_engine-32c41061c44990e8)
-     Running unittests src/lib.rs (target/debug/deps/executor-db6228a530c8540a)
-     Running unittests src/lib.rs (target/debug/deps/hf_tokenizer-c40b0a01e6bc2b10)
-     Running tests/adapter.rs (target/debug/deps/adapter-b497bc0324598cb1)
-     Running unittests src/lib.rs (target/debug/deps/ic_laya_core-6964a64c760dd52d)
-     Running tests/core.rs (target/debug/deps/core-b636c478f9b204f5)
-     Running unittests src/lib.rs (target/debug/deps/laya_candle-99b94fca4d106fae)
-     Running unittests src/bin/laya-infer.rs (target/debug/deps/laya_infer-89f1c56f0c4abfb7)
-     Running tests/parity.rs (target/debug/deps/parity-160ce1b69f1fee79)
-     Running unittests src/lib.rs (target/debug/deps/mock_ledger-39ff599a11938de7)
+warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug/examples/export
+  |
+  = note: the example target `export` in package `verdict-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/verdict-engine)` has the same output filename as the example target `export` in package `mock-ledger v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/mock-ledger)`
+  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
+  = help: consider changing their names to be unique or compiling them separately
+warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug/examples/export.dSYM
+  |
+  = note: the example target `export` in package `verdict-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/verdict-engine)` has the same output filename as the example target `export` in package `mock-ledger v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/mock-ledger)`
+  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
+  = help: consider changing their names to be unique or compiling them separately
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.48s
+     Running unittests src/lib.rs (target/debug/deps/canister_common-29fb78dd0b2fafde)
+     Running unittests src/lib.rs (target/debug/deps/decision_engine-bd6771ee71ce8a78)
+     Running unittests src/lib.rs (target/debug/deps/executor-4d667ae0d4e7d648)
+     Running unittests src/lib.rs (target/debug/deps/hf_tokenizer-69449724ed879f0d)
+     Running tests/adapter.rs (target/debug/deps/adapter-7275fe97dd7227d6)
+     Running unittests src/lib.rs (target/debug/deps/ic_laya_core-38ed18e2a42481b0)
+     Running tests/core.rs (target/debug/deps/core-41a604e8d46607ca)
+     Running unittests src/lib.rs (target/debug/deps/laya_candle-2cbcf2411d9d978f)
+     Running unittests src/bin/laya-infer.rs (target/debug/deps/laya_infer-646db7d82d3f3eec)
+     Running tests/parity.rs (target/debug/deps/parity-2801cf1438102899)
+     Running unittests src/lib.rs (target/debug/deps/mock_ledger-fdbaff64fad9c648)
+     Running unittests src/lib.rs (target/debug/deps/verdict_candle-4fccc60887ffef7c)
+     Running unittests src/bin/verdict_infer.rs (target/debug/deps/verdict_infer-4b2ae15c804e9852)
+     Running tests/golden.rs (target/debug/deps/golden-fdf75e5721025530)
+     Running tests/model.rs (target/debug/deps/model-d7a60a1e8ffc3f07)
+     Running unittests src/lib.rs (target/debug/deps/verdict_engine-7962e0190c1fb332)
+     Running unittests src/lib.rs (target/debug/deps/verdict_simd-e9eb9875952165f5)
+     Running unittests src/main.rs (target/debug/deps/verdict_upload-765dfeb996b9968c)
    Doc-tests canister_common
    Doc-tests decision_engine
    Doc-tests executor
@@ -194,3 +273,6 @@ warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug
    Doc-tests ic_laya_core
    Doc-tests laya_candle
    Doc-tests mock_ledger
+   Doc-tests verdict_candle
+   Doc-tests verdict_engine
+   Doc-tests verdict_simd

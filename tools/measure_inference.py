@@ -38,8 +38,14 @@ import sys
 import time
 from pathlib import Path
 
+from icp_guard import any_network_status, require_local_network
+
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build"
+
+# How `icp canister call` renders a failed `Result`: `(variant { Err = ... })`. Anchored,
+# so a reply that merely mentions "Err" inside a string field is not read as a failure.
+REPLY_ERROR = re.compile(r"^\(\s*variant\s*\{\s*Err\b")
 
 
 class Failure(Exception):
@@ -129,8 +135,14 @@ class Icp:
 
     def call(self, canister: str, method: str, args: str = "()", expect_ok: bool = True,
              timeout: int = 300) -> str:
-        return self.run(["canister", "call", canister, method, args, "-e", self.env,
-                         "--candid", self.did[canister]], expect_ok=expect_ok, timeout=timeout)
+        reply = self.run(["canister", "call", canister, method, args, "-e", self.env,
+                          "--candid", self.did[canister]], expect_ok=expect_ok, timeout=timeout)
+        # `icp canister call` exits 0 on a Candid `Err`, so `expect_ok=True` must also mean
+        # "the reply is not an error variant"; otherwise a failed registration looks like a
+        # successful one. Callers that expect an Err pass `expect_ok=False`.
+        if expect_ok and REPLY_ERROR.match(reply.strip()):
+            raise RuntimeError(f"{canister}.{method} returned an error: {reply.strip()[:200]}")
+        return reply
 
     def query(self, canister: str, method: str, args: str = "()") -> str:
         return self.run(["canister", "call", canister, method, args, "-e", self.env,
@@ -338,35 +350,6 @@ def ensure_canister(icp: "Icp", name: str) -> str:
     return principal
 
 
-def any_network_status(icp: "Icp") -> dict | None:
-    """Return the configured environment's status, local or not."""
-    raw = icp.run(["network", "status", "-e", icp.env, "--json"], expect_ok=False)
-    start = raw.find("{")
-    if start < 0:
-        return None
-    try:
-        return json.loads(raw[start:])
-    except ValueError:
-        return None
-
-
-def require_local_network(icp: "Icp") -> None:
-    """Refuse anything that could touch a real network.
-
-    This test mints cycles, installs canisters, and reinstalls them. Pointed at a
-    connected network it would attempt exactly that, and a fresh `--identity`
-    means the operator would not even notice their own identity was not used. The
-    `managed` flag is the only reliable local/remote discriminator, so it is
-    enforced here rather than left to the docstring.
-    """
-    status = any_network_status(icp)
-    if status and not status.get("managed"):
-        raise Failure(
-            f"environment '{icp.env}' points at {status.get('api_url')}, which is not a local "
-            f"network. This test mints cycles, installs canisters, and wipes state, so it only "
-            f"runs against a locally launched replica.")
-
-
 def network_status(icp: "Icp") -> dict | None:
     """Return the running *local* network's status, or None when it is not up.
 
@@ -555,7 +538,7 @@ def main() -> int:
         raise Failure("build/decision-engine.wasm missing")
 
     icp = Icp(ROOT, args.env, args.identity)
-    require_local_network(icp)
+    require_local_network(icp, Failure)
     status = network_status(icp)
     started_here = status is None
     if started_here:
@@ -602,6 +585,12 @@ def main() -> int:
                                                "cold_peak_bytes": 3_000_000_000},
                                    "tiers": results}, indent=2) + "\n")
         print(f"\nwrote {out.relative_to(ROOT)}")
+        failed = [r["tier"] for r in results if "harness_error" in r]
+        if failed:
+            # The artifact is still written (it records which tier failed and why), but a run
+            # in which every tier failed must not look like a successful measurement.
+            print(f"FAILED tiers: {', '.join(failed)}", file=sys.stderr)
+            return 1
     finally:
         if started_here:
             print("stopping local network ...")

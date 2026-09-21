@@ -50,8 +50,9 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 |---|---|
 | 実Laya weights | 未同梱・未ロード。**構造の突き合わせは完了**（[MODEL_PORT_FINDINGS.md](MODEL_PORT_FINDINGS.md)）。803 MiBの取得とexportは未実施 |
 | upstream tensor/tokenizer/qtype一致 | **名前とshapeは全206 tensorで一致**。ただしQKV順・RoPE・prompt形式など数値parityの前提は未確認 |
-| 実checkpoint inference品質 | 未測定。`fixtures/`はランダムweightで言語理解を証明しない |
-| ICP heap/instructions/cycles | **未測定**。20B instructions / 2.5GiB heapの受入目標は未検証。F32 pack 1.57 GiBは実測済み |
+| 実checkpoint inference品質 | Layaは未測定（`fixtures/`はランダムweight）。**openJev 151Mは著者記録の1000件でargmax 1000/1000一致**（[VERDICT_ENGINE.md](VERDICT_ENGINE.md) 3.1節） |
+| ICP heap/instructions/cycles | **instructionsは実測済み**（Laya合成pack、openJev実checkpoint）。heap（warm 2.5GiB / cold peak 3.0GiB）はcanisterのheapを読む口がなく**未測定** |
+| openJev 151Mの実測上限 | **T=120トークンが成功、T=126が40B上限で拒否**（[VERDICT_ENGINE.md](VERDICT_ENGINE.md) 5.1.1節）。実benchmarkの入力長は**中央値95トークン**で、**1000件中975件（97.5%）が予算内**。超過は121〜150の25件のみ |
 | local replica / PocketIC | **PASS**。`tools/local_integration.py`が`icp` CLIの管理networkで3 canisterを実行 |
 | 本番ledger / live transfer | `LimitedLive`はコードで拒否。実asset接続機能は未有効化 |
 | Human review承認再開 | NeedsReviewで停止する。承認endpointは未実装 |
@@ -71,6 +72,49 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 これを実checkpoint（28層・hidden 1024・128 tokens）へ外挿すると **494B〜567B instructions**。**設計目標20Bの25〜28倍、ICPのupdate上限40Bの12〜14倍**である。
 
 つまり **F32のままでは実checkpointは載らない**。必要な削減は最低12倍で、INT8化で見込める4倍では足りない。INT8と蒸留の併用、または層数・hiddenの再検討が必要になる。ただし「Scoreを削る」「尺度説明を短縮する」「入力を切る」といった意味を削る最適化は、この結果を理由にしても認められない。
+
+### openJev 151Mは外挿ではなく実測で上限を押さえた
+
+`tools/measure_verdict.py` が**実checkpoint（605 MiB pack、151M params）**を投入し、
+実benchmarkの1件（自然長118トークン）を118/119/120/126/128トークンで測った:
+
+| T | instructions | 判定 |
+|---|---|---|
+| 118 | 38,998,851,854 | 予算内 |
+| 119 | 39,293,820,829 | 予算内 |
+| 120 | **39,568,299,856** | **予算内（成功した最長）** |
+| 126 / 128 | — | **replicaが40B上限で拒否（IC0522）** |
+
+**上限はT=120と126の間**である。`VERDICT_ENGINE.md` 5.1節の4点から出した外挿 `T ≈ 123` は
+この範囲に入っており、外挿としては妥当だったが、**上限値は外挿ではなくこの実測で押さえる**
+（[VERDICT_ENGINE.md](VERDICT_ENGINE.md) 5.1.1節、`artifacts/verdict_sweep.json`）。
+151Mは量子化なしでも**実benchmarkの97.5%（中央値95トークン）が1 callに収まる**。
+当初「平均383トークンで3.2倍超過」と書いていたが、383はJevBench生入力の素朴な計数であり、
+この実装が食わせるprompt（選択肢の説明文を含む）の長さではない。**測り直した値が上の分布である。**
+
+### ボトルネックを位相別に特定した（openJev実checkpoint、T=120）
+
+`infer_profiled`（owner専用、`instruction_counter`を位相境界で読む）で内訳を測った。
+**同一入力で2回測って同じ配分**である（[VERDICT_ENGINE.md](VERDICT_ENGINE.md) 5.2節）:
+
+| 位相 | 割合 | instr/MAC |
+|---|---|---|
+| `attn.pre`（qkv射影＋RoPE＋head整形） | **33.0%** | 2.79 |
+| `layer.mlp_up`（Wi＋GELU） | **31.9%** | 2.70 |
+| `layer.mlp_down`（Wo） | 15.8% | 2.68 |
+| `layer.attn`（out射影） | 10.5% | 2.66 |
+| `attn.core`（scores＋softmax＋AV） | 6.8% | 5.52 |
+| norm・活性化・embedding・projector・decode | 2.1% | — |
+
+**密なmatmulが92%**で、norm・softmax・gather・decodeは2%未満。しかも**どのmatmulも
+2.66〜2.79 instr/MACとほぼ一定**で、f32x4の下限0.5の約5.5倍で回っている。
+
+**ただし「5.5倍の伸びしろ」ではない。** 差の大半は計算ではなく**演算ごとの周辺コスト**
+（tensor確保、`narrow`/`transpose`/`contiguous`のコピー、カーネル起動）である。
+理論MACがほぼ同じ `attn.pre`(2.79) と `layer.attn`(2.66) の差がその証拠で、
+必要なのは「速いgemm」ではなく「**演算の融合**」であり、見込みは**2〜3倍**である。
+最長150トークンは実測の傾き（2.85e8/token）から**約42.7B instructions（40Bの1.07倍）**で、
+裾は約7%の超過にとどまる。それでも**裾を消すにはカーネル改善ではなくINT8・蒸留・入力契約の設計が要る**。
 
 **内訳を実測した**（`artifacts/phase_measurements.json`）: encoderが**83%**、decisionが16%、
 softmax/norm/活性化/gather/decodeは合計1%未満。ADR-010の「hot linearへ適用」は裏付けられた。

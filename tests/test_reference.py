@@ -74,9 +74,19 @@ class TransactionOracleTests(unittest.TestCase):
     def test_success_monotonic(self):
         m=ReservationOracle();m.observe("success");m.observe("unknown");self.assertEqual(m.status,"Succeeded")
     def test_all_four_event_traces(self):
-        for events in itertools.product(["unknown","success","duplicate","too_old","bad_fee"],repeat=4):
+        # `ReservationOracle.invariant()` raises ValueError rather than using `assert`, so
+        # this enumeration is meaningful under `python -O`. The trace count is asserted so
+        # an accidentally-empty enumeration cannot pass either.
+        events=["unknown","success","duplicate","too_old","bad_fee"]
+        traces=0
+        for trace in itertools.product(events,repeat=4):
             m=ReservationOracle()
-            for e in events:m.observe(e);m.invariant()
+            for e in trace:m.observe(e)
+            traces+=1
+        self.assertEqual(traces,len(events)**4)
+    def test_invariant_is_enforced_without_assert(self):
+        m=ReservationOracle();m.reserved=55          # neither 0 nor the full charge
+        with self.assertRaises(ValueError):m.invariant()
     def test_retry_limit(self):
         m=ReservationOracle();m.observe("unknown");m.retry(allowed=True,age=1);m.observe("unknown")
         with self.assertRaises(ValueError):m.retry(allowed=True,age=2)

@@ -18,6 +18,12 @@
       "build": "bash tools/build_one.sh mock-ledger",
       "candid": "build/mock-ledger.did",
       "wasm": "build/mock-ledger.wasm"
+    },
+    "verdict_engine": {
+      "type": "custom",
+      "build": "bash tools/build_one.sh verdict-engine",
+      "candid": "build/verdict-engine.did",
+      "wasm": "build/verdict-engine.wasm"
     }
   }
 }

@@ -52,8 +52,14 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
+from icp_guard import any_network_status, require_local_network
+
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build"
+
+# How `icp canister call` renders a failed `Result`: `(variant { Err = ... })`. Anchored,
+# so a reply that merely mentions "Err" inside a string field is not read as a failure.
+REPLY_ERROR = re.compile(r"^\(\s*variant\s*\{\s*Err\b")
 
 # From crates/ic-laya-core/src/demo.rs. TEST-ONLY values; not language understanding.
 SPECIAL = {"cls": 1, "sep": 2, "mask": 3, "pad": 0}
@@ -250,8 +256,15 @@ class Icp:
         return completed.stdout + completed.stderr
 
     def call(self, canister: str, method: str, args: str = "()", expect_ok: bool = True) -> str:
-        return self.run(["canister", "call", canister, method, args, "-e", self.env,
-                         "--candid", self.did[canister]], expect_ok=expect_ok)
+        reply = self.run(["canister", "call", canister, method, args, "-e", self.env,
+                          "--candid", self.did[canister]], expect_ok=expect_ok)
+        # `icp canister call` exits 0 even when the canister returns a Candid `Err`, so a
+        # caller that only asserted a non-zero exit (`check(True, "...")`) could never
+        # fail. With `expect_ok=True` the reply itself must not be an error variant; the
+        # refusal paths that *want* an Err pass `expect_ok=False`.
+        if expect_ok and REPLY_ERROR.match(reply.strip()):
+            raise Failure(f"{canister}.{method} returned an error: {reply.strip()[:200]}")
+        return reply
 
 
 def known_identities(icp: "Icp") -> dict[str, str]:
@@ -350,7 +363,7 @@ def main() -> int:
             raise Failure(f"missing build/{wasm}.wasm; run bash tools/build_one.sh {wasm} first")
 
     icp = Icp(ROOT, args.env, args.identity)
-    require_local_network(icp)
+    require_local_network(icp, Failure)
     # Do not start a network that is already up, and do not stop one we did not
     # start: another project may be using it deliberately.
     status = network_status(icp)
@@ -386,35 +399,6 @@ def network_status(icp: "Icp") -> dict | None:
     if not status or not status.get("managed") or not status.get("api_url"):
         return None
     return status
-
-
-def any_network_status(icp: "Icp") -> dict | None:
-    """Return the configured environment's status, local or not."""
-    raw = icp.run(["network", "status", "-e", icp.env, "--json"], expect_ok=False)
-    start = raw.find("{")
-    if start < 0:
-        return None
-    try:
-        return json.loads(raw[start:])
-    except ValueError:
-        return None
-
-
-def require_local_network(icp: "Icp") -> None:
-    """Refuse anything that could touch a real network.
-
-    This test mints cycles, installs canisters, and reinstalls them. Pointed at a
-    connected network it would attempt exactly that, and a fresh `--identity`
-    means the operator would not even notice their own identity was not used. The
-    `managed` flag is the only reliable local/remote discriminator, so it is
-    enforced here rather than left to the docstring.
-    """
-    status = any_network_status(icp)
-    if status and not status.get("managed"):
-        raise Failure(
-            f"environment '{icp.env}' points at {status.get('api_url')}, which is not a local "
-            f"network. This test mints cycles, installs canisters, and wipes state, so it only "
-            f"runs against a locally launched replica.")
 
 
 def run_workflow(icp: Icp, keep_state: bool, verify_upgrade: bool = False) -> int:
