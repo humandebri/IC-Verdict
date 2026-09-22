@@ -1,0 +1,13 @@
+progress cases=100 argmax_match=100 max_dev_so_far=0.036979
+progress cases=200 argmax_match=200 max_dev_so_far=0.051595
+progress cases=300 argmax_match=299 max_dev_so_far=0.051595
+progress cases=400 argmax_match=399 max_dev_so_far=0.051595
+progress cases=500 argmax_match=498 max_dev_so_far=0.051595
+progress cases=600 argmax_match=598 max_dev_so_far=0.051595
+progress cases=700 argmax_match=697 max_dev_so_far=0.051595
+progress cases=800 argmax_match=797 max_dev_so_far=0.051595
+progress cases=900 argmax_match=897 max_dev_so_far=0.051595
+progress cases=1000 argmax_match=997 max_dev_so_far=0.051595
+cases=1000 skipped_no_truth=0 argmax_match=997/1000 (99.70%) longest_input_tokens=150 temp=1.4265149
+top-probability |p-gold|: max=0.051595 mean=0.002726
+quality-gate min_cases=1000 min_argmax_ratio=0.9950 unsafe_abstention_escape=1

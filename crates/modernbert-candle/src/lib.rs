@@ -140,6 +140,28 @@ fn rope_apply(x:&Tensor,table:&RopeTable,mark:&mut dyn FnMut(&'static str))->CRe
     mark("rope.apply");
     Tensor::cat(&[&left,&right],2)
 }
+/// Shared within a forward pass; do not allocate all-zero masks for short inputs.
+pub fn attention_masks(layers:&[EncoderLayer],tokens:usize)->CResult<std::collections::BTreeMap<usize,Tensor>>{
+    let mut masks=std::collections::BTreeMap::new();
+    for layer in layers {
+        if let Some(distance)=layer.distance {
+            if tokens>distance+1 && !masks.contains_key(&distance){
+                if let Some(mask)=attention_mask(tokens,Some(distance))?{masks.insert(distance,mask);}
+            }
+        }
+    }
+    Ok(masks)
+}
+fn attention_mask(tokens:usize,distance:Option<usize>)->CResult<Option<Tensor>>{
+    match distance {
+        Some(distance) if tokens.saturating_sub(1)>distance=>{
+            let mask:Vec<f32>=(0..tokens).flat_map(|i|(0..tokens).map(move|j|
+                if i.abs_diff(j)>distance{f32::NEG_INFINITY}else{0.0})).collect();
+            Ok(Some(Tensor::from_vec(mask,(1,tokens,tokens),&Device::Cpu)?))
+        },
+        _=>Ok(None),
+    }
+}
 impl Attention {
     pub fn heads(&self)->usize{self.heads}
     pub fn new(qkv:Linear,out:Linear,heads:usize)->Self{Self{qkv,out,heads}}
@@ -155,6 +177,11 @@ impl Attention {
     /// different changes, and one "attention" number cannot separate them.
     pub fn forward_marked(&self,x:&Tensor,table:Option<&RopeTable>,max_distance:Option<usize>,
                           mark:&mut dyn FnMut(&'static str))->CResult<Tensor>{
+        let mask=attention_mask(x.dim(0)?,max_distance)?;
+        self.forward_cached(x,table,mask.as_ref(),mark)
+    }
+    fn forward_cached(&self,x:&Tensor,table:Option<&RopeTable>,mask:Option<&Tensor>,
+                      mark:&mut dyn FnMut(&'static str))->CResult<Tensor>{
         let (t,h)=x.dims2()?;let d=h/self.heads;let y=self.qkv.forward(x)?;
         let mut q=y.narrow(1,0,h)?.reshape((t,self.heads,d))?.transpose(0,1)?.contiguous()?;
         let mut k=y.narrow(1,h,h)?.reshape((t,self.heads,d))?.transpose(0,1)?.contiguous()?;
@@ -163,10 +190,7 @@ impl Attention {
         mark("attn.pre");
         let mut scores=(q.contiguous()?.matmul(&k.transpose(1,2)?.contiguous()?)?*(1.0/(d as f64).sqrt()))?;
         mark("attn.scores");
-        if let Some(distance)=max_distance {
-            let mask:Vec<f32>=(0..t).flat_map(|i|(0..t).map(move|j|if i.abs_diff(j)>distance{f32::NEG_INFINITY}else{0.0})).collect();
-            scores=scores.broadcast_add(&Tensor::from_vec(mask,(1,t,t),x.device())?)?;
-        }
+        if let Some(mask)=mask {scores=scores.broadcast_add(mask)?;}
         mark("attn.mask");
         let weights=softmax_last(&scores)?;
         mark("attn.softmax");
@@ -183,6 +207,7 @@ impl EncoderLayer {
     }
     pub fn forward(&self,x:&Tensor,table:&RopeTable)->CResult<Tensor>{self.forward_marked(x,table,&mut |_|{})}
     pub fn theta(&self)->f64{self.theta}
+    pub fn distance(&self)->Option<usize>{self.distance}
     /// Rotary tables are indexed by the *per-head* dimension, not the hidden size.
     pub fn head_dim(&self,hidden:usize)->usize{hidden/self.attention.heads()}
     /// Same computation, with a marker after each sub-phase.
@@ -192,9 +217,13 @@ impl EncoderLayer {
     /// softmax and the gated activation are element-wise and would need different
     /// treatment.
     pub fn forward_marked(&self,x:&Tensor,table:&RopeTable,mark:&mut dyn FnMut(&'static str))->CResult<Tensor>{
+        let mask=attention_mask(x.dim(0)?,self.distance)?;
+        self.forward_cached(x,table,mask.as_ref(),mark)
+    }
+    pub fn forward_cached(&self,x:&Tensor,table:&RopeTable,mask:Option<&Tensor>,mark:&mut dyn FnMut(&'static str))->CResult<Tensor>{
         let normalized=match &self.attention_norm{Some(n)=>n.forward(x)?,None=>x.clone()};
         mark("layer.attn_norm");
-        let attended=self.attention.forward_marked(&normalized,Some(table),self.distance,mark)?;
+        let attended=self.attention.forward_cached(&normalized,Some(table),mask,mark)?;
         mark("layer.attn");
         let x=(x+attended)?;
         mark("layer.attn_resid");
@@ -228,8 +257,31 @@ pub mod encoder {
         pub fn forward(&self,input_ids:&[u32])->CResult<Tensor>{
             let mut x=self.embed(input_ids)?;
             let tables=self.rope_tables(x.dim(0)?,x.dim(1)?,&mut |_|{})?;
-            for layer in &self.layers{let table=Self::table_for(&tables,layer.theta()).clone();x=layer.forward(&x,&table)?;}
+            let masks=super::attention_masks(&self.layers,x.dim(0)?)?;
+            for layer in &self.layers{let table=Self::table_for(&tables,layer.theta());let mask=layer.distance().and_then(|d|masks.get(&d));x=layer.forward_cached(&x,table,mask,&mut |_|{})?;}
             self.final_norm.forward(&x)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+    #[test]
+    fn mask_boundary_and_cached_forward_match(){
+        assert!(attention_mask(5,Some(4)).unwrap().is_none());
+        let mask=attention_mask(6,Some(4)).unwrap().unwrap().flatten_all().unwrap().to_vec1::<f32>().unwrap();
+        for i in 0usize..6{for j in 0usize..6{assert_eq!(mask[i*6+j],if i.abs_diff(j)>4{f32::NEG_INFINITY}else{0.});}}
+        let h=8;let t=7;
+        let linear=|o,i|Linear::new_quantized(QuantWeight{w:vec![1;o*i],scales:vec![0.01;o],out_features:o,in_features:i,block_size:i},None);
+        let layer=EncoderLayer::new(None,Attention::new(linear(3*h,h),linear(h,h),2),
+            Norm::new(Tensor::ones(h,candle_core::DType::F32,&Device::Cpu).unwrap(),None,1e-5),linear(2*h,h),linear(h,h),10000.,Some(2));
+        let layers=vec![layer.clone(),layer.clone()];
+        let masks=attention_masks(&layers,t).unwrap();assert_eq!(masks.len(),1);
+        let x=Tensor::from_vec((0..t*h).map(|i|i as f32*0.01).collect(),(t,h),&Device::Cpu).unwrap();
+        let table=rope_table(t,h/2,10000.,&mut |_|{}).unwrap();
+        let a=layer.forward(&x,&table).unwrap().to_vec2::<f32>().unwrap();
+        let b=layer.forward_cached(&x,&table,masks.get(&2),&mut |_|{}).unwrap().to_vec2::<f32>().unwrap();
+        assert_eq!(a,b);
     }
 }

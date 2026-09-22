@@ -348,7 +348,11 @@ def ensure_canister(icp: "Icp", name: str) -> str:
 
 
 def main() -> int:
+    global BUILD
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--build-dir",type=Path,default=BUILD,help="initial canister artifacts")
+    parser.add_argument("--upgrade-executor-wasm",type=Path,help="new executor Wasm for old-to-new upgrade tests")
+    parser.add_argument("--project-root",type=Path,default=ROOT,help="icp project used for a disposable local test network; builds still come from this repository")
     parser.add_argument("--keep", action="store_true",
                         help="leave the local network running after this invocation")
     parser.add_argument("--env", default="local")
@@ -363,12 +367,14 @@ def main() -> int:
                         help="skip the upgrade-guard check (it needs the network to stay up "
                              "within this invocation)")
     args = parser.parse_args()
+    BUILD=args.build_dir
 
     for wasm in ["decision-engine", "executor", "mock-ledger"]:
         if not (BUILD / f"{wasm}.wasm").exists():
             raise Failure(f"missing build/{wasm}.wasm; run bash tools/build_one.sh {wasm} first")
 
-    icp = Icp(ROOT, args.env, args.identity)
+    icp = Icp(args.project_root, args.env, args.identity)
+    icp.upgrade_executor_wasm=args.upgrade_executor_wasm
     # Start the replica *before* demanding proof that it is local. `network start` is
     # not a guarded command, so bringing it up is safe; everything after this point
     # mints cycles and `-m reinstall`s canisters. Requiring `managed: true` first made
@@ -687,7 +693,7 @@ def verify_upgrade_guard(icp: "Icp", install_args: str, stranded: bytes) -> int:
     """
     print("verifying the unresolved-transfer upgrade guard ...")
     blocked = icp.run(["canister", "install", "executor", "-e", icp.env, "-y", "-m", "upgrade",
-                       "--wasm", str(BUILD / "executor.wasm"), "--args", install_args],
+                       "--wasm", str(getattr(icp,"upgrade_executor_wasm",None) or BUILD / "executor.wasm"), "--args", install_args],
                       expect_ok=False)
     check("unresolved transfer" in blocked,
           f"upgrade is refused while a transfer is unresolved: {blocked.strip()[-160:]}")
@@ -699,7 +705,7 @@ def verify_upgrade_guard(icp: "Icp", install_args: str, stranded: bytes) -> int:
     check("NeedsReview" in parked and "abandoned" in parked,
           f"owner can park the unresolved transfer before upgrading: {parked.strip()[:160]}")
     upgraded = icp.run(["canister", "install", "executor", "-e", icp.env, "-y", "-m", "upgrade",
-                        "--wasm", str(BUILD / "executor.wasm"), "--args", install_args])
+                        "--wasm", str(getattr(icp,"upgrade_executor_wasm",None) or BUILD / "executor.wasm"), "--args", install_args])
     check("installed successfully" in upgraded.lower() or "upgrad" in upgraded.lower(),
           f"executor upgrades after the transfer is parked: {upgraded.strip()[-160:]}")
     restored = icp.call("executor", "get_request", f"({blob(stranded)})")

@@ -44,7 +44,7 @@ pub fn load()->Result<ExecutorState>{
     if m.format!=FORMAT{return Err(Error::Storage);}
     Ok(ExecutorState{instance:m.instance,owner:m.owner,engine:m.engine,mode:m.mode,paused:m.paused,
         plans:read_digest_map(&PLAN_MAP)?,operations:read_digest_map(&OPERATION_MAP)?,grants:read_digest_map(&GRANT_MAP)?,
-        requests:read_digest_map(&REQUEST_MAP)?,next_nonce:NONCE_MAP.with(|x|x.borrow().iter().map(|e|(*e.key(),e.value())).collect()),mock_ledgers:m.mock_ledgers})
+        requests:read_digest_map(&REQUEST_MAP)?,changes:Changes::default(),next_nonce:NONCE_MAP.with(|x|x.borrow().iter().map(|e|(*e.key(),e.value())).collect()),mock_ledgers:m.mock_ledgers})
 }
 
 fn read_digest_map<T:DeserializeOwned>(map:&'static std::thread::LocalKey<RefCell<StableBTreeMap<Digest,Vec<u8>,Memory>>>)->Result<BTreeMap<Digest,T>>{
@@ -64,13 +64,85 @@ fn write_all<T:Serialize>(map:&'static std::thread::LocalKey<RefCell<StableBTree
     map.with(|x|{let mut x=x.borrow_mut();for(k,v)in values{x.insert(*k,encode(v)?);}Ok(())})
 }
 
-pub fn sync(old:&ExecutorState,new:&ExecutorState)->Result<()>{
-    sync_map(&PLAN_MAP,&old.plans,&new.plans)?;sync_map(&OPERATION_MAP,&old.operations,&new.operations)?;
-    sync_map(&GRANT_MAP,&old.grants,&new.grants)?;sync_map(&REQUEST_MAP,&old.requests,&new.requests)?;
-    NONCE_MAP.with(|x|{let mut x=x.borrow_mut();for k in old.next_nonce.keys().filter(|k|!new.next_nonce.contains_key(*k)){x.remove(k);}for(k,v)in &new.next_nonce{if old.next_nonce.get(k)!=Some(v){x.insert(*k,*v);}}});
-    if encode(&meta(old))?!=encode(&meta(new))?{let bytes=encode(&meta(new))?;META_CELL.with(|x|{x.borrow_mut().set(bytes);});}
+/// Persist only keys changed by core, including transitions returning Err.
+pub fn sync(s:&ExecutorState)->Result<()>{
+    let c=&s.changes;
+    write_changes(&PLAN_MAP,&s.plans,&c.plans)?;
+    write_changes(&OPERATION_MAP,&s.operations,&c.operations)?;
+    write_changes(&GRANT_MAP,&s.grants,&c.grants)?;
+    write_changes(&REQUEST_MAP,&s.requests,&c.requests)?;
+    NONCE_MAP.with(|x|{let mut x=x.borrow_mut();for k in &c.nonces{
+        if let Some(v)=s.next_nonce.get(k){x.insert(*k,*v);}else{x.remove(k);}
+    }});
+    if c.meta{let bytes=encode(&meta(s))?;META_CELL.with(|x|{x.borrow_mut().set(bytes);});}
     Ok(())
 }
-fn sync_map<T:Serialize+PartialEq>(map:&'static std::thread::LocalKey<RefCell<StableBTreeMap<Digest,Vec<u8>,Memory>>>,old:&BTreeMap<Digest,T>,new:&BTreeMap<Digest,T>)->Result<()>{
-    map.with(|x|{let mut x=x.borrow_mut();for k in old.keys().filter(|k|!new.contains_key(*k)){x.remove(k);}for(k,v)in new{if old.get(k)!=Some(v){x.insert(*k,encode(v)?);}}Ok(())})
+fn write_changes<T:Serialize>(map:&'static std::thread::LocalKey<RefCell<StableBTreeMap<Digest,Vec<u8>,Memory>>>,
+    values:&BTreeMap<Digest,T>,keys:&std::collections::BTreeSet<Digest>)->Result<()>{
+    map.with(|x|{let mut x=x.borrow_mut();for k in keys{
+        if let Some(v)=values.get(k){x.insert(*k,encode(v)?);}else{x.remove(k);}
+    }Ok(())})
+}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+    use ic_laya_core::demo::*;
+    fn commit(s:&mut ExecutorState){sync(s).unwrap();s.changes=Changes::default();}
+    fn same(s:&ExecutorState){assert_eq!(encode(s).unwrap(),encode(&load().unwrap()).unwrap());}
+    #[test]
+    fn write_set_survives_async_transitions_errors_and_recovery(){
+        let (mut s,mut engine,op,grant)=setup().unwrap();replace_all(&s).unwrap();s.changes=Changes::default();
+        let id=s.submit(actor(2),0,op,grant,NOW).unwrap();commit(&mut s);same(&s);
+        for _ in 0..3{
+            let req=s.begin_evaluation(actor(2),id,NOW+1).unwrap();commit(&mut s);same(&s);
+            let reply=engine.evaluate(s.instance,req.clone(),NOW+2,&FixtureTokenizer,&mut FixtureBackend::default());
+            s.finish_evaluation(id,req.evaluation_id,reply,NOW+3).unwrap();commit(&mut s);same(&s);
+        }
+        s.set_mode(actor(1),Mode::Mock).unwrap();commit(&mut s);
+        let cap=s.authorize(actor(2),id,NOW+4).unwrap();let cmd=s.prepare_dispatch(cap,NOW+4).unwrap();commit(&mut s);same(&s);
+        s.finish_ledger(&cmd,LedgerOutcome::Unknown("timeout".into())).unwrap();commit(&mut s);same(&s);
+        s.abandon_unknown(actor(1),id,"upgrade".into()).unwrap();commit(&mut s);
+        s.recover_after_upgrade();commit(&mut s);same(&s);
+        s.finish_ledger(&cmd,LedgerOutcome::Success("1".into())).unwrap();commit(&mut s);same(&s);s.check_invariants().unwrap();
+    }
+    #[test]
+    fn registry_revisions_revocation_and_metadata_survive_reload(){
+        let (fixture,_,op,grant)=setup().unwrap();
+        let mut s=ExecutorState::new(fixture.instance,fixture.owner,fixture.engine);
+        replace_all(&s).unwrap();
+        let plan=fixture.plans.values().next().unwrap().clone();
+        s.install_plan(actor(1),plan).unwrap();commit(&mut s);same(&s);
+        s.install_operation(actor(1),fixture.operations[&op].clone()).unwrap();commit(&mut s);same(&s);
+        s.install_grant(actor(1),fixture.grants[&grant].clone()).unwrap();commit(&mut s);same(&s);
+        s.revise_operation(actor(1),op,"updated evidence".into()).unwrap();commit(&mut s);same(&s);
+        let id=s.submit(actor(2),0,op,grant,NOW).unwrap();commit(&mut s);
+        s.cancel(actor(2),id).unwrap();commit(&mut s);same(&s);
+        s.revoke(actor(1),grant).unwrap();commit(&mut s);same(&s);
+        s.set_paused(actor(1),true).unwrap();s.set_mode(actor(1),Mode::Shadow).unwrap();commit(&mut s);same(&s);
+        assert!(s.install_operation(actor(2),fixture.operations[&op].clone()).is_err());
+        assert!(!s.changes.meta && s.changes.operations.is_empty());same(&s);
+    }
+    #[test]
+    fn one_changed_request_is_independent_of_history_size(){
+        for count in [1,64,512]{
+            let (mut s,_,op,grant)=setup().unwrap();
+            let mut ids=Vec::new();for nonce in 0..count{ids.push(s.submit(actor(2),nonce,op,grant,NOW).unwrap());}
+            replace_all(&s).unwrap();s.changes=Changes::default();
+            let id=ids[0];assert!(s.begin_evaluation(actor(2),id,NOW+400_000_000_000).is_err());
+            assert_eq!(s.changes.requests.len(),1);assert!(s.changes.grants.is_empty()&&s.changes.nonces.is_empty());
+            commit(&mut s);same(&s);assert_eq!(s.requests[&id].status,Status::Stale);
+        }
+    }
+    #[test]
+    fn transport_retry_report_only_and_nonce_deletion_are_persisted(){
+        let(mut s,mut engine,op,grant)=setup().unwrap();replace_all(&s).unwrap();s.changes=Changes::default();
+        let id=s.submit(actor(2),0,op,grant,NOW).unwrap();commit(&mut s);
+        let req=s.begin_evaluation(actor(2),id,NOW+1).unwrap();commit(&mut s);
+        s.engine_transport_failed(id,req.evaluation_id).unwrap();commit(&mut s);same(&s);
+        complete(&mut s,&mut engine,id).unwrap();commit(&mut s);
+        let cap=s.authorize(actor(2),id,NOW+4).unwrap();assert!(matches!(s.prepare_dispatch(cap,NOW+4),Err(Error::ReportOnly)));commit(&mut s);same(&s);
+        s.next_nonce.insert(actor(9),1);s.changes.nonces.insert(actor(9));commit(&mut s);
+        s.release_caller(actor(1),actor(9)).unwrap();commit(&mut s);same(&s);
+    }
 }

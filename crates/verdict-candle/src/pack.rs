@@ -62,7 +62,7 @@ impl Builder {
                 let (rows,cols)=match e.shape.as_slice(){[r,c]=>(*r,*c),_=>return Err(Error::Invalid("quantised weight shape".into()))};
                 let data_len=rows.checked_mul(cols).ok_or(Error::TooLong)?;
                 let w=bytes[..data_len].iter().map(|&v|v as i8).collect::<Vec<_>>();
-                if w.iter().any(|&v|v==i8::MIN){return Err(Error::Numeric);}
+                if w.contains(&i8::MIN){return Err(Error::Numeric);}
                 let scales=bytes[data_len..].chunks_exact(4).map(|b|f32::from_le_bytes([b[0],b[1],b[2],b[3]])).collect::<Vec<_>>();
                 if scales.len()!=rows*cols.div_ceil(32)||scales.iter().any(|v|!v.is_finite()||*v<=0.0){return Err(Error::Numeric);}
                 self.quant.insert(e.name,modernbert_candle::QuantWeight{w,scales,out_features:rows,in_features:cols,block_size:32});

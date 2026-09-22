@@ -1,1 +1,2 @@
-# Python tooling and tests use only the Python standard library.
+# Default Python tooling and tests use only the standard library.
+# Optional offline tools/diagnose_verdict.py additionally requires NumPy.

@@ -1,0 +1,16 @@
+{
+  "host": "macOS-26.5.2-arm64-arm-64bit",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+  "icp": "icp 1.0.2",
+  "files": {
+    "build/verdict-engine.wasm": "524bc25be73baec85e0f03bf8bed9afefa867087da36b21412ada9256645b40c",
+    "build/executor.wasm": "00d9aed7eccc2d952452384b12e0c6cebdd428d49fc623e70e2846b3666a2f8e",
+    "build/decision-engine.wasm": "7a2f06d52b035b50a971bf8196b1cbd24dd92dd8d0d429168dae8583522cf5d8",
+    "build/mock-ledger.wasm": "dbab20940f4533ab55392775cba0082432595ada99a259573fdfabd4fbaab43d",
+    "target/release/verdict-infer": "0697c09cbdfe3aa682d5dae3c230aecdefacb4dd60568a8950094820da4736fe",
+    "/tmp/ic-laya-efficiency-baseline/executor.wasm": "a8225287830fcb8648e1f795131f6f79ae864b3d60b8ff0390bfb7ba8e5f2fd7"
+  },
+  "measured_verdict_wasm_sha256": "964fcdd7b426a639173f3ecfdb13ded48e81691315a564565f6f6c2f9c61dbf3",
+  "quality_run_note": "1000-case run started before final checked-shape wrapper / warmup helper / pure quality_pass extraction; model arithmetic is identical. quality_run_native_sha256 identifies that run; files records the final rebuilt binary.",
+  "quality_run_native_sha256": "e68553e0ef1100bf6a5940152660e1afe616107caa9b505451e00cb9fed028ec"
+}

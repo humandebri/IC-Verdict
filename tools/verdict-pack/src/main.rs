@@ -61,7 +61,8 @@ fn run()->Result<(),String>{
     if let Some(st)=&st{cfg.first_layer_attention_norm=st.tensor("model.encoder_model.layers.0.attn_norm.weight").is_ok();}
     let expected=expected_tensors(&cfg).map_err(|e|e.to_string())?;
     let mut found=BTreeMap::<String,String>::new();let mut unmapped=BTreeSet::<String>::new();
-    if let Some(st)=&st{for(name,view)in st.iter(){if name=="model.logit_scale"{continue;}if let Some(c)=canonical(name){if view.dtype()!=Dtype::F32{return Err(format!("{name}: expected F32"));}found.insert(c,name.into());}else{unmapped.insert(name.into());}}if !unmapped.is_empty(){return Err(format!("unmapped checkpoint tensors: {:?}",unmapped.iter().take(5).collect::<Vec<_>>()));}}
+    if let Some(st)=&st{for(name,view)in st.iter(){if name=="model.logit_scale"{continue;}
+        if let Some(c)=canonical(name){if view.dtype()!=Dtype::F32{return Err(format!("{name}: expected F32"));}found.insert(c,name.into());}else{unmapped.insert(name.into());}}if !unmapped.is_empty(){return Err(format!("unmapped checkpoint tensors: {:?}",unmapped.iter().take(5).collect::<Vec<_>>()));}}
     if !a.random&&(found.len()!=expected.len()||expected.keys().any(|k|!found.contains_key(k))){return Err("checkpoint tensor set mismatch".into());}
     std::fs::create_dir_all(&a.out).map_err(|e|e.to_string())?;let mut file=std::fs::File::create(a.out.join("model.bin")).map_err(|e|e.to_string())?;
     let mut entries=Vec::new();let mut offset=0u64;

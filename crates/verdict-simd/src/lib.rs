@@ -75,15 +75,21 @@ pub fn quantize_blocks_i8(src:&[f32],rows:usize,cols:usize,block:usize)->(Vec<i8
 
 /// Block-scaled variant used by production packs. Activations retain one high-precision
 /// i16 scale per input row; weight sums are rescaled after every block.
+#[allow(clippy::too_many_arguments)] // Kernel shape and buffers are explicit.
 pub fn matmul_i8_blocked(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:usize,block:usize,out:&mut[f32])->bool{
-    let blocks=k.div_ceil(block);assert!(a.len()>=m*k&&w.len()>=n*k&&sx.len()>=m&&sw.len()>=n*blocks&&out.len()>=m*n);
+    assert!(block>0,"block must be nonzero");
+    let blocks=k.div_ceil(block);
+    let mk=m.checked_mul(k).expect("shape overflow");let nk=n.checked_mul(k).expect("shape overflow");
+    let mn=m.checked_mul(n).expect("shape overflow");let nb=n.checked_mul(blocks).expect("shape overflow");
+    assert!(a.len()>=mk&&w.len()>=nk&&sx.len()>=m&&sw.len()>=nb&&out.len()>=mn);
+    if m==0||n==0||k==0{out[..mn].fill(0.0);return false;}
     #[cfg(target_arch="wasm32")]
     if block==32&&k%32==0{unsafe{matmul_i8_block32_simd(a,w,sx,sw,m,k,n,out)};return true;}
     #[cfg(not(target_arch="wasm32"))]
     {
         use rayon::prelude::*;
         out[..m*n].par_chunks_mut(n).enumerate().for_each(|(i,row)|{for j in 0..n{let mut total=0.0f32;for b in 0..blocks{let begin=b*block;let end=(begin+block).min(k);let mut acc=0i32;for p in begin..end{acc+=(a[i*k+p]as i32)*(w[j*k+p]as i32);}total+=acc as f32*sw[j*blocks+b];}row[j]=total*sx[i];}});
-        return false;
+        false
     }
     #[cfg(target_arch="wasm32")]
     for i in 0..m{for j in 0..n{let mut total=0.0f32;for b in 0..blocks{let begin=b*block;let end=(begin+block).min(k);let mut acc=0i32;for p in begin..end{acc+=(a[i*k+p]as i32)*(w[j*k+p]as i32);}total+=acc as f32*sw[j*blocks+b];}out[i*n+j]=total*sx[i];}}
@@ -96,6 +102,72 @@ pub fn matmul_i8_blocked(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:
 unsafe fn matmul_i8_block32_simd(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:usize,out:&mut[f32]){
     use core::arch::wasm32::*;let blocks=k/32;
     for i in 0..m{for j in 0..n{let mut total=0.0f32;for b in 0..blocks{let ap=unsafe{a.as_ptr().add(i*k+b*32)};let wp=unsafe{w.as_ptr().add(j*k+b*32)};let mut acc=i32x4_splat(0);for p in [0usize,8,16,24]{let av=unsafe{v128_load(ap.add(p).cast())};let wv=i16x8_extend_low_i8x16(unsafe{v128_load64_zero(wp.add(p).cast())});acc=i32x4_add(acc,i32x4_dot_i16x8(av,wv));}let sum=i32x4_extract_lane::<0>(acc)+i32x4_extract_lane::<1>(acc)+i32x4_extract_lane::<2>(acc)+i32x4_extract_lane::<3>(acc);total+=sum as f32*sw[j*blocks+b];}out[i*n+j]=total*sx[i];}}
+}
+
+/// Measurement candidate only: production keeps the validated block32 kernel.
+/// `tile` selects the number of input rows sharing each widened weight vector.
+#[allow(clippy::too_many_arguments)]
+pub fn matmul_i8_block32_candidate(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:usize,out:&mut[f32],tile:usize)->bool{
+    assert!(k>0&&k.is_multiple_of(32)&&[2,4,8].contains(&tile));
+    let mk=m.checked_mul(k).expect("shape overflow");let nk=n.checked_mul(k).expect("shape overflow");
+    let mn=m.checked_mul(n).expect("shape overflow");let nb=n.checked_mul(k/32).expect("shape overflow");
+    assert!(a.len()>=mk&&w.len()>=nk&&sx.len()>=m&&sw.len()>=nb&&out.len()>=mn);
+    if m==0||n==0{return false;}
+    #[cfg(target_arch="wasm32")]
+    {
+        // SAFETY: shape checks above cover all rows and each 32-element block.
+        unsafe{match tile{
+            2=>block32_tile::<2>(a,w,sx,sw,m,k,n,out),
+            4=>block32_tile::<4>(a,w,sx,sw,m,k,n,out),
+            8=>block32_tile::<8>(a,w,sx,sw,m,k,n,out),_=>unreachable!(),
+        }}
+        true
+    }
+    #[cfg(not(target_arch="wasm32"))]
+    {matmul_i8_blocked(a,w,sx,sw,m,k,n,32,out)}
+}
+#[cfg(target_arch="wasm32")]
+#[target_feature(enable="simd128")]
+#[allow(clippy::too_many_arguments)]
+unsafe fn block32_tile<const M:usize>(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:usize,out:&mut[f32]){
+    use core::arch::wasm32::*;
+    let blocks=k/32;
+    for i in (0..m).step_by(M){for j in (0..n).step_by(4){
+        let rows=M.min(m-i);let cols=4.min(n-j);let mut total=[[0f32;4];M];
+        for b in 0..blocks{
+            let mut acc=[[i32x4_splat(0);4];M];
+            for p in [0usize,8,16,24]{
+                let mut xs=[i32x4_splat(0);M];
+                for r in 0..rows{xs[r]=unsafe{v128_load(a.as_ptr().add((i+r)*k+b*32+p).cast())};}
+                for c in 0..cols{
+                    let wv=i16x8_extend_low_i8x16(unsafe{v128_load64_zero(w.as_ptr().add((j+c)*k+b*32+p).cast())});
+                    for r in 0..rows{acc[r][c]=i32x4_add(acc[r][c],i32x4_dot_i16x8(xs[r],wv));}
+                }
+            }
+            for r in 0..rows{for c in 0..cols{
+                let v=acc[r][c];let sum=i32x4_extract_lane::<0>(v)+i32x4_extract_lane::<1>(v)+i32x4_extract_lane::<2>(v)+i32x4_extract_lane::<3>(v);
+                total[r][c]+=sum as f32*sw[(j+c)*blocks+b];
+            }}
+        }
+        for r in 0..rows{for c in 0..cols{out[(i+r)*n+j+c]=total[r][c]*sx[i+r];}}
+    }}
+}
+
+/// Measurement-only sliding-window core, [heads,tokens,dim]. Global attention
+/// and production inference are deliberately not routed here before acceptance.
+#[allow(clippy::too_many_arguments)]
+pub fn local_attention_candidate(q:&[f32],k:&[f32],v:&[f32],heads:usize,t:usize,d:usize,distance:usize)->Vec<f32>{
+    assert!(d>0&&q.len()==heads*t*d&&k.len()==q.len()&&v.len()==q.len());
+    let mut out=vec![0f32;q.len()];let scale=(1.0/(d as f64).sqrt()) as f32;
+    let mut scores=Vec::with_capacity(t.min(distance.saturating_mul(2).saturating_add(1)));
+    for h in 0..heads{for i in 0..t{
+        let lo=i.saturating_sub(distance);let hi=t.min(i.saturating_add(distance).saturating_add(1));
+        scores.clear();
+        for j in lo..hi{let mut dot=0f32;for c in 0..d{dot+=q[(h*t+i)*d+c]*k[(h*t+j)*d+c];}scores.push(dot*scale);}
+        softmax_row_scalar(&mut scores);
+        for (j,&weight) in (lo..hi).zip(&scores){for c in 0..d{out[(h*t+i)*d+c]+=weight*v[(h*t+j)*d+c];}}
+    }}
+    out
 }
 
 /// Activation quantisation into the i16 range.
@@ -1035,6 +1107,44 @@ unsafe fn softmax_row_simd(row: &mut [f32]) {
 mod tests {
     use super::*;
 
+    #[test]
+    fn block32_matches_i64_reference_including_partial_blocks_and_tiles(){
+        for (m,k,n) in [(1usize,16usize,1usize),(3,33,5),(7,64,9),(9,96,7)]{
+            let a:Vec<i16>=(0..m*k).map(|i|(i%16385) as i16-8192).collect();
+            let w:Vec<i8>=(0..n*k).map(|i|(i%255) as i16-127).map(|x|x as i8).collect();
+            let sx=vec![0.00013;m];let sw:Vec<f32>=(0..n*k.div_ceil(32)).map(|i|0.001*(1+i%7) as f32).collect();
+            let mut want=vec![0.;m*n];
+            for i in 0..m{for j in 0..n{
+                let mut total=0f32;
+                for b in 0..k.div_ceil(32){let acc:i64=(b*32..((b+1)*32).min(k)).map(|p|a[i*k+p] as i64*w[j*k+p] as i64).sum();total+=acc as f32*sw[j*k.div_ceil(32)+b];}
+                want[i*n+j]=total*sx[i];
+            }}
+            let mut got=vec![0.;m*n];let _=matmul_i8_blocked(&a,&w,&sx,&sw,m,k,n,32,&mut got);assert_eq!(got,want);
+            if k%32==0{for tile in [2,4,8]{let _=matmul_i8_block32_candidate(&a,&w,&sx,&sw,m,k,n,&mut got,tile);assert_eq!(got,want);}}
+        }
+    }
+    #[test]
+    fn sliding_attention_boundaries_are_uniform_for_zero_scores(){
+        for t in [1,3,8]{for distance in [0,1,4,20]{
+            let q=vec![0.;2*t*4];let v:Vec<f32>=(0..2*t*4).map(|i|i as f32).collect();
+            let got=local_attention_candidate(&q,&q,&v,2,t,4,distance);
+            for h in 0..2{for i in 0..t{for c in 0..4{
+                let lo=i.saturating_sub(distance);let hi=t.min(i+distance+1);
+                let expected=(lo..hi).map(|j|v[(h*t+j)*4+c]).sum::<f32>()/(hi-lo) as f32;
+                assert!((got[(h*t+i)*4+c]-expected).abs()<1e-4);
+            }}}
+        }}
+    }
+    #[test]
+    fn block32_empty_output_and_empty_contraction(){
+        let mut out=[1f32;6];let _=matmul_i8_blocked(&[],&[],&[1.;2],&[],2,0,3,32,&mut out);assert_eq!(out,[0.;6]);
+        let _=matmul_i8_blocked(&[],&[],&[],&[],0,32,0,32,&mut []);
+    }
+    #[test]
+    #[should_panic(expected="shape overflow")]
+    fn block32_rejects_overflow_before_pointer_arithmetic(){
+        let _=matmul_i8_blocked(&[],&[],&[],&[],usize::MAX,32,1,32,&mut []);
+    }
     fn sample(m: usize, k: usize, n: usize) -> (Vec<f32>, Vec<f32>) {
         let a = (0..m * k).map(|i| ((i % 13) as f32) * 0.25 - 1.5).collect();
         let b = (0..k * n).map(|i| ((i % 7) as f32) * 0.5 - 1.5).collect();

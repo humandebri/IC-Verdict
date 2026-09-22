@@ -4,7 +4,7 @@
 use crate::{math, schema::validate_compiled, *};
 use candid::{CandidType, Principal};
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap,BTreeSet};
 
 const MAX_REQUESTS:usize=512;
 const MAX_REGISTRY:usize=64;
@@ -112,6 +112,12 @@ pub enum LedgerOutcome { Success(String), Duplicate(String), DefinitiveError(Str
 #[derive(Debug)]
 pub struct AuthorizedTransfer { request:Digest,snapshot:Digest }
 
+/// Ephemeral write set. Never part of the stable snapshot format.
+#[derive(Debug,Clone,Default,CandidType)]
+pub struct Changes {
+    pub meta:bool,pub plans:BTreeSet<Digest>,pub operations:BTreeSet<Digest>,
+    pub grants:BTreeSet<Digest>,pub requests:BTreeSet<Digest>,pub nonces:BTreeSet<Principal>,
+}
 #[derive(Debug,Clone,Serialize,Deserialize,CandidType)]
 pub struct ExecutorState {
     pub instance:Principal,pub owner:Principal,pub engine:Principal,pub mode:Mode,pub paused:bool,
@@ -119,29 +125,31 @@ pub struct ExecutorState {
     pub requests:BTreeMap<Digest,RequestRecord>,pub next_nonce:BTreeMap<Principal,u64>,
     /// Only ledgers that passed the mock-only handshake may receive this release's outcalls.
     pub mock_ledgers:Vec<Principal>,
+    #[serde(skip)]
+    pub changes:Changes,
 }
 impl ExecutorState {
-    pub fn new(instance:Principal,owner:Principal,engine:Principal)->Self {Self{instance,owner,engine,mode:Mode::ReportOnly,paused:false,plans:BTreeMap::new(),operations:BTreeMap::new(),grants:BTreeMap::new(),requests:BTreeMap::new(),next_nonce:BTreeMap::new(),mock_ledgers:Vec::new()}}
+    pub fn new(instance:Principal,owner:Principal,engine:Principal)->Self {Self{instance,owner,engine,mode:Mode::ReportOnly,paused:false,plans:BTreeMap::new(),operations:BTreeMap::new(),grants:BTreeMap::new(),requests:BTreeMap::new(),next_nonce:BTreeMap::new(),mock_ledgers:Vec::new(),changes:Changes::default()}}
     pub fn assert_owner(&self,caller:Principal)->Result<()> {if caller!=self.owner || caller==Principal::anonymous(){Err(Error::Unauthorized)}else{Ok(())}}
-    pub fn set_mode(&mut self,caller:Principal,mode:Mode)->Result<()> {self.assert_owner(caller)?;if mode==Mode::LimitedLive{return Err(Error::LiveDisabled);}self.mode=mode;Ok(())}
-    pub fn set_paused(&mut self,caller:Principal,pause:bool)->Result<()> {self.assert_owner(caller)?;self.paused=pause;Ok(())}
+    pub fn set_mode(&mut self,caller:Principal,mode:Mode)->Result<()> {self.assert_owner(caller)?;if mode==Mode::LimitedLive{return Err(Error::LiveDisabled);}self.mode=mode;self.changes.meta=true;Ok(())}
+    pub fn set_paused(&mut self,caller:Principal,pause:bool)->Result<()> {self.assert_owner(caller)?;self.paused=pause;self.changes.meta=true;Ok(())}
     pub fn install_plan(&mut self,caller:Principal,p:Plan)->Result<()> {
         self.assert_owner(caller)?;p.validate()?;
         if let Some(old)=self.plans.get(&p.id){return if old==&p{Ok(())}else{Err(Error::IdConflict)};}
-        if self.plans.len()>=MAX_REGISTRY{return Err(Error::Capacity);}self.plans.insert(p.id,p);Ok(())
+        if self.plans.len()>=MAX_REGISTRY{return Err(Error::Capacity);}self.changes.plans.insert(p.id);self.plans.insert(p.id,p);Ok(())
     }
     pub fn install_operation(&mut self,caller:Principal,o:Operation)->Result<()> {
         self.assert_owner(caller)?;o.proposal.validate()?;
         if o.id==[0;32] || o.revision==0 || o.evidence.is_empty() || o.evidence.len()>MAX_STATE_BYTES || o.status!=OperationStatus::Available{return Err(Error::Invalid("operation".into()));}
         if self.operations.contains_key(&o.id){return Err(Error::IdConflict);}
-        if self.operations.len()>=MAX_REQUESTS{return Err(Error::Capacity);}self.operations.insert(o.id,o);Ok(())
+        if self.operations.len()>=MAX_REQUESTS{return Err(Error::Capacity);}self.changes.operations.insert(o.id);self.operations.insert(o.id,o);Ok(())
     }
     pub fn revise_operation(&mut self,caller:Principal,id:Digest,evidence:String)->Result<()> {
         self.assert_owner(caller)?;
         if evidence.is_empty() || evidence.len()>MAX_STATE_BYTES{return Err(Error::TooLong);}
         let o=self.operations.get_mut(&id).ok_or(Error::NotFound)?;
         if o.status!=OperationStatus::Available{return Err(Error::OperationUsed);}
-        let rev=o.revision.checked_add(1).ok_or(Error::Capacity)?;o.evidence=evidence;o.revision=rev;Ok(())
+        let rev=o.revision.checked_add(1).ok_or(Error::Capacity)?;o.evidence=evidence;o.revision=rev;self.changes.operations.insert(id);Ok(())
     }
     pub fn install_grant(&mut self,caller:Principal,g:Grant)->Result<()> {
         self.assert_owner(caller)?;
@@ -150,7 +158,7 @@ impl ExecutorState {
         for r in &g.recipients{r.validate()?;}
         if !self.plans.contains_key(&g.plan){return Err(Error::NotFound);}
         if self.grants.contains_key(&g.id){return Err(Error::IdConflict);}
-        if self.grants.len()>=MAX_REGISTRY{return Err(Error::Capacity);}self.grants.insert(g.id,g);Ok(())
+        if self.grants.len()>=MAX_REGISTRY{return Err(Error::Capacity);}self.changes.grants.insert(g.id);self.grants.insert(g.id,g);Ok(())
     }
     /// Drop a caller's nonce high-water mark, so a delegate that no longer has requests
     /// or grants does not occupy one of the `MAX_REGISTRY` slots forever.
@@ -163,9 +171,10 @@ impl ExecutorState {
         if target==Principal::anonymous(){return Err(Error::Invalid("caller".into()));}
         if self.requests.values().any(|r|r.caller==target)||self.grants.values().any(|g|g.delegate==target){return Err(Error::Transition);}
         if self.next_nonce.remove(&target).is_none(){return Err(Error::NotFound);}
+        self.changes.nonces.insert(target);
         Ok(())
     }
-    pub fn revoke(&mut self,caller:Principal,id:Digest)->Result<()> {self.assert_owner(caller)?;let g=self.grants.get_mut(&id).ok_or(Error::NotFound)?;let rev=g.revision.checked_add(1).ok_or(Error::Capacity)?;g.revoked=true;g.revision=rev;Ok(())}
+    pub fn revoke(&mut self,caller:Principal,id:Digest)->Result<()> {self.assert_owner(caller)?;let g=self.grants.get_mut(&id).ok_or(Error::NotFound)?;let rev=g.revision.checked_add(1).ok_or(Error::Capacity)?;g.revoked=true;g.revision=rev;self.changes.grants.insert(id);Ok(())}
     fn request_id(&self,caller:Principal,nonce:u64)->Digest {let mut h=Canonical::new("ic-laya/workflow/v1");h.bytes(self.instance.as_slice()).bytes(caller.as_slice()).u64(nonce);h.finish()}
     fn snapshot(o:&Operation,g:&Grant,p:&Plan)->Digest {
         let mut h=Canonical::new("ic-laya/snapshot/v1");h.bytes(&o.id).u64(o.revision).text(&o.evidence).bytes(&o.proposal.digest())
@@ -186,7 +195,7 @@ impl ExecutorState {
         let new_nonce=next.checked_add(1).ok_or(Error::Capacity)?;
         let r=RequestRecord{id,caller,nonce,operation,grant,plan:g.plan,operation_revision:o.revision,grant_revision:g.revision,snapshot:Self::snapshot(o,g,p),expires_at_ns:expires,
             status:Status::Received,receipts:Vec::new(),pending:None,reservation:None,frozen:None,ledger_attempt:0,ever_unknown:false};
-        self.requests.insert(id,r);self.next_nonce.insert(caller,new_nonce);Ok(id)
+        self.changes.requests.insert(id);self.requests.insert(id,r);self.changes.nonces.insert(caller);self.next_nonce.insert(caller,new_nonce);Ok(id)
     }
     fn owned(&self,caller:Principal,id:&Digest)->Result<RequestRecord> {
         let r=self.requests.get(id).ok_or(Error::NotFound)?;
@@ -203,24 +212,24 @@ impl ExecutorState {
     pub fn begin_evaluation(&mut self,caller:Principal,id:Digest,now:u64)->Result<DecisionRequest> {
         let mut r=self.owned(caller,&id)?;
         if !matches!(r.status,Status::Received|Status::Evaluating){return Err(Error::Transition);}
-        if let Err(e)=self.current(&r,now){r.status=Status::Stale;r.pending=None;self.requests.insert(id,r);return Err(e);}
+        if let Err(e)=self.current(&r,now){r.status=Status::Stale;r.pending=None;self.changes.requests.insert(id);self.requests.insert(id,r);return Err(e);}
         if let Some(p)=r.pending.as_mut(){
             if p.in_flight{return Err(Error::Busy);}
             if p.sends>=2{return Err(Error::Capacity);}
-            p.in_flight=true;p.sends+=1;let req=p.request.clone();self.requests.insert(id,r);return Ok(req);
+            p.in_flight=true;p.sends+=1;let req=p.request.clone();self.changes.requests.insert(id);self.requests.insert(id,r);return Ok(req);
         }
         let p=self.plans.get(&r.plan).ok_or(Error::NotFound)?;let slot=r.receipts.len();
         let required=p.signals.get(slot).ok_or(Error::Transition)?;let o=self.operations.get(&r.operation).ok_or(Error::NotFound)?;
         let mut h=Canonical::new("ic-laya/slot/v1");h.bytes(&id).u64(slot as u64).bytes(&r.snapshot);
         let req=DecisionRequest{evaluation_id:h.finish(),schema_hash:required.schema.schema_hash,model:p.model,calibration:Some(required.calibration),
             binding:Some(Binding{workflow:id,slot:slot as u8,attempt:0,snapshot:r.snapshot}),state:o.evidence.clone(),expires_at_ns:r.expires_at_ns};
-        r.pending=Some(PendingEvaluation{request:req.clone(),in_flight:true,sends:1});r.status=Status::Evaluating;self.requests.insert(id,r);Ok(req)
+        r.pending=Some(PendingEvaluation{request:req.clone(),in_flight:true,sends:1});r.status=Status::Evaluating;self.changes.requests.insert(id);self.requests.insert(id,r);Ok(req)
     }
     pub fn engine_transport_failed(&mut self,id:Digest,eval_id:Digest)->Result<()> {
         let r=self.requests.get_mut(&id).ok_or(Error::NotFound)?;
         if r.status!=Status::Evaluating{return Err(Error::Transition);}
         let p=r.pending.as_mut().ok_or(Error::Transition)?;if p.request.evaluation_id!=eval_id{return Err(Error::BindingMismatch);}
-        p.in_flight=false;if p.sends>=2{r.status=Status::NeedsReview("engine retry limit".into());r.pending=None;}Ok(())
+        self.changes.requests.insert(id);p.in_flight=false;if p.sends>=2{r.status=Status::NeedsReview("engine retry limit".into());r.pending=None;}Ok(())
     }
     fn expected_stamp(&self,r:&RequestRecord,slot:usize,req:&DecisionRequest,backend:BackendKind)->Result<Stamp> {
         let s=self.plans.get(&r.plan).and_then(|p|p.signals.get(slot)).ok_or(Error::NotFound)?;
@@ -246,7 +255,7 @@ impl ExecutorState {
         if r.status!=Status::Evaluating{return Err(Error::Transition);}
         let pending=r.pending.clone().ok_or(Error::Transition)?;
         if pending.request.evaluation_id!=eval_id{return Err(Error::BindingMismatch);}
-        if let Err(e)=self.current(&r,now){r.status=Status::Stale;r.pending=None;self.requests.insert(id,r);return Err(e);}
+        if let Err(e)=self.current(&r,now){r.status=Status::Stale;r.pending=None;self.changes.requests.insert(id);self.requests.insert(id,r);return Err(e);}
         let slot=r.receipts.len();
         let required=self.plans.get(&r.plan).and_then(|p|p.signals.get(slot)).ok_or(Error::NotFound)?;
         let outcome=(||{
@@ -263,7 +272,7 @@ impl ExecutorState {
             },
             Err(e)=>r.status=Status::NeedsReview(e.to_string()),
         }
-        let status=r.status.clone();self.requests.insert(id,r);Ok(status)
+        let status=r.status.clone();self.changes.requests.insert(id);self.requests.insert(id,r);Ok(status)
     }
     pub fn authorize(&self,caller:Principal,id:Digest,now:u64)->Result<AuthorizedTransfer> {
         let r=self.owned(caller,&id)?;self.current(&r,now)?;
@@ -292,7 +301,7 @@ impl ExecutorState {
         self.authorize(r.caller,r.id,now)?;
         if authorization.snapshot!=r.snapshot{return Err(Error::BindingMismatch);}
         match self.mode {
-            Mode::ReportOnly|Mode::Shadow=>{r.status=Status::Reported;self.requests.insert(r.id,r);return Err(Error::ReportOnly);},
+            Mode::ReportOnly|Mode::Shadow=>{r.status=Status::Reported;self.changes.requests.insert(r.id);self.requests.insert(r.id,r);return Err(Error::ReportOnly);},
             Mode::LimitedLive=>return Err(Error::LiveDisabled),Mode::Mock=>{},
         }
         let mut op=self.operations.get(&r.operation).cloned().ok_or(Error::NotFound)?;
@@ -303,7 +312,7 @@ impl ExecutorState {
         r.reservation=Some(Reservation{charge,epoch});r.frozen=Some(frozen.clone());r.status=Status::Submitted;r.ledger_attempt=1;
         op.status=OperationStatus::Reserved(r.id);
         let cmd=DispatchCommand{request:r.id,attempt:1,transfer:frozen};
-        self.grants.insert(grant.id,grant);self.operations.insert(op.id,op);self.requests.insert(r.id,r);Ok(cmd)
+        self.changes.grants.insert(grant.id);self.grants.insert(grant.id,grant);self.changes.operations.insert(op.id);self.operations.insert(op.id,op);self.changes.requests.insert(r.id);self.requests.insert(r.id,r);Ok(cmd)
     }
     fn settle_record(&mut self,mut r:RequestRecord,success:bool,text:String)->Result<Status> {
         let reservation=r.reservation.clone().ok_or(Error::Storage)?;
@@ -313,7 +322,7 @@ impl ExecutorState {
         g.settle(reservation.charge,reservation.epoch,success)?;
         o.status=if success{OperationStatus::Consumed(r.id)}else{OperationStatus::Available};
         r.reservation=None;r.status=if success{Status::Succeeded(text)}else{Status::FailedDefinitive(text)};
-        let status=r.status.clone();self.grants.insert(g.id,g);self.operations.insert(o.id,o);self.requests.insert(r.id,r);Ok(status)
+        let status=r.status.clone();self.changes.grants.insert(g.id);self.grants.insert(g.id,g);self.changes.operations.insert(o.id);self.operations.insert(o.id,o);self.changes.requests.insert(r.id);self.requests.insert(r.id,r);Ok(status)
     }
     pub fn finish_ledger(&mut self,cmd:&DispatchCommand,outcome:LedgerOutcome)->Result<Status> {
         let mut r=self.requests.get(&cmd.request).cloned().ok_or(Error::NotFound)?;
@@ -328,7 +337,7 @@ impl ExecutorState {
             },
             LedgerOutcome::DefinitiveError(e) if !r.ever_unknown && cmd.attempt==r.ledger_attempt=>self.settle_record(r,false,e),
             LedgerOutcome::DefinitiveError(e)|LedgerOutcome::Unknown(e)=>{
-                r.ever_unknown=true;r.status=Status::OutcomeUnknown(e);let status=r.status.clone();self.requests.insert(r.id,r);Ok(status)
+                r.ever_unknown=true;r.status=Status::OutcomeUnknown(e);let status=r.status.clone();self.changes.requests.insert(r.id);self.requests.insert(r.id,r);Ok(status)
             },
         }
     }
@@ -339,7 +348,7 @@ impl ExecutorState {
         let frozen=r.frozen.clone().ok_or(Error::Storage)?;
         if now<frozen.created_at_time_ns || now-frozen.created_at_time_ns>MOCK_DEDUP_WINDOW_NS{return Err(Error::Expired);}
         r.ledger_attempt+=1;r.status=Status::Submitted;
-        let cmd=DispatchCommand{request:id,attempt:r.ledger_attempt,transfer:frozen};self.requests.insert(id,r);Ok(cmd)
+        let cmd=DispatchCommand{request:id,attempt:r.ledger_attempt,transfer:frozen};self.changes.requests.insert(id);self.requests.insert(id,r);Ok(cmd)
     }
     /// Owner-only: move an unresolved transfer to `NeedsReview` while keeping its
     /// reservation.
@@ -356,21 +365,21 @@ impl ExecutorState {
         let mut r=self.requests.get(&id).cloned().ok_or(Error::NotFound)?;
         if !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_)){return Err(Error::Transition);}
         r.status=Status::NeedsReview(format!("abandoned: {reason}"));
-        let status=r.status.clone();self.requests.insert(id,r);Ok(status)
+        let status=r.status.clone();self.changes.requests.insert(id);self.requests.insert(id,r);Ok(status)
     }
     pub fn cancel(&mut self,caller:Principal,id:Digest)->Result<()> {
         let mut r=self.owned(caller,&id)?;
         if r.frozen.is_some() || r.reservation.is_some(){return Err(Error::OutcomeUnknown);}
-        r.pending=None;r.status=Status::Cancelled;self.requests.insert(id,r);Ok(())
+        r.pending=None;r.status=Status::Cancelled;self.changes.requests.insert(id);self.requests.insert(id,r);Ok(())
     }
     pub fn get(&self,caller:Principal,id:Digest)->Result<RequestRecord>{self.owned(caller,&id)}
     /// Conservative restart recovery. Never rewind a nonce or release an unknown transfer.
     pub fn recover_after_upgrade(&mut self){
         for r in self.requests.values_mut(){
-            if r.status==Status::Evaluating {r.status=Status::NeedsReview("upgrade interrupted inference".into());r.pending=None;}
-            if r.status==Status::Submitted {r.status=Status::OutcomeUnknown("upgrade interrupted callback".into());r.ever_unknown=true;}
+            if r.status==Status::Evaluating {self.changes.requests.insert(r.id);r.status=Status::NeedsReview("upgrade interrupted inference".into());r.pending=None;}
+            if r.status==Status::Submitted {self.changes.requests.insert(r.id);r.status=Status::OutcomeUnknown("upgrade interrupted callback".into());r.ever_unknown=true;}
         }
-        self.paused=true;
+        self.paused=true;self.changes.meta=true;
     }
     /// Cheap subset of [`Self::check_invariants`] for the per-mutation path: the
     /// reservation totals per grant and the request/operation agreement. The full method

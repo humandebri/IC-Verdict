@@ -1,0 +1,7 @@
+pack: manifest=14310 model=27776 tokenizer=1428 test_only=true
+begin_upload ok
+  0.0 / 0.0 MiB (0.4s)
+uploaded 29204 bytes in 0.4s
+warm-up: 22 tensors
+  model resident after 22 of 22 tensors
+warm-up complete

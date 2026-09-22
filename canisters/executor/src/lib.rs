@@ -11,7 +11,7 @@ fn admitted()->Result<()> {
     let caller=ic_cdk::api::msg_caller();
     read(|s|if caller!=Principal::anonymous() && (caller==s.owner || s.grants.values().any(|g|g.delegate==caller)){Ok(())}else{Err(Error::Unauthorized)})
 }
-fn mutate<R>(f:impl FnOnce(&mut ExecutorState)->R)->R{STATE.with(|x|{let mut s=x.borrow_mut();let s=s.as_mut().expect("initialized");let old=s.clone();let r=f(s);stable::sync(&old,s).unwrap_or_else(|e|ic_cdk::trap(format!("stable commit failed: {e}")));r})}
+fn mutate<R>(f:impl FnOnce(&mut ExecutorState)->R)->R{STATE.with(|x|{let mut s=x.borrow_mut();let s=s.as_mut().expect("initialized");let r=f(s);stable::sync(s).unwrap_or_else(|e|ic_cdk::trap(format!("stable commit failed: {e}")));s.changes=Changes::default();r})}
 #[ic_cdk::init]
 fn init(owner:Principal,engine:Principal){
     if [owner,engine].iter().any(|&p|p==Principal::anonymous()||p==Principal::management_canister()){ic_cdk::trap("invalid principal");}
@@ -25,9 +25,9 @@ fn pre_upgrade(){read(|s|{
 fn post_upgrade(){
     let legacy=stable::is_legacy_snapshot();
     let mut s:ExecutorState=if legacy{canister_common::restore()}else{stable::load()}.unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
-    let old=s.clone();s.recover_after_upgrade();s.check_invariants().unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
-    if legacy{stable::replace_all(&s)}else{stable::sync(&old,&s)}.unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
-    STATE.with(|x|*x.borrow_mut()=Some(s));
+    s.recover_after_upgrade();s.check_invariants().unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
+    if legacy{stable::replace_all(&s)}else{stable::sync(&s)}.unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
+    s.changes=Changes::default();STATE.with(|x|*x.borrow_mut()=Some(s));
 }
 #[ic_cdk::update]
 fn register_plan(plan:Plan)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.install_plan(caller,plan))}
@@ -59,7 +59,7 @@ async fn register_mock_ledger(ledger:Principal)->Result<()> {
     let response=ic_cdk::call::Call::bounded_wait(ledger,"ic_laya_mock_profile").change_timeout(10).await.map_err(|_|Error::Denied("mock handshake failed".into()))?;
     let marker:String=response.candid().map_err(|_|Error::BindingMismatch)?;
     if marker!=canister_common::MOCK_MAGIC{return Err(Error::Denied("not an IC-Laya mock ledger".into()));}
-    mutate(|s|{s.assert_owner(caller)?;if !s.mock_ledgers.contains(&ledger){if s.mock_ledgers.len()>=8{return Err(Error::Capacity);}s.mock_ledgers.push(ledger);}Ok(())})
+    mutate(|s|{s.assert_owner(caller)?;if !s.mock_ledgers.contains(&ledger){if s.mock_ledgers.len()>=8{return Err(Error::Capacity);}s.mock_ledgers.push(ledger);s.changes.meta=true;}Ok(())})
 }
 #[ic_cdk::update]
 fn submit(operation:Digest,grant:Digest,client_nonce:u64)->Result<Digest>{admitted()?;let caller=ic_cdk::api::msg_caller();mutate(|s|s.submit(caller,client_nonce,operation,grant,ic_cdk::api::time()))}

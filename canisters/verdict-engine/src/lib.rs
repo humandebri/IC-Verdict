@@ -101,8 +101,27 @@ fn projected(s:&Persistent,tokens:usize)->u64{
 /// the caller already knows which method it called, so "over budget" needs no second
 /// discriminator to be actionable.
 fn guard_within(s:&Persistent,tokens:usize,budget:u64)->Result<()>{
-    if projected(s,tokens)>budget {return Err(Error::Capacity);}
-    Ok(())
+    guard_cost(s.cost_fixed,s.cost_per_token,tokens,budget)
+}
+fn guard_cost(fixed:u64,per_token:u64,tokens:usize,budget:u64)->Result<()>{
+    let cost=fixed.saturating_add(per_token.saturating_mul(tokens as u64))
+        .saturating_mul(BUDGET_MARGIN_PERMILLE)/1000;
+    if cost>budget {Err(Error::Capacity)}else{Ok(())}
+}
+/// Same pack after an upgrade: retain registered contracts and idempotency records.
+fn activate_bundle(s:&mut Persistent,bundle:Digest){
+    if s.workflow.active_model!=bundle {
+        let callers=std::mem::take(&mut s.workflow.callers);
+        s.workflow=EngineState::new(bundle);
+        s.workflow.callers=callers;
+    }
+    s.active_model=bundle;
+}
+fn finish_warmup(s:&mut Persistent,builder:verdict_candle::pack::Builder)->Result<verdict_candle::VerdictModel>{
+    let bundle=builder.bundle;
+    let model=builder.finish()?;
+    activate_bundle(s,bundle);
+    Ok(model)
 }
 /// Update-path guard: the policy budget the owner may tighten with `set_cost_model`.
 /// The update entry points pass `s.budget` into `infer_once`/`decide_once`, so this is
@@ -128,7 +147,9 @@ thread_local!{
 }
 
 fn read<R>(f:impl FnOnce(&Persistent)->R)->R{STATE.with(|x|f(x.borrow().as_ref().expect("initialized")))}
-fn mutate<R>(f:impl FnOnce(&mut Persistent)->R)->R{STATE.with(|x|{let mut state=x.borrow_mut();let state=state.as_mut().expect("initialized");let result=f(state);canister_common::persist_or_trap(state);result})}
+// Update messages commit the heap atomically; only upgrades need a stable snapshot.
+// This canister has no awaits. pre_upgrade serializes the bounded registries/cache.
+fn mutate<R>(f:impl FnOnce(&mut Persistent)->R)->R{STATE.with(|x|{let mut state=x.borrow_mut();let state=state.as_mut().expect("initialized");f(state)})}
 fn owner()->Result<()>{read(|s|if ic_cdk::api::msg_caller()==s.owner{Ok(())}else{Err(Error::Unauthorized)})}
 fn admitted(caller:Principal)->Result<()>{
     read(|s|if caller==s.owner || (caller!=Principal::anonymous() && s.callers.contains_key(&caller)){Ok(())}else{Err(Error::Unauthorized)})
@@ -399,6 +420,60 @@ fn bench_int8(m:u32,n:u32,k:u32,iterations:u32)->Result<Int8BenchReply>{
         quantize_weights_instructions,quantize_activations_instructions,max_abs_diff_vs_f32:max_abs,max_rel_diff_vs_f32:max_rel})
 }
 
+/// Owner-only block32 benchmark. tile=0 measures the production kernel; 2/4/8
+/// measure candidates without changing the inference path or its cost model.
+#[ic_cdk::update]
+fn bench_int8_block32(m:u32,n:u32,k:u32,iterations:u32,tile:u32)->Result<BenchReply>{
+    owner()?;
+    if m==0||n==0||k==0||m>128||n>4096||k>4096||!k.is_multiple_of(32)
+        ||iterations==0||iterations>4||![0,2,4,8].contains(&tile){return Err(Error::Invalid("bench shape/tile".into()));}
+    let (m,n,k)=(m as usize,n as usize,k as usize);
+    let w=bench_matrix(n,k)?.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+    let x=bench_matrix(m,k)?.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+    let(wq,ws)=verdict_simd::quantize_blocks_i8(&w,n,k,32);
+    let(aq,asx)=verdict_simd::quantize_acts_i16(&x,m,k);
+    let mut want=vec![0f32;m*n];let _=verdict_simd::matmul_i8_blocked(&aq,&wq,&asx,&ws,m,k,n,32,&mut want);
+    let mut out=vec![0f32;m*n];
+    let run=|out:&mut[f32]|if tile==0{verdict_simd::matmul_i8_blocked(&aq,&wq,&asx,&ws,m,k,n,32,out)}
+        else{verdict_simd::matmul_i8_block32_candidate(&aq,&wq,&asx,&ws,m,k,n,out,tile as usize)};
+    let _=run(&mut out);
+    if out!=want{return Err(Error::Numeric);}
+    let before=ic_cdk::api::instruction_counter();for _ in 0..iterations{let _=run(&mut out);}
+    let instructions=ic_cdk::api::instruction_counter()-before;
+    let macs=(m*n*k*iterations as usize) as u64;
+    Ok(BenchReply{m:m as u32,n:n as u32,k:k as u32,iterations,macs,instructions,per_iteration:instructions/iterations as u64,
+        instructions_per_mac:instructions as f64/macs as f64})
+}
+
+/// Measure only the QK/softmax/AV core. Candidate differences are checked against
+/// the dense masked reference; no candidate can affect normal inference.
+#[ic_cdk::update]
+fn bench_local_attention(tokens:u32,distance:u32,candidate:bool)->Result<BenchReply>{
+    owner()?;
+    if tokens==0||tokens>128||distance>128{return Err(Error::TooLong);}
+    let (t,d,h)=(tokens as usize,64usize,12usize);
+    let q=bench_matrix(h*t,d)?.reshape((h,t,d)).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+    let flat=q.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+    let mask:Vec<f32>=(0..t).flat_map(|i|(0..t).map(move|j|if i.abs_diff(j)>distance as usize{f32::NEG_INFINITY}else{0.})).collect();
+    let mask=Tensor::from_vec(mask,(1,t,t),&Device::Cpu).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+    let dense=||->candle_core::Result<Vec<f32>>{
+        let scores=(q.matmul(&q.transpose(1,2)?.contiguous()?)?*(1.0/(d as f64).sqrt()))?.broadcast_add(&mask)?;
+        let mut scores=scores.flatten_all()?.to_vec1::<f32>()?;
+        verdict_simd::softmax_rows_inplace(&mut scores,h*t,t);
+        Tensor::from_vec(scores,(h,t,t),&Device::Cpu)?.matmul(&q)?.flatten_all()?.to_vec1::<f32>()
+    };
+    let want=dense().map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+    let run=||->Result<Vec<f32>>{if candidate{Ok(verdict_simd::local_attention_candidate(&flat,&flat,&flat,h,t,d,distance as usize))}
+        else{dense().map_err(|e|Error::ModelUnavailable(e.to_string()))}};
+    let got=run()?;
+    if got.iter().zip(&want).any(|(a,b)|!a.is_finite()||(a-b).abs()>1e-4){return Err(Error::Numeric);}
+    let before=ic_cdk::api::instruction_counter();let got=run()?;
+    let instructions=ic_cdk::api::instruction_counter()-before;
+    std::hint::black_box(got);
+    Ok(BenchReply{m:tokens,n:distance,k:d as u32,iterations:1,macs:(2*h*t*t*d) as u64,instructions,per_iteration:instructions,
+        instructions_per_mac:instructions as f64/(2*h*t*t*d) as f64})
+}
+
 #[derive(CandidType,Serialize,Deserialize,Clone)]
 pub struct F16BenchReply{pub m:u32,pub n:u32,pub k:u32,pub iterations:u32,
     pub convert_instructions:u64,pub instructions:u64,pub per_iteration:u64,pub instructions_per_mac:f64,
@@ -493,13 +568,8 @@ fn warmup_next()->Result<bool>{
     })?;
     if done {
         let builder=BUILDER.with(|b|b.borrow_mut().take()).ok_or(Error::Transition)?;
-        let bundle=builder.bundle;let model=builder.finish()?;
-        MODEL.with(|m|*m.borrow_mut()=Some(model));mutate(|s|{
-            s.active_model=bundle;
-            s.workflow=EngineState::new(bundle);
-            for caller in s.callers.keys().copied(){s.workflow.allow_caller(caller,1000)?;}
-            Ok::<(),Error>(())
-        })?;
+        let model=mutate(|s|finish_warmup(s,builder))?;
+        MODEL.with(|m|*m.borrow_mut()=Some(model));
     }
     Ok(done)
 }
@@ -558,7 +628,7 @@ fn infer_tokens_query(input_ids:Vec<u32>)->Result<InferReply>{
 #[ic_cdk::update]
 fn evaluate(req:ic_laya_core::DecisionRequest)->Result<ic_laya_core::Receipt>{
     let caller=ic_cdk::api::msg_caller();let now=ic_cdk::api::time();admitted(caller)?;
-    let budget_state=read(|s|s.clone());
+    let (max_input_tokens,cost_fixed,cost_per_token,budget)=read(|s|(s.max_input_tokens,s.cost_fixed,s.cost_per_token,s.budget));
     mutate(|s|s.workflow.evaluate_with(caller,req,now,|compiled,_,state|{
         let labels:Vec<String>=compiled.schema.options.iter().map(|o|o.text.clone()).collect();
         let special=TOKENIZER.with(|t|t.borrow().as_ref().map(|t|t.special_tokens()))
@@ -568,8 +638,8 @@ fn evaluate(req:ic_laya_core::DecisionRequest)->Result<ic_laya_core::Receipt>{
             let t=t.borrow();let m=m.borrow();
             let (t,model)=match(t.as_ref(),m.as_ref()){(Some(t),Some(m))=>(t,m),_=>return Err(Error::ModelUnavailable("warm-up required".into()))};
             let mut input=vec![model.config.cls_token_id];input.extend(t.encode_piece(&prompt)?);input.push(model.config.sep_token_id);
-            if input.len()>budget_state.max_input_tokens as usize||input.len()>verdict_candle::MAX_SEQUENCE{return Err(Error::TooLong);}
-            guard_within(&budget_state,input.len(),budget_state.budget)?;
+            if input.len()>max_input_tokens as usize||input.len()>verdict_candle::MAX_SEQUENCE{return Err(Error::TooLong);}
+            guard_cost(cost_fixed,cost_per_token,input.len(),budget)?;
             let before=ic_cdk::api::instruction_counter();let logits=model.logits(&input)?;
             let measured=ic_cdk::api::instruction_counter().saturating_sub(before);
             Ok((logits,input.len() as u32,model.kind(),measured))
@@ -674,7 +744,7 @@ fn decide_once(req:DecideRequest,budget:u64)->Result<DecideReply>{
         input.extend(t.encode_piece(&prompt)?);
         input.push(model.config.sep_token_id);
         if input.len()>limits as usize || input.len()>verdict_candle::MAX_SEQUENCE{return Err(Error::TooLong);}
-        guard_within(&read(|s|s.clone()),input.len(),budget)?;
+        read(|s|guard_within(s,input.len(),budget))?;
         let before=ic_cdk::api::instruction_counter();
         let logits=model.logits(&input)?;
         if logits.len()!=ids.len(){return Err(Error::BindingMismatch);}
@@ -719,6 +789,41 @@ pub struct BatchRequest{pub state:String,pub questions:Vec<BatchQuestion>,pub te
 pub struct QuestionResult{pub id:String,pub ids:Vec<String>,pub logits:Vec<f32>,pub probabilities:Vec<f32>,pub selected:String,pub confidence:f32}
 #[derive(CandidType,Serialize,Deserialize,Clone)]
 pub struct BatchReply{pub model:Digest,pub questions:Vec<QuestionResult>,pub input_tokens:u32,pub measured_instructions:u64}
+type BatchLayout=(Vec<String>,Vec<String>,Vec<usize>);
+fn batch_layout(questions:&[BatchQuestion])->Result<BatchLayout>{
+    let mut question_ids=std::collections::BTreeSet::new();
+    let (mut labels,mut ids,mut counts)=(Vec::new(),Vec::new(),Vec::new());
+    for q in questions {
+        if q.id.trim().is_empty() || !question_ids.insert(&q.id){return Err(Error::Invalid("question id".into()));}
+        let mut seen=std::collections::BTreeSet::new();
+        if q.options.is_empty() || q.options.len()>MAX_OPTIONS{return Err(Error::TooLong);}
+        let mut n=0usize;
+        for o in &q.options {
+            if o.id.is_empty()||o.text.is_empty(){return Err(Error::Invalid("option".into()));}
+            if !seen.insert(o.id.as_str()){return Err(Error::Invalid("duplicate option id".into()));}
+            labels.push(o.text.clone());ids.push(o.id.clone());n+=1;
+        }
+        if q.abstention {if !seen.insert("__insufficient_evidence__"){return Err(Error::Invalid("duplicate option id".into()));}labels.push(ABSTENTION_DESC.into());ids.push("__insufficient_evidence__".into());n+=1;}
+        counts.push(n);
+    }
+    if ids.len()>verdict_candle::MAX_CLASSES{return Err(Error::TooLong);}
+    Ok((labels,ids,counts))
+}
+fn batch_results(questions:&[BatchQuestion],ids:&[String],counts:&[usize],logits:&[f32],temperature:f64)->Result<Vec<QuestionResult>>{
+        let mut out=Vec::new();let mut offset=0usize;
+        for (q,count) in questions.iter().zip(counts.iter()) {
+            let end=offset+count;
+            let qlogits=logits[offset..end].to_vec();
+            let scaled:Vec<f32>=qlogits.iter().map(|x|(*x as f64/temperature) as f32).collect();
+            let qprobs=softmax(&scaled)?;
+            let qids=ids[offset..end].to_vec();
+            let best=qprobs.iter().enumerate().fold((0usize,f32::NEG_INFINITY),|a,(i,p)|if *p>a.1{(i,*p)}else{a});
+            out.push(QuestionResult{id:q.id.clone(),ids:qids.clone(),logits:qlogits,probabilities:qprobs,
+                selected:qids[best.0].clone(),confidence:best.1});
+            offset=end;
+        }
+    Ok(out)
+}
 /// Several typed questions over one state, in a single forward pass.
 ///
 /// Measured reason (docs/VERDICT_ENGINE.md 5.1.6): sending the same state three times
@@ -734,19 +839,7 @@ fn decide_batch(req:BatchRequest)->Result<BatchReply>{
     if req.questions.is_empty() || req.questions.len()>8{return Err(Error::TooLong);}
     if !req.temperature.is_finite()||req.temperature<=0.0||req.temperature>100.0{return Err(Error::Numeric);}
     let limits=read(|s|s.max_input_tokens);
-    let (mut labels,mut ids,mut counts)=(Vec::new(),Vec::new(),Vec::new());
-    for q in &req.questions {
-        if q.options.is_empty() || q.options.len()>MAX_OPTIONS{return Err(Error::TooLong);}
-        let mut n=0usize;
-        for o in &q.options {
-            if o.id.is_empty()||o.text.is_empty(){return Err(Error::Invalid("option".into()));}
-            labels.push(o.text.clone());ids.push(o.id.clone());n+=1;
-        }
-        if q.abstention {labels.push(ABSTENTION_DESC.into());ids.push("__insufficient_evidence__".into());n+=1;}
-        counts.push(n);
-    }
-    if ids.len()>verdict_candle::MAX_CLASSES{return Err(Error::TooLong);}
-    {let mut seen=std::collections::BTreeSet::new();for id in &ids{if !seen.insert(id.clone()){return Err(Error::Invalid("duplicate option id".into()));}}}
+    let (labels,ids,counts)=batch_layout(&req.questions)?;
     let question=req.questions.iter().map(|q|q.question.clone()).collect::<Vec<_>>().join(" | ");
     // The tokenizer's own added tokens include `<<LABEL>>`/`<<SEP>>`, and it emits the
     // special id wherever that literal appears. An injected state or option text would
@@ -762,24 +855,12 @@ fn decide_batch(req:BatchRequest)->Result<BatchReply>{
         input.extend(t.encode_piece(&prompt)?);
         input.push(model.config.sep_token_id);
         if input.len()>limits as usize || input.len()>verdict_candle::MAX_SEQUENCE{return Err(Error::TooLong);}
-        guard_budget(&read(|s|s.clone()),input.len())?;
+        read(|s|guard_budget(s,input.len()))?;
         let before=ic_cdk::api::instruction_counter();
         let logits=model.logits(&input)?;
         if logits.len()!=ids.len(){return Err(Error::BindingMismatch);}
         let measured=ic_cdk::api::instruction_counter().saturating_sub(before);
-        let scaled:Vec<f32>=logits.iter().map(|x|(*x as f64/req.temperature) as f32).collect();
-        let probabilities=softmax(&scaled)?;
-        let mut out=Vec::new();let mut offset=0usize;
-        for (q,count) in req.questions.iter().zip(counts.iter()) {
-            let end=offset+count;
-            let qlogits=logits[offset..end].to_vec();
-            let qprobs=probabilities[offset..end].to_vec();
-            let qids=ids[offset..end].to_vec();
-            let best=qprobs.iter().enumerate().fold((0usize,f32::NEG_INFINITY),|a,(i,p)|if *p>a.1{(i,*p)}else{a});
-            out.push(QuestionResult{id:q.id.clone(),ids:qids.clone(),logits:qlogits,probabilities:qprobs,
-                selected:qids[best.0].clone(),confidence:best.1});
-            offset=end;
-        }
+        let out=batch_results(&req.questions,&ids,&counts,&logits,req.temperature)?;
         Ok(BatchReply{model:model.bundle_id(),questions:out,input_tokens:input.len() as u32,measured_instructions:measured})
     }))
 }
@@ -803,6 +884,51 @@ pub fn candid_interface()->String{__export_service()}
 #[cfg(test)]
 mod tests{
     use super::*;
+    fn question(id:&str)->BatchQuestion{
+        BatchQuestion{id:id.into(),question:"choose".into(),options:vec![OptionSpec{id:"yes".into(),text:"yes".into()}],abstention:true}
+    }
+    #[test]
+    fn batch_allows_shared_ids_but_normalizes_each_question(){
+        let qs=vec![question("one"),question("two")];
+        let (_,ids,counts)=batch_layout(&qs).unwrap();
+        let got=batch_results(&qs,&ids,&counts,&[0.,0.,100.,100.],1.).unwrap();
+        assert_eq!(got.len(),2);
+        for q in got{assert_eq!(q.probabilities,vec![0.5,0.5]);assert_eq!(q.confidence,0.5);assert_eq!(q.selected,"yes");}
+    }
+    #[test]
+    fn batch_rejects_ambiguous_ids(){
+        assert!(batch_layout(&[question("" )]).is_err());
+        assert!(batch_layout(&[question("one"),question("one")]).is_err());
+        let mut q=question("one");q.options.push(q.options[0].clone());
+        assert!(batch_layout(&[q]).is_err());
+        let mut q=question("one");q.options[0].id="__insufficient_evidence__".into();
+        assert!(batch_layout(&[q]).is_err());
+    }
+    #[test]
+    fn rewarm_preserves_contracts_and_idempotency_even_after_snapshot_restore(){
+        let mut s=state(COST_FIXED,COST_PER_TOKEN);
+        let (mut executor,mut engine,op,grant)=ic_laya_core::demo::setup().unwrap();
+        let id=executor.submit(ic_laya_core::demo::actor(2),0,op,grant,ic_laya_core::demo::NOW).unwrap();
+        ic_laya_core::demo::complete(&mut executor,&mut engine,id).unwrap();
+        s.active_model=engine.active_model;s.workflow=engine;
+        let before=ic_laya_core::storage::encode(&s).unwrap();
+        let mut restored:Persistent=ic_laya_core::storage::decode(&before).unwrap();
+        let bundle=restored.active_model;activate_bundle(&mut restored,bundle);
+        assert_eq!(before,ic_laya_core::storage::encode(&restored).unwrap());
+        let callers=ic_laya_core::storage::encode(&restored.workflow.callers).unwrap();
+        activate_bundle(&mut restored,[9;32]);
+        assert!(restored.workflow.schemas.is_empty()&&restored.workflow.calibrations.is_empty()&&restored.workflow.cache.is_empty());
+        assert_eq!(callers,ic_laya_core::storage::encode(&restored.workflow.callers).unwrap());
+    }
+    #[test]
+    fn incomplete_warmup_does_not_reset_registered_state(){
+        let mut s=state(COST_FIXED,COST_PER_TOKEN);
+        s.workflow=ic_laya_core::demo::setup().unwrap().1;s.active_model=s.workflow.active_model;
+        let before=ic_laya_core::storage::encode(&s).unwrap();
+        let builder=verdict_candle::pack::Builder::new(include_bytes!("../../../fixtures/verdict-tiny/manifest.json")).unwrap();
+        assert!(matches!(finish_warmup(&mut s,builder),Err(Error::Transition)));
+        assert_eq!(before,ic_laya_core::storage::encode(&s).unwrap());
+    }
     /// The budget guard is pure arithmetic, so it is testable off-wasm. Nothing here
     /// calls `ic0`: `instruction_counter` and the caller APIs are only read from the
     /// entry points, which these tests exercise through the guard functions.

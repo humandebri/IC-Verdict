@@ -1,0 +1,8 @@
+   Compiling verdict-candle v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-candle)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.24s
+     Running unittests src/bin/verdict_infer.rs (target/debug/deps/verdict_infer-779ca98975ac470b)
+
+running 1 test
+test tests::quality_requires_a_complete_safe_set ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

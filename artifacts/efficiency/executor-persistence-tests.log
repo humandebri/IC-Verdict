@@ -1,0 +1,11 @@
+   Compiling executor v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/executor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.84s
+     Running unittests src/lib.rs (target/debug/deps/executor-c8fef8a3f57f1343)
+
+running 4 tests
+test stable::tests::transport_retry_report_only_and_nonce_deletion_are_persisted ... ok
+test stable::tests::write_set_survives_async_transitions_errors_and_recovery ... ok
+test stable::tests::registry_revisions_revocation_and_metadata_survive_reload ... ok
+test stable::tests::one_changed_request_is_independent_of_history_size ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.80s

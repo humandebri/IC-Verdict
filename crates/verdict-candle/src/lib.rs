@@ -136,16 +136,16 @@ pub fn is_dense_weight(name:&str)->bool{
 /// (that is where the canister gets it: quantising every dense weight inside a single
 /// warm-up call exceeded the 40B instruction limit, IC0522), and from the f32 tensor
 /// otherwise.
-fn linear(m:&BTreeMap<String,Tensor>,q:&QuantMap,p:&str)->Result<Linear>{
+fn linear(m:&BTreeMap<String,Tensor>,q:&mut QuantMap,p:&str)->Result<Linear>{
     let key=format!("{p}.weight");
     let _=m;
-    q.get(&key).cloned().map(|w|Linear::new_quantized(w,None)).ok_or_else(||Error::Invalid(format!("missing quantised weight: {key}")))
+    q.remove(&key).map(|w|Linear::new_quantized(w,None)).ok_or_else(||Error::Invalid(format!("missing quantised weight: {key}")))
 }
 /// The head projectors do carry biases, which stay in f32.
-fn linear_biased(m:&BTreeMap<String,Tensor>,q:&QuantMap,p:&str)->Result<Linear>{
+fn linear_biased(m:&BTreeMap<String,Tensor>,q:&mut QuantMap,p:&str)->Result<Linear>{
     let key=format!("{p}.weight");
     let bias=Some(tensor(m,&format!("{p}.bias"))?);
-    q.get(&key).cloned().map(|w|Linear::new_quantized(w,bias)).ok_or_else(||Error::Invalid(format!("missing quantised weight: {key}")))
+    q.remove(&key).map(|w|Linear::new_quantized(w,bias)).ok_or_else(||Error::Invalid(format!("missing quantised weight: {key}")))
 }
 fn norm(m:&BTreeMap<String,Tensor>,p:&str,eps:f64)->Result<Norm>{Ok(Norm::new(tensor(m,&format!("{p}.weight"))?,None,eps))}
 
@@ -158,14 +158,14 @@ impl VerdictModel {
     pub fn from_tensors(c:VerdictConfig,bundle:Digest,kind:BackendKind,m:BTreeMap<String,Tensor>)->Result<Self>{
         let mut q=QuantMap::new();let mut aux=BTreeMap::new();
         for (name,t) in m {if is_matrix_weight(&name){q.insert(name.clone(),quantized(&BTreeMap::from([(name.clone(),t)]),&name)?);}else{aux.insert(name,t);}}
-        Self::assemble(c,bundle,kind,aux,&q)
+        Self::assemble(c,bundle,kind,aux,q)
     }
     /// Build from a pack that already quantised its dense weights, so warm-up never pays
     /// the quantisation cost (it is spread over the pack's per-tensor pushes instead).
     pub fn from_quantized(c:VerdictConfig,bundle:Digest,kind:BackendKind,m:BTreeMap<String,Tensor>,q:QuantMap)->Result<Self>{
-        Self::assemble(c,bundle,kind,m,&q)
+        Self::assemble(c,bundle,kind,m,q)
     }
-    fn assemble(c:VerdictConfig,bundle:Digest,kind:BackendKind,m:BTreeMap<String,Tensor>,q:&QuantMap)->Result<Self>{
+    fn assemble(c:VerdictConfig,bundle:Digest,kind:BackendKind,m:BTreeMap<String,Tensor>,mut q:QuantMap)->Result<Self>{
         let expected=expected_tensors(&c)?;
         // A dense weight is supplied exactly once: either as f32 or as int8.
         if expected.len()!=m.len()+q.len(){return Err(Error::Invalid("unexpected tensor set".into()));}
@@ -182,19 +182,19 @@ impl VerdictModel {
             let attention_norm=if i>0 || c.first_layer_attention_norm {Some(norm(&m,&format!("{p}.attn_norm"),c.norm_eps)?)} else {None};
             layers.push(EncoderLayer::new(
                 attention_norm,
-                Attention::new(linear(&m,q,&format!("{p}.qkv"))?,linear(&m,q,&format!("{p}.out"))?,c.attention_heads),
+                Attention::new(linear(&m,&mut q,&format!("{p}.qkv"))?,linear(&m,&mut q,&format!("{p}.out"))?,c.attention_heads),
                 norm(&m,&format!("{p}.mlp_norm"),c.norm_eps)?,
-                linear(&m,q,&format!("{p}.wi"))?,linear(&m,q,&format!("{p}.wo"))?,
+                linear(&m,&mut q,&format!("{p}.wi"))?,linear(&m,&mut q,&format!("{p}.wo"))?,
                 if local{c.local_rope_theta}else{c.global_rope_theta},
                 if local{Some(c.local_attention/2)}else{None},
             ));
         }
-        let e=q.get("embeddings.weight").ok_or_else(||Error::Invalid("missing quantised embeddings.weight".into()))?;
-        let embedding=QuantEmbedding::new(e.w.clone(),e.scales.clone(),e.out_features,e.in_features,e.block_size)
+        let e=q.remove("embeddings.weight").ok_or_else(||Error::Invalid("missing quantised embeddings.weight".into()))?;
+        let embedding=QuantEmbedding::new(e.w,e.scales,e.out_features,e.in_features,e.block_size)
             .map_err(|x|Error::ModelUnavailable(x.to_string()))?;
         let encoder=ModernBert::new(embedding,norm(&m,"embeddings.norm",c.norm_eps)?,layers,norm(&m,"final_norm",c.norm_eps)?);
-        Ok(Self{text_1:linear_biased(&m,q,"text_projector.linear_1")?,text_2:linear_biased(&m,q,"text_projector.linear_2")?,
-            class_1:linear_biased(&m,q,"classes_projector.linear_1")?,class_2:linear_biased(&m,q,"classes_projector.linear_2")?,
+        Ok(Self{text_1:linear_biased(&m,&mut q,"text_projector.linear_1")?,text_2:linear_biased(&m,&mut q,"text_projector.linear_2")?,
+            class_1:linear_biased(&m,&mut q,"classes_projector.linear_1")?,class_2:linear_biased(&m,&mut q,"classes_projector.linear_2")?,
             encoder,config:c,bundle,backend_kind:kind})
     }
     /// Positions of the `<<LABEL>>` tokens, in order. These are the class slots.
@@ -267,10 +267,12 @@ impl VerdictModel {
         let tables=if detailed {self.encoder.rope_tables(tokens,hidden,mark)}
                     else {self.encoder.rope_tables(tokens,hidden,&mut |_|{})}
                     .map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        let masks=modernbert_candle::attention_masks(&self.encoder.layers,tokens).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
         for layer in &self.encoder.layers {
-            let table=modernbert_candle::table_for(&tables,layer.theta()).clone();
-            h=if detailed {layer.forward_marked(&h,&table,mark).map_err(|e|Error::ModelUnavailable(e.to_string()))?}
-              else {layer.forward(&h,&table).map_err(|e|Error::ModelUnavailable(e.to_string()))?};
+            let table=modernbert_candle::table_for(&tables,layer.theta());
+            let mask=layer.distance().and_then(|d|masks.get(&d));
+            h=if detailed {layer.forward_cached(&h,table,mask,mark).map_err(|e|Error::ModelUnavailable(e.to_string()))?}
+              else {layer.forward_cached(&h,table,mask,&mut |_|{}).map_err(|e|Error::ModelUnavailable(e.to_string()))?};
         }
         h=self.encoder.final_norm.forward(&h).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
         mark("encoder");

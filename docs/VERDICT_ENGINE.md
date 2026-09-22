@@ -704,9 +704,9 @@ canisterにowner専用の `infer_profiled(input_ids, detailed)` を追加し、`
 fixtureはモデルではない（重みは乱数）。ここで測っているのは
 「pack投入 → warm-up → forward → 命令数の報告」という経路が canister 上で成立することである。
 
-### 5.3 ネイティブでの一致（外部証拠）
+### 5.3 ネイティブF32での一致（過去の外部証拠）
 
-`data/real_banking_test.jsonl` の入力を、著者が記録した `predictions_v2.jsonl` と突き合わせた結果。
+以下はF32経路で `data/real_banking_test.jsonl` の入力を、著者が記録した `predictions_v2.jsonl` と突き合わせた過去の結果であり、現行INT8の値ではない。
 
 | 項目 | 値 |
 |---|---|
@@ -719,7 +719,8 @@ fixtureはモデルではない（重みは乱数）。ここで測っている�
 
 tokenizer・prompt contract・projector・内積scorer・temperature 1.4265148639678955 まで含めて
 一致している。ログは `artifacts/verdict_parity.log`。`cargo test --release -p verdict-candle --test golden -- --ignored` が同じ比較を
-gateとして実行する（1000件版は `--limit` を外す）。
+gateとして実行する。現行INT8の基準は1,000件以上・argmax一致99.5%以上・欠落0・危険な棄権反転0である。
+現行の検証結果は5.4節と `report.md` を参照。
 
 
 ### 5.3 query 経路（5B上限）と、そこでの実測上限
@@ -767,36 +768,54 @@ canonical な短い id 列（`cls,<<LABEL>>,2000,<<LABEL>>,3000,sep`）を neutr
   （opt-in の gate は `python3 tools/verify.py --verdict-query`）。int8 の手順は上記のフィット→`set_cost_model`。
 
 
+### 5.4 block-32の再計測と状態管理の改善（2026-09-22）
+
+現行packの比較記録は [`report.md`](../report.md) に集約した。
+同じpackで比較した7入力（合成T=8/16/32/64/96/120、実例T=98）のlogitsは旧版と完全一致した。
+T=120の推論命令数は39,782,583,123から39,769,124,903へ約0.034%減少した。
+warm-up後のWasmメモリ最大到達量は355,729,408から185,925,632 bytesへ約47.7%減少した。
+これは量子化済み重みを複製せず移動する効果であり、解放後のlive heapやwarm-up時間を測った値ではない。
+
+block-32用の2×4・4×4・8×4タイルは、標準カーネルより命令数が増えたため採用しなかった。
+局所attentionのQK/softmax/AV候補も増加したため採用せず、attention maskのforward内共有だけを適用した。
+測定用のowner限定 `bench_int8_block32` と `bench_local_attention` は通常推論から呼ばれない。
+既定の費用モデルと予算は変更していない。T=128は両版とも通常経路のガードで拒否され、
+ガードを持たない計測経路でも40B命令上限に達した。
+
+同一bundleの再warm-upはスキーマ・校正・キャッシュ・利用枠を維持する。
+別bundleではモデル依存の登録情報を消去し、callerの利用枠を保持する。
+質問バッチは質問ごとに選択肢IDを検証し、質問ごとにsoftmaxを計算する。
+質問をまたぐ同じ選択肢IDや棄権選択肢を許可するが、質問IDの重複は拒否する。
+executorは変更キーだけをstable memoryへ保存し、Errを返す状態遷移も保存する。
+verdict-engineはawaitを含まないupdateのheapコミットを利用し、snapshotはinit/pre_upgrade時に作成する。
+
 ## 6. 制約と未検証
 
 * コード経路は `ic-verdict-int8-pack-v1` 専用で、旧F32 packを拒否する。全2次元重みはblock-32 INT8、
   Norm・bias・scaleだけがF32補助値である。packは170,408,640 bytes。著者記録とのargmaxは
   997/1000で許容基準99.5%を通過するが、`__insufficient_evidence__`から具体クラスへの危険な反転が1件あるため、
   本番配備とcost model更新は停止中。過去のper-row INT8実測は
-  0.780 instructions/MAC・T=120で14.57e9だったが、block-32 kernelの実canister値は未測定。
-  既定F32のT=120実測は36.98e9（`overflow-checks=false` とカーネル整理の適用後。無効化直後は37.31e9）。
+  0.780 instructions/MAC・T=120で14.57e9だったが、現行block-32のT=120は39.77e9である（5.4節）。
+  F32やper-row INT8の過去の実測値は、現行packの費用推定には利用できない。
 * 校正は同梱artifactの **5候補限定** temperature（1.4265148639678955）をそのまま使う経路のみ。
   候補数・qtype別の再校正は未実施。
 * `crates/verdict-simd` は **int8 経路でモデルに配線されている**（`Linear::forward` が量子化重みを持つとき
-  `matmul_i8` を呼び、softmaxは既定経路でも `softmax_rows_inplace` を使う）。f32カーネル一族と
-  `bench_simd` は整理で削除したため、既定（F32）の行列積は candle gemm のままである。
+  `matmul_i8_blocked` を呼び、softmaxは `softmax_rows_inplace` を使う）。attentionのF32行列積は
+  candle gemmを使う。
 * `verdict-engine` はraw推論に加えてexecutor互換の`register_schema`・`register_calibration`・`evaluate`を持ち、
   実checkpointのlogitsを型付き`Receipt`へ変換できる。実資金dispatchは引き続き無効である。
-* **query 経路（`infer_tokens_query` / `decide_query` / `query_limits`）は実装・実測済み**だが、
-  上限は5Bなので既定F32では14トークンまで、int8でも40トークンまでである（5.3節）。長い入力は
-  update 経路（T≤120）を使う。query の応答は非 certified なので、資金を動かす判断には使わない。
-* 実checkpointの canister 実行は **T=2〜120** で確認済み。成功した最長は **T=120**（現行カーネルで
-  36,976,071,434。`overflow-checks` 有効時は39.57e9、無効化直後は37.31e9、int8は14.57e9）。**T=126は予算ガードの
-  計算値41.74e9が40Bを超えるため拒否**される設計で、replicaでの実測記録は残っていない。
-  **ガードの費用モデルは最適化前の傾きのままなので、現行の実測（3.081e8/token）ではT=126は約38.8e9で
-  予算内に入る**（5.1.2節）。
-  383トークンの実入力は1 callに収まらない（5.1.1節）。
-* `tools/measure_verdict.py` は replica を起動し577.5 MiB（605,512,704 B）を投入するため、既定では `verify.py` の
-  gateに入らない。`python3 tools/verify.py --verdict-canister` は**温まったreplica**に対して
-  `tools/measure_verdict.py --skip-upload --sweep 120` を、`--verdict-query` は同じ replica に対して
-  `tools/measure_verdict.py --query --skip-upload` を実行する（後者は `artifacts/verdict_query_sweep.log`）。
+* **query 経路（`infer_tokens_query` / `decide_query` / `query_limits`）の上限は5B**である。
+  5.3節のper-row INT8で40トークンという記録は、現行block-32には適用できない。
+  今回のupdate計測ではT=16で約5.13Bだったが、現行queryの最長入力は再測定していない。
+  応答は非certifiedなので、資金を動かす判断には使わない。
+* 現行block-32のcanister実行は今回T=8〜120で確認し、成功した最長はT=120である。
+  T=128は40Bを超過した。T=121〜127の境界は再測定しておらず、上限拡張は行っていない。
+  383トークンの実入力は1 callに収まらない。
+* `tools/measure_verdict.py` の全実行はモデル投入とローカルreplicaを必要とするため、既定の
+  `verify.py` gateには含まれない。`--verdict-canister` / `--verdict-query` は温まったreplicaに対して
+  実行するopt-in検査である。今回の旧版との比較は `tools/compare_verdict.py` で再現できる。
 * `tools/verify.py` の `PASS` の意味は `artifacts/verification.json` の各行が示すとおりで、
   実行していない検査は `NOT_RUN` として残る。`python_reference_and_export_tests` は
   `python3 -m unittest discover -s tests` の結果である（torch依存の検査はLaya削除時に撤去済み）。
-* 品質評価は行っていない。JevBenchの独立値は Intelligence 59.0 / hard 38.2%（公開GLiClass重み、
+* 著者記録との一致検証は実施したが、JevBench自体は再評価していない。JevBenchの独立値は Intelligence 59.0 / hard 38.2%（公開GLiClass重み、
   著者エンジン）で、Laya-large は 63.2 / 34.1%。このリポジトリで再測定したものではない。
