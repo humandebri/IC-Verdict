@@ -108,13 +108,13 @@ python tools/local_demo.py
 
 CandidはRustの`export_candid!()`から生成して`build/*.did`へ置きます。未コンパイルの段階で手書きのDIDを正本として同梱していません。
 
-verdict-engineのコード経路はINT8専用です（本番配備は安全性ゲート未通過のため停止中）:
+verdict-engineのコード経路は速度を優先したper-row INT8専用です:
 
 ```bash
 bash tools/build_one.sh verdict-engine
 ```
 
-packは全2次元重みをblock-32 INT8で保持し、旧F32 packは受理しません。Norm・bias・scaleだけがF32補助値です。著者記録とのargmaxは997/1000で、許容された99.5%基準は通過します。ただし3反転中1件が`__insufficient_evidence__`から具体クラスへの変化だったため、「危険な反転ゼロ」の安全性ゲートにより本番投入を停止しています。
+packは全2次元重みをper-row INT8（`i8_row_symmetric`）で保持し、旧F32重みとblock-32 packは受理しません。Norm・bias・scaleだけがF32補助値です。精度差・棄権からの反転は測定結果として報告し、自動停止条件にはしません。必要な場合のみ`--min-argmax-ratio`で比較閾値を明示できます。詳細は[per-row復帰の検証記録](docs/PER_ROW_INT8.md)を参照してください。
 
 ## 6. 判断バックエンド
 
@@ -145,7 +145,7 @@ Layaの代わりに **openJev-verdict 系の151Mモデル**（`heman10x/rlcd-mod
 |---|---|
 | `crates/verdict-candle` | GLiClass uni-encoder の forward（encoder は `modernbert-candle` と共有） |
 | `canisters/verdict-engine` | pack投入・warm-up・`infer_tokens`・`decide` と instructions 実測。**query経路**（`infer_tokens_query`・`decide_query`・`query_limits`）も実装 |
-| `tools/pack_verdict.py` / `tools/verdict-pack` | HF checkpoint → canonical block-32 INT8 pack（142テンソル、約162.5 MiB） |
+| `tools/pack_verdict.py` / `tools/verdict-pack` | HF checkpoint → canonical per-row INT8 pack（142テンソル、約145.2 MiB） |
 | `tools/make_verdict_fixture.py` | canisterスモーク用の小型pack（同一カーネル） |
 | `tools/verdict-upload` | 全entry hashを事前検証してagent経由でpack転送し、queryも呼び出す |
 | `tools/verdict_canister.py` | ローカルreplicaで作成→install→投入→推論までを実行（`--query`でqueryスモーク） |

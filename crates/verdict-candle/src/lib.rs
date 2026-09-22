@@ -111,7 +111,7 @@ fn quantized(m:&BTreeMap<String,Tensor>,name:&str)->Result<modernbert_candle::Qu
     let t=tensor(m,name)?;
     let (out_features,in_features)=t.dims2().map_err(|e|Error::Invalid(e.to_string()))?;
     let flat=t.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
-    let block_size=32;let (w,scales)=verdict_simd::quantize_blocks_i8(&flat,out_features,in_features,block_size);
+    let block_size=in_features;let (w,scales)=verdict_simd::quantize_rows_i8(&flat,out_features,in_features);
     Ok(modernbert_candle::QuantWeight{w,scales,out_features,in_features,block_size})
 }
 /// Every two-dimensional model parameter is carried as INT8 in the production pack.

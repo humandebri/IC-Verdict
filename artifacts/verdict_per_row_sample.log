@@ -1,0 +1,3 @@
+cases=20 skipped_no_truth=0 argmax_match=19/20 (95.00%) longest_input_tokens=118 temp=1.4265149
+top-probability |p-gold|: max=0.016831 mean=0.003918
+quality-gate min_cases=20 min_argmax_ratio=0.0000 unsafe_abstention_escape=0

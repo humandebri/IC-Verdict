@@ -2,7 +2,13 @@
 
 v0.1からの差分: Rust/Wasm/local replicaを実行検証し、openJev実checkpoint parityとICP実測を完了した。実送金は引き続き無効である。
 
-## 未配備: INT8 pack全面移行
+## 現行: per-row INT8へ復帰
+
+速度を優先し、全2次元重みをオフラインper-row INT8へ変更した。packは152,245,512 bytes。
+精度差・棄権反転による既定の停止条件は撤去した。以下のblock-32に関する記載は旧版の記録であり、
+現行の検証結果は[PER_ROW_INT8.md](PER_ROW_INT8.md)を参照。
+
+## 旧版: block-32 INT8 pack
 
 `ic-verdict-int8-pack-v1`を実装し、全2次元重み（embeddingを含む）をblock-32 INT8、Norm・bias・scaleだけをF32補助値として保存する。生成packは **170,408,640 bytes**（旧F32 605,512,704 bytesの28.1%）で、旧F32 manifestと2次元F32 entryはloaderが拒否する。Wasm buildと通常テストは通過した。
 

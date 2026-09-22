@@ -1,6 +1,7 @@
 //! Canonical INT8 production pack for the openJev/GLiClass backend.
 //!
-//! Every two-dimensional model parameter is quantised offline. One-dimensional
+//! Every two-dimensional model parameter is quantised offline with one scale per row.
+//! Block-32 entries are rejected rather than silently selecting a slower kernel. One-dimensional
 //! normalization weights and projector biases remain little-endian f32 auxiliaries.
 use crate::{expected_tensors,is_matrix_weight,QuantMap,VerdictConfig,VerdictModel};
 use candle_core::{Device,DType,Tensor};
@@ -12,7 +13,7 @@ pub const FORMAT:&str="ic-verdict-int8-pack-v1";
 
 #[derive(Debug,Clone,Copy,PartialEq,Eq,Serialize,Deserialize)]
 #[serde(rename_all="snake_case")]
-pub enum Encoding { I8Block32Symmetric,F32Le }
+pub enum Encoding { I8RowSymmetric,F32Le }
 
 #[derive(Debug,Clone,Serialize,Deserialize)]
 pub struct TensorEntry {pub name:String,pub shape:Vec<usize>,pub encoding:Encoding,pub offset:u64,pub length:u64,pub sha256:Digest}
@@ -23,12 +24,12 @@ pub struct Manifest {
     pub total_bytes:u64,pub tensors:Vec<TensorEntry>,
 }
 fn numel(shape:&[usize])->Result<u64>{shape.iter().try_fold(1u64,|a,&b|a.checked_mul(b as u64).ok_or(Error::TooLong))}
-fn expected_encoding(name:&str)->Encoding{if is_matrix_weight(name){Encoding::I8Block32Symmetric}else{Encoding::F32Le}}
+fn expected_encoding(name:&str)->Encoding{if is_matrix_weight(name){Encoding::I8RowSymmetric}else{Encoding::F32Le}}
 fn expected_length(name:&str,shape:&[usize])->Result<u64>{
     let n=numel(shape)?;
-    match expected_encoding(name){Encoding::I8Block32Symmetric=>{
-        let(rows,cols)=match shape{[r,c]=>(*r as u64,*c as u64),_=>return Err(Error::Invalid("matrix shape".into()))};
-        let blocks=cols.div_ceil(32);n.checked_add(rows.checked_mul(blocks).and_then(|x|x.checked_mul(4)).ok_or(Error::TooLong)?).ok_or(Error::TooLong)
+    match expected_encoding(name){Encoding::I8RowSymmetric=>{
+        let rows=match shape{[r,_]=>*r as u64,_=>return Err(Error::Invalid("matrix shape".into()))};
+        n.checked_add(rows.checked_mul(4).ok_or(Error::TooLong)?).ok_or(Error::TooLong)
     },Encoding::F32Le=>n.checked_mul(4).ok_or(Error::TooLong)}
 }
 impl Manifest {
@@ -58,14 +59,14 @@ impl Builder {
         let e=self.next_entry().ok_or(Error::Transition)?.clone();
         if bytes.len() as u64!=e.length||hash(bytes)!=e.sha256{return Err(Error::Invalid("tensor integrity".into()));}
         match e.encoding {
-            Encoding::I8Block32Symmetric=>{
+            Encoding::I8RowSymmetric=>{
                 let (rows,cols)=match e.shape.as_slice(){[r,c]=>(*r,*c),_=>return Err(Error::Invalid("quantised weight shape".into()))};
                 let data_len=rows.checked_mul(cols).ok_or(Error::TooLong)?;
                 let w=bytes[..data_len].iter().map(|&v|v as i8).collect::<Vec<_>>();
                 if w.contains(&i8::MIN){return Err(Error::Numeric);}
                 let scales=bytes[data_len..].chunks_exact(4).map(|b|f32::from_le_bytes([b[0],b[1],b[2],b[3]])).collect::<Vec<_>>();
-                if scales.len()!=rows*cols.div_ceil(32)||scales.iter().any(|v|!v.is_finite()||*v<=0.0){return Err(Error::Numeric);}
-                self.quant.insert(e.name,modernbert_candle::QuantWeight{w,scales,out_features:rows,in_features:cols,block_size:32});
+                if scales.len()!=rows||scales.iter().any(|v|!v.is_finite()||*v<=0.0){return Err(Error::Numeric);}
+                self.quant.insert(e.name,modernbert_candle::QuantWeight{w,scales,out_features:rows,in_features:cols,block_size:cols});
             }
             Encoding::F32Le=>{
                 if bytes.chunks_exact(4).any(|b|!f32::from_le_bytes([b[0],b[1],b[2],b[3]]).is_finite()){return Err(Error::Numeric);}

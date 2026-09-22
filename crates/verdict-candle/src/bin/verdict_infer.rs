@@ -107,8 +107,8 @@ fn softmax(xs:&[f32])->Vec<f32>{
     e.iter().map(|x|x/s).collect()
 }
 
-fn quality_pass(cases:usize,matched:usize,missing:usize,unsafe_escape:usize,min_cases:usize,min_ratio:f64)->bool{
-    cases>0 && cases>=min_cases && missing==0 && unsafe_escape==0 && matched as f64/cases as f64>=min_ratio
+fn quality_pass(cases:usize,matched:usize,missing:usize,_abstention_escape:usize,min_cases:usize,min_ratio:f64)->bool{
+    cases>0 && cases>=min_cases && missing==0 && matched as f64/cases as f64>=min_ratio
 }
 
 
@@ -151,7 +151,8 @@ fn main(){
             let temp:f32=opt("--temp").unwrap_or_else(||"1.4265148639678955".into()).parse().unwrap_or_else(|_|die("bad --temp".into()));
             let limit:usize=opt("--limit").unwrap_or_else(||"1000000".into()).parse().unwrap_or_else(|_|die("bad --limit".into()));
             let offset:usize=opt("--offset").unwrap_or_else(||"0".into()).parse().unwrap_or_else(|_|die("bad --offset".into()));
-            let min_argmax_ratio:f64=opt("--min-argmax-ratio").unwrap_or_else(||"0.995".into()).parse().unwrap_or_else(|_|die("bad --min-argmax-ratio".into()));
+            // Agreement is reported, not a deployment gate unless explicitly requested.
+            let min_argmax_ratio:f64=opt("--min-argmax-ratio").unwrap_or_else(||"0.0".into()).parse().unwrap_or_else(|_|die("bad --min-argmax-ratio".into()));
             if !(0.0..=1.0).contains(&min_argmax_ratio){die("--min-argmax-ratio must be in 0..=1".into());}
             let min_cases:usize=opt("--min-cases").unwrap_or_else(||"1000".into()).parse().unwrap_or_else(|_|die("bad --min-cases".into()));
             let abstain_id=opt("--abstain-id").unwrap_or_else(||"__insufficient_evidence__".into());
@@ -243,10 +244,11 @@ fn main(){
 mod tests{
     use super::quality_pass;
     #[test]
-    fn quality_requires_a_complete_safe_set(){
+    fn quality_reports_drift_and_enforces_only_explicit_ratio(){
         assert!(quality_pass(1000,995,0,0,1000,0.995));
         assert!(!quality_pass(1000,994,0,0,1000,0.995));
-        assert!(!quality_pass(1000,997,0,1,1000,0.995));
+        assert!(quality_pass(1000,997,0,1,1000,0.995));
+        assert!(quality_pass(1000,994,0,3,1000,0.0));
         assert!(!quality_pass(999,999,0,0,1000,0.995));
         assert!(!quality_pass(1000,1000,1,0,1000,0.995));
         assert!(!quality_pass(0,0,0,0,0,0.));

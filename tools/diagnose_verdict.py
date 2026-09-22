@@ -50,6 +50,11 @@ def load_weights(checkpoint, pack):
         n = math.prod(shape)
         if entry['encoding'] == 'f32_le':
             decoded[name] = quant_raw[begin:begin+4*n].view('<f4').reshape(shape)
+        elif entry['encoding'] == 'i8_row_symmetric':
+            rows, cols = shape
+            q = quant_raw[begin:begin+n].view(np.int8).reshape(shape)
+            scales = quant_raw[begin+n:begin+entry['length']].view('<f4').reshape(rows, 1)
+            decoded[name] = q.astype(np.float32) * scales
         else:
             rows, cols = shape
             blocks = (cols+31)//32

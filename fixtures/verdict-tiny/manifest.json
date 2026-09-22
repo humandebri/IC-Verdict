@@ -55,7 +55,7 @@
     "max_classes": 8,
     "projector_activation": "Gelu"
   },
-  "total_bytes": 27776,
+  "total_bytes": 27520,
   "tensors": [
     {
       "name": "classes_projector.linear_1.bias",
@@ -106,7 +106,7 @@
         32,
         32
       ],
-      "encoding": "i8_block32_symmetric",
+      "encoding": "i8_row_symmetric",
       "offset": 128,
       "length": 1152,
       "sha256": [
@@ -193,7 +193,7 @@
         32,
         32
       ],
-      "encoding": "i8_block32_symmetric",
+      "encoding": "i8_row_symmetric",
       "offset": 1408,
       "length": 1152,
       "sha256": [
@@ -280,7 +280,7 @@
         64,
         32
       ],
-      "encoding": "i8_block32_symmetric",
+      "encoding": "i8_row_symmetric",
       "offset": 2688,
       "length": 2304,
       "sha256": [
@@ -367,7 +367,7 @@
         32,
         32
       ],
-      "encoding": "i8_block32_symmetric",
+      "encoding": "i8_row_symmetric",
       "offset": 5120,
       "length": 1152,
       "sha256": [
@@ -411,7 +411,7 @@
         96,
         32
       ],
-      "encoding": "i8_block32_symmetric",
+      "encoding": "i8_row_symmetric",
       "offset": 6272,
       "length": 3456,
       "sha256": [
@@ -455,7 +455,7 @@
         96,
         32
       ],
-      "encoding": "i8_block32_symmetric",
+      "encoding": "i8_row_symmetric",
       "offset": 9728,
       "length": 3456,
       "sha256": [
@@ -499,42 +499,42 @@
         32,
         48
       ],
-      "encoding": "i8_block32_symmetric",
+      "encoding": "i8_row_symmetric",
       "offset": 13184,
-      "length": 1792,
+      "length": 1664,
       "sha256": [
-        87,
-        0,
-        211,
-        238,
-        104,
+        212,
+        42,
+        108,
+        192,
+        36,
+        239,
+        240,
+        58,
+        242,
+        230,
+        33,
+        221,
+        157,
+        144,
+        95,
+        177,
         6,
-        70,
-        28,
-        40,
+        38,
+        165,
+        201,
+        201,
+        222,
+        211,
+        136,
         115,
-        22,
-        5,
-        58,
-        47,
-        89,
-        249,
-        94,
-        170,
-        120,
-        58,
-        164,
-        148,
-        151,
-        65,
+        14,
+        59,
         184,
-        35,
-        75,
-        74,
-        248,
-        71,
-        244,
-        16
+        89,
+        214,
+        124,
+        34
       ]
     },
     {
@@ -543,7 +543,7 @@
         32
       ],
       "encoding": "f32_le",
-      "offset": 14976,
+      "offset": 14848,
       "length": 128,
       "sha256": [
         82,
@@ -586,7 +586,7 @@
         32
       ],
       "encoding": "f32_le",
-      "offset": 15104,
+      "offset": 14976,
       "length": 128,
       "sha256": [
         82,
@@ -629,8 +629,8 @@
         32,
         32
       ],
-      "encoding": "i8_block32_symmetric",
-      "offset": 15232,
+      "encoding": "i8_row_symmetric",
+      "offset": 15104,
       "length": 1152,
       "sha256": [
         215,
@@ -673,8 +673,8 @@
         96,
         32
       ],
-      "encoding": "i8_block32_symmetric",
-      "offset": 16384,
+      "encoding": "i8_row_symmetric",
+      "offset": 16256,
       "length": 3456,
       "sha256": [
         253,
@@ -717,8 +717,8 @@
         96,
         32
       ],
-      "encoding": "i8_block32_symmetric",
-      "offset": 19840,
+      "encoding": "i8_row_symmetric",
+      "offset": 19712,
       "length": 3456,
       "sha256": [
         253,
@@ -761,42 +761,42 @@
         32,
         48
       ],
-      "encoding": "i8_block32_symmetric",
-      "offset": 23296,
-      "length": 1792,
+      "encoding": "i8_row_symmetric",
+      "offset": 23168,
+      "length": 1664,
       "sha256": [
-        87,
-        0,
-        211,
-        238,
-        104,
+        212,
+        42,
+        108,
+        192,
+        36,
+        239,
+        240,
+        58,
+        242,
+        230,
+        33,
+        221,
+        157,
+        144,
+        95,
+        177,
         6,
-        70,
-        28,
-        40,
+        38,
+        165,
+        201,
+        201,
+        222,
+        211,
+        136,
         115,
-        22,
-        5,
-        58,
-        47,
-        89,
-        249,
-        94,
-        170,
-        120,
-        58,
-        164,
-        148,
-        151,
-        65,
+        14,
+        59,
         184,
-        35,
-        75,
-        74,
-        248,
-        71,
-        244,
-        16
+        89,
+        214,
+        124,
+        34
       ]
     },
     {
@@ -805,7 +805,7 @@
         32
       ],
       "encoding": "f32_le",
-      "offset": 25088,
+      "offset": 24832,
       "length": 128,
       "sha256": [
         82,
@@ -848,7 +848,7 @@
         32
       ],
       "encoding": "f32_le",
-      "offset": 25216,
+      "offset": 24960,
       "length": 128,
       "sha256": [
         82,
@@ -891,8 +891,8 @@
         32,
         32
       ],
-      "encoding": "i8_block32_symmetric",
-      "offset": 25344,
+      "encoding": "i8_row_symmetric",
+      "offset": 25088,
       "length": 1152,
       "sha256": [
         215,
@@ -935,7 +935,7 @@
         32
       ],
       "encoding": "f32_le",
-      "offset": 26496,
+      "offset": 26240,
       "length": 128,
       "sha256": [
         82,
@@ -978,8 +978,8 @@
         32,
         32
       ],
-      "encoding": "i8_block32_symmetric",
-      "offset": 26624,
+      "encoding": "i8_row_symmetric",
+      "offset": 26368,
       "length": 1152,
       "sha256": [
         215,

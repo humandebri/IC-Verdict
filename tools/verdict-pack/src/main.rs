@@ -50,7 +50,7 @@ fn floats(raw:&[u8])->Result<Vec<f32>,String>{
 }
 fn random_floats(n:usize)->Vec<f32>{let mut state=0x5eedu64;(0..n).map(|_|{state=state.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);((((state>>33)&0xffff_ffff)as f32)/(0x7fff_ffffu32 as f32)-1.0)*0.4}).collect()}
 fn payload(name:&str,shape:&[usize],values:&[f32])->(Encoding,Vec<u8>){
-    if is_matrix_weight(name){let rows=shape[0];let cols=shape[1];let(q,s)=verdict_simd::quantize_blocks_i8(values,rows,cols,32);let mut out=Vec::with_capacity(q.len()+4*s.len());out.extend(q.iter().map(|v|*v as u8));for v in s{out.extend_from_slice(&v.to_le_bytes());}(Encoding::I8Block32Symmetric,out)}
+    if is_matrix_weight(name){let rows=shape[0];let cols=shape[1];let(q,s)=verdict_simd::quantize_rows_i8(values,rows,cols);let mut out=Vec::with_capacity(q.len()+4*s.len());out.extend(q.iter().map(|v|*v as u8));for v in s{out.extend_from_slice(&v.to_le_bytes());}(Encoding::I8RowSymmetric,out)}
     else{let mut out=Vec::with_capacity(values.len()*4);for v in values{out.extend_from_slice(&v.to_le_bytes());}(Encoding::F32Le,out)}
 }
 fn run()->Result<(),String>{

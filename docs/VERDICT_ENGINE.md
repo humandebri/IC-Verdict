@@ -789,7 +789,13 @@ block-32用の2×4・4×4・8×4タイルは、標準カーネルより命令数
 executorは変更キーだけをstable memoryへ保存し、Errを返す状態遷移も保存する。
 verdict-engineはawaitを含まないupdateのheapコミットを利用し、snapshotはinit/pre_upgrade時に作成する。
 
-## 6. 制約と未検証
+## 現行方式への訂正
+
+速度優先の指定により、現行packは`i8_row_symmetric`のper-row INT8へ復帰した。
+block-32とその品質ゲートに関する以下の記載は旧版の履歴である。
+現在の仕様・測定結果は[PER_ROW_INT8.md](PER_ROW_INT8.md)を参照。
+
+## 6. 旧block-32版の制約と未検証
 
 * コード経路は `ic-verdict-int8-pack-v1` 専用で、旧F32 packを拒否する。全2次元重みはblock-32 INT8、
   Norm・bias・scaleだけがF32補助値である。packは170,408,640 bytes。著者記録とのargmaxは

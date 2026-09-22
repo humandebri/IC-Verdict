@@ -43,9 +43,9 @@ fn weights(c:&VerdictConfig)->BTreeMap<String,Tensor>{
 fn pack_payload(name:&str,t:&Tensor)->(pack::Encoding,Vec<u8>){
     let values=t.flatten_all().expect("flat").to_vec1::<f32>().expect("vec");
     if verdict_candle::is_matrix_weight(name){
-        let(rows,cols)=t.dims2().expect("matrix");let(q,scales)=verdict_simd::quantize_blocks_i8(&values,rows,cols,32);
+        let(rows,cols)=t.dims2().expect("matrix");let(q,scales)=verdict_simd::quantize_rows_i8(&values,rows,cols);
         let mut out=q.iter().map(|v|*v as u8).collect::<Vec<_>>();for s in scales{out.extend_from_slice(&s.to_le_bytes());}
-        (pack::Encoding::I8Block32Symmetric,out)
+        (pack::Encoding::I8RowSymmetric,out)
     }else{(pack::Encoding::F32Le,values.iter().flat_map(|x|x.to_le_bytes()).collect())}
 }
 
@@ -144,8 +144,8 @@ fn head_matches_an_independent_recomputation_from_the_encoder_output(){
     let dequant=|t:&Tensor|->Tensor{
         let (rows,cols)=t.dims2().expect("2d");
         let flat=t.flatten_all().expect("flat").to_vec1::<f32>().expect("vec");
-        let block=32;let blocks=cols.div_ceil(block);let(q,scales)=verdict_simd::quantize_blocks_i8(&flat,rows,cols,block);
-        let out:Vec<f32>=q.iter().enumerate().map(|(i,&v)|{let row=i/cols;let col=i%cols;(v as f32)*scales[row*blocks+col/block]}).collect();
+        let(q,scales)=verdict_simd::quantize_rows_i8(&flat,rows,cols);
+        let out:Vec<f32>=q.iter().enumerate().map(|(i,&v)|(v as f32)*scales[i/cols]).collect();
         Tensor::from_slice(&out,(rows,cols),&Device::Cpu).expect("dequant")
     };
     let hidden=m.encode(&ids).expect("encode");
@@ -227,8 +227,8 @@ fn pack_rejects_tensor_set_mismatch(){
     let mut tensors=Vec::new();let mut offset=0u64;
     for (name,shape) in &expected {
         let n:usize=shape.iter().product();
-        let encoding=if verdict_candle::is_matrix_weight(name){pack::Encoding::I8Block32Symmetric}else{pack::Encoding::F32Le};
-        let length=(if encoding==pack::Encoding::I8Block32Symmetric{n+shape[0]*shape[1].div_ceil(32)*4}else{n*4})as u64;
+        let encoding=if verdict_candle::is_matrix_weight(name){pack::Encoding::I8RowSymmetric}else{pack::Encoding::F32Le};
+        let length=(if encoding==pack::Encoding::I8RowSymmetric{n+shape[0]*4}else{n*4})as u64;
         let shape=if name=="embeddings.weight"{vec![shape[0],shape[1]+1]}else{shape.clone()};
         tensors.push(pack::TensorEntry{name:name.clone(),shape,encoding,offset,length,sha256:[0u8;32]});
         offset+=length;
@@ -245,8 +245,10 @@ fn pack_rejects_tensor_set_mismatch(){
 #[test]
 fn pack_rejects_f32_matrix_and_legacy_format(){
     let c=cfg();let expected=expected_tensors(&c).expect("expected");let mut offset=0u64;let mut tensors=Vec::new();
-    for(name,shape)in expected{let n:usize=shape.iter().product();let encoding=if verdict_candle::is_matrix_weight(&name){pack::Encoding::I8Block32Symmetric}else{pack::Encoding::F32Le};let length=(if encoding==pack::Encoding::I8Block32Symmetric{n+shape[0]*shape[1].div_ceil(32)*4}else{n*4})as u64;tensors.push(pack::TensorEntry{name,shape,encoding,offset,length,sha256:[0;32]});offset+=length;}
+    for(name,shape)in expected{let n:usize=shape.iter().product();let encoding=if verdict_candle::is_matrix_weight(&name){pack::Encoding::I8RowSymmetric}else{pack::Encoding::F32Le};let length=(if encoding==pack::Encoding::I8RowSymmetric{n+shape[0]*4}else{n*4})as u64;tensors.push(pack::TensorEntry{name,shape,encoding,offset,length,sha256:[0;32]});offset+=length;}
     let mut manifest=pack::Manifest{format:pack::FORMAT.into(),source_repo:"test".into(),source_revision:"test".into(),test_only:true,tokenizer_sha256:[0;32],config:c,total_bytes:offset,tensors};
+    let block_pack=serde_json::to_string(&manifest).expect("json").replace("i8_row_symmetric","i8_block32_symmetric");
+    assert!(pack::Builder::new(block_pack.as_bytes()).is_err(),"block32 must not silently use the row kernel");
     manifest.tensors.iter_mut().find(|e|e.name=="embeddings.weight").expect("embedding").encoding=pack::Encoding::F32Le;
     assert!(pack::Builder::new(&serde_json::to_vec(&manifest).expect("json")).is_err());
     manifest.format="ic-verdict-f32-pack-v1".into();

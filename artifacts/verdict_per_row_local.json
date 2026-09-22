@@ -1,0 +1,56 @@
+{
+  "canister": "4fbx2-kt777-77775-aaabq-cai",
+  "endpoint": "http://localhost:8011",
+  "encoding": "i8_row_symmetric",
+  "pack_sha256": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+  "wasm_sha256": "9163169a7c0d5655d70a5575034fe34fb16b3fb89aca9e44f6702e412b9f79f4",
+  "query": [
+    {
+      "tokens": 6,
+      "instructions": 773816963,
+      "reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      logits = vec { 1.6792731 : float32; 1.6945809 : float32 };\n      measured_instructions = 773_816_963 : nat64;\n      class_positions = vec { 1 : nat32; 3 : nat32 };\n      input_tokens = 6 : nat32;\n    }\n  },\n)\n"
+    },
+    {
+      "tokens": 14,
+      "instructions": 1630950264,
+      "reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      logits = vec { 1.2372528 : float32; 3.2233388 : float32 };\n      measured_instructions = 1_630_950_264 : nat64;\n      class_positions = vec { 1 : nat32; 3 : nat32 };\n      input_tokens = 14 : nat32;\n    }\n  },\n)\n"
+    },
+    {
+      "tokens": 20,
+      "instructions": 2223958355,
+      "reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      logits = vec { 1.4249926 : float32; 3.0718427 : float32 };\n      measured_instructions = 2_223_958_355 : nat64;\n      class_positions = vec { 1 : nat32; 3 : nat32 };\n      input_tokens = 20 : nat32;\n    }\n  },\n)\n"
+    },
+    {
+      "tokens": 30,
+      "instructions": 3394926890,
+      "reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      logits = vec { 0.4575985 : float32; 0.8895132 : float32 };\n      measured_instructions = 3_394_926_890 : nat64;\n      class_positions = vec { 1 : nat32; 3 : nat32 };\n      input_tokens = 30 : nat32;\n    }\n  },\n)\n"
+    },
+    {
+      "tokens": 39,
+      "instructions": 4884089567,
+      "reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      logits = vec { 0.6949977 : float32; 2.374535 : float32 };\n      measured_instructions = 4_884_089_567 : nat64;\n      class_positions = vec { 1 : nat32; 3 : nat32 };\n      input_tokens = 39 : nat32;\n    }\n  },\n)\n"
+    },
+    {
+      "tokens": 40,
+      "instructions": 4441624625,
+      "reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      logits = vec { 0.70610315 : float32; 2.3823767 : float32 };\n      measured_instructions = 4_441_624_625 : nat64;\n      class_positions = vec { 1 : nat32; 3 : nat32 };\n      input_tokens = 40 : nat32;\n    }\n  },\n)\n"
+    }
+  ],
+  "update": [
+    {
+      "tokens": 120,
+      "instructions": 14559052908,
+      "reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      logits = vec { 0.6740815 : float32; 0.93347883 : float32 };\n      measured_instructions = 14_559_052_908 : nat64;\n      class_positions = vec { 1 : nat32; 3 : nat32 };\n      input_tokens = 120 : nat32;\n    }\n  },\n)\n"
+    },
+    {
+      "tokens": 128,
+      "instructions": 15670269425,
+      "reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      logits = vec { 0.6807366 : float32; 0.8782573 : float32 };\n      measured_instructions = 15_670_269_425 : nat64;\n      class_positions = vec { 1 : nat32; 3 : nat32 };\n      input_tokens = 128 : nat32;\n    }\n  },\n)\n"
+    }
+  ],
+  "query_limits": "(\n  record {\n    max_input_tokens = 128 : nat32;\n    cost_per_token = 121_028_580 : nat64;\n    cost_fixed = 48_746_986 : nat64;\n    margin_permille = 1_005 : nat64;\n    max_tokens = 40 : nat32;\n    budget = 5_000_000_000 : nat64;\n  },\n)\n",
+  "inter_canister_decide": "(\n  variant {\n    Ok = record {\n      ids = vec { \"card_lost\"; \"dispute_charge\"; \"__insufficient_evidence__\" };\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      probabilities = vec {\n        0.97008014 : float32;\n        0.0025588067 : float32;\n        0.027361082 : float32;\n      };\n      logits = vec {\n        5.2675796 : float32;\n        -3.2028346 : float32;\n        0.17740753 : float32;\n      };\n      measured_instructions = 5_879_695_877 : nat64;\n      selected = \"card_lost\";\n      input_tokens = 52 : nat32;\n      confidence = 0.97008014 : float32;\n    }\n  },\n)\n",
+  "info": "(\n  record {\n    model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n    pack_format = \"ic-verdict-int8-pack-v1\";\n    max_input_tokens = 128 : nat32;\n    max_classes = 25 : nat32;\n    cost_per_token = 121_028_580 : nat64;\n    callers = 1 : nat64;\n    cost_fixed = 48_746_986 : nat64;\n    model_bytes = 152_245_512 : nat64;\n    warmed = true;\n    budget = 40_000_000_000 : nat64;\n    tensors = 0 : nat64;\n    upload_complete = true;\n    heap_bytes = 178_978_816 : nat64;\n  },\n)\n",
+  "upgrade_rewarm_pass": true,
+  "passed": true
+}

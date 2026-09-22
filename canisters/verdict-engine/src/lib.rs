@@ -29,22 +29,11 @@ mod getrandom_ic;
 /// Refuse inputs longer than this. It is a policy bound; the *budget* guard is
 /// `estimated_cost`, which uses the measured cost model below.
 pub const MAX_INPUT_TOKENS:u32=128;
-/// Measured on a local replica against the real checkpoint, F32, wasm
-/// (docs/VERDICT_ENGINE.md 5.1): `I(T) ≈ COST_FIXED + COST_PER_TOKEN × T`, with the
-/// real prompt sweep pinning the ceiling between 120 (39.57e9) and 126 (rejected).
-/// The guard must refuse *before* spending the budget, so the model is a constant
-/// rather than a measurement; `set_cost_model` lets the owner correct it.
-///
-/// It is deliberately conservative for the current kernels: the optimization series
-/// after that fit brought T=120 down to 36.98e9, so this model refuses early — the
-/// fitted marginal slope is 3.068e8 instructions/token (two-point fit at T=6 and T=120),
-/// not the 3.081e8 that `I(120)/120` reports, because the average still carries the
-/// fixed cost. With that fit the guard would accept 129 tokens (capped at 128 by
-/// `MAX_INPUT_TOKENS`) and 15 query tokens, so the defaults leave 121..128 and one query
-/// token on the table until the owner calls `set_cost_model`. See docs/VERDICT_ENGINE.md
-/// 5.1.2 and 5.3 for the arithmetic.
-pub const COST_FIXED:u64=254_400_000;
-pub const COST_PER_TOKEN:u64=327_600_000;
+/// Per-row INT8 fit from the real-model local measurements (docs/VERDICT_ENGINE.md
+/// 5.3). Restores a 40-token query ceiling. Upgrades preserve an owner's existing
+/// cost model; use set_cost_model explicitly when changing the stored model.
+pub const COST_FIXED:u64=48_746_986;
+pub const COST_PER_TOKEN:u64=121_028_580;
 /// ICP's per-update instruction limit.
 pub const UPDATE_BUDGET:u64=40_000_000_000;
 /// ICP's per-query instruction limit (canister resource limits: 40B per update call,
@@ -52,14 +41,11 @@ pub const UPDATE_BUDGET:u64=40_000_000_000;
 /// price is this lower ceiling and an uncertified reply.
 ///
 /// The token ceiling follows from the same cost model as the update one
-/// (`T <= (QUERY_BUDGET - COST_FIXED) / COST_PER_TOKEN`), so it is about fourteen
-/// tokens with the guard's conservative fit and about fifteen with the measured slope.
+/// (`T <= (QUERY_BUDGET - COST_FIXED) / COST_PER_TOKEN`), with an encoding margin.
 /// `query_limits()` reports the derived value; nothing hardcodes it.
 pub const QUERY_BUDGET:u64=5_000_000_000;
 /// Keep a margin for the reply encoding and the tokenizer, which the linear model
-/// above does not cover. Fitted so the guard reproduces the measurement: T=120
-/// (39.57e9 measured, 39.77e9 projected) is accepted and T=126 (41.74e9) is refused,
-/// which is exactly where the replica rejected the call.
+/// above does not cover. This is an estimate, not a bound for every possible input.
 const BUDGET_MARGIN_PERMILLE:u64=1005;
 /// One decision's option list plus the abstention slot must fit the checkpoint's
 /// 25 logit slots.
@@ -953,18 +939,19 @@ mod tests{
         assert_eq!(restored.workflow.active_model,[7;32]);
     }
     #[test]
-    fn the_default_model_advertises_fourteen_query_tokens(){
+    fn the_default_model_advertises_forty_query_tokens(){
         let s=state(COST_FIXED,COST_PER_TOKEN);
-        assert_eq!(max_tokens_within(&s,QUERY_BUDGET),14);
-        assert!(guard_within(&s,14,QUERY_BUDGET).is_ok());
-        assert!(matches!(guard_within(&s,15,QUERY_BUDGET),Err(Error::Capacity)));
+        assert_eq!(max_tokens_within(&s,QUERY_BUDGET),40);
+        assert!(guard_within(&s,40,QUERY_BUDGET).is_ok());
+        assert!(matches!(guard_within(&s,41,QUERY_BUDGET),Err(Error::Capacity)));
+        assert_eq!(max_tokens_within(&s,UPDATE_BUDGET),128);
     }
     #[test]
     fn the_measured_slope_raises_the_query_ceiling(){
         // 3.068e8/token is the *fitted marginal* slope of the two recorded points
         // (T=6 and T=120, docs/VERDICT_ENGINE.md 5.1.1/5.3). `I(120)/120 = 3.081e8`
         // is an average and still carries the fixed cost, so it is not the slope.
-        let s=state(COST_FIXED,306_804_548);
+        let s=state(254_400_000,306_804_548);
         assert_eq!(max_tokens_within(&s,QUERY_BUDGET),15);
     }
     #[test]
@@ -978,7 +965,7 @@ mod tests{
     }
     #[test]
     fn the_update_guard_still_pins_the_measured_ceiling(){
-        let s=state(COST_FIXED,COST_PER_TOKEN);
+        let s=state(254_400_000,327_600_000);
         assert!(guard_budget(&s,120).is_ok());
         assert!(matches!(guard_budget(&s,126),Err(Error::Capacity)));
         // 121..128 fit the budget under the fitted model and are refused by the default

@@ -1,0 +1,12 @@
+PASS query tokens=6 instructions=773816963
+PASS query tokens=14 instructions=1630950264
+PASS query tokens=20 instructions=2223958355
+PASS query tokens=30 instructions=3394926890
+PASS query tokens=39 instructions=4884089567
+PASS query tokens=40 instructions=4441624625
+PASS update tokens=120 instructions=14559052908
+PASS update tokens=128 instructions=15670269425
+PASS query 41 rejected by guard
+PASS inter-canister real-text decide
+warm-only: using pack already stored by the canister
+PASS upgrade rewarm preserves model logits and query limit

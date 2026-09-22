@@ -110,8 +110,8 @@ def check() -> int:
         if list(hashlib.sha256(chunk).digest()) != tensor["sha256"]:
             print(f"{tensor['name']}: sha256 mismatch", file=sys.stderr)
             return 1
-        if len(tensor["shape"]) == 2 and tensor.get("encoding") != "i8_block32_symmetric":
-            print(f"{tensor['name']}: matrix is not block-32 INT8", file=sys.stderr)
+        if len(tensor["shape"]) == 2 and tensor.get("encoding") != "i8_row_symmetric":
+            print(f"{tensor['name']}: matrix is not per-row INT8", file=sys.stderr)
             return 1
         offset += tensor["length"]
     for name in ("config.json", "tokenizer.json"):

@@ -137,8 +137,8 @@ class PackVerdictTests(unittest.TestCase):
                     elements *= dim
                 if len(shape) == 2:
                     rows, cols = shape
-                    length = elements + 4 * rows * ((cols + 31) // 32)
-                    self.assertEqual(tensor["encoding"], "i8_block32_symmetric")
+                    length = elements + 4 * rows
+                    self.assertEqual(tensor["encoding"], "i8_row_symmetric")
                 else:
                     length = 4 * elements
                     self.assertEqual(tensor["encoding"], "f32_le")
