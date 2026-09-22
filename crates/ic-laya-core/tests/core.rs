@@ -68,6 +68,21 @@ fn cached_result_cannot_bypass_active_model_change() {
     engine.active_model=hash(b"different-active-model");
     assert_eq!(engine.evaluate(executor.instance,req,NOW,&FixtureTokenizer,&mut backend),Err(Error::BindingMismatch));
 }
+
+#[test]
+fn backend_specific_renderer_uses_the_shared_receipt_contract() {
+    let(mut executor,mut engine,operation,grant)=setup().unwrap();
+    let id=executor.submit(actor(2),0,operation,grant,NOW).unwrap();
+    let req=executor.begin_evaluation(actor(2),id,NOW).unwrap();
+    let receipt=engine.evaluate_with(executor.instance,req.clone(),NOW,|schema,temperature,state|{
+        assert_eq!(schema.schema_hash,req.schema_hash);assert_eq!(temperature,1.0);assert!(!state.is_empty());
+        Ok((vec![3.0,1.0],17,BackendKind::Checkpoint,99))
+    }).unwrap();
+    assert_eq!(receipt.input_tokens,17);assert_eq!(receipt.measured_instructions,99);
+    assert_eq!(receipt.stamp.backend,BackendKind::Checkpoint);
+    let cached=engine.evaluate_with(executor.instance,req,NOW,|_,_,_|panic!("cache must win")).unwrap();
+    assert_eq!(cached,receipt);
+}
 #[test]
 fn calibration_must_cover_whole_workflow_expiry() {
     let (mut executor,mut engine,operation,grant)=setup().unwrap();

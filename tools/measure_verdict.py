@@ -28,8 +28,17 @@ Usage
     # Reuse a chain that is already installed and warm (skips the 605 MiB upload).
     python3 tools/measure_verdict.py --sweep 128,150,160 --skip-upload --keep
 
+    # Measure the 5B *query* path instead: its own sweep and its own artifact.
+    python3 tools/measure_verdict.py --query --skip-upload --keep
+
 The upload is the slow part and is charged at 2,000 cycles/byte, so a resumed run is
 almost always what you want after the first one.
+
+`--query` is a different measurement, not a faster one. A query call gets 5B instructions
+instead of 40B, so it can only score a handful of tokens: the JevBench prompt used by the
+update sweep is 118 tokens and cannot fit a query at all. That mode therefore pads the
+canonical short id list (`--query-ids`) with neutral filler and records where the
+canister's own guard refuses.
 """
 from __future__ import annotations
 
@@ -62,6 +71,13 @@ from verdict_canister import (  # noqa: E402  (same directory, shared plumbing)
 INFER = ROOT / "target" / "debug" / "verdict-infer"
 DEFAULT_CASES = ROOT / "models" / "verdict-parity" / "cases.jsonl"
 DEFAULT_TOKENIZER = ROOT / "models" / "verdict-151m" / "tokenizer.json"
+# The query path's defaults. The lengths deliberately probe past the ceiling the current
+# cost model implies for F32 (14 tokens) so the sweep records a refusal, not just a pass;
+# `--query-ids` is the canonical short prompt (`cls,<<LABEL>>,2000,<<LABEL>>,3000,sep`)
+# and `--query-filler` is the tokenizer's `[PAD]`, taken from the real pack's manifest.
+DEFAULT_QUERY_SWEEP = "2,6,10,12,14,15,16,20"
+DEFAULT_QUERY_IDS = "50281,50368,2000,50368,3000,50282"
+DEFAULT_QUERY_FILLER = 50283
 
 
 def load_case(path: Path, index: int) -> dict:
@@ -91,27 +107,42 @@ def case_tokens(case: dict, tokenizer: Path, want: int | None) -> tuple[list[int
 
 
 def infer(icp: Icp, args, canister: str, principal: str, owner: Path, ids: list[int],
-          profile: bool = False, detailed: bool = False) -> dict:
-    """One measured `infer_tokens` update, made by the canister owner.
+          profile: bool = False, detailed: bool = False, query: bool = False) -> dict:
+    """One measured inference, made by the canister owner.
 
-    A call that trips the replica's own 40B instruction limit is a *result*, not a
-    failure: it is the most direct evidence available about where the ceiling is.
-    The instruction count is not returned in that case (the call never completes),
-    so the point is recorded with `over_budget` and used only as a bound.
+    A call the canister's own budget guard refuses, and a call the replica cuts off at
+    its instruction limit, are both *results*, not failures: they are the most direct
+    evidence available about where the ceiling is. Neither returns an instruction count
+    (the call never completes the forward pass), so the point is recorded as a bound.
+    The two are told apart by the classifiers `verdict-upload` prints before failing
+    (`REJECTED` for a decoded `Err`, `TRAPPED` for a transport-level trap), not by
+    parsing English prose.
 
     With `profile`, the call is `infer_profiled` instead, which is owner-only and
-    returns the same total plus a per-phase breakdown.
+    returns the same total plus a per-phase breakdown. With `query`, it is
+    `infer_tokens_query` under the 5B query budget.
     """
     command = [str(UPLOADER), "--url", args.replica, "--canister", canister,
                "--pem", str(owner), "--no-upload", "--allow-caller", principal]
-    command += ["--profile" if profile else "--infer", ",".join(str(i) for i in ids)]
-    if profile and detailed:
-        command.append("--profile-detailed")
+    if query:
+        command += ["--query-infer", ",".join(str(i) for i in ids)]
+    else:
+        command += ["--profile" if profile else "--infer", ",".join(str(i) for i in ids)]
+        if profile and detailed:
+            command.append("--profile-detailed")
     completed = subprocess.run(command, capture_output=True, text=True, timeout=1800)
     output = completed.stdout + completed.stderr
     if completed.returncode != 0:
-        if "instruction limit" in output or "IC0522" in output:
-            return {"over_budget": True, "input_tokens": len(ids), "instructions": None}
+        if "REJECTED" in output:
+            variant = output.split("REJECTED", 1)[1].strip().splitlines()[0].strip()
+            if variant.startswith("Capacity"):
+                return {"over_budget": True, "guard_refused": True, "variant": variant,
+                        "input_tokens": len(ids), "instructions": None}
+            # Unauthorized / ModelUnavailable / TooLong are real failures, not bounds.
+            raise Failure(f"the canister refused the call: {variant}\n{output}")
+        if "TRAPPED" in output or "instruction limit" in output or "IC0522" in output:
+            return {"over_budget": True, "replica_trapped": True,
+                    "input_tokens": len(ids), "instructions": None}
         raise Failure(f"{'infer_profiled' if profile else 'infer_tokens'} failed:\n{output}")
     if profile:
         total = re.search(r"PROFILE tokens=(\d+) measured=(\d+)", output)
@@ -154,6 +185,126 @@ def critical_length(points: list[dict], budget: int) -> float | None:
     return crossing
 
 
+def parse_ids(text: str) -> list[int]:
+    """The canonical short id list, e.g. `cls,<<LABEL>>,2000,<<LABEL>>,3000,sep`."""
+    values = [int(v) for v in text.split(",") if v.strip()]
+    if not values:
+        raise Failure("--query-ids is empty")
+    return values
+
+
+def pad_ids(ids: list[int], want: int, filler: int) -> list[int] | None:
+    """Grow the canonical id list to `want` by inserting filler before the separator.
+
+    Mirrors what the update sweep does to a real prompt: the class slots stay where the
+    prompt contract put them and neutral tokens are added inside the sequence. Returns
+    None when `want` is below the list's own length, because this only pads.
+    """
+    if want < len(ids):
+        return None
+    if want == len(ids):
+        return list(ids)
+    return ids[:-1] + [filler] * (want - len(ids)) + ids[-1:]
+
+
+def query_limits(icp: Icp, args, canister: str, owner: Path) -> dict:
+    """The canister's own answer to "how long an input can a query score?".
+
+    Read from the canister, not recomputed here: the ceiling follows from the cost model
+    the owner installed, and a client that hardcoded 14 would be wrong the moment
+    `set_cost_model` corrects the slope.
+    """
+    command = [str(UPLOADER), "--url", args.replica, "--canister", canister,
+               "--pem", str(owner), "--no-upload", "--query-limits"]
+    completed = subprocess.run(command, capture_output=True, text=True, timeout=600)
+    output = completed.stdout + completed.stderr
+    match = re.search(r"QUERY_BUDGET (\d+) MAX_TOKENS (\d+) MARGIN (\d+) MAX_INPUT (\d+) "
+                      r"COST_FIXED (\d+) PER_TOKEN (\d+)", output)
+    if completed.returncode != 0 or not match:
+        raise Failure(f"query_limits failed:\n{output}")
+    return {"budget": int(match.group(1)), "max_tokens": int(match.group(2)),
+            "margin_permille": int(match.group(3)), "max_input_tokens": int(match.group(4)),
+            "cost_fixed": int(match.group(5)), "cost_per_token": int(match.group(6))}
+
+
+def query_run(icp: Icp, args, canister: str, payer: str, owner: Path,
+              lengths: list[int]) -> int:
+    """Sweep short inputs through the query path and record where it stops.
+
+    These lengths are far below the update sweep's: a query gets 5B instructions, so the
+    usable range is a handful of tokens. A point the guard refuses is evidence, not a
+    failure, and the sweep stops there -- the guard is monotone in T, so every longer
+    length would produce the same verdict at the cost of one call each.
+    """
+    base = parse_ids(args.query_ids)
+    limits = query_limits(icp, args, canister, owner)
+    print(f"  query limits: budget={limits['budget']:,} max_tokens={limits['max_tokens']} "
+          f"margin={limits['margin_permille']} max_input={limits['max_input_tokens']}")
+    points: list[dict] = []
+    refused: list[int] = []
+    for want in lengths:
+        ids = pad_ids(base, want, args.query_filler)
+        if ids is None:
+            print(f"  skip T={want}: below the canonical {len(base)}-token list (this tool only pads)")
+            continue
+        measured = infer(icp, args, canister, payer, owner, ids, query=True)
+        if measured.get("over_budget"):
+            point = {"requested_tokens": want, "input_tokens": measured["input_tokens"],
+                     "over_budget": True, "instructions": None,
+                     "guard_refused": bool(measured.get("guard_refused")),
+                     "replica_trapped": bool(measured.get("replica_trapped"))}
+            if point["guard_refused"]:
+                point["variant"] = measured.get("variant", "")
+            how = ("the canister's budget guard refused it before spending anything"
+                   if point["guard_refused"] else "the replica cut the call off at its instruction limit")
+            print(f"  T={want:4d}  OVER BUDGET: {how}")
+            points.append(point)
+            refused.append(measured["input_tokens"])
+            break
+        point = {"requested_tokens": want, "over_budget": False, **measured,
+                 "instructions_per_token": measured["instructions"] / measured["input_tokens"]}
+        print(f"  T={measured['input_tokens']:4d}  {measured['instructions']:>16,} instructions"
+              f"  ({point['instructions_per_token']:,.0f}/token)")
+        points.append(point)
+    measured_points = [p for p in points if p.get("instructions")]
+    if not measured_points:
+        raise Failure("no query measurement points: every requested length was skipped or refused")
+    within = max(p["input_tokens"] for p in measured_points)
+    report = {
+        "kind": "query",
+        "budget": limits["budget"],
+        "query_limits": limits,
+        # The ceiling only means something together with the model that produced it, and
+        # the int8 run needs its own fit to be readable at all.
+        "cost_model": {"cost_fixed": limits["cost_fixed"], "cost_per_token": limits["cost_per_token"],
+                       "margin_permille": limits["margin_permille"], "budget": limits["budget"]},
+        "base_ids": base,
+        "filler": args.query_filler,
+        "points": points,
+        "max_tokens_measured": within,
+        "guard_refused_at": min(refused) if refused else None,
+        "note": ("5B query path (`infer_tokens_query`). Inputs are the canonical short id list "
+                 "padded with neutral filler, not the JevBench prompt: that prompt is 118 tokens "
+                 "and cannot fit a query call at all. The sweep stops at the first refusal because "
+                 "the budget guard is monotone in T, so no longer length is measured. The ceiling "
+                 "is exact for the `cost_model` recorded above, not for the hardware: if that "
+                 "kernel's cost depends on the data (int8), install a fit from the worst observed "
+                 "cost, otherwise a call at the ceiling can still be trapped by the replica."),
+    }
+    args.query_out.parent.mkdir(parents=True, exist_ok=True)
+    args.query_out.write_text(json.dumps(report, indent=2) + "\n")
+    print()
+    print(f"query path: longest measured T={within} tokens, budget {limits['budget']:,}")
+    if refused:
+        print(f"refused from T={min(refused)}")
+    try:
+        shown = args.query_out.relative_to(ROOT)
+    except ValueError:
+        shown = args.query_out
+    print(f"wrote {shown}")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--pack", type=Path, default=ROOT / "models" / "verdict-pack")
@@ -167,6 +318,18 @@ def main() -> int:
     parser.add_argument("--profile-detailed", action="store_true",
                         help="include every encoder sub-phase in the profile (many entries)")
     parser.add_argument("--out", type=Path, default=ROOT / "artifacts" / "verdict_sweep.json")
+    parser.add_argument("--query", action="store_true",
+                        help="measure the 5B query path (infer_tokens_query) instead of the update sweep")
+    parser.add_argument("--query-sweep", default=DEFAULT_QUERY_SWEEP,
+                        help="comma-separated token lengths for --query")
+    parser.add_argument("--query-ids", default=DEFAULT_QUERY_IDS,
+                        help="canonical short id list (cls,<<LABEL>>,content,...,sep) padded for --query; "
+                             "the defaults fit models/verdict-pack, so a run against fixtures/verdict-tiny "
+                             "must override both --query-ids and --query-filler")
+    parser.add_argument("--query-filler", type=int, default=DEFAULT_QUERY_FILLER,
+                        help="neutral/pad token id used to pad --query-ids")
+    parser.add_argument("--query-out", type=Path,
+                        default=ROOT / "artifacts" / "verdict_query_sweep.json")
     parser.add_argument("--env", default="local")
     parser.add_argument("--replica", default="")
     parser.add_argument("--identity", default="ic-verdict-local")
@@ -181,21 +344,29 @@ def main() -> int:
         raise Failure("missing build/verdict-engine.wasm; run bash tools/build_one.sh verdict-engine")
     if not UPLOADER.exists():
         raise Failure(f"{UPLOADER} is missing; run: cargo build -p verdict-upload")
+    if args.query and args.profile:
+        raise Failure("--profile measures infer_profiled, which is not part of the query path")
 
     lengths = [int(v) for v in args.sweep.split(",") if v.strip()]
-    case = load_case(args.cases, args.case_index)
+    query_lengths = [int(v) for v in args.query_sweep.split(",") if v.strip()]
+    # The query sweep pads the canonical short id list instead of the benchmark case, so a
+    # query-only run must not require `models/verdict-parity/cases.jsonl` to exist.
+    case = None if args.query else load_case(args.cases, args.case_index)
 
     args.home.mkdir(parents=True, exist_ok=True, mode=0o700)
     icp = Icp(args.env, args.identity, args.home)
-    # This tool mints cycles, reinstalls the canister and uploads 600 MiB, so it must
-    # never reach a real network. Refuse before any of that.
-    require_local_network(icp, Failure)
+    # Start the replica before demanding proof that it is local: `network start` is
+    # not a guarded command, while everything past this point mints cycles,
+    # reinstalls the canister and uploads 600 MiB. Checking first made the documented
+    # cold start impossible -- with nothing running, `network status` is unreadable
+    # and the fail-closed guard refused before the start could happen.
     status = icp.run(["network", "status", "-e", args.env, "--json"], expect_ok=False)
     started_here = "api_url" not in status
     if started_here:
         print("starting the local network ...")
         icp.run(["network", "start", "-d", "-e", args.env])
         status = icp.run(["network", "status", "-e", args.env, "--json"])
+    require_local_network(icp, Failure)
     match = re.search(r'"api_url":\s*"([^"]+)"', status)
     args.replica = args.replica or (match.group(1) if match else "")
     require_local_replica(args.replica, Failure)
@@ -220,6 +391,9 @@ def main() -> int:
                      "--wasm", str(BUILD / "verdict-engine.wasm"), "--args", f'(principal "{principal}")'])
             upload_pack(icp, args, canister)
         print("  canister info:", " ".join(icp.call("info").split())[:200])
+
+        if args.query:
+            return query_run(icp, args, canister, payer, owner, query_lengths)
 
         natural_ids, natural = case_tokens(case, args.tokenizer, None)
         print(f"case {case.get('id')} native length: {natural} tokens, {len(natural_ids)} ids")
@@ -293,7 +467,13 @@ def main() -> int:
         over = [p["input_tokens"] for p in points if p.get("over_budget")]
         if over:
             print(f"over budget at T={min(over)} (the replica rejected it at the instruction limit)")
-        print(f"wrote {args.out.relative_to(ROOT)}")
+        try:
+            shown = args.out.relative_to(ROOT)
+        except ValueError:
+            # --out outside the repository: the write succeeded, so printing the
+            # absolute path must not turn a completed measurement into a traceback.
+            shown = args.out
+        print(f"wrote {shown}")
         return 0
     finally:
         if started_here and not args.keep:

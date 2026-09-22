@@ -37,7 +37,7 @@ impl<T:ChoiceSchema> Choice<T> {
 }
 impl<T:DecisionSchema> Noul<T> {
     pub fn try_from_receipt(schema:&CompiledSchema,r:&Receipt,expected:&Stamp)->Result<Self>{Ok(Self{distribution:checked::<T>(schema,r,expected,Primitive::Noul)?,stamp:r.stamp.clone(),_type:PhantomData})}
-    pub fn p_true_ppm(&self)->u32{self.distribution.as_slice()[1]}
+    pub fn distribution(&self)->&Distribution{&self.distribution}
     pub fn stamp(&self)->&Stamp{&self.stamp}
 }
 impl<T:DecisionSchema> Score<T> {
@@ -45,7 +45,6 @@ impl<T:DecisionSchema> Score<T> {
     pub fn mean_ppm(&self)->u32{self.distribution.mean_ppm()}
     pub fn expected_level_microunits(&self)->u64{self.distribution.expected_level_microunits()}
     pub fn tail_ppm(&self,from_bin:usize)->Result<u32>{self.distribution.tail(from_bin)}
-    pub fn cdf_ppm(&self,through_bin:usize)->Result<u32>{self.distribution.cdf(through_bin)}
     pub fn distribution(&self)->&Distribution{&self.distribution}
     pub fn stamp(&self)->&Stamp{&self.stamp}
 }

@@ -1,3 +1,8 @@
+  query limits: budget=5,000,000,000 max_tokens=14 margin=1005 max_input=128
+  T=   3         1,000,000 instructions  (333,333/token)
+
+query path: longest measured T=3 tokens, budget 5,000,000,000
+wrote /var/folders/c0/wmdw9g8d70xdy1xmlw3qmdfm0000gn/T/tmpjskr89xf/verdict_query_sweep.json
 test_transfer_is_never_executed_against_a_remote_environment (test_icp_guard.IcpRunnerIntegrationTests.test_transfer_is_never_executed_against_a_remote_environment) ... ok
 test_transfer_runs_against_a_managed_local_replica (test_icp_guard.IcpRunnerIntegrationTests.test_transfer_runs_against_a_managed_local_replica) ... ok
 test_local_replica_is_allowed (test_icp_guard.NetworkGuardTests.test_local_replica_is_allowed) ... ok
@@ -15,6 +20,17 @@ test_normalize_features_is_refused (test_pack_verdict.PackVerdictTests.test_norm
 test_random_without_test_is_refused (test_pack_verdict.PackVerdictTests.test_random_without_test_is_refused) ... ok
 test_unknown_projector_activation_is_refused (test_pack_verdict.PackVerdictTests.test_unknown_projector_activation_is_refused) ... ok
 test_valid_checkpoint_exports_a_self_consistent_pack (test_pack_verdict.PackVerdictTests.test_valid_checkpoint_exports_a_self_consistent_pack) ... ok
+test_a_budget_guard_refusal_is_a_bound_not_a_failure (test_query_contract.QueryInferenceTests.test_a_budget_guard_refusal_is_a_bound_not_a_failure) ... ok
+test_a_failed_limit_probe_is_a_failure (test_query_contract.QueryInferenceTests.test_a_failed_limit_probe_is_a_failure) ... ok
+test_a_measured_reply_is_parsed (test_query_contract.QueryInferenceTests.test_a_measured_reply_is_parsed) ... ok
+test_a_replica_instruction_limit_is_also_a_bound (test_query_contract.QueryInferenceTests.test_a_replica_instruction_limit_is_also_a_bound) ... ok
+test_other_rejections_stay_failures (test_query_contract.QueryInferenceTests.test_other_rejections_stay_failures) ... ok
+test_padding_grows_the_list_before_the_separator (test_query_contract.QueryInferenceTests.test_padding_grows_the_list_before_the_separator) ... ok
+test_query_limits_come_from_the_canister (test_query_contract.QueryInferenceTests.test_query_limits_come_from_the_canister) ... ok
+test_the_default_sweep_probes_past_the_f32_ceiling (test_query_contract.QueryInferenceTests.test_the_default_sweep_probes_past_the_f32_ceiling) ... ok
+test_the_report_records_the_cost_model_that_produced_the_ceiling (test_query_contract.QueryInferenceTests.test_the_report_records_the_cost_model_that_produced_the_ceiling) ... ok
+test_a_requested_query_check_that_fails_is_not_a_pass (test_query_contract.VerifyQueryFlagTests.test_a_requested_query_check_that_fails_is_not_a_pass) ... ok
+test_the_query_row_stays_not_run_when_it_is_not_requested (test_query_contract.VerifyQueryFlagTests.test_the_query_row_stays_not_run_when_it_is_not_requested) ... ok
 test_no_flags_stays_green_but_announces_nothing_was_verified (test_verify_contract.VerifyContractTests.test_no_flags_stays_green_but_announces_nothing_was_verified) ... ok
 test_real_ledger_row_can_pass_fail_or_stay_unrun (test_verify_contract.VerifyContractTests.test_real_ledger_row_can_pass_fail_or_stay_unrun) ... ok
 test_rust_requested_with_a_toolchain_runs_the_checks (test_verify_contract.VerifyContractTests.test_rust_requested_with_a_toolchain_runs_the_checks) ... ok
@@ -23,6 +39,6 @@ test_the_fixture_check_validates_instead_of_regenerating (test_verify_contract.V
 test_verdict_requested_without_the_pack_is_not_a_pass (test_verify_contract.VerifyContractTests.test_verdict_requested_without_the_pack_is_not_a_pass) ... ok
 
 ----------------------------------------------------------------------
-Ran 23 tests in 0.206s
+Ran 34 tests in 0.201s
 
 OK

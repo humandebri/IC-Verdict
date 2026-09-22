@@ -1,0 +1,314 @@
+=== 1. build the int8 verdict-engine ===
+info: syncing channel updates for 1.97.1-aarch64-apple-darwin
+info: latest update on 2026-07-16 for version 1.97.1 (8bab26f4f 2026-07-14)
+info: downloading 7 components
+warn: the missing active toolchain `1.97.1-aarch64-apple-darwin` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+warning: function `pretransposed` is never used
+   --> crates/verdict-candle/src/lib.rs:131:4
+    |
+131 | fn pretransposed(t:&Tensor)->Result<Tensor>{
+    |    ^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling version_check v0.9.5
+   Compiling autocfg v1.5.1
+   Compiling cfg-if v1.0.5
+   Compiling libm v0.2.16
+   Compiling serde_core v1.0.229
+   Compiling zerocopy v0.8.57
+   Compiling paste v1.0.15
+   Compiling generic-array v0.14.7
+   Compiling num-traits v0.2.19
+   Compiling getrandom v0.3.4
+   Compiling serde v1.0.229
+   Compiling crossbeam-utils v0.8.23
+   Compiling crossbeam-epoch v0.9.21
+   Compiling syn v2.0.119
+   Compiling syn v3.0.6
+   Compiling crossbeam-deque v0.8.8
+   Compiling crc32fast v1.5.2
+   Compiling rand_core v0.9.5
+   Compiling rayon-core v1.13.0
+   Compiling libc v0.2.189
+   Compiling memchr v2.8.3
+   Compiling either v1.18.0
+   Compiling serde_derive v1.0.229
+   Compiling bytemuck_derive v1.12.1
+   Compiling ident_case v1.0.1
+   Compiling strsim v0.11.1
+   Compiling once_cell v1.21.4
+   Compiling thiserror v1.0.69
+   Compiling bytemuck v1.25.2
+   Compiling zerocopy-derive v0.8.57
+   Compiling thiserror-impl v1.0.69
+   Compiling pulp v0.22.3
+   Compiling rustversion v1.0.23
+   Compiling binrw_derive v0.15.2
+   Compiling anyhow v1.0.104
+   Compiling binrw v0.15.2
+   Compiling typenum v1.20.1
+   Compiling rayon v1.12.0
+   Compiling num-complex v0.4.6
+   Compiling dyn-stack-macros v0.1.3
+   Compiling pulp-wasm-simd-flag v0.1.1
+   Compiling shlex v2.0.1
+   Compiling object v0.39.1
+   Compiling zmij v1.0.23
+   Compiling bitflags v2.13.2
+   Compiling reborrow v0.5.5
+   Compiling find-msvc-tools v0.1.13
+   Compiling cc v1.4.7
+   Compiling raw-cpuid v11.6.0
+   Compiling dyn-stack v0.13.2
+   Compiling thiserror v2.0.20
+   Compiling serde_json v1.0.151
+   Compiling seq-macro v0.3.6
+   Compiling itoa v1.0.18
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling ppv-lite86 v0.2.21
+   Compiling thiserror-impl v2.0.20
+   Compiling rand_chacha v0.9.0
+   Compiling rand v0.9.5
+   Compiling lazy_static v1.5.0
+   Compiling fnv v1.0.7
+   Compiling darling_core v0.20.11
+   Compiling rand_distr v0.5.1
+   Compiling candid_derive v0.10.35
+   Compiling half v2.7.1
+   Compiling ar_archive_writer v0.5.3
+   Compiling gemm-common v0.19.0
+   Compiling digest v0.10.7
+   Compiling byteorder v1.5.0
+   Compiling psm v0.1.32
+   Compiling sha2 v0.10.9
+   Compiling darling_macro v0.20.11
+   Compiling num-integer v0.1.47
+   Compiling synstructure v0.14.0
+   Compiling array-init v2.1.0
+   Compiling unicode-width v0.2.2
+   Compiling equivalent v1.0.2
+   Compiling typed-arena v2.0.2
+   Compiling data-encoding v2.11.1
+   Compiling arrayvec v0.5.2
+   Compiling smallvec v1.16.1
+   Compiling pretty v0.12.5
+   Compiling num-bigint v0.4.8
+   Compiling darling v0.20.11
+   Compiling cpufeatures v0.2.17
+   Compiling stacker v0.1.25
+   Compiling aho-corasick v1.1.5
+   Compiling serde_bytes v0.11.19
+   Compiling hex v0.4.3
+   Compiling regex-syntax v0.8.11
+   Compiling leb128 v0.2.7
+   Compiling ic_principal v0.1.5
+   Compiling zerofrom-derive v0.1.8
+   Compiling gemm-f32 v0.19.0
+   Compiling derive_builder_core v0.20.2
+   Compiling regex-automata v0.4.18
+   Compiling darling_core v0.23.0
+   Compiling ahash v0.8.12
+   Compiling slotmap v1.1.1
+   Compiling esaxx-rs v0.1.10
+   Compiling bit-vec v0.8.0
+   Compiling fastrand v2.5.0
+   Compiling allocator-api2 v0.2.21
+   Compiling hashbrown v0.17.1
+   Compiling foldhash v0.2.0
+   Compiling heck v0.5.0
+   Compiling stable_deref_trait v1.2.1
+   Compiling minimal-lexical v0.2.1
+   Compiling strum_macros v0.26.4
+   Compiling nom v7.1.3
+   Compiling candid v0.10.35
+   Compiling indexmap v2.14.2
+   Compiling hashbrown v0.16.1
+   Compiling darling_macro v0.23.0
+   Compiling tempfile v3.27.0
+   Compiling bit-set v0.8.0
+   Compiling derive_builder_macro v0.20.2
+   Compiling zerofrom v0.1.8
+   Compiling gemm-f16 v0.19.0
+   Compiling yoke-derive v0.8.3
+   Compiling gemm-c32 v0.19.0
+   Compiling gemm-c64 v0.19.0
+   Compiling gemm-f64 v0.19.0
+   Compiling castaway v0.2.4
+   Compiling bincode v1.3.3
+   Compiling monostate-impl v0.1.18
+   Compiling itertools v0.14.0
+   Compiling macro_rules_attribute-proc_macro v0.2.3
+   Compiling typed-path v0.12.3
+   Compiling pastey v0.2.3
+   Compiling static_assertions v1.1.0
+   Compiling base64 v0.13.1
+   Compiling ic-cdk-executor v2.0.0
+   Compiling ryu v1.0.23
+   Compiling unicode-segmentation v1.13.3
+   Compiling macro_rules_attribute v0.2.3
+   Compiling compact_str v0.9.1
+   Compiling zip v8.6.0
+   Compiling rayon-cond v0.4.0
+   Compiling spm_precompiled v0.1.4
+   Compiling monostate v0.1.18
+   Compiling ic-laya-core v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/ic-laya-core)
+   Compiling yoke v0.8.3
+   Compiling gemm v0.19.0
+   Compiling derive_builder v0.20.2
+   Compiling strum v0.26.3
+   Compiling num_cpus v1.17.0
+   Compiling fancy-regex v0.14.0
+   Compiling safetensors v0.8.0
+   Compiling darling v0.23.0
+   Compiling regex v1.13.1
+   Compiling memmap2 v0.9.11
+   Compiling unicode-normalization-alignments v0.1.12
+   Compiling float8 v0.7.0
+   Compiling dary_heap v0.3.9
+   Compiling unicode_categories v0.1.1
+   Compiling ic0 v1.2.0
+   Compiling log v0.4.34
+   Compiling candle-core v0.11.0
+   Compiling ic-cdk-macros v0.20.3
+   Compiling tokenizers v0.22.0
+   Compiling ic-error-types v0.2.0
+warning: unnecessary `unsafe` block
+   --> crates/verdict-simd/src/lib.rs:900:24
+    |
+900 | ...   acc0 = unsafe { i32x4_add(acc0, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p0.cast()) }))) };
+    |              ^^^^^^ unnecessary `unsafe` block
+    |
+    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+   --> crates/verdict-simd/src/lib.rs:901:24
+    |
+901 | ...   acc1 = unsafe { i32x4_add(acc1, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p1.cast()) }))) };
+    |              ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> crates/verdict-simd/src/lib.rs:902:24
+    |
+902 | ...   acc2 = unsafe { i32x4_add(acc2, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p2.cast()) }))) };
+    |              ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> crates/verdict-simd/src/lib.rs:903:24
+    |
+903 | ...   acc3 = unsafe { i32x4_add(acc3, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p3.cast()) }))) };
+    |              ^^^^^^ unnecessary `unsafe` block
+
+warning: `verdict-simd` (lib) generated 4 warnings
+   Compiling pin-project-lite v0.2.17
+   Compiling ic-cdk v0.20.3
+   Compiling canister-common v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/canister-common)
+   Compiling hf-tokenizer v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/hf-tokenizer)
+   Compiling modernbert-candle v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/modernbert-candle)
+   Compiling verdict-candle v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-candle)
+warning: function `pretransposed` is never used
+   --> crates/verdict-candle/src/lib.rs:131:4
+    |
+131 | fn pretransposed(t:&Tensor)->Result<Tensor>{
+    |    ^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `verdict-candle` (lib) generated 1 warning
+   Compiling verdict-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/verdict-engine)
+    Finished `release` profile [optimized] target(s) in 1m 11s
+Built build/verdict-engine.wasm and .did; no deployment performed.
+=== 2. deploy int8 + warm (F32 smoke first, then query limits) ===
+pack: manifest=60344 model=605512704 tokenizer=3583596 test_only=false
+begin_upload ok (191 byte reply)
+  1.0 / 580.9 MiB (0.4s)
+  33.0 / 580.9 MiB (30.2s)
+  65.0 / 580.9 MiB (46.2s)
+  97.0 / 580.9 MiB (72.9s)
+  129.0 / 580.9 MiB (93.1s)
+  161.0 / 580.9 MiB (106.4s)
+  193.0 / 580.9 MiB (118.1s)
+  225.0 / 580.9 MiB (129.8s)
+  257.0 / 580.9 MiB (141.4s)
+  289.0 / 580.9 MiB (153.1s)
+  321.0 / 580.9 MiB (164.6s)
+  353.0 / 580.9 MiB (176.1s)
+  385.0 / 580.9 MiB (188.3s)
+  417.0 / 580.9 MiB (201.5s)
+  449.0 / 580.9 MiB (224.1s)
+  481.0 / 580.9 MiB (265.5s)
+  513.0 / 580.9 MiB (297.0s)
+  545.0 / 580.9 MiB (310.6s)
+  577.0 / 580.9 MiB (329.0s)
+  580.9 / 580.9 MiB (330.4s)
+uploaded 609096300 bytes in 330.4s
+warm-up: 142 tensors
+  25 / 142
+  50 / 142
+  75 / 142
+  100 / 142
+  125 / 142
+  model resident after 142 of 142 tensors
+warm-up complete
+allowed caller 4n2np-tgdic-4ebia-biyac-gbvgr-yv2vw-4gncr-flsv3-nryjb-fyhtq-zqe
+tokens=6 class_positions=[1, 3]
+  class 0 logit 1.988353
+  class 1 logit 1.885463
+MEASURED_INSTRUCTIONS 775263584 tokens=6
+starting the local network ...
+  network: http://127.0.0.1:8000/
+payer identity (cycles/controller): ic-verdict-local (4n2np-tgdic-4ebia-biyac-gbvgr-yv2vw-4gncr-flsv3-nryjb-fyhtq-zqe)
+canister owner (uploads and infer_tokens): 7kgje-alv7l-wmor5-wpty5-plova-rtql3-i6a4f-giwmg-erft7-cmtkx-gqe
+  canister: 4caro-hl777-77775-aaaba-cai
+installing ...
+uploading pack through the agent ...
+info: ( record { model = blob "\f8\ac\ec\ab\e3\63\86\a4\41\b8\bd\0d\4a\e2\54\61\68\8e\01\97\68\ee\15\67\da\21\e6\31\63\04\49\29"; max_input_tokens = 128 : nat32; max_classes = 25 : nat32; cost_per_token = 327_600_000 : nat64; callers = 0 : nat64; cost_fixed = 254_400_000 : nat64; warmed = true; budget = 4
+infer_tokens 50281,50368,2000,50368,3000,50282 ...
+
+VERDICT ENGINE LOCAL RUN OK
+canister=4caro-hl777-77775-aaaba-cai
+--- int8 query limits before the cost model is corrected:
+QUERY_BUDGET 5000000000 MAX_TOKENS 14 MARGIN 1005 MAX_INPUT 128
+=== 3. measure int8 at T=6 and T=120 (update path) ===
+MEASURED_INSTRUCTIONS 774918466 tokens=6
+  T= 120    14,572,176,608 instructions  (121,434,805/token)
+wrote /tmp/verdict_sweep_int8.json
+int8 cost model fit (fixed,per_token,budget) = 48746986,121028580,40000000000
+=== 4. install the fit and read the derived query ceiling ===
+cost model set to fixed=48746986 per_token=121028580 budget=40000000000
+QUERY_BUDGET 5000000000 MAX_TOKENS 40 MARGIN 1005 MAX_INPUT 128
+=== 5. int8 query sweep ===
+  network: http://127.0.0.1:8000/
+  canister: 4caro-hl777-77775-aaaba-cai  owner: 7kgje-alv7l-wmor5-wpty5-plova-rtql3-i6a4f-giwmg-erft7-cmtkx-gqe
+  canister info: ( record { model = blob "\f8\ac\ec\ab\e3\63\86\a4\41\b8\bd\0d\4a\e2\54\61\68\8e\01\97\68\ee\15\67\da\21\e6\31\63\04\49\29"; max_input_tokens = 128 : nat32; max_classes = 25 : nat32; cost_per_token = 1
+  query limits: budget=5,000,000,000 max_tokens=40 margin=1005 max_input=128
+  T=   6       774,013,680 instructions  (129,002,280/token)
+  T=  10     1,163,225,847 instructions  (116,322,585/token)
+  T=  15     2,194,516,445 instructions  (146,301,096/token)
+  T=  20     2,224,609,275 instructions  (111,230,464/token)
+  T=  25     3,207,476,869 instructions  (128,299,075/token)
+  T=  30     3,400,273,154 instructions  (113,342,438/token)
+  T=  35     4,392,108,269 instructions  (125,488,808/token)
+  T=  38     4,317,071,548 instructions  (113,607,146/token)
+  T=  39     4,889,292,497 instructions  (125,366,474/token)
+  T=  40     4,447,164,256 instructions  (111,179,106/token)
+  T=  44  OVER BUDGET: the canister's budget guard refused it before spending anything
+
+query path: longest measured T=40 tokens, budget 5,000,000,000
+refused from T=44
+wrote artifacts/verdict_query_sweep_int8.json
+=== 6. stop network ===
+error: unexpected argument '--identity' found
+
+  tip: a similar argument exists: '--identity-password-file'
+
+Usage: icp network stop --environment <ENVIRONMENT> --project-root-override <PROJECT_ROOT_OVERRIDE> --identity-password-file <FILE> [NAME]
+
+For more information, try '--help'.
+INT8_DONE

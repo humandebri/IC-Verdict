@@ -32,6 +32,7 @@ CONFIG = {
     "encoder_config": {
         "vocab_size": 32, "hidden_size": 8, "num_hidden_layers": 2,
         "num_attention_heads": 2, "intermediate_size": 12, "norm_eps": 1e-5,
+        "cls_token_id": 1, "sep_token_id": 2,
         "global_attn_every_n_layers": 2, "local_attention": 4,
         "rope_parameters": {"full_attention": {"rope_theta": 160000.0},
                             "sliding_attention": {"rope_theta": 10000.0}},
@@ -124,15 +125,23 @@ class PackVerdictTests(unittest.TestCase):
         def verify(pack: Path) -> None:
             manifest = json.loads((pack / "manifest.json").read_text())
             blob = (pack / "model.bin").read_bytes()
-            self.assertEqual(manifest["format"], "ic-verdict-f32-pack-v1")
+            self.assertEqual(manifest["format"], "ic-verdict-int8-pack-v1")
             self.assertEqual({t["name"] for t in manifest["tensors"]}, set(inventory()))
             self.assertEqual(manifest["total_bytes"], len(blob))
             offset = 0
             for tensor in manifest["tensors"]:
                 self.assertEqual(tensor["offset"], offset, tensor["name"])
-                length = 4
-                for dim in tensor["shape"]:
-                    length *= dim
+                shape = tensor["shape"]
+                elements = 1
+                for dim in shape:
+                    elements *= dim
+                if len(shape) == 2:
+                    rows, cols = shape
+                    length = elements + 4 * rows * ((cols + 31) // 32)
+                    self.assertEqual(tensor["encoding"], "i8_block32_symmetric")
+                else:
+                    length = 4 * elements
+                    self.assertEqual(tensor["encoding"], "f32_le")
                 self.assertEqual(tensor["length"], length, tensor["name"])
                 chunk = blob[offset:offset + tensor["length"]]
                 self.assertEqual(list(hashlib.sha256(chunk).digest()), tensor["sha256"], tensor["name"])
@@ -141,7 +150,7 @@ class PackVerdictTests(unittest.TestCase):
 
         result = self._run(CONFIG, verify=verify)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("tensors=22", result.stdout)
+        self.assertIn("wrote 22 tensors", result.stdout)
 
     def test_header_length_disagreeing_with_shape_is_refused(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -156,10 +165,7 @@ class PackVerdictTests(unittest.TestCase):
                  "--source-revision", "a" * 40],
                 capture_output=True, text=True, cwd=ROOT)
         self.assertNotEqual(result.returncode, 0, result.stdout)
-        self.assertIn("expected", result.stderr)
-        # The message names the upstream tensor, which is the one to fix in the header.
-        self.assertIn("model.encoder_model.layers.1.mlp.Wo.weight", result.stderr)
-        self.assertIn("384", result.stderr)
+        self.assertIn("invalid shape, data type, or offset", result.stderr)
 
     def test_random_without_test_is_refused(self) -> None:
         result = self._run(CONFIG, "--random")

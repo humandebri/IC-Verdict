@@ -16,7 +16,7 @@ fn init(owner:Principal){if owner==Principal::anonymous(){ic_cdk::trap("invalid 
 #[ic_cdk::pre_upgrade]
 fn pre_upgrade(){read(persist_or_trap);}
 #[ic_cdk::post_upgrade]
-fn post_upgrade(){let s:State=restore().unwrap_or_else(|e|ic_cdk::trap(&e.to_string()));STATE.with(|x|*x.borrow_mut()=Some(s));}
+fn post_upgrade(){let s:State=restore().unwrap_or_else(|e|ic_cdk::trap(e.to_string()));STATE.with(|x|*x.borrow_mut()=Some(s));}
 #[ic_cdk::update]
 fn ic_laya_mock_profile()->String{MOCK_MAGIC.into()}
 #[ic_cdk::update]

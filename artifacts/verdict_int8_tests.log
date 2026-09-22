@@ -16,17 +16,17 @@ test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; fini
 
 
 running 12 tests
-test pack_rejects_tensor_set_mismatch ... ok
-test profiled_forward_keeps_the_same_rejections ... ok
 test every_label_marker_contributes_one_slot_in_order ... ok
+test profiled_forward_keeps_the_same_rejections ... ok
+test pack_rejects_tensor_set_mismatch ... ok
 test reserved_token_literals_are_rejected_in_prompt_inputs ... ok
 test refuses_more_classes_than_the_checkpoint_scores ... ok
 test refuses_non_finite_and_out_of_vocab_ids ... ok
 test logits_are_one_per_class_token_in_order ... ok
 test same_input_gives_the_same_logits ... ok
-test pack_round_trip_reproduces_the_model ... ok
 test profiled_forward_returns_the_same_logits ... ok
 test detailed_profiling_only_adds_repeated_markers ... ok
+test pack_round_trip_reproduces_the_model ... ok
 test head_matches_an_independent_recomputation_from_the_encoder_output ... ok
 
 test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
@@ -46,9 +46,9 @@ warning: function `pretransposed` is never used
 
 warning: `verdict-candle` (lib) generated 1 warning
 warning: `verdict-candle` (lib test) generated 1 warning (1 duplicate)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
-     Running unittests src/lib.rs (target/debug/deps/verdict_candle-2aed9ab62222d931)
-     Running unittests src/bin/verdict_infer.rs (target/debug/deps/verdict_infer-376927065b5ba425)
-     Running tests/golden.rs (target/debug/deps/golden-ffee36c086b84ff4)
-     Running tests/model.rs (target/debug/deps/model-04c3f0c72e944f42)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running unittests src/lib.rs (target/debug/deps/verdict_candle-1677e6421cbf63d8)
+     Running unittests src/bin/verdict_infer.rs (target/debug/deps/verdict_infer-a20ccb4dec84a13a)
+     Running tests/golden.rs (target/debug/deps/golden-84c2bda74229f888)
+     Running tests/model.rs (target/debug/deps/model-9795fa33208b1475)
    Doc-tests verdict_candle

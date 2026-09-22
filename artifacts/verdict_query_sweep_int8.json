@@ -1,0 +1,103 @@
+{
+  "kind": "query",
+  "budget": 5000000000,
+  "query_limits": {
+    "budget": 5000000000,
+    "max_tokens": 40,
+    "margin_permille": 1005,
+    "max_input_tokens": 128
+  },
+  "base_ids": [
+    50281,
+    50368,
+    2000,
+    50368,
+    3000,
+    50282
+  ],
+  "filler": 50283,
+  "points": [
+    {
+      "requested_tokens": 6,
+      "over_budget": false,
+      "instructions": 774013680,
+      "input_tokens": 6,
+      "instructions_per_token": 129002280.0
+    },
+    {
+      "requested_tokens": 10,
+      "over_budget": false,
+      "instructions": 1163225847,
+      "input_tokens": 10,
+      "instructions_per_token": 116322584.7
+    },
+    {
+      "requested_tokens": 15,
+      "over_budget": false,
+      "instructions": 2194516445,
+      "input_tokens": 15,
+      "instructions_per_token": 146301096.33333334
+    },
+    {
+      "requested_tokens": 20,
+      "over_budget": false,
+      "instructions": 2224609275,
+      "input_tokens": 20,
+      "instructions_per_token": 111230463.75
+    },
+    {
+      "requested_tokens": 25,
+      "over_budget": false,
+      "instructions": 3207476869,
+      "input_tokens": 25,
+      "instructions_per_token": 128299074.76
+    },
+    {
+      "requested_tokens": 30,
+      "over_budget": false,
+      "instructions": 3400273154,
+      "input_tokens": 30,
+      "instructions_per_token": 113342438.46666667
+    },
+    {
+      "requested_tokens": 35,
+      "over_budget": false,
+      "instructions": 4392108269,
+      "input_tokens": 35,
+      "instructions_per_token": 125488807.68571429
+    },
+    {
+      "requested_tokens": 38,
+      "over_budget": false,
+      "instructions": 4317071548,
+      "input_tokens": 38,
+      "instructions_per_token": 113607146.0
+    },
+    {
+      "requested_tokens": 39,
+      "over_budget": false,
+      "instructions": 4889292497,
+      "input_tokens": 39,
+      "instructions_per_token": 125366474.28205128
+    },
+    {
+      "requested_tokens": 40,
+      "over_budget": false,
+      "instructions": 4447164256,
+      "input_tokens": 40,
+      "instructions_per_token": 111179106.4
+    },
+    {
+      "requested_tokens": 44,
+      "input_tokens": 44,
+      "over_budget": true,
+      "instructions": null,
+      "guard_refused": true,
+      "replica_trapped": false,
+      "variant": "Capacity"
+    }
+  ],
+  "max_tokens_measured": 40,
+  "guard_refused_at": 44,
+  "note": "5B query path (`infer_tokens_query`). Inputs are the canonical short id list padded with neutral filler, not the JevBench prompt: that prompt is 118 tokens and cannot fit a query call at all. The sweep stops at the first refusal because the budget guard is monotone in T, so no longer length is measured."
+}

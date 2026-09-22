@@ -1,21 +1,17 @@
 {
-  "timestamp_utc": "2026-09-21T11:03:07.061469+00:00",
+  "timestamp_utc": "2026-09-22T02:37:23.245661+00:00",
   "scope": "Source delivery validation, NOT proof of Rust/ICP/pretrained-model operation",
   "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
-  "packages": {
-    "torch": null,
-    "numpy": "2.3.5",
-    "safetensors": null
-  },
+  "packages": {},
   "toolchain": {
     "cargo": "/Users/0xhude/.cargo/bin/cargo",
     "rustc": "/Users/0xhude/.cargo/bin/rustc",
     "rustup": "/Users/0xhude/.cargo/bin/rustup",
     "dfx": "/Users/0xhude/Library/Application Support/org.dfinity.dfx/bin/dfx"
   },
-  "rust_source_files": 32,
-  "rust_test_functions_written": 88,
-  "rust_test_functions_executed_here": null,
+  "rust_source_files": 33,
+  "rust_test_functions_written": 96,
+  "rust_test_functions_executed_here": "see cargo result/log",
   "requested_but_not_verified": [],
   "checks": [
     {
@@ -79,43 +75,117 @@
     },
     {
       "check": "rust_workspace_tests",
-      "status": "NOT_RUN",
-      "reason": "Pass --rust to run Rust checks"
+      "status": "PASS",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace"
+      ],
+      "log": "rust_workspace_tests.log",
+      "returncode": 0
     },
     {
       "check": "wasm_build",
-      "status": "NOT_RUN",
-      "reason": "Pass --rust to run Rust checks"
+      "status": "PASS",
+      "command": [
+        "cargo",
+        "build",
+        "--target",
+        "wasm32-unknown-unknown",
+        "-p",
+        "decision-engine",
+        "--lib"
+      ],
+      "log": "wasm_build.log",
+      "returncode": 0
     },
     {
       "check": "verdict_candle_tests",
-      "status": "NOT_RUN",
-      "reason": "Pass --rust to run Rust checks"
+      "status": "PASS",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "verdict-candle"
+      ],
+      "log": "verdict_candle_tests.log",
+      "returncode": 0
     },
     {
       "check": "verdict_candle_int8_tests",
-      "status": "NOT_RUN",
-      "reason": "Pass --rust to run Rust checks"
+      "status": "PASS",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "verdict-candle",
+        "--features",
+        "int8"
+      ],
+      "log": "verdict_int8_tests.log",
+      "returncode": 0
     },
     {
       "check": "verdict_engine_wasm_build",
-      "status": "NOT_RUN",
-      "reason": "Pass --rust to run Rust checks"
+      "status": "PASS",
+      "command": [
+        "cargo",
+        "build",
+        "--target",
+        "wasm32-unknown-unknown",
+        "-p",
+        "verdict-engine",
+        "--lib"
+      ],
+      "log": "verdict_wasm_build.log",
+      "returncode": 0
     },
     {
       "check": "verdict_engine_int8_wasm_build",
-      "status": "NOT_RUN",
-      "reason": "Pass --rust to run Rust checks"
+      "status": "PASS",
+      "command": [
+        "cargo",
+        "build",
+        "--target",
+        "wasm32-unknown-unknown",
+        "-p",
+        "verdict-engine",
+        "--lib",
+        "--features",
+        "int8"
+      ],
+      "log": "verdict_int8_wasm_build.log",
+      "returncode": 0
     },
     {
       "check": "openjev_checkpoint_parity",
-      "status": "NOT_RUN",
-      "reason": "Pass --verdict with models/verdict-pack and models/verdict-parity populated; see docs/VERDICT_ENGINE.md"
+      "status": "PASS",
+      "command": [
+        "/Volumes/KINGSTON/ICP/IC-Laya/target/release/verdict-infer",
+        "check",
+        "--pack",
+        "/Volumes/KINGSTON/ICP/IC-Laya/models/verdict-pack",
+        "--tokenizer",
+        "/Volumes/KINGSTON/ICP/IC-Laya/models/verdict-151m/tokenizer.json",
+        "--cases",
+        "/Volumes/KINGSTON/ICP/IC-Laya/models/verdict-parity/cases.jsonl",
+        "--predictions",
+        "/Volumes/KINGSTON/ICP/IC-Laya/models/verdict-parity/predictions.jsonl",
+        "--limit",
+        "1000"
+      ],
+      "log": "verdict_parity.log",
+      "returncode": 0
     },
     {
       "check": "openjev_canister_instructions",
       "status": "NOT_RUN",
       "reason": "Pass --verdict-canister with a warm local replica; see docs/VERDICT_ENGINE.md"
+    },
+    {
+      "check": "openjev_query_canister",
+      "status": "NOT_RUN",
+      "reason": "Pass --verdict-query with a warm local replica; see docs/VERDICT_ENGINE.md"
     },
     {
       "check": "real_ledger_transfer",
@@ -124,8 +194,13 @@
     },
     {
       "check": "icp_canister_integration",
-      "status": "NOT_RUN",
-      "reason": "Pass --local-integration to run it (starts a local replica via icp CLI)"
+      "status": "PASS",
+      "command": [
+        "/Users/0xhude/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "tools/local_integration.py"
+      ],
+      "log": "local_integration.log",
+      "returncode": 0
     }
   ]
 }

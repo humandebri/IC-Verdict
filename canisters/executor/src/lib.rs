@@ -4,25 +4,31 @@ use candid::Principal;
 use canister_common::{Lookup,TransferError,TransferResult,to_icrc};
 use ic_laya_core::{workflow::*,*};
 use std::cell::RefCell;
+mod stable;
 thread_local!{static STATE:RefCell<Option<ExecutorState>>=const{RefCell::new(None)};}
 fn read<R>(f:impl FnOnce(&ExecutorState)->R)->R{STATE.with(|x|f(x.borrow().as_ref().expect("initialized")))}
 fn admitted()->Result<()> {
     let caller=ic_cdk::api::msg_caller();
     read(|s|if caller!=Principal::anonymous() && (caller==s.owner || s.grants.values().any(|g|g.delegate==caller)){Ok(())}else{Err(Error::Unauthorized)})
 }
-fn mutate<R>(f:impl FnOnce(&mut ExecutorState)->R)->R{STATE.with(|x|{let mut s=x.borrow_mut();let s=s.as_mut().expect("initialized");let r=f(s);if let Err(e)=s.check_invariants_light(){ic_cdk::trap(&format!("invariant: {e}"));}canister_common::persist_or_trap(s);r})}
+fn mutate<R>(f:impl FnOnce(&mut ExecutorState)->R)->R{STATE.with(|x|{let mut s=x.borrow_mut();let s=s.as_mut().expect("initialized");let old=s.clone();let r=f(s);stable::sync(&old,s).unwrap_or_else(|e|ic_cdk::trap(format!("stable commit failed: {e}")));r})}
 #[ic_cdk::init]
 fn init(owner:Principal,engine:Principal){
     if [owner,engine].iter().any(|&p|p==Principal::anonymous()||p==Principal::management_canister()){ic_cdk::trap("invalid principal");}
-    let s=ExecutorState::new(ic_cdk::api::canister_self(),owner,engine);canister_common::persist_or_trap(&s);STATE.with(|x|*x.borrow_mut()=Some(s));
+    let s=ExecutorState::new(ic_cdk::api::canister_self(),owner,engine);stable::replace_all(&s).unwrap_or_else(|e|ic_cdk::trap(e.to_string()));STATE.with(|x|*x.borrow_mut()=Some(s));
 }
 #[ic_cdk::pre_upgrade]
 fn pre_upgrade(){read(|s|{
     if s.requests.values().any(|r|matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_))){ic_cdk::trap("unresolved transfer: reconcile before ordinary upgrade");}
-    canister_common::persist_or_trap(s);
 });}
 #[ic_cdk::post_upgrade]
-fn post_upgrade(){let mut s:ExecutorState=canister_common::restore().unwrap_or_else(|e|ic_cdk::trap(&e.to_string()));s.recover_after_upgrade();s.check_invariants().unwrap_or_else(|e|ic_cdk::trap(&e.to_string()));canister_common::persist_or_trap(&s);STATE.with(|x|*x.borrow_mut()=Some(s));}
+fn post_upgrade(){
+    let legacy=stable::is_legacy_snapshot();
+    let mut s:ExecutorState=if legacy{canister_common::restore()}else{stable::load()}.unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
+    let old=s.clone();s.recover_after_upgrade();s.check_invariants().unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
+    if legacy{stable::replace_all(&s)}else{stable::sync(&old,&s)}.unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
+    STATE.with(|x|*x.borrow_mut()=Some(s));
+}
 #[ic_cdk::update]
 fn register_plan(plan:Plan)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.install_plan(caller,plan))}
 #[ic_cdk::update]

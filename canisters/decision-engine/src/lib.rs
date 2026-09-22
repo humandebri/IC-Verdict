@@ -30,7 +30,7 @@ fn init(owner:Principal){
 #[ic_cdk::pre_upgrade]
 fn pre_upgrade(){read(canister_common::persist_or_trap);}
 #[ic_cdk::post_upgrade]
-fn post_upgrade(){let s:Persistent=canister_common::restore().unwrap_or_else(|e|ic_cdk::trap(&e.to_string()));STATE.with(|x|*x.borrow_mut()=Some(s));}
+fn post_upgrade(){let s:Persistent=canister_common::restore().unwrap_or_else(|e|ic_cdk::trap(e.to_string()));STATE.with(|x|*x.borrow_mut()=Some(s));}
 #[derive(CandidType,Serialize,Deserialize)]
 pub struct EngineInfo {pub model:Digest,pub fixture:bool,pub schemas:u64,pub cached:u64,pub live_dispatch_supported:bool}
 #[ic_cdk::query]

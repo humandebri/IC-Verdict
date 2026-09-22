@@ -1,29 +1,17 @@
-   Compiling serde_core v1.0.229
-   Compiling syn v3.0.6
-   Compiling serde v1.0.229
-   Compiling num-traits v0.2.19
-   Compiling bytemuck v1.25.2
-   Compiling zerocopy v0.8.57
-   Compiling serde_json v1.0.151
-   Compiling memchr v2.8.3
+   Compiling generic-array v0.14.7
+   Compiling candid_derive v0.10.35
+   Compiling crc32fast v1.5.2
    Compiling binrw v0.15.2
-   Compiling getrandom v0.3.4
-   Compiling rand_core v0.9.5
-   Compiling num-integer v0.1.47
-   Compiling serde_derive v1.0.229
-   Compiling thiserror-impl v2.0.20
-   Compiling serde_bytes v0.11.19
-   Compiling thiserror v2.0.20
-   Compiling ppv-lite86 v0.2.21
-   Compiling rand_chacha v0.9.0
-   Compiling ic_principal v0.1.5
-   Compiling num-bigint v0.4.8
-   Compiling ic-error-types v0.2.0
-   Compiling bincode v1.3.3
+   Compiling stacker v0.1.25
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
    Compiling candid v0.10.35
-   Compiling ic-laya-core v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/ic-laya-core)
+   Compiling ic_principal v0.1.5
+   Compiling ic-laya-core v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/ic-laya-core)
    Compiling ic-cdk-macros v0.20.3
    Compiling ic-cdk v0.20.3
-   Compiling canister-common v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/canister-common)
-   Compiling decision-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/decision-engine)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.26s
+   Compiling canister-common v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/canister-common)
+   Compiling decision-engine v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/decision-engine)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.83s

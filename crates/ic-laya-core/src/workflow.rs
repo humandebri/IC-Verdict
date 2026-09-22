@@ -205,7 +205,8 @@ impl ExecutorState {
         if !matches!(r.status,Status::Received|Status::Evaluating){return Err(Error::Transition);}
         if let Err(e)=self.current(&r,now){r.status=Status::Stale;r.pending=None;self.requests.insert(id,r);return Err(e);}
         if let Some(p)=r.pending.as_mut(){
-            if p.in_flight{return Err(Error::Busy);}if p.sends>=2{return Err(Error::Capacity);}
+            if p.in_flight{return Err(Error::Busy);}
+            if p.sends>=2{return Err(Error::Capacity);}
             p.in_flight=true;p.sends+=1;let req=p.request.clone();self.requests.insert(id,r);return Ok(req);
         }
         let p=self.plans.get(&r.plan).ok_or(Error::NotFound)?;let slot=r.receipts.len();

@@ -354,7 +354,7 @@ def main() -> int:
     parser.add_argument("--env", default="local")
     parser.add_argument("--identity", default="ic-laya-local-test",
                         help="fixed test identity, created if absent (never the ambient default)")
-    parser.add_argument("--port", type=int, default=8000,
+    parser.add_argument("--port", type=int, default=8011,
                         help="assert the network listens on this port; the real port comes from "
                              "icp.yaml gateway.port and is not configured here")
     parser.add_argument("--keep-state", action="store_true",
@@ -369,17 +369,25 @@ def main() -> int:
             raise Failure(f"missing build/{wasm}.wasm; run bash tools/build_one.sh {wasm} first")
 
     icp = Icp(ROOT, args.env, args.identity)
-    require_local_network(icp, Failure)
+    # Start the replica *before* demanding proof that it is local. `network start` is
+    # not a guarded command, so bringing it up is safe; everything after this point
+    # mints cycles and `-m reinstall`s canisters. Requiring `managed: true` first made
+    # the documented cold start impossible: with nothing running, `network status` is
+    # unreadable and the fail-closed guard refused before the start could happen.
+    # A network that *is* reachable but not locally launched is still refused first,
+    # so `--env ic` never reaches a start attempt.
     # Do not start a network that is already up, and do not stop one we did not
     # start: another project may be using it deliberately.
+    reachable = any_network_status(icp) is not None
     status = network_status(icp)
     started_here = status is None
-    if started_here:
+    if started_here and not reachable:
         print(f"starting local network (gateway port comes from icp.yaml) ...")
         icp.run(["network", "start", "-d", "-e", args.env])
         status = network_status(icp)
-    else:
+    elif not started_here:
         print("local network already running; reusing it")
+    require_local_network(icp, Failure)
     actual_port = urlparse(status["api_url"]).port
     if actual_port != args.port:
         raise Failure(
@@ -668,7 +676,7 @@ def leave_unknown_for_upgrade(icp: "Icp", grant_id: bytes, ledger: str, owner: s
 
 
 def verify_upgrade_guard(icp: "Icp", install_args: str, stranded: bytes) -> int:
-    """Assert the upgrade guard refuses to upgrade over an unresolved transfer.
+    """Assert the guard blocks unresolved state, then verify a stable-table upgrade.
 
     `pre_upgrade` traps when any request is still Submitted or OutcomeUnknown, so a
     normal upgrade must fail and leave the reservation intact rather than silently
@@ -686,6 +694,17 @@ def verify_upgrade_guard(icp: "Icp", install_args: str, stranded: bytes) -> int:
     after = icp.call("executor", "get_request", f"({blob(stranded)})")
     check("OutcomeUnknown" in after and "reservation = opt" in after and "reservation = null" not in after,
           f"the unresolved reservation survives the refused upgrade: {after.strip()[:160]}")
+    parked = icp.call("executor", "abandon_unknown",
+                      f"({blob(stranded)}, \"integration upgrade test\")")
+    check("NeedsReview" in parked and "abandoned" in parked,
+          f"owner can park the unresolved transfer before upgrading: {parked.strip()[:160]}")
+    upgraded = icp.run(["canister", "install", "executor", "-e", icp.env, "-y", "-m", "upgrade",
+                        "--wasm", str(BUILD / "executor.wasm"), "--args", install_args])
+    check("installed successfully" in upgraded.lower() or "upgrad" in upgraded.lower(),
+          f"executor upgrades after the transfer is parked: {upgraded.strip()[-160:]}")
+    restored = icp.call("executor", "get_request", f"({blob(stranded)})")
+    check("NeedsReview" in restored and "abandoned" in restored and "reservation = opt" in restored,
+          "stable-table state and its held reservation survive a successful upgrade")
     print("\nUPGRADE GUARD CHECKS PASSED")
     return 0
 
