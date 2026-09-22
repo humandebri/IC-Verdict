@@ -18,8 +18,21 @@ use candid::{Decode, Encode, Principal};
 use ic_agent::identity::BasicIdentity;
 use ic_agent::Agent;
 use ic_laya_core::SpecialTokens;
+use std::io::{Read, Seek, SeekFrom};
 use std::path::PathBuf;
 use std::time::Instant;
+
+fn validate_pack(manifest_raw:&[u8],model_path:&std::path::Path,tokenizer:&[u8])->Result<verdict_candle::pack::Manifest,String>{
+    let manifest=verdict_candle::pack::Manifest::parse(manifest_raw).map_err(|e|format!("manifest: {e}"))?;
+    if ic_laya_core::hash(tokenizer)!=manifest.tokenizer_sha256{return Err("tokenizer hash does not match manifest".into());}
+    let mut file=std::fs::File::open(model_path).map_err(|e|format!("model.bin: {e}"))?;
+    if file.metadata().map_err(|e|e.to_string())?.len()!=manifest.total_bytes{return Err("model.bin length does not match manifest".into());}
+    for entry in &manifest.tensors{
+        let mut bytes=vec![0;entry.length as usize];file.seek(SeekFrom::Start(entry.offset)).and_then(|_|file.read_exact(&mut bytes)).map_err(|e|format!("{}: {e}",entry.name))?;
+        if ic_laya_core::hash(&bytes)!=entry.sha256{return Err(format!("{}: sha256 mismatch",entry.name));}
+    }
+    Ok(manifest)
+}
 
 struct Args {
     url: String,
@@ -37,6 +50,9 @@ struct Args {
     warm_only: bool,
     allow_caller: Option<String>,
     infer: Option<String>,
+    query_infer: Option<String>,
+    query_limits: bool,
+    set_cost_model: Option<String>,
     profile: Option<String>,
     profile_detailed: bool,
     decide: bool,
@@ -123,6 +139,36 @@ struct ProfileReply {
     phases: Vec<PhaseCost>,
 }
 
+/// Mirror of the canister's `QueryLimits`: what the 5B query path accepts, and the cost
+/// model that produced that ceiling (so a recorded measurement stays readable).
+#[derive(candid::Deserialize, candid::CandidType)]
+struct QueryLimits {
+    budget: u64,
+    margin_permille: u64,
+    max_tokens: u32,
+    max_input_tokens: u32,
+    cost_fixed: u64,
+    cost_per_token: u64,
+}
+
+#[derive(candid::Deserialize, candid::CandidType)]
+struct EngineBudget { budget: u64 }
+
+/// Read `query_limits` over a query call.
+async fn read_query_limits(agent: &Agent, canister: &Principal) -> Result<QueryLimits, String> {
+    let raw = agent
+        .query(canister, "query_limits")
+        .call()
+        .await
+        .map_err(|e| format!("query_limits: {e}"))?;
+    Decode!(&raw, QueryLimits).map_err(|e| format!("query_limits reply: {e}"))
+}
+
+async fn read_info(agent: &Agent, canister: &Principal) -> Result<EngineBudget, String> {
+    let raw = agent.query(canister, "info").call().await.map_err(|e| format!("info: {e}"))?;
+    Decode!(&raw, EngineBudget).map_err(|e| format!("info reply: {e}"))
+}
+
 fn parse_args() -> Result<Args, String> {
     let mut url = "http://127.0.0.1:8000".to_string();
     let mut canister = None;
@@ -136,6 +182,9 @@ fn parse_args() -> Result<Args, String> {
     let mut warm_only = false;
     let mut allow_caller = None;
     let mut infer = None;
+    let mut query_infer = None;
+    let mut query_limits = false;
+    let mut set_cost_model = None;
     let mut decide = false;
     let mut bench = None;
     let mut quant = None;
@@ -164,6 +213,9 @@ fn parse_args() -> Result<Args, String> {
             "--warm-only" => warm_only = true,
             "--allow-caller" => allow_caller = Some(value()?),
             "--infer" => infer = Some(value()?),
+            "--query-infer" => query_infer = Some(value()?),
+            "--query-limits" => query_limits = true,
+            "--set-cost-model" => set_cost_model = Some(value()?),
             "--decide" => decide = true,
             "--bench" => bench = Some(value()?),
             "--quant" => quant = Some(value()?),
@@ -192,6 +244,9 @@ fn parse_args() -> Result<Args, String> {
         warm_only,
         allow_caller,
         infer,
+        query_infer,
+        query_limits,
+        set_cost_model,
         profile,
         profile_detailed,
         decide,
@@ -229,23 +284,22 @@ async fn run() -> Result<(), String> {
     // `--no-upload` reuses a canister that is already warm, so the pack is only
     // read when there is something to push.
     let mut pack_inputs = None;
-    if !args.no_upload {
+    if !args.no_upload && !args.warm_only {
         let manifest = std::fs::read(args.pack.clone().ok_or("--pack is required")?.join("manifest.json"))
             .map_err(|e| format!("manifest: {e}"))?;
-        let model = std::fs::read(args.pack.clone().ok_or("--pack is required")?.join("model.bin"))
-            .map_err(|e| format!("model.bin: {e}"))?;
+        let model_path=args.pack.clone().ok_or("--pack is required")?.join("model.bin");
+        let model_length=std::fs::metadata(&model_path).map_err(|e|format!("model.bin: {e}"))?.len();
         let tokenizer = std::fs::read(args.tokenizer.clone().ok_or("--tokenizer is required")?)
             .map_err(|e| format!("tokenizer: {e}"))?;
-        let meta: serde_json::Value =
-            serde_json::from_slice(&manifest).map_err(|e| format!("manifest json: {e}"))?;
+        let meta=validate_pack(&manifest,&model_path,&tokenizer)?;
         println!(
             "pack: manifest={} model={} tokenizer={} test_only={}",
             manifest.len(),
-            model.len(),
+            model_length,
             tokenizer.len(),
-            meta["test_only"]
+            meta.test_only
         );
-        pack_inputs = Some((manifest, model, tokenizer));
+        pack_inputs = Some((manifest, model_path, model_length, tokenizer));
     }
 
     let agent = Agent::builder()
@@ -266,25 +320,37 @@ async fn run() -> Result<(), String> {
         literals: vec!["[CLS]".into(), "[SEP]".into(), "[MASK]".into(), "[PAD]".into()],
     };
 
-    if let Some((manifest, model, tokenizer)) = &pack_inputs {
-        let _ = (&manifest, &model);
-        if !args.warm_only {
+    if let Some((manifest, model_path, model_length, tokenizer)) = &pack_inputs {
         let reply = agent
             .update(&canister, "begin_upload")
             .with_arg(Encode!(&manifest, &(tokenizer.len() as u64), &special).map_err(|e| e.to_string())?)
             .call_and_wait()
             .await
             .map_err(|e| format!("begin_upload: {e}"))?;
-        println!("begin_upload ok ({} byte reply)", reply.len());
-        }
+        Decode!(&reply, Result<Vec<u8>, ic_laya_core::Error>)
+            .map_err(|e|format!("begin_upload reply: {e}"))?
+            .map_err(|e|format!("begin_upload rejected: {e:?}"))?;
+        println!("begin_upload ok");
 
-        let payload: Vec<u8> = if args.warm_only { Vec::new() } else { model.iter().chain(tokenizer.iter()).copied().collect() };
+        let total=*model_length as usize+tokenizer.len();
+        let mut model=std::fs::File::open(model_path).map_err(|e|format!("model.bin: {e}"))?;
         let started = Instant::now();
         let mut offset = 0usize;
         let mut next_report = 0usize;
-        while offset < payload.len() {
-            let end = (offset + args.chunk).min(payload.len());
-            let chunk = payload[offset..end].to_vec();
+        while offset < total {
+            let end = (offset + args.chunk).min(total);
+            let mut chunk=Vec::with_capacity(end-offset);
+            if offset<*model_length as usize {
+                let model_end=end.min(*model_length as usize);
+                model.seek(SeekFrom::Start(offset as u64)).map_err(|e|format!("model seek: {e}"))?;
+                chunk.resize(model_end-offset,0);
+                model.read_exact(&mut chunk).map_err(|e|format!("model read: {e}"))?;
+            }
+            if end>*model_length as usize {
+                let begin=offset.max(*model_length as usize)-*model_length as usize;
+                let finish=end-*model_length as usize;
+                chunk.extend_from_slice(&tokenizer[begin..finish]);
+            }
             let reply = agent
                 .update(&canister, "upload_chunk")
                 .with_arg(
@@ -297,8 +363,8 @@ async fn run() -> Result<(), String> {
                 .map_err(|e| format!("upload_chunk reply: {e}"))?
                 .map_err(|e| format!("canister rejected chunk at {offset}: {e:?}"))?;
             offset = confirmed as usize;
-            if offset >= next_report || offset == payload.len() {
-                let mib = payload.len() as f64 / 1048576.0;
+            if offset >= next_report || offset == total {
+                let mib = total as f64 / 1048576.0;
                 println!(
                     "  {:.1} / {:.1} MiB ({:.1}s)",
                     offset as f64 / 1048576.0,
@@ -341,15 +407,70 @@ async fn run() -> Result<(), String> {
         println!("warm-up complete");
     }
 
+    if args.warm_only {
+        println!("warm-only: using pack already stored by the canister");
+        let reply=agent.update(&canister,"start_warmup").with_arg(Encode!().map_err(|e|e.to_string())?)
+            .call_and_wait().await.map_err(|e|format!("start_warmup: {e}"))?;
+        let total=Decode!(&reply,Result<u64,ic_laya_core::Error>).map_err(|e|format!("start_warmup reply: {e}"))?
+            .map_err(|e|format!("start_warmup rejected: {e:?}"))?;
+        for _ in 0..total {
+            let reply=agent.update(&canister,"warmup_next").with_arg(Encode!().map_err(|e|e.to_string())?)
+                .call_and_wait().await.map_err(|e|format!("warmup_next: {e}"))?;
+            if Decode!(&reply,Result<bool,ic_laya_core::Error>).map_err(|e|format!("warmup_next reply: {e}"))?
+                .map_err(|e|format!("warmup_next rejected: {e:?}"))? {break;}
+        }
+    }
+
     if let Some(caller) = &args.allow_caller {
         let principal = Principal::from_text(caller).map_err(|e| format!("caller principal: {e}"))?;
-        agent
+        let reply=agent
             .update(&canister, "allow_caller")
             .with_arg(Encode!(&principal).map_err(|e| e.to_string())?)
             .call_and_wait()
             .await
             .map_err(|e| format!("allow_caller: {e}"))?;
+        Decode!(&reply,Result<(),ic_laya_core::Error>).map_err(|e|format!("allow_caller reply: {e}"))?
+            .map_err(|e|format!("allow_caller rejected: {e:?}"))?;
         println!("allowed caller {caller}");
+    }
+
+    // Owner-only. The budget guard's slope is a measurement, not a constant: after
+    // measuring a build (int8, a faster kernel) the owner installs the new fit and the
+    // derived query ceiling moves with it. Read `query-limits` afterwards to confirm.
+    if let Some(spec) = &args.set_cost_model {
+        let parts: Vec<u64> = spec
+            .split(',')
+            .filter(|part| !part.trim().is_empty())
+            .map(|part| part.trim().parse::<u64>().map_err(|e| format!("cost model {part}: {e}")))
+            .collect::<Result<_, _>>()?;
+        if parts.len() != 3 {
+            return Err("--set-cost-model needs fixed,per_token,budget".into());
+        }
+        let reply=agent
+            .update(&canister, "set_cost_model")
+            .with_arg(Encode!(&parts[0], &parts[1], &parts[2]).map_err(|e| e.to_string())?)
+            .call_and_wait()
+            .await
+            .map_err(|e| format!("set_cost_model: {e}"))?;
+        Decode!(&reply,Result<(),ic_laya_core::Error>).map_err(|e|format!("set_cost_model reply: {e}"))?
+            .map_err(|e|format!("set_cost_model rejected: {e:?}"))?;
+        // Assert instead of announcing: a canister-side `Err(Invalid(...))` still comes back
+        // as a successful transport call, so the only proof that the model changed is
+        // reading it back. `budget` is the field that cannot coincide by accident.
+        let observed = read_query_limits(&agent, &canister).await?;
+        let info=read_info(&agent,&canister).await?;
+        if info.budget != parts[2] || observed.cost_fixed != parts[0]
+            || observed.cost_per_token != parts[1]
+        {
+            return Err(format!(
+                "set_cost_model did not take effect: asked fixed={} per_token={} budget={}, \
+                 canister reports fixed={} per_token={} budget={}",
+                parts[0], parts[1], parts[2],
+                observed.cost_fixed, observed.cost_per_token, info.budget));
+        }
+        println!(
+            "cost model set to fixed={} per_token={} budget={} (max query tokens now {})",
+            parts[0], parts[1], parts[2], observed.max_tokens);
     }
 
     if let Some(ids) = &args.infer {
@@ -365,8 +486,17 @@ async fn run() -> Result<(), String> {
             .await
             .map_err(|e| format!("infer_tokens: {e}"))?;
         let reply = Decode!(&reply, Result<InferReply, ic_laya_core::Error>)
-            .map_err(|e| format!("infer_tokens reply: {e}"))?
-            .map_err(|e| format!("infer_tokens rejected: {e:?}"))?;
+            .map_err(|e| format!("infer_tokens reply: {e}"))?;
+        let reply = match reply {
+            Ok(reply) => reply,
+            Err(error) => {
+                // `Capacity` is the pre-flight budget guard refusing before spending
+                // anything; a machine-readable line keeps `measure_verdict.py` from
+                // classifying that by matching English text.
+                println!("REJECTED {error:?}");
+                return Err(format!("infer_tokens rejected: {error:?}"));
+            }
+        };
         println!(
             "tokens={} class_positions={:?}",
             reply.input_tokens, reply.class_positions
@@ -375,6 +505,55 @@ async fn run() -> Result<(), String> {
             println!("  class {index} logit {logit:.6}");
         }
         println!("MEASURED_INSTRUCTIONS {} tokens={}", reply.measured_instructions, reply.input_tokens);
+    }
+
+    // The query path. Both classifiers are printed before failing so callers (and
+    // `tools/measure_verdict.py`) never have to parse English error text to tell
+    // "the canister's budget guard refused this" from "the replica cut the call off".
+    if let Some(ids) = &args.query_infer {
+        let tokens: Vec<u32> = ids
+            .split(',')
+            .filter(|part| !part.trim().is_empty())
+            .map(|part| part.trim().parse::<u32>().map_err(|e| format!("id {part}: {e}")))
+            .collect::<Result<_, _>>()?;
+        let raw = match agent
+            .query(&canister, "infer_tokens_query")
+            .with_arg(Encode!(&tokens).map_err(|e| e.to_string())?)
+            .call()
+            .await
+        {
+            Ok(raw) => raw,
+            Err(error) => {
+                println!("TRAPPED {error}");
+                return Err(format!("infer_tokens_query: {error}"));
+            }
+        };
+        let reply = Decode!(&raw, Result<InferReply, ic_laya_core::Error>)
+            .map_err(|e| format!("infer_tokens_query reply: {e}"))?;
+        let reply = match reply {
+            Ok(reply) => reply,
+            Err(error) => {
+                println!("REJECTED {error:?}");
+                return Err(format!("infer_tokens_query rejected: {error:?}"));
+            }
+        };
+        println!(
+            "QUERY tokens={} class_positions={:?}",
+            reply.input_tokens, reply.class_positions
+        );
+        for (index, logit) in reply.logits.iter().enumerate() {
+            println!("  class {index} logit {logit:.6}");
+        }
+        println!("MEASURED_INSTRUCTIONS {} tokens={}", reply.measured_instructions, reply.input_tokens);
+    }
+
+    if args.query_limits {
+        let limits = read_query_limits(&agent, &canister).await?;
+        println!(
+            "QUERY_BUDGET {} MAX_TOKENS {} MARGIN {} MAX_INPUT {} COST_FIXED {} PER_TOKEN {}",
+            limits.budget, limits.max_tokens, limits.margin_permille, limits.max_input_tokens,
+            limits.cost_fixed, limits.cost_per_token
+        );
     }
 
     if let Some(ids) = &args.profile {

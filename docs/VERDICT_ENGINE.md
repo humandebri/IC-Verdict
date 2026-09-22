@@ -138,6 +138,12 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 > （commit `b38d606`）で削除した**ため、それらに依存する値は履歴であり再実行できない。
 > 現在も再現できるのは `bench_int8`（0.780 instructions/MAC）、`infer_tokens`、
 > `infer_profiled`、`--sweep`、および `verdict-infer check` である。
+>
+> **現行カーネル（HEAD）の実測**: T=120 の実checkpointは **36,976,071,434 instructions**
+> （308,133,929/token、`artifacts/verdict_sweep.json`）。これは最適化前の基準値
+> 39,568,154,800（`overflow-checks` 有効時）／37,311,793,353（無効化直後）より低い。
+> 以下の 5.1.3〜5.1.13 の対比表は**その当時のF32基準値（37,311,793,353）を1.00とした履歴**で、
+> 現行値に置き換えたものではない。
 
 `infer_tokens` の `measured_instructions`（forwardのみ、引数のdecodeとreplyのencodeは含まない）。
 入力は `[CLS] <<LABEL>> 2000 <<LABEL>> 3000 [SEP]` に filler を足したもの。
@@ -167,12 +173,14 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 
 | T（トークン） | instructions | 判定 |
 |---|---|---|
-| 118 | 38,998,851,854 | 予算内 |
-| 119 | 39,293,820,829 | 予算内 |
-| 120 | **39,568,154,800** | 予算内（成功した最長） |
+| 118 | 38,998,851,854 | 予算内（最適化前のカーネル） |
+| 119 | 39,293,820,829 | 予算内（同） |
+| 120 | **36,976,071,434** | 予算内（現行カーネル。成功した最長。最適化前は 39,568,154,800） |
 | 126 | — | **replicaが40B上限で拒否（IC0522）** |
 | 128 | — | 同上 |
 
+* **現行カーネルでの再測は T=120 の1点**（36,976,071,434、308,133,929/token）。118/119/126/128 の行は
+  int8カーネル整理（commit `b38d606`/`52f47e9`）より前の測定で、そのままでは現行値と混ぜられない。
 * **上限は T=120（成功）と T=126（拒否）の間**。5.1節の外挿 `T ≈ 123` はこの範囲に入っており、
   外挿としては妥当だった。ただし**上限値そのものは外挿ではなくこの3点で押さえる**。
 * この3点の厳密な最小二乗は `I(T) ≈ 5.41e9 + 2.8465e8 × T`（切片を落とすと過小評価になる）。5.1節の式（`2.66e8 + 3.22e8 × T`）と
@@ -213,10 +221,16 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 
 | 項目 | 値 |
 |---|---|
-| warm時のwasm linear memory | **1,099,694,080 B ≒ 1.02 GiB**（`heap_bytes` = `memory_size(0)×64KiB`、実checkpoint warm時） |
+| warm時のwasm linear memory | **1,099,694,080 B ≒ 1.02 GiB**（`heap_bytes` = `memory_size(0)×64KiB`、実checkpoint warm時。現行wasmでの再測でも同値: `info.heap_bytes = 1_099_694_080`） |
 | `decide`（state+question+2選択肢+abstention、実重み） | 52トークン、**16,831,252,741 instructions**、`card_lost` を 0.9731 で選択（targetと一致）、abstention 0.0245 |
 | 事前予算ガード | `I(T)=2.544e8+3.276e8·T`（実測2点 T=2/T=120 にフィット）＋余裕0.5%。**以下はコードの実値**（以前の39.10e9/41.04e9は傾きの取り違え）。`estimated_cost(120)=39,764,232,000`（39.76e9）≤ 40e9 で**許可**、`estimated_cost(126)=41,739,660,000`（41.74e9）で**拒否** |
-| ガードの実地確認 | T=120: `39,567,477,066` で **Ok**（先行実測39.568e9と再現）。T=126: 40B超過を**trap ではなく `Capacity`** で返す（以前は replica が IC0522 で拒否） |
+| ガードの実地確認 | T=120: 現行カーネルで `36,976,071,434` が **Ok**（最適化前の同条件は `39,567,477,066`、ガードはそこから更新していない）。T=126: 40B超過を**trap ではなく `Capacity`** で返す（以前は replica が IC0522 で拒否） |
+
+**ガードの費用モデルは最適化前の実測に固定されたままである。** 傾き 3.276e8 instructions/token は
+今も `estimated_cost(120)=39.76e9` / `estimated_cost(126)=41.74e9` を返すが、現行カーネルの実測傾きは
+**3.081e8**（36,976,071,434 − 固定費2.544e8 を120で割った値）で、T=126 の実測見積りは約38.8e9と
+40B以内に入る。つまり**ガードは約7%保守的**で、予算内の長さを `Capacity` で拒否しうる。
+費用モデルの再フィット（`set_cost_model`）はコード変更なので、ここでは数値のずれとして記録するにとどめる。
 
 `decide` が実重みで通ったことで、**typed decision 経路（tokenizer→prompt契約→forward→temperature→softmax）が canister 上で完走する**ことが確認できた。
 
@@ -625,25 +639,29 @@ candle の `softmax_last_dim` は `max_keepdim` → `broadcast_sub` → `exp` �
 ### 5.2 位相別の内訳とボトルネック（`infer_profiled`、T=120、実checkpoint）
 
 canisterにowner専用の `infer_profiled(input_ids, detailed)` を追加し、`logits` の位相境界で
-`instruction_counter` を読んだ。**同一入力で2回測って同じ配分**（attn.pre 33.0%/32.9%）である。
+`instruction_counter` を読んだ。**同一入力で2回測って同じ配分**（`rope.apply` 32.9%）である。
+位相名は現行の計装（`--profile-detailed`）のもので、`artifacts/verdict_sweep.json` の値をそのまま載せる。
 
 | 位相 | instructions | 割合 | 理論MAC | instr/MAC |
 |---|---|---|---|---|
-| `attn.pre`（qkv射影＋RoPE＋head整形） | 13,050,393,833 | **33.0%** | 4,671,406,080 | 2.79 |
-| `layer.mlp_up`（Wi＋GELU） | 12,636,107,754 | **31.9%** | 4,671,406,080 | 2.70 |
-| `layer.mlp_down`（Wo） | 6,251,963,430 | **15.8%** | 2,335,703,040 | 2.68 |
-| `layer.attn`（out射影） | 4,140,907,026 | 10.5% | 1,557,135,360 | 2.66 |
-| `attn.core`（scores＋mask＋softmax＋AV） | 2,685,295,641 | 6.8% | 486,604,800 | 5.52 |
-| `layer.attn_norm`＋`mlp_act`＋`attn_resid` | 734,462,544 | 1.9% | — | — |
-| embedding / encoder / projector / decode | 70,905,384 | 0.2% | — | — |
-| **合計** | **39,568,154,800** | 100% | 13,722,255,360 | **2.88** |
+| `rope.apply`（qkv射影＋RoPE＋head整形） | 12,147,651,930 | **32.9%** | 4,671,406,080 | 2.60 |
+| `layer.mlp_up`（Wi＋GELU） | 11,950,467,823 | **32.3%** | 4,671,406,080 | 2.56 |
+| `layer.mlp_down`（Wo） | 5,908,475,625 | **16.0%** | 2,335,703,040 | 2.53 |
+| `layer.attn`（out射影） | 3,911,952,785 | 10.6% | 1,557,135,360 | 2.51 |
+| `attn.scores`＋`attn.mask`＋`attn.softmax`＋`attn.core`（AV） | 2,234,092,695 | 6.0% | 486,604,800 | 4.59 |
+| `layer.attn_norm`＋`mlp_act`＋`attn_resid` | 733,751,878 | 2.0% | — | — |
+| embedding / rope.table / attn.pre / encoder / projector / decode | 89,982,739 | 0.2% | — | — |
+| **合計** | **36,976,375,475** | 100% | 13,722,255,360 | **2.69** |
+
+（最適化前の同じ計装は合計 39,568,154,800・2.88 instr/MAC で、位相名も `attn.pre`／`attn.core` だった。
+差分の大半は softmax の融合とカーネル整理である。）
 
 **読み方:**
 
-1. **密なmatmulが92%を占める**（`attn.pre`＋`mlp_up`＋`mlp_down`＋`layer.attn`）。
+1. **密なmatmulが92%を占める**（`rope.apply`＋`mlp_up`＋`mlp_down`＋`layer.attn` ＝ 91.8%）。
    norm・活性化・softmax・gather・decodeは合計2%未満で、最適化対象ではない。
-2. **どのmatmulも instr/MAC が 2.66〜2.79 でほぼ一定**。つまり特定の1カ所が遅いのではなく、
-   **カーネル全体がf32x4の下限0.5の約5.5倍**で回っている。`attn.core` の5.52は
+2. **どのmatmulも instr/MAC が 2.51〜2.60 でほぼ一定**。つまり特定の1カ所が遅いのではなく、
+   **カーネル全体がf32x4の下限0.5の約5倍**で回っている。`attn.scores`〜`attn.core` の4.59は
    `t×t` の要素演算（mask加算・softmax）を含むためで、これも別種のカーネル問題である。
 3. **形状依存がある**（`verdict-infer gemm`、native、同一カーネル）:
 
@@ -654,16 +672,16 @@ canisterにowner専用の `infer_profiled(input_ids, detailed)` を追加し、`
    | m=120 n=768 k=768 | 159.9 | attention out射影と同じ形 |
 
    同じMAC数でも **n=2304 は n=768 より1.4〜1.5倍遅い**。canister実測の
-   `attn.pre`(2.79) 対 `layer.attn`(2.66)・`mlp_down`(2.68) の比（1.05）とは桁が違うので、
+   `rope.apply`(2.60) 対 `layer.attn`(2.51)・`mlp_down`(2.53) の比（1.04）とは桁が違うので、
    位相間の差の主因は形状ではなく**位相ごとの周辺コスト**である。
 
 **ボトルネックの結論:** 費用は「特定の遅い演算」ではなく**密行列積の総量**にある。
-モデルは1トークンあたり 1.14e8 MAC（22層・hidden 768）を必要とし、それが2.9 instructions/MACで
+モデルは1トークンあたり 1.14e8 MAC（22層・hidden 768）を必要とし、それが2.69 instructions/MACで
 実行されている。したがって改善のレバーは次の2つだけで、優先順位は明確である:
 
 | レバー | 効果の見積り | 根拠 |
 |---|---|---|
-| **カーネル効率**（f32x4下限0.5へ） | 2.9〜5.8倍 | 実測2.88 instr/MAC ÷ 下限0.5。**ただしFMAが無いwasmでは現実的な下限は1.0前後**なので、過度な期待は禁物 |
+| **カーネル効率**（f32x4下限0.5へ） | 2.7〜5.4倍 | 実測2.69 instr/MAC ÷ 下限0.5。**ただしFMAが無いwasmでは現実的な下限は1.0前後**なので、過度な期待は禁物 |
 | **MAC総量**（INT8・蒸留・入力長） | 削減率そのもの | instr/MACが既に下限近辺なら、これが唯一の大きなレバー |
 
 **注意（誤読しやすい点）:** 2.88 instr/MAC を「5.8倍の伸びしろ」と読んではいけない。
@@ -694,7 +712,7 @@ fixtureはモデルではない（重みは乱数）。ここで測っている�
 |---|---|
 | 比較件数 | **1000（全件、`skipped_no_truth=0`）** |
 | argmax一致 | **1000/1000 (100.00%)** |
-| 校正済み top 確率の最大偏差 | 7e-6 |
+| 校正済み top 確率の最大偏差 | 5e-6 |
 | 平均偏差 | 0.000000 |
 | 最長入力 | 150トークン |
 | 重み転置の修正後（50件で再確認） | 50/50 (100.00%)、最大偏差 3e-6（in-session実行。生ログは`artifacts/`未保存） |
@@ -704,26 +722,79 @@ tokenizer・prompt contract・projector・内積scorer・temperature 1.426514863
 gateとして実行する（1000件版は `--limit` を外す）。
 
 
+### 5.3 query 経路（5B上限）と、そこでの実測上限
+
+`infer_tokens_query` / `decide_query` は同じ forward を **query call** として実行する。resource limits
+（[canister resource limits](https://oa7fk-maaaa-aaaam-abgka-cai.icp0.io/docs/building-apps/canister-management/resource-limits)）では
+update 40B に対して **query は 5B**、応答サイズは update 2MiB / query 3MiB、canister あたりの query 実行スレッドは 2、
+replicated query の stable アクセスは 1GiB である。query は cycles を消費せず、合意も要らない。
+代償は**上限の低さ**と、**応答が certified でない**こと（呼び出し側は「誰が何を実行したか」を検証できない）。
+
+上限は update と同じ費用モデルから導出する:
+`T_query = floor(((QUERY_BUDGET×1000/1005) − COST_FIXED) / COST_PER_TOKEN)`。canister は `query_limits()` で
+`budget` / `margin_permille` / `max_tokens` / `max_input_tokens` を返すので、呼び出し側がこの値を
+ハードコードする必要はない。超過は replica が切る前に **ガードが `Capacity` で拒否**する（`Error` に変種は足していない:
+variant 一覧は公開 Candid surface であり、呼び出した method で区別できる）。
+
+既定（F32、保守的な費用モデル）での実測。canister `verdict-engine` に実checkpointを投入し warm した状態で、
+canonical な短い id 列（`cls,<<LABEL>>,2000,<<LABEL>>,3000,sep`）を neutral filler `[PAD]` で pad して測った
+（`artifacts/verdict_query_sweep.json`）:
+
+| T | instructions | 判定 |
+|---|---|---|
+| 6 | 2,000,352,930 | 予算内 |
+| 10 | 3,159,259,650 | 予算内 |
+| 12 | 3,652,108,732 | 予算内 |
+| 14 | **4,325,353,975** | **予算内（成功した最長）** |
+| 15 | — | **ガードが `Capacity` で拒否（実測見積りは約4.6e9で5B以内）** |
+
+* `query_limits()` は `max_tokens=14` を返す。限界費用は実測 308.1e6/token で update と同一だが、
+  **ガードは最適化前の傾き（3.276e8）のままなので1トークン保守的**である（update 側の T=120/126 と同じ性質。
+  owner が実測傾斜を `set_cost_model` で入れると 15 になる）。
+* **JevBench の実benchmark入力（自然長118）は query には絶対に入らない。** `decide` の実測 52トークン
+  （16.83e9）も同様で、`decide_query` は現実的な入力では `Capacity` を返す。これは仕様どおりの拒否である。
+* 同一 id 列で query と update の logits は一致した（1.950261 / 1.879874）。query は状態を変えない
+  （複数 query の前後で `info` の `warmed` / `active_model` / `callers` / `tensors` / `heap_bytes` が不変）。
+* **int8 ビルドでは上限が大きく上がる。** 実測2点（T=6: 774,918,466 / T=120: 14,572,176,608）から
+  フィットした `fixed=48,746,986, per_token=121,028,580` を `set_cost_model` で入れると
+  `query_limits().max_tokens` は **40** になり、実測も T=40 まで成功した
+  （`artifacts/verdict_query_sweep_int8.json`）。F32 の 14 に対して **約2.9倍**である。
+  int8 の実測は T に対して単調でない（T=38: 4.317e9、T=39: 4.889e9、T=40: 4.447e9）— int8 カーネルに
+  データ依存の分岐（範囲クランプ）があるためで、フィットは平均として扱う。
+* **資金移動の根拠に query を使わない。** 応答は certified ではなく、`executor` は verdict-engine を
+  呼んでいない。この経路は対話的な短入力の採点と計測のためのもので、資金を動かす判断は update 経路のままである。
+* 実測の再現: 温まった replica に対し `python3 tools/measure_verdict.py --query --skip-upload --keep`
+  （opt-in の gate は `python3 tools/verify.py --verdict-query`）。int8 の手順は上記のフィット→`set_cost_model`。
+
+
 ## 6. 制約と未検証
 
-* **既定はF32**。量子化カーネル（INT8）は実装済みで `verdict-engine` の `int8` フィーチャ
-  （`IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine`）として配線されており、実測は
-  0.780 instructions/MAC・T=120で14.57e9（F32比 −60.8%）。INT4/ternaryは未実装で2.2節の表は推定。
-  既定F32のT=120実測は37.1e9（`overflow-checks=false`適用後）。
+* コード経路は `ic-verdict-int8-pack-v1` 専用で、旧F32 packを拒否する。全2次元重みはblock-32 INT8、
+  Norm・bias・scaleだけがF32補助値である。packは170,408,640 bytes。著者記録とのargmaxは
+  997/1000で許容基準99.5%を通過するが、`__insufficient_evidence__`から具体クラスへの危険な反転が1件あるため、
+  本番配備とcost model更新は停止中。過去のper-row INT8実測は
+  0.780 instructions/MAC・T=120で14.57e9だったが、block-32 kernelの実canister値は未測定。
+  既定F32のT=120実測は36.98e9（`overflow-checks=false` とカーネル整理の適用後。無効化直後は37.31e9）。
 * 校正は同梱artifactの **5候補限定** temperature（1.4265148639678955）をそのまま使う経路のみ。
   候補数・qtype別の再校正は未実施。
 * `crates/verdict-simd` は **int8 経路でモデルに配線されている**（`Linear::forward` が量子化重みを持つとき
   `matmul_i8` を呼び、softmaxは既定経路でも `softmax_rows_inplace` を使う）。f32カーネル一族と
   `bench_simd` は整理で削除したため、既定（F32）の行列積は candle gemm のままである。
-* `verdict-engine` は推論専用で、executor / mock-ledger / ワークフローには接続していない。
-  実資金・Receipt・委任の経路は `decision-engine` 側のままである。
-* 実checkpointの canister 実行は **T=2〜120** で確認済み。成功した最長は **T=120**（39.57e9は
-  `overflow-checks` 有効時の実測、無効化後は37.1e9、int8は14.57e9）。**T=126は予算ガードの
+* `verdict-engine` はraw推論に加えてexecutor互換の`register_schema`・`register_calibration`・`evaluate`を持ち、
+  実checkpointのlogitsを型付き`Receipt`へ変換できる。実資金dispatchは引き続き無効である。
+* **query 経路（`infer_tokens_query` / `decide_query` / `query_limits`）は実装・実測済み**だが、
+  上限は5Bなので既定F32では14トークンまで、int8でも40トークンまでである（5.3節）。長い入力は
+  update 経路（T≤120）を使う。query の応答は非 certified なので、資金を動かす判断には使わない。
+* 実checkpointの canister 実行は **T=2〜120** で確認済み。成功した最長は **T=120**（現行カーネルで
+  36,976,071,434。`overflow-checks` 有効時は39.57e9、無効化直後は37.31e9、int8は14.57e9）。**T=126は予算ガードの
   計算値41.74e9が40Bを超えるため拒否**される設計で、replicaでの実測記録は残っていない。
+  **ガードの費用モデルは最適化前の傾きのままなので、現行の実測（3.081e8/token）ではT=126は約38.8e9で
+  予算内に入る**（5.1.2節）。
   383トークンの実入力は1 callに収まらない（5.1.1節）。
 * `tools/measure_verdict.py` は replica を起動し577.5 MiB（605,512,704 B）を投入するため、既定では `verify.py` の
   gateに入らない。`python3 tools/verify.py --verdict-canister` は**温まったreplica**に対して
-  `tools/measure_verdict.py --skip-upload --sweep 120` を実行する。
+  `tools/measure_verdict.py --skip-upload --sweep 120` を、`--verdict-query` は同じ replica に対して
+  `tools/measure_verdict.py --query --skip-upload` を実行する（後者は `artifacts/verdict_query_sweep.log`）。
 * `tools/verify.py` の `PASS` の意味は `artifacts/verification.json` の各行が示すとおりで、
   実行していない検査は `NOT_RUN` として残る。`python_reference_and_export_tests` は
   `python3 -m unittest discover -s tests` の結果である（torch依存の検査はLaya削除時に撤去済み）。

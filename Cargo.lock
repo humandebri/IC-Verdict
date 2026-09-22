@@ -380,7 +380,7 @@ dependencies = [
 
 [[package]]
 name = "canister-common"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "candid",
  "ic-cdk",
@@ -705,7 +705,7 @@ checksum = "4583a4551df46e2792f82ceeac45e850d2e2d5debba0b91f102385cda5b11f06"
 
 [[package]]
 name = "decision-engine"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "candid",
  "canister-common",
@@ -964,12 +964,14 @@ dependencies = [
 
 [[package]]
 name = "executor"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
+ "bincode",
  "candid",
  "canister-common",
  "ic-cdk",
  "ic-laya-core",
+ "ic-stable-structures",
  "serde",
  "serde_json",
 ]
@@ -1376,7 +1378,7 @@ checksum = "6fe2267d4ed49bc07b63801559be28c718ea06c4738b7a03c94df7386d2cde46"
 
 [[package]]
 name = "hf-tokenizer"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "ic-laya-core",
  "serde_json",
@@ -1630,7 +1632,7 @@ dependencies = [
 
 [[package]]
 name = "ic-laya-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "bincode",
  "candid",
@@ -1638,6 +1640,15 @@ dependencies = [
  "serde_json",
  "sha2 0.10.9",
  "thiserror 2.0.20",
+]
+
+[[package]]
+name = "ic-stable-structures"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ee3372ddc0cf2a747fc26ce2d075a240ed6bfab151e63bc70109e8967f7ce6f"
+dependencies = [
+ "ic_principal",
 ]
 
 [[package]]
@@ -2051,7 +2062,7 @@ dependencies = [
 
 [[package]]
 name = "mock-ledger"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "candid",
  "canister-common",
@@ -2063,7 +2074,7 @@ dependencies = [
 
 [[package]]
 name = "modernbert-candle"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "candle-core",
  "serde",
@@ -3527,7 +3538,7 @@ checksum = "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be"
 
 [[package]]
 name = "verdict-candle"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "candle-core",
  "hf-tokenizer",
@@ -3540,7 +3551,7 @@ dependencies = [
 
 [[package]]
 name = "verdict-engine"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "candid",
  "candle-core",
@@ -3558,12 +3569,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "verdict-pack"
+version = "0.2.0"
+dependencies = [
+ "ic-laya-core",
+ "modernbert-candle",
+ "safetensors",
+ "serde_json",
+ "verdict-candle",
+ "verdict-simd",
+]
+
+[[package]]
 name = "verdict-simd"
-version = "0.1.0"
+version = "0.2.0"
+dependencies = [
+ "rayon",
+]
 
 [[package]]
 name = "verdict-upload"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "candid",
  "ic-agent",
@@ -3571,6 +3597,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
+ "verdict-candle",
 ]
 
 [[package]]

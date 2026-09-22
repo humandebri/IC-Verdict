@@ -1,6 +1,12 @@
 # 実装状態 v0.2
 
-v0.1からの差分: Rust toolchainのある環境でビルドとテストを実行し、判明した不具合を修正した。**「ソース納品・未コンパイル」ではなくなった。** ただし実Laya checkpoint、ICP実測、実送金は引き続き未検証である。
+v0.1からの差分: Rust/Wasm/local replicaを実行検証し、openJev実checkpoint parityとICP実測を完了した。実送金は引き続き無効である。
+
+## 未配備: INT8 pack全面移行
+
+`ic-verdict-int8-pack-v1`を実装し、全2次元重み（embeddingを含む）をblock-32 INT8、Norm・bias・scaleだけをF32補助値として保存する。生成packは **170,408,640 bytes**（旧F32 605,512,704 bytesの28.1%）で、旧F32 manifestと2次元F32 entryはloaderが拒否する。Wasm buildと通常テストは通過した。
+
+著者記録1000件とのargmax一致は **997/1000**（per-row max-absは996/1000）で、許容された99.5%基準は通過する。しかし3反転中1件が`__insufficient_evidence__`から`lost_or_stolen_phone`への変化であり、「危険な反転ゼロ」の安全性ゲートには不合格である。したがって本番配備、INT8専用temperatureの再校正、実canisterでのcost model更新は停止中であり、以下の1000/1000記録は従来F32基準の記録である。
 
 ## この環境で実際に実行した検証
 
@@ -8,13 +14,15 @@ v0.1からの差分: Rust toolchainのある環境でビルドとテストを実
 
 | 検証 | 結果 |
 |---|---|
-| `cargo test --workspace` | **PASS 88件**（Layaバックエンド削除後。decision-engine は fixture モード） |
+| `cargo test --workspace` | **PASS 93件**（Layaバックエンド削除後。decision-engine は fixture モード。query経路のguardテスト5件を含む） |
 | `bash tools/build_one.sh` × decision-engine / executor / mock-ledger / verdict-engine | **PASS**。Candid 4件と Wasm 4件を生成 |
-| `IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine` | **PASS**（int8 dense重み＋8行カーネル込み） |
+| `bash tools/build_one.sh verdict-engine` | **PASS**（block-32 INT8専用pack＋Wasm SIMD kernel） |
 | `cargo run -p ic-laya-core --example mock_workflow` | **PASS**。三primitive逐次評価 → mock送金 → `Succeeded`, reserved=0/spent=110 |
 | `tools/local_integration.py`（local replicaで3 canister実行） | **PASS**。下記のworkflow全体を実機で確認 |
-| Python unittest | **PASS 23件** |
-| `tools/verify.py --rust --require-rust` | 下表参照 |
+| Python unittest | **PASS 33件**（query経路の契約テスト10件を含む） |
+| openJev実checkpoint parity（`verdict-infer check --limit 1000`） | **PASS 1000/1000**（最大偏差 5e-6） |
+| query経路（`infer_tokens_query` / `query_limits`、ローカルreplica実測） | **PASS**。上限は既定F32で**14トークン**（T=14: 4.33e9、T=15は`Capacity`）、int8ビルドでは**40トークン**。queryとupdateのlogits一致、query前後で`info`不変も確認 |
+| `tools/verify.py --rust --require-rust --manifest --verdict --local-integration` | **PASS 14/17行**。残る`NOT_RUN`は`openjev_canister_instructions`と`openjev_query_canister`（どちらも温まったreplicaが要る）、`real_ledger_transfer`（実送金）のみ |
 
 ### local replica統合試験で確認したこと
 
@@ -41,20 +49,36 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 
 また、**toolchain依存**が判明したため`rust-toolchain.toml`で1.97.1に固定した。`candle-core 0.11.0`はaarch64で`fp16` target featureが有効だと`stdarch_neon_f16`を使うが、これは1.93.0では未安定のためE0658で失敗し、1.97.1では通る。wasm32は`cpu/neon.rs`をコンパイルしないためcanister buildは影響を受けない。
 
+## 今回直した不具合: replica停止状態から起動できない
+
+`icp_guard`をfail-closedにした際、3つのツールが `require_local_network`（`managed: true` の確認）を
+`network start` より**前**に呼ぶようになり、replicaが停止している状態では必ず
+「cannot confirm that environment 'local' is a locally launched replica」で拒否されていた。
+`network start` はguard対象外（cyclesもstateも動かさない）なので、**起動を先に行い、確認を
+その直後・cycles mint / install / call の前**に移した。
+
+* 対象: `tools/local_integration.py`、`tools/verdict_canister.py`、`tools/measure_verdict.py`。
+* `local_integration.py` はさらに、**到達可能だがmanagedでない**ネットワーク（`--env ic` など）では
+  起動を試みずに従来どおり拒否する（`any_network_status` で区別）。
+* 検証: `tools/verify.py --local-integration` が停止状態から起動して **PASS**（`artifacts/local_integration.log`
+  の先頭が "starting local network ..."）。既存の`tests/test_icp_guard.py` 23件もPASS。
+* 副次: `measure_verdict.py --out` にリポジトリ外のパスを渡すと、書き込み成功後に
+  `relative_to` でtracebackしていたため、絶対パスを表示するよう修正。
+
 ## 未完了・未確認
 
 | 項目 | 状態 / 次の作業 |
 |---|---|
 | Layaバックエンド | **削除済み**（`laya-candle` crate・decision-engine の `candle` feature・Laya計測ツール）。weightは未取得のままで、合成weightからの外挿が40B上限の12〜14倍だった。記録は[archive/](archive/)に退避 |
 | 実checkpoint inference品質 | Layaは未測定（`fixtures/`はランダムweight）。**openJev 151Mは著者記録の1000件でargmax 1000/1000一致**（[VERDICT_ENGINE.md](VERDICT_ENGINE.md) 3.1節） |
-| ICP heap/instructions/cycles | **instructionsは実測済み**（Laya合成pack、openJev実checkpoint）。heap（warm 2.5GiB / cold peak 3.0GiB）はcanisterのheapを読む口がなく**未測定** |
+| ICP heap/instructions/cycles | **instructionsは実測済み**（Laya合成pack、openJev実checkpoint）。heapは`heap_bytes`で実checkpoint warm時 **1.02 GiB**（1,099,694,080 B）を記録済み（[VERDICT_ENGINE.md](VERDICT_ENGINE.md) 5.1.2節。今回の再測は未実施）。cyclesは未計測 |
 | openJev 151Mの実測上限 | **T=120トークンが成功、T=126が40B上限で拒否**（[VERDICT_ENGINE.md](VERDICT_ENGINE.md) 5.1.1節）。実benchmarkの入力長は**中央値95トークン**で、**1000件中975件（97.5%）が予算内**。超過は121〜150の25件のみ |
 | local replica / PocketIC | **PASS**。`tools/local_integration.py`が`icp` CLIの管理networkで3 canisterを実行 |
 | 本番ledger / live transfer | `LimitedLive`はコードで拒否。実asset接続機能は未有効化 |
 | Human review承認再開 | NeedsReviewで停止する。承認endpointは未実装 |
 | temperature fitとholdout校正 | 受入機構のみ。**上流はprimitive別・候補数別のtemperatureを持つ**が現行型はスカラー。仕様判断が未解決 |
 | stable table / compaction | bounded snapshotのみ。削除なし、上限で停止 |
-| INT8 / SIMD専用kernel | **実装中**。ADR-017で方針確定（SIMDはICPで実行可能と実測済み）。蒸留は後段 |
+| INT8 / SIMD専用kernel | **実装済み、安全性ゲート未通過**。block-32でargmax 997/1000（99.5%基準は通過）だが危険な反転1件。過去per-row kernelはT=120で14.57e9 instructions、block-32は未測定 |
 
 ## 性能について
 
@@ -78,10 +102,13 @@ v0.1は「Rust未コンパイル、未確認」としていた。実際にビル
 
 | T | instructions | 判定 |
 |---|---|---|
-| 118 | 38,998,851,854 | 予算内 |
-| 119 | 39,293,820,829 | 予算内 |
-| 120 | **39,568,299,856** | **予算内（成功した最長）** |
+| 118 | 38,998,851,854 | 予算内（当時のカーネル） |
+| 119 | 39,293,820,829 | 予算内（当時） |
+| 120 | **36,976,071,434** | **予算内（現行カーネル。成功した最長。当時の実測は39,568,299,856）** |
 | 126 / 128 | — | **replicaが40B上限で拒否（IC0522）** |
+
+T=118/119の行は int8カーネル整理（commit `b38d606`/`52f47e9`）より前の測定である。現行カーネルでの
+再測は T=120（36,976,071,434、308,133,929/token）で、位相別内訳も `artifacts/verdict_sweep.json` に更新済み。
 
 **上限はT=120と126の間**である。`VERDICT_ENGINE.md` 5.1節の4点から出した外挿 `T ≈ 123` は
 この範囲に入っており、外挿としては妥当だったが、**上限値は外挿ではなくこの実測で押さえる**
@@ -119,7 +146,9 @@ softmax/norm/活性化/gather/decodeは合計1%未満。ADR-010の「hot linear�
 
 **効率（現行の実測）**: gemm **2.501**、int8カーネル **0.780** instructions/MAC。以前の「encoder 1.43」は分母の取り違えで撤回済み（`docs/archive/PERFORMANCE_MEASUREMENTS.md`）。
 スカラーなら3〜4、SIMDなら1前後が下限なので、**現状は下限から1.4倍以内**である。
-INT8は実装済みで、T=120の実測は **14.57e9**（F32比 −60.8%）。T=126以上は予算ガードで拒否される。
+INT8は実装済みで、T=120の実測は **14.57e9**（現行F32 36.98e9 比 −60.6%）。T=126以上は予算ガードで拒否される。
+**ただしガードの費用モデルは最適化前の傾き（3.276e8/token）のまま**で、現行の実測傾きは 3.081e8/token である
+（ガードは約7%保守的。T=126の実測見積りは約38.8e9で予算内だが、ガードは41.74e9と見て拒否する）。
 
 **サブフェーズまで特定した**（128-token profile、6層h768）: **MLP 51%**、attention 31%、
 decision head 16%、その他 約2%。

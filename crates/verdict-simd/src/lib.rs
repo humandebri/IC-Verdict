@@ -44,10 +44,8 @@
 /// Per-row symmetric int8 quantisation. Returns the quantised values and the scale per
 /// row (one scale for every `cols` values).
 ///
-/// The scale uses the 99.9th percentile of the row magnitude rather than the maximum, so
-/// a single outlier cannot stretch the scale and coarsen every other weight in the row.
-/// Outliers then clip to +-127. Measured effect on the golden gate is in
-/// docs/VERDICT_ENGINE.md 5.1.6.
+/// The scale uses the row's maximum magnitude. Production packs are quantised offline,
+/// and avoiding clipping is the conservative choice for the 1000-case parity gate.
 pub fn quantize_rows_i8(src: &[f32], rows: usize, cols: usize) -> (Vec<i8>, Vec<f32>) {
     assert!(src.len() >= rows * cols, "input shorter than rows*cols");
     let mut q = vec![0i8; rows * cols];
@@ -55,13 +53,9 @@ pub fn quantize_rows_i8(src: &[f32], rows: usize, cols: usize) -> (Vec<i8>, Vec<
     if rows == 0 || cols == 0 {
         return (q, scales);
     }
-    let mut scratch = vec![0.0f32; cols];
     for r in 0..rows {
         let row = &src[r * cols..r * cols + cols];
-        scratch.copy_from_slice(row);
-        scratch.sort_by(|a, b| a.abs().partial_cmp(&b.abs()).unwrap_or(std::cmp::Ordering::Equal));
-        let rank = ((cols as f32 * 0.999) as usize).min(cols - 1);
-        let max = scratch[rank].abs();
+        let max = row.iter().fold(0.0f32,|a,v|a.max(v.abs()));
         let scale = if max > 0.0 { max / 127.0 } else { 1.0 };
         scales[r] = scale;
         for (i, v) in row.iter().enumerate() {
@@ -69,6 +63,39 @@ pub fn quantize_rows_i8(src: &[f32], rows: usize, cols: usize) -> (Vec<i8>, Vec<
         }
     }
     (q, scales)
+}
+
+/// Symmetric INT8 with one scale per `block` values in each row.
+pub fn quantize_blocks_i8(src:&[f32],rows:usize,cols:usize,block:usize)->(Vec<i8>,Vec<f32>){
+    assert!(block>0&&src.len()>=rows*cols,"invalid blocked quantisation shape");
+    let blocks=cols.div_ceil(block);let mut q=vec![0i8;rows*cols];let mut scales=vec![1.0f32;rows*blocks];
+    for r in 0..rows{for b in 0..blocks{let begin=b*block;let end=(begin+block).min(cols);let row=&src[r*cols+begin..r*cols+end];let max=row.iter().fold(0.0f32,|a,v|a.max(v.abs()));let scale=if max>0.0{max/127.0}else{1.0};scales[r*blocks+b]=scale;for(i,v)in row.iter().enumerate(){q[r*cols+begin+i]=(v/scale).round().clamp(-127.0,127.0)as i8;}}}
+    (q,scales)
+}
+
+/// Block-scaled variant used by production packs. Activations retain one high-precision
+/// i16 scale per input row; weight sums are rescaled after every block.
+pub fn matmul_i8_blocked(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:usize,block:usize,out:&mut[f32])->bool{
+    let blocks=k.div_ceil(block);assert!(a.len()>=m*k&&w.len()>=n*k&&sx.len()>=m&&sw.len()>=n*blocks&&out.len()>=m*n);
+    #[cfg(target_arch="wasm32")]
+    if block==32&&k%32==0{unsafe{matmul_i8_block32_simd(a,w,sx,sw,m,k,n,out)};return true;}
+    #[cfg(not(target_arch="wasm32"))]
+    {
+        use rayon::prelude::*;
+        out[..m*n].par_chunks_mut(n).enumerate().for_each(|(i,row)|{for j in 0..n{let mut total=0.0f32;for b in 0..blocks{let begin=b*block;let end=(begin+block).min(k);let mut acc=0i32;for p in begin..end{acc+=(a[i*k+p]as i32)*(w[j*k+p]as i32);}total+=acc as f32*sw[j*blocks+b];}row[j]=total*sx[i];}});
+        return false;
+    }
+    #[cfg(target_arch="wasm32")]
+    for i in 0..m{for j in 0..n{let mut total=0.0f32;for b in 0..blocks{let begin=b*block;let end=(begin+block).min(k);let mut acc=0i32;for p in begin..end{acc+=(a[i*k+p]as i32)*(w[j*k+p]as i32);}total+=acc as f32*sw[j*blocks+b];}out[i*n+j]=total*sx[i];}}
+    #[cfg(target_arch="wasm32")]
+    {false}
+}
+
+#[cfg(target_arch="wasm32")]
+#[target_feature(enable="simd128")]
+unsafe fn matmul_i8_block32_simd(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:usize,out:&mut[f32]){
+    use core::arch::wasm32::*;let blocks=k/32;
+    for i in 0..m{for j in 0..n{let mut total=0.0f32;for b in 0..blocks{let ap=unsafe{a.as_ptr().add(i*k+b*32)};let wp=unsafe{w.as_ptr().add(j*k+b*32)};let mut acc=i32x4_splat(0);for p in [0usize,8,16,24]{let av=unsafe{v128_load(ap.add(p).cast())};let wv=i16x8_extend_low_i8x16(unsafe{v128_load64_zero(wp.add(p).cast())});acc=i32x4_add(acc,i32x4_dot_i16x8(av,wv));}let sum=i32x4_extract_lane::<0>(acc)+i32x4_extract_lane::<1>(acc)+i32x4_extract_lane::<2>(acc)+i32x4_extract_lane::<3>(acc);total+=sum as f32*sw[j*blocks+b];}out[i*n+j]=total*sx[i];}}
 }
 
 /// Activation quantisation into the i16 range.
@@ -140,6 +167,7 @@ unsafe fn quantize_row_i16_simd(row: &[f32], out: &mut [i16], inv_scale: f32) {
 /// Returns `true` when the wasm SIMD path ran; the scalar path is the reference used
 /// by the native tests.
 #[must_use]
+#[allow(clippy::too_many_arguments)] // Hot kernel ABI keeps dimensions and buffers explicit.
 pub fn matmul_i8(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, k: usize, n: usize, out: &mut [f32]) -> bool {
     assert!(a.len() >= m * k && w.len() >= n * k && sx.len() >= m && sw.len() >= n && out.len() >= m * n);
     #[cfg(target_arch = "wasm32")]
@@ -160,6 +188,7 @@ pub fn matmul_i8(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, k: usize
 }
 
 /// Reference implementation of the int8 kernel (also the native path).
+#[allow(clippy::too_many_arguments)] // Scalar reference intentionally mirrors the SIMD ABI.
 pub fn matmul_i8_scalar(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, k: usize, n: usize, out: &mut [f32]) {
     for i in 0..m {
         for j in 0..n {

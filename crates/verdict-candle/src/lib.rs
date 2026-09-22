@@ -24,7 +24,7 @@ pub mod pack;
 use candle_core::{DType,Device,Tensor,D};
 use ic_laya_core::{engine::InferenceBackend,BackendKind,Digest,Error,Result,SpecialTokens,TokenInput};
 use modernbert_candle::encoder::ModernBert;
-use modernbert_candle::{Activation,Attention,EncoderLayer,Linear,Norm};
+use modernbert_candle::{Activation,Attention,EncoderLayer,Linear,Norm,QuantEmbedding};
 use serde::{Deserialize,Serialize};
 use std::collections::BTreeMap;
 
@@ -56,7 +56,7 @@ impl VerdictConfig {
     pub fn validate(&self)->Result<()> {
         let h=self.hidden_size;
         if h==0 || h>2048 || self.vocab_size<5 || self.vocab_size>300_000 || self.layers==0 || self.layers>64
-            || self.attention_heads==0 || h%self.attention_heads!=0 || (h/self.attention_heads)%2!=0
+            || self.attention_heads==0 || !h.is_multiple_of(self.attention_heads) || !(h/self.attention_heads).is_multiple_of(2)
             || self.intermediate_size==0 || self.intermediate_size>16384
             || self.global_every==0 || self.local_attention==0
             || self.max_classes==0 || self.max_classes>64
@@ -107,14 +107,16 @@ pub type QuantMap=BTreeMap<String,modernbert_candle::QuantWeight>;
 /// int8 weights straight from the `[out, in]` tensor the pack stores, which is the
 /// layout the kernel wants. Measured 1.605 instructions/MAC against gemm's 2.501
 /// (docs/VERDICT_ENGINE.md 5.1.6), and it drops the f32 copy of the weight entirely.
-#[cfg(feature="int8")]
 fn quantized(m:&BTreeMap<String,Tensor>,name:&str)->Result<modernbert_candle::QuantWeight>{
     let t=tensor(m,name)?;
     let (out_features,in_features)=t.dims2().map_err(|e|Error::Invalid(e.to_string()))?;
     let flat=t.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
-    let (w,scales)=verdict_simd::quantize_rows_i8(&flat,out_features,in_features);
-    Ok(modernbert_candle::QuantWeight{w,scales,out_features,in_features})
+    let block_size=32;let (w,scales)=verdict_simd::quantize_blocks_i8(&flat,out_features,in_features,block_size);
+    Ok(modernbert_candle::QuantWeight{w,scales,out_features,in_features,block_size})
 }
+/// Every two-dimensional model parameter is carried as INT8 in the production pack.
+#[must_use]
+pub fn is_matrix_weight(name:&str)->bool{name=="embeddings.weight"||is_dense_weight(name)}
 /// True for the weight matrices that reach a `Linear`: the four encoder projections of
 /// each layer and the four head-projector matrices. Norms are 1-D and the embedding is a
 /// lookup, so neither is quantised.
@@ -128,9 +130,6 @@ pub fn is_dense_weight(name:&str)->bool{
 /// Weights arrive as `[out, in]`. Transposing once here removes a per-call copy of
 /// the whole weight matrix from `forward`, which measured 1.77e10 instructions per
 /// canister call regardless of token count (see docs/VERDICT_ENGINE.md 5.1).
-fn pretransposed(t:&Tensor)->Result<Tensor>{
-    t.t().and_then(|x|x.contiguous()).map_err(|e|Error::ModelUnavailable(e.to_string()))
-}
 /// Encoder projections carry no bias (`attention_bias`/`mlp_bias` are false).
 ///
 /// With the `int8` feature the weight comes from `q` when the pack pre-quantised it
@@ -139,25 +138,14 @@ fn pretransposed(t:&Tensor)->Result<Tensor>{
 /// otherwise.
 fn linear(m:&BTreeMap<String,Tensor>,q:&QuantMap,p:&str)->Result<Linear>{
     let key=format!("{p}.weight");
-    #[cfg(feature="int8")]
-    {
-        if let Some(qw)=q.get(&key){return Ok(Linear::new_quantized(qw.clone(),None));}
-        return Ok(Linear::new_quantized(quantized(m,&key)?,None));
-    }
-    #[cfg(not(feature="int8"))]
-    {let _=(q,key);Ok(Linear::new_transposed(pretransposed(&tensor(m,&format!("{p}.weight"))?)?,None))}
+    let _=m;
+    q.get(&key).cloned().map(|w|Linear::new_quantized(w,None)).ok_or_else(||Error::Invalid(format!("missing quantised weight: {key}")))
 }
 /// The head projectors do carry biases, which stay in f32.
 fn linear_biased(m:&BTreeMap<String,Tensor>,q:&QuantMap,p:&str)->Result<Linear>{
     let key=format!("{p}.weight");
     let bias=Some(tensor(m,&format!("{p}.bias"))?);
-    #[cfg(feature="int8")]
-    {
-        if let Some(qw)=q.get(&key){return Ok(Linear::new_quantized(qw.clone(),bias));}
-        return Ok(Linear::new_quantized(quantized(m,&key)?,bias));
-    }
-    #[cfg(not(feature="int8"))]
-    {let _=(q,key);Ok(Linear::new_transposed(pretransposed(&tensor(m,&format!("{p}.weight"))?)?,bias))}
+    q.get(&key).cloned().map(|w|Linear::new_quantized(w,bias)).ok_or_else(||Error::Invalid(format!("missing quantised weight: {key}")))
 }
 fn norm(m:&BTreeMap<String,Tensor>,p:&str,eps:f64)->Result<Norm>{Ok(Norm::new(tensor(m,&format!("{p}.weight"))?,None,eps))}
 
@@ -168,11 +156,12 @@ pub struct VerdictModel {
 fn activate(x:&Tensor,kind:Activation)->CResult<Tensor>{match kind{Activation::Relu=>x.relu(),Activation::Gelu=>x.gelu_erf()}}
 impl VerdictModel {
     pub fn from_tensors(c:VerdictConfig,bundle:Digest,kind:BackendKind,m:BTreeMap<String,Tensor>)->Result<Self>{
-        Self::assemble(c,bundle,kind,m,&QuantMap::new())
+        let mut q=QuantMap::new();let mut aux=BTreeMap::new();
+        for (name,t) in m {if is_matrix_weight(&name){q.insert(name.clone(),quantized(&BTreeMap::from([(name.clone(),t)]),&name)?);}else{aux.insert(name,t);}}
+        Self::assemble(c,bundle,kind,aux,&q)
     }
     /// Build from a pack that already quantised its dense weights, so warm-up never pays
     /// the quantisation cost (it is spread over the pack's per-tensor pushes instead).
-    #[cfg(feature="int8")]
     pub fn from_quantized(c:VerdictConfig,bundle:Digest,kind:BackendKind,m:BTreeMap<String,Tensor>,q:QuantMap)->Result<Self>{
         Self::assemble(c,bundle,kind,m,&q)
     }
@@ -184,7 +173,7 @@ impl VerdictModel {
             if let Some(t)=m.get(name){
                 if t.dims()!=shape.as_slice() || t.dtype()!=DType::F32{return Err(Error::Invalid(format!("shape/dtype: {name}")));}
             }else if let Some(qw)=q.get(name){
-                if shape.len()!=2 || qw.out_features!=shape[0] || qw.in_features!=shape[1]{return Err(Error::Invalid(format!("quantised shape: {name}")));}
+                if shape.len()!=2 || qw.out_features!=shape[0] || qw.in_features!=shape[1] || qw.block_size==0{return Err(Error::Invalid(format!("quantised shape: {name}")));}
             }else{return Err(Error::Invalid(format!("missing {name}")));}
         }
         let mut layers=Vec::new();
@@ -200,7 +189,10 @@ impl VerdictModel {
                 if local{Some(c.local_attention/2)}else{None},
             ));
         }
-        let encoder=ModernBert::new(tensor(&m,"embeddings.weight")?,norm(&m,"embeddings.norm",c.norm_eps)?,layers,norm(&m,"final_norm",c.norm_eps)?);
+        let e=q.get("embeddings.weight").ok_or_else(||Error::Invalid("missing quantised embeddings.weight".into()))?;
+        let embedding=QuantEmbedding::new(e.w.clone(),e.scales.clone(),e.out_features,e.in_features,e.block_size)
+            .map_err(|x|Error::ModelUnavailable(x.to_string()))?;
+        let encoder=ModernBert::new(embedding,norm(&m,"embeddings.norm",c.norm_eps)?,layers,norm(&m,"final_norm",c.norm_eps)?);
         Ok(Self{text_1:linear_biased(&m,q,"text_projector.linear_1")?,text_2:linear_biased(&m,q,"text_projector.linear_2")?,
             class_1:linear_biased(&m,q,"classes_projector.linear_1")?,class_2:linear_biased(&m,q,"classes_projector.linear_2")?,
             encoder,config:c,bundle,backend_kind:kind})
@@ -212,13 +204,12 @@ impl VerdictModel {
     fn hidden(&self,ids:&[u32])->Result<Tensor>{
         if ids.is_empty() || ids.len()>MAX_SEQUENCE {return Err(Error::Invalid("token input".into()));}
         if ids.iter().any(|&v|v as usize>=self.config.vocab_size){return Err(Error::Invalid("token id".into()));}
-        let t=Tensor::from_vec(ids.to_vec(),ids.len(),&Device::Cpu).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
-        self.encoder.forward(&t).map_err(|e|Error::ModelUnavailable(e.to_string()))
+        self.encoder.forward(ids).map_err(|e|Error::ModelUnavailable(e.to_string()))
     }
     /// Encoder output `[tokens, hidden]`, exposed for parity tooling.
     pub fn encode(&self,ids:&[u32])->Result<Vec<f32>>{
         let h=self.hidden(ids)?;let (t,d)=h.dims2().map_err(|e|Error::ModelUnavailable(e.to_string()))?;
-        h.flatten_all().and_then(|x|x.to_vec1::<f32>()).map(|v|{debug_assert_eq!(v.len(),t*d);v}).map_err(|e|Error::ModelUnavailable(e.to_string()))
+        h.flatten_all().and_then(|x|x.to_vec1::<f32>()).inspect(|v|debug_assert_eq!(v.len(),t*d)).map_err(|e|Error::ModelUnavailable(e.to_string()))
     }
     fn projector(one:&Linear,two:&Linear,act:Activation,x:&Tensor)->CResult<Tensor>{
         two.forward(&activate(&one.forward(x)?,act)?)
@@ -268,9 +259,7 @@ impl VerdictModel {
         if ids.is_empty() || ids.len()>MAX_SEQUENCE {return Err(Error::Invalid("token input".into()));}
         if ids.iter().any(|&v|v as usize>=self.config.vocab_size){return Err(Error::Invalid("token id".into()));}
         let device=candle_core::Device::Cpu;
-        let tokens=Tensor::from_vec(ids.to_vec(),ids.len(),&device).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
-        let mut h=self.encoder.embedding_norm.forward(&self.encoder.embedding.index_select(&tokens,0).map_err(|e|Error::ModelUnavailable(e.to_string()))?)
-            .map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        let mut h=self.encoder.embed(ids).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
         mark("embedding");
         let tokens=h.dim(0).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
         let hidden=h.dim(1).map_err(|e|Error::ModelUnavailable(e.to_string()))?;

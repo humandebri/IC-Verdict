@@ -12,7 +12,29 @@ type CResult<T> = candle_core::Result<T>;
 #[derive(Debug,Clone,Copy,Serialize,Deserialize)]
 pub enum Activation { Relu, Gelu }
 #[derive(Clone)]
-pub struct QuantWeight { pub w:Vec<i8>,pub scales:Vec<f32>,pub out_features:usize,pub in_features:usize }
+pub struct QuantWeight { pub w:Vec<i8>,pub scales:Vec<f32>,pub out_features:usize,pub in_features:usize,pub block_size:usize }
+#[derive(Clone)]
+pub struct QuantEmbedding { pub w:Vec<i8>,pub scales:Vec<f32>,pub vocab_size:usize,pub hidden_size:usize,pub block_size:usize }
+impl QuantEmbedding {
+    pub fn new(w:Vec<i8>,scales:Vec<f32>,vocab_size:usize,hidden_size:usize,block_size:usize)->CResult<Self>{
+        let blocks=hidden_size.div_ceil(block_size.max(1));
+        if w.len()!=vocab_size.checked_mul(hidden_size).ok_or_else(||candle_core::Error::Msg("embedding size overflow".into()))?
+            || block_size==0 || scales.len()!=vocab_size*blocks || scales.iter().any(|x|!x.is_finite()||*x<=0.0) {
+            return Err(candle_core::Error::Msg("invalid quantised embedding".into()));
+        }
+        Ok(Self{w,scales,vocab_size,hidden_size,block_size})
+    }
+    pub fn lookup(&self,ids:&[u32])->CResult<Tensor>{
+        let mut out=Vec::with_capacity(ids.len().saturating_mul(self.hidden_size));
+        for &id in ids {
+            let row=id as usize;
+            if row>=self.vocab_size{return Err(candle_core::Error::Msg("embedding id out of range".into()));}
+            let start=row*self.hidden_size;let blocks=self.hidden_size.div_ceil(self.block_size);
+            out.extend(self.w[start..start+self.hidden_size].iter().enumerate().map(|(i,&v)|v as f32*self.scales[row*blocks+i/self.block_size]));
+        }
+        Tensor::from_vec(out,(ids.len(),self.hidden_size),&Device::Cpu)
+    }
+}
 #[derive(Clone)]
 pub struct Linear { weight:Option<Tensor>,bias:Option<Tensor>,transposed:bool,quant:Option<QuantWeight> }
 impl Linear {
@@ -34,7 +56,7 @@ impl Linear {
             let flat=x.flatten_all()?.to_vec1::<f32>()?;
             let (aq,asx)=verdict_simd::quantize_acts_i16(&flat,m,k);
             let mut out=vec![0f32;m*q.out_features];
-            let _=verdict_simd::matmul_i8(&aq,&q.w,&asx,&q.scales,m,k,q.out_features,&mut out);
+            if q.block_size<k{let _=verdict_simd::matmul_i8_blocked(&aq,&q.w,&asx,&q.scales,m,k,q.out_features,q.block_size,&mut out);}else{let _=verdict_simd::matmul_i8(&aq,&q.w,&asx,&q.scales,m,k,q.out_features,&mut out);}
             let mut shape=dims[..dims.len()-1].to_vec();shape.push(q.out_features);
             let y=Tensor::from_vec(out,shape,x.device())?;
             return match &self.bias{Some(b)=>y.broadcast_add(b),None=>Ok(y)};
@@ -85,7 +107,7 @@ pub fn rope_tables(layers:&[EncoderLayer],tokens:usize,hidden:usize,mark:&mut dy
     }
     Ok(out)
 }
-pub fn table_for<'a>(tables:&'a [(f64,RopeTable)],theta:f64)->&'a RopeTable{
+pub fn table_for(tables:&[(f64,RopeTable)],theta:f64)->&RopeTable{
     &tables.iter().find(|(t,_)|*t==theta).expect("rope table for layer theta").1
 }
 
@@ -105,7 +127,7 @@ fn rope_table(t:usize,d:usize,theta:f64,mark:&mut dyn FnMut(&'static str))->CRes
     // implementation, so parity is unchanged.
     let denom:Vec<f64>=(0..half).map(|i|theta.powf((2*i) as f64/d as f64)).collect();
     let mut cos=Vec::with_capacity(t*half);let mut sin=Vec::with_capacity(t*half);
-    for pos in 0..t {let p=pos as f64;for i in 0..half {let a=p/denom[i];cos.push(a.cos() as f32);sin.push(a.sin() as f32);}}
+    for pos in 0..t {let p=pos as f64;for d in denom.iter().take(half){let a=p/d;cos.push(a.cos() as f32);sin.push(a.sin() as f32);}}
     mark("rope.table");
     let cos=Tensor::from_vec(cos,(1,t,half),&Device::Cpu)?;let sin=Tensor::from_vec(sin,(1,t,half),&Device::Cpu)?;
     Ok(RopeTable{cos,sin})
@@ -186,11 +208,11 @@ impl EncoderLayer {
     }
 }
 pub mod encoder {
-    use super::{CResult,EncoderLayer,Norm,RopeTable,Tensor};
+    use super::{CResult,EncoderLayer,Norm,QuantEmbedding,RopeTable,Tensor};
     /// ModernBERT = token embeddings + pre-norm layers + final norm.
-    pub struct ModernBert { pub embedding:Tensor,pub embedding_norm:Norm,pub layers:Vec<EncoderLayer>,pub final_norm:Norm }
+    pub struct ModernBert { pub embedding:QuantEmbedding,pub embedding_norm:Norm,pub layers:Vec<EncoderLayer>,pub final_norm:Norm }
     impl ModernBert {
-        pub fn new(embedding:Tensor,embedding_norm:Norm,layers:Vec<EncoderLayer>,final_norm:Norm)->Self{
+        pub fn new(embedding:QuantEmbedding,embedding_norm:Norm,layers:Vec<EncoderLayer>,final_norm:Norm)->Self{
             Self{embedding,embedding_norm,layers,final_norm}
         }
         /// One rotary table per distinct `theta` among the layers (at most two), built
@@ -200,10 +222,11 @@ pub mod encoder {
         pub fn rope_tables(&self,tokens:usize,dim:usize,mark:&mut dyn FnMut(&'static str))->CResult<Vec<(f64,RopeTable)>>{
             super::rope_tables(&self.layers,tokens,dim,mark)
         }
-        pub fn table_for<'a>(tables:&'a [(f64,RopeTable)],theta:f64)->&'a RopeTable{super::table_for(tables,theta)}
-        /// `input_ids` is a 1-D token id tensor; the result is `[tokens, hidden]`.
-        pub fn forward(&self,input_ids:&Tensor)->CResult<Tensor>{
-            let mut x=self.embedding_norm.forward(&self.embedding.index_select(input_ids,0)?)?;
+        pub fn table_for(tables:&[(f64,RopeTable)],theta:f64)->&RopeTable{super::table_for(tables,theta)}
+        /// The result is `[tokens, hidden]`; only requested embedding rows are decoded.
+        pub fn embed(&self,input_ids:&[u32])->CResult<Tensor>{self.embedding_norm.forward(&self.embedding.lookup(input_ids)?) }
+        pub fn forward(&self,input_ids:&[u32])->CResult<Tensor>{
+            let mut x=self.embed(input_ids)?;
             let tables=self.rope_tables(x.dim(0)?,x.dim(1)?,&mut |_|{})?;
             for layer in &self.layers{let table=Self::table_for(&tables,layer.theta()).clone();x=layer.forward(&x,&table)?;}
             self.final_norm.forward(&x)

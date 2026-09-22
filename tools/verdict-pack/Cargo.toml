@@ -1,0 +1,12 @@
+[package]
+name = "verdict-pack"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[dependencies]
+verdict-candle.workspace = true
+verdict-simd.workspace = true
+modernbert-candle.workspace = true
+ic-laya-core.workspace = true
+serde_json.workspace = true
+safetensors.workspace = true

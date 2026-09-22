@@ -9,15 +9,15 @@
 //! The model side is `verdict-candle`; its encoder is `modernbert-candle`, the shared
 //! ModernBERT implementation.
 //!
-//! Sizing: F32 weights are 151M x 4 B = 605 MiB, which fits the 4 GiB wasm heap
-//! with room for activations. Instructions, not memory, are the binding limit:
+//! Sizing: the production block-32 INT8 pack is about 162.5 MiB; no two-dimensional
+//! F32 weight is accepted. Instructions, not memory, remain the binding limit:
 //! see `MAX_INPUT_TOKENS` and the measurement note in `infer_tokens`.
 use candid::{CandidType,Principal};
 use candle_core::{Device,Module,Tensor};
 use candle_core::quantized::{GgmlDType,QMatMul,QTensor};
 use ic_laya_core::{hash,Digest,Error,Result,SpecialTokens};
-use ic_laya_core::engine::InferenceBackend;
-use ic_laya_core::schema::TextTokenizer;
+use ic_laya_core::engine::{EngineState,InferenceBackend};
+use ic_laya_core::schema::{self,TextTokenizer};
 use serde::{Deserialize,Serialize};
 use std::cell::RefCell;
 use std::collections::BTreeMap;
@@ -34,10 +34,28 @@ pub const MAX_INPUT_TOKENS:u32=128;
 /// real prompt sweep pinning the ceiling between 120 (39.57e9) and 126 (rejected).
 /// The guard must refuse *before* spending the budget, so the model is a constant
 /// rather than a measurement; `set_cost_model` lets the owner correct it.
+///
+/// It is deliberately conservative for the current kernels: the optimization series
+/// after that fit brought T=120 down to 36.98e9, so this model refuses early — the
+/// fitted marginal slope is 3.068e8 instructions/token (two-point fit at T=6 and T=120),
+/// not the 3.081e8 that `I(120)/120` reports, because the average still carries the
+/// fixed cost. With that fit the guard would accept 129 tokens (capped at 128 by
+/// `MAX_INPUT_TOKENS`) and 15 query tokens, so the defaults leave 121..128 and one query
+/// token on the table until the owner calls `set_cost_model`. See docs/VERDICT_ENGINE.md
+/// 5.1.2 and 5.3 for the arithmetic.
 pub const COST_FIXED:u64=254_400_000;
 pub const COST_PER_TOKEN:u64=327_600_000;
 /// ICP's per-update instruction limit.
 pub const UPDATE_BUDGET:u64=40_000_000_000;
+/// ICP's per-query instruction limit (canister resource limits: 40B per update call,
+/// 5B per query call). A query also costs no cycles and needs no consensus round; the
+/// price is this lower ceiling and an uncertified reply.
+///
+/// The token ceiling follows from the same cost model as the update one
+/// (`T <= (QUERY_BUDGET - COST_FIXED) / COST_PER_TOKEN`), so it is about fourteen
+/// tokens with the guard's conservative fit and about fifteen with the measured slope.
+/// `query_limits()` reports the derived value; nothing hardcodes it.
+pub const QUERY_BUDGET:u64=5_000_000_000;
 /// Keep a margin for the reply encoding and the tokenizer, which the linear model
 /// above does not cover. Fitted so the guard reproduces the measurement: T=120
 /// (39.57e9 measured, 39.77e9 projected) is accepted and T=126 (41.74e9) is refused,
@@ -57,6 +75,7 @@ struct Persistent{
     active_model:Digest,
     upload:Option<Upload>,
     callers:BTreeMap<Principal,u32>,
+    #[serde(default="empty_workflow")] workflow:EngineState,
     max_input_tokens:u32,
     // Cost model used by the pre-flight budget guard. `#[serde(default)]` keeps an
     // older snapshot loadable across an upgrade.
@@ -64,17 +83,42 @@ struct Persistent{
     #[serde(default="default_cost_per_token")] cost_per_token:u64,
     #[serde(default="default_budget")] budget:u64,
 }
+#[derive(Clone,Serialize,Deserialize)]
+struct LegacyPersistent{owner:Principal,active_model:Digest,upload:Option<Upload>,callers:BTreeMap<Principal,u32>,max_input_tokens:u32,
+    #[serde(default="default_cost_fixed")] cost_fixed:u64,#[serde(default="default_cost_per_token")] cost_per_token:u64,#[serde(default="default_budget")] budget:u64}
 fn default_cost_fixed()->u64{COST_FIXED}
 fn default_cost_per_token()->u64{COST_PER_TOKEN}
 fn default_budget()->u64{UPDATE_BUDGET}
+fn empty_workflow()->EngineState{EngineState::new([0;32])}
 /// Projected instructions for one forward pass of `tokens` tokens, plus margin.
 fn projected(s:&Persistent,tokens:usize)->u64{
     (s.cost_fixed.saturating_add(s.cost_per_token.saturating_mul(tokens as u64)))
         .saturating_mul(BUDGET_MARGIN_PERMILLE)/1000
 }
-fn guard_budget(s:&Persistent,tokens:usize)->Result<()>{
-    if projected(s,tokens)>s.budget {return Err(Error::Capacity);}
+/// Refuse before the call spends `budget`.
+///
+/// `Capacity`, not a new `Error` variant: the variant list is public Candid surface and
+/// the caller already knows which method it called, so "over budget" needs no second
+/// discriminator to be actionable.
+fn guard_within(s:&Persistent,tokens:usize,budget:u64)->Result<()>{
+    if projected(s,tokens)>budget {return Err(Error::Capacity);}
     Ok(())
+}
+/// Update-path guard: the policy budget the owner may tighten with `set_cost_model`.
+/// The update entry points pass `s.budget` into `infer_once`/`decide_once`, so this is
+/// only the named form of that comparison; keeping it makes the difference between the
+/// two budgets explicit at the call sites.
+fn guard_budget(s:&Persistent,tokens:usize)->Result<()>{guard_within(s,tokens,s.budget)}
+/// Largest `T` whose projected cost fits `budget`, capped by the policy bound.
+///
+/// Both divisions floor, so the advertised length is never one the guard would refuse.
+/// Enforcement stays in `guard_within`: a cost model the owner corrects after measuring
+/// raises the usable query length without touching this function.
+fn max_tokens_within(s:&Persistent,budget:u64)->u32{
+    if s.cost_per_token==0 {return 0;}
+    let net=budget.saturating_mul(1000)/BUDGET_MARGIN_PERMILLE;
+    let tokens=net.saturating_sub(s.cost_fixed)/s.cost_per_token;
+    (tokens.min(u32::MAX as u64) as u32).min(s.max_input_tokens)
 }
 thread_local!{static STATE:RefCell<Option<Persistent>>=const{RefCell::new(None)};}
 thread_local!{
@@ -93,7 +137,7 @@ fn admitted(caller:Principal)->Result<()>{
 #[ic_cdk::init]
 fn init(owner:Principal){
     if owner==Principal::anonymous() || owner==Principal::management_canister(){ic_cdk::trap("invalid owner");}
-    let s=Persistent{owner,active_model:[0;32],upload:None,callers:BTreeMap::new(),max_input_tokens:MAX_INPUT_TOKENS,
+    let s=Persistent{owner,active_model:[0;32],upload:None,callers:BTreeMap::new(),workflow:EngineState::new([0;32]),max_input_tokens:MAX_INPUT_TOKENS,
         cost_fixed:COST_FIXED,cost_per_token:COST_PER_TOKEN,budget:UPDATE_BUDGET};
     canister_common::persist_or_trap(&s);STATE.with(|x|*x.borrow_mut()=Some(s));
 }
@@ -103,7 +147,12 @@ fn pre_upgrade(){read(canister_common::persist_or_trap);}
 fn post_upgrade(){
     // The heap model is never kept across an upgrade: the pack bytes and upload
     // metadata survive in stable memory, the Candle tensors do not.
-    let s:Persistent=canister_common::restore().unwrap_or_else(|e|ic_cdk::trap(&e.to_string()));
+    let s:Persistent=canister_common::restore().or_else(|_|->Result<Persistent>{
+        let old:LegacyPersistent=canister_common::restore()?;let mut workflow=EngineState::new(old.active_model);
+        for caller in old.callers.keys().copied(){workflow.allow_caller(caller,1000)?;}
+        Ok(Persistent{owner:old.owner,active_model:old.active_model,upload:old.upload,callers:old.callers,workflow,
+            max_input_tokens:old.max_input_tokens,cost_fixed:old.cost_fixed,cost_per_token:old.cost_per_token,budget:old.budget})
+    }).unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
     MODEL.with(|x|*x.borrow_mut()=None);BUILDER.with(|x|*x.borrow_mut()=None);TOKENIZER.with(|x|*x.borrow_mut()=None);
     STATE.with(|x|*x.borrow_mut()=Some(s));
 }
@@ -111,6 +160,8 @@ fn post_upgrade(){
 #[derive(CandidType,Serialize,Deserialize)]
 pub struct EngineInfo{
     pub model:Digest,
+    pub pack_format:String,
+    pub model_bytes:u64,
     pub tensors:u64,
     pub warmed:bool,
     pub upload_complete:bool,
@@ -130,7 +181,7 @@ fn info()->EngineInfo{
             (n,m.borrow().is_some())
         }));
         EngineInfo{
-            model:s.active_model,tensors,warmed,
+            model:s.active_model,pack_format:verdict_candle::pack::FORMAT.into(),model_bytes:s.upload.as_ref().map(|u|u.model_length).unwrap_or(0),tensors,warmed,
             upload_complete:s.upload.as_ref().map(|u|u.received==u.model_length+u.tokenizer_length).unwrap_or(false),
             max_input_tokens:s.max_input_tokens,max_classes:verdict_candle::MAX_CLASSES as u32,
             callers:s.callers.len() as u64,heap_bytes:heap_bytes(),
@@ -142,8 +193,22 @@ fn info()->EngineInfo{
 fn allow_caller(caller:Principal)->Result<()>{
     owner()?;
     if caller==Principal::anonymous() || caller==Principal::management_canister(){return Err(Error::Invalid("caller".into()));}
-    mutate(|s|{if !s.callers.contains_key(&caller) && s.callers.len()>=64{return Err(Error::Capacity);}s.callers.insert(caller,ic_cdk::api::time() as u32);Ok(())})
+    mutate(|s|{if !s.callers.contains_key(&caller) && s.callers.len()>=64{return Err(Error::Capacity);}s.callers.insert(caller,ic_cdk::api::time() as u32);s.workflow.allow_caller(caller,1000)?;Ok(())})
 }
+#[ic_cdk::update]
+fn set_caller_quota(caller:Principal,per_minute:u32)->Result<()>{owner()?;mutate(|s|s.workflow.allow_caller(caller,per_minute))}
+
+#[ic_cdk::update]
+fn register_schema(schema_value:ic_laya_core::Schema,qtype_id:u32)->Result<ic_laya_core::CompiledSchema>{
+    owner()?;
+    let compiled=TOKENIZER.with(|t|{
+        let t=t.borrow();let t=t.as_ref().ok_or_else(||Error::ModelUnavailable("warm-up required".into()))?;
+        schema::compile(schema_value,t,qtype_id)
+    })?;
+    mutate(|s|s.workflow.register(compiled.clone()))?;Ok(compiled)
+}
+#[ic_cdk::update]
+fn register_calibration(calibration:ic_laya_core::Calibration)->Result<()>{owner()?;mutate(|s|s.workflow.register_calibration(calibration,ic_cdk::api::time()))}
 #[ic_cdk::update]
 fn set_max_input_tokens(n:u32)->Result<u32>{
     owner()?;
@@ -166,6 +231,35 @@ fn heap_bytes()->u64{
 /// Projected cost of one forward pass, with the margin the guard applies.
 #[ic_cdk::query]
 fn estimated_cost(tokens:u32)->u64{read(|s|projected(s,tokens as usize))}
+/// What the query path will accept, so a client never hardcodes the derived ceiling.
+///
+/// `max_tokens` is the answer to "how long an input can this canister score in a query
+/// call"; it moves when the owner corrects the cost model with `set_cost_model`. The
+/// cost model itself is returned alongside it: a recorded measurement is only readable
+/// later if it says which model produced the ceiling, and the same ceiling means
+/// different things for an average fit and an upper-bound fit.
+///
+/// **The ceiling is exact for the installed model, not for the hardware.** The guard
+/// compares a linear projection against the budget, so it refuses before the replica
+/// does exactly when the installed `cost_fixed`/`cost_per_token` upper-bound the inputs
+/// in question. For F32 that holds with the default 0.5% margin (measured spread 0.3%);
+/// for a data-dependent kernel such as int8 the measured cost varies by ~20%, so the
+/// owner must install a fit from the *worst observed* cost, not the average one.
+#[derive(CandidType,Serialize,Deserialize)]
+pub struct QueryLimits{
+    pub budget:u64,
+    pub margin_permille:u64,
+    pub max_tokens:u32,
+    pub max_input_tokens:u32,
+    pub cost_fixed:u64,
+    pub cost_per_token:u64,
+}
+#[ic_cdk::query]
+fn query_limits()->QueryLimits{
+    read(|s|QueryLimits{budget:QUERY_BUDGET,margin_permille:BUDGET_MARGIN_PERMILLE,
+        max_tokens:max_tokens_within(s,QUERY_BUDGET),max_input_tokens:s.max_input_tokens,
+        cost_fixed:s.cost_fixed,cost_per_token:s.cost_per_token})
+}
 #[ic_cdk::update]
 fn set_cost_model(cost_fixed:u64,cost_per_token:u64,budget:u64)->Result<()>{
     owner()?;
@@ -251,7 +345,7 @@ fn bench_qmatmul(m:u32,n:u32,k:u32,iterations:u32,dtype:String)->Result<QuantBen
     let want=reference.flatten_all().and_then(|t|t.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
     let max_abs_diff_vs_f32=got.iter().zip(want.iter()).fold(0.0f32,|acc,(g,w)|acc.max((g-w).abs()));
     let macs=(m*n*k*iterations as usize) as f64;
-    Ok(QuantBenchReply{m:m as u32,n:n as u32,k:k as u32,iterations:iterations as u32,dtype,
+    Ok(QuantBenchReply{m:m as u32,n:n as u32,k:k as u32,iterations,dtype,
         quantize_instructions,instructions,per_iteration:instructions/iterations as u64,
         instructions_per_mac:if macs>0.0{instructions as f64/macs}else{0.0},max_abs_diff_vs_f32})
 }
@@ -269,7 +363,7 @@ pub struct Int8BenchReply{pub m:u32,pub n:u32,pub k:u32,pub iterations:u32,
 #[ic_cdk::update]
 fn bench_int8(m:u32,n:u32,k:u32,iterations:u32)->Result<Int8BenchReply>{
     owner()?;
-    if m==0||n==0||k==0||m>512||n>4096||k>4096||iterations==0||iterations>64||k%8!=0{return Err(Error::Invalid("bench shape".into()));}
+    if m==0||n==0||k==0||m>512||n>4096||k>4096||iterations==0||iterations>64||!k.is_multiple_of(8){return Err(Error::Invalid("bench shape".into()));}
     let (m,n,k)=(m as usize,n as usize,k as usize);
     // Weight as [n, k] (the checkpoint layout) and activations as [m, k].
     let w=bench_matrix(n,k)?.flatten_all().and_then(|x|x.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
@@ -299,7 +393,7 @@ fn bench_int8(m:u32,n:u32,k:u32,iterations:u32)->Result<Int8BenchReply>{
     for _ in 0..iterations { let _=verdict_simd::matmul_i8(&xq,&wq,&xsx,&wsx,m,k,n,&mut out); }
     let instructions=ic_cdk::api::instruction_counter().saturating_sub(before);
     let macs=(m*n*k*iterations as usize) as f64;
-    Ok(Int8BenchReply{m:m as u32,n:n as u32,k:k as u32,iterations:iterations as u32,simd_used,instructions,
+    Ok(Int8BenchReply{m:m as u32,n:n as u32,k:k as u32,iterations,simd_used,instructions,
         per_iteration:instructions/iterations as u64,
         instructions_per_mac:if macs>0.0{instructions as f64/macs}else{0.0},
         quantize_weights_instructions,quantize_activations_instructions,max_abs_diff_vs_f32:max_abs,max_rel_diff_vs_f32:max_rel})
@@ -337,7 +431,7 @@ fn bench_f16(m:u32,n:u32,k:u32,iterations:u32)->Result<F16BenchReply>{
     let want=reference.flatten_all().and_then(|t|t.to_vec1::<f32>()).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
     let max_abs_diff_vs_f32=got.iter().zip(want.iter()).fold(0.0f32,|a,(g,w)|a.max((g-w).abs()));
     let macs=(m*n*k*iterations as usize) as f64;
-    Ok(F16BenchReply{m:m as u32,n:n as u32,k:k as u32,iterations:iterations as u32,convert_instructions,instructions,
+    Ok(F16BenchReply{m:m as u32,n:n as u32,k:k as u32,iterations,convert_instructions,instructions,
         per_iteration:instructions/iterations as u64,
         instructions_per_mac:if macs>0.0{instructions as f64/macs}else{0.0},max_abs_diff_vs_f32})
 }
@@ -400,7 +494,12 @@ fn warmup_next()->Result<bool>{
     if done {
         let builder=BUILDER.with(|b|b.borrow_mut().take()).ok_or(Error::Transition)?;
         let bundle=builder.bundle;let model=builder.finish()?;
-        MODEL.with(|m|*m.borrow_mut()=Some(model));mutate(|s|s.active_model=bundle);
+        MODEL.with(|m|*m.borrow_mut()=Some(model));mutate(|s|{
+            s.active_model=bundle;
+            s.workflow=EngineState::new(bundle);
+            for caller in s.callers.keys().copied(){s.workflow.allow_caller(caller,1000)?;}
+            Ok::<(),Error>(())
+        })?;
     }
     Ok(done)
 }
@@ -413,6 +512,22 @@ pub struct InferReply{
     pub input_tokens:u32,
     pub measured_instructions:u64,
 }
+/// Shared body of `infer_tokens` (update) and `infer_tokens_query` (query).
+///
+/// Only the budget differs, so the two entry points cannot drift apart. `logits` takes
+/// `&self`, which is what lets the query path score an input without mutating the
+/// cached model.
+fn infer_once(s:&Persistent,input_ids:Vec<u32>,budget:u64)->Result<InferReply>{
+    if input_ids.is_empty() || input_ids.len()>s.max_input_tokens as usize {return Err(Error::TooLong);}
+    guard_within(s,input_ids.len(),budget)?;
+    MODEL.with(|m|{
+        let m=m.borrow();let model=m.as_ref().ok_or_else(||Error::ModelUnavailable("warm-up required".into()))?;
+        let before=ic_cdk::api::instruction_counter();
+        let logits=model.logits(&input_ids)?;
+        let measured=ic_cdk::api::instruction_counter().saturating_sub(before);
+        Ok(InferReply{model:model.bundle_id(),class_positions:model.class_positions(&input_ids),logits,input_tokens:input_ids.len() as u32,measured_instructions:measured})
+    })
+}
 /// Raw token ids in, one logit per `<<LABEL>>` token out.
 ///
 /// The instruction count is measured around the forward pass only, so it excludes
@@ -421,17 +536,45 @@ pub struct InferReply{
 #[ic_cdk::update]
 fn infer_tokens(input_ids:Vec<u32>)->Result<InferReply>{
     let caller=ic_cdk::api::msg_caller();admitted(caller)?;
-    read(|s|{
-        if input_ids.is_empty() || input_ids.len()>s.max_input_tokens as usize {return Err(Error::TooLong);}
-        guard_budget(s,input_ids.len())?;
-        MODEL.with(|m|{
-            let mut m=m.borrow_mut();let model=m.as_mut().ok_or_else(||Error::ModelUnavailable("warm-up required".into()))?;
-            let before=ic_cdk::api::instruction_counter();
-            let logits=model.logits(&input_ids)?;
+    read(|s|infer_once(s,input_ids,s.budget))
+}
+/// `infer_tokens` over a query call: the same forward pass under the 5B query budget.
+///
+/// What it buys: no consensus round, no cycles, lower latency, and a 3 MiB reply cap
+/// instead of 2 MiB. What it costs: the ceiling falls to roughly fourteen tokens
+/// (`query_limits()` reports the derived value), the reply is **not certified**, and
+/// the same caller allowlist is enforced by code the caller cannot verify. Use it for
+/// interactive short-input scoring, never as the authority for moving funds.
+///
+/// The model must already be warm: a query cannot load the pack, because `stable_write`
+/// is illegal in a query, and loading it would exceed the 5B limit anyway.
+#[ic_cdk::query]
+fn infer_tokens_query(input_ids:Vec<u32>)->Result<InferReply>{
+    let caller=ic_cdk::api::msg_caller();admitted(caller)?;
+    read(|s|infer_once(s,input_ids,QUERY_BUDGET))
+}
+
+/// Workflow-compatible, durable one-question evaluation using the resident checkpoint.
+#[ic_cdk::update]
+fn evaluate(req:ic_laya_core::DecisionRequest)->Result<ic_laya_core::Receipt>{
+    let caller=ic_cdk::api::msg_caller();let now=ic_cdk::api::time();admitted(caller)?;
+    let budget_state=read(|s|s.clone());
+    mutate(|s|s.workflow.evaluate_with(caller,req,now,|compiled,_,state|{
+        let labels:Vec<String>=compiled.schema.options.iter().map(|o|o.text.clone()).collect();
+        let special=TOKENIZER.with(|t|t.borrow().as_ref().map(|t|t.special_tokens()))
+            .ok_or_else(||Error::ModelUnavailable("warm-up required".into()))?;
+        let prompt=verdict_candle::render_prompt_checked(&compiled.schema.instructions,state,&labels,&special)?;
+        TOKENIZER.with(|t|MODEL.with(|m|{
+            let t=t.borrow();let m=m.borrow();
+            let (t,model)=match(t.as_ref(),m.as_ref()){(Some(t),Some(m))=>(t,m),_=>return Err(Error::ModelUnavailable("warm-up required".into()))};
+            let mut input=vec![model.config.cls_token_id];input.extend(t.encode_piece(&prompt)?);input.push(model.config.sep_token_id);
+            if input.len()>budget_state.max_input_tokens as usize||input.len()>verdict_candle::MAX_SEQUENCE{return Err(Error::TooLong);}
+            guard_within(&budget_state,input.len(),budget_state.budget)?;
+            let before=ic_cdk::api::instruction_counter();let logits=model.logits(&input)?;
             let measured=ic_cdk::api::instruction_counter().saturating_sub(before);
-            Ok(InferReply{model:model.bundle_id(),class_positions:model.class_positions(&input_ids),logits,input_tokens:input_ids.len() as u32,measured_instructions:measured})
-        })
-    })
+            Ok((logits,input.len() as u32,model.kind(),measured))
+        }))
+    }))
 }
 
 /// Wire form of `verdict_candle::PhaseCost`. Kept local so the canister's Candid
@@ -502,15 +645,11 @@ pub struct DecideReply{
     pub input_tokens:u32,
     pub measured_instructions:u64,
 }
-/// One typed decision: state + question + options in, calibrated distribution out.
+/// Shared body of `decide` (update) and `decide_query` (query).
 ///
-/// The prompt is the checkpoint's own contract
-/// (`<<LABEL>>desc...<<SEP>>Question: ...\n\nContext:\n...`, wrapped as
-/// `[CLS] ... [SEP]`), so the tokenizer and the head see exactly what the
-/// reference engine produces.
-#[ic_cdk::update]
-fn decide(req:DecideRequest)->Result<DecideReply>{
-    let caller=ic_cdk::api::msg_caller();admitted(caller)?;
+/// Every prompt, policy and shape check lives here, so the two entry points cannot end
+/// up enforcing different rules. Only the budget differs.
+fn decide_once(req:DecideRequest,budget:u64)->Result<DecideReply>{
     if req.state.is_empty() || req.state.len()>ic_laya_core::MAX_STATE_BYTES {return Err(Error::TooLong);}
     if req.options.is_empty() || req.options.len()>MAX_OPTIONS {return Err(Error::TooLong);}
     if !req.temperature.is_finite() || req.temperature<=0.0 || req.temperature>100.0 {return Err(Error::Numeric);}
@@ -529,13 +668,13 @@ fn decide(req:DecideRequest)->Result<DecideReply>{
         .ok_or_else(||Error::ModelUnavailable("warm-up required".into()))?;
     let prompt=verdict_candle::render_prompt_checked(&req.question,&req.state,&labels,&special)?;
     TOKENIZER.with(|t|MODEL.with(|m|{
-        let t=t.borrow();let mut m=m.borrow_mut();
-        let (t,model)=match (t.as_ref(),m.as_mut()){(Some(t),Some(m))=>(t,m),_=>return Err(Error::ModelUnavailable("warm-up required".into()))};
+        let t=t.borrow();let m=m.borrow();
+        let (t,model)=match (t.as_ref(),m.as_ref()){(Some(t),Some(m))=>(t,m),_=>return Err(Error::ModelUnavailable("warm-up required".into()))};
         let mut input=vec![model.config.cls_token_id];
         input.extend(t.encode_piece(&prompt)?);
         input.push(model.config.sep_token_id);
         if input.len()>limits as usize || input.len()>verdict_candle::MAX_SEQUENCE{return Err(Error::TooLong);}
-        guard_budget(&read(|s|s.clone()),input.len())?;
+        guard_within(&read(|s|s.clone()),input.len(),budget)?;
         let before=ic_cdk::api::instruction_counter();
         let logits=model.logits(&input)?;
         if logits.len()!=ids.len(){return Err(Error::BindingMismatch);}
@@ -548,6 +687,29 @@ fn decide(req:DecideRequest)->Result<DecideReply>{
             selected:ids[best.0].clone(),confidence:best.1,input_tokens:input.len() as u32,measured_instructions:measured,
         })
     }))
+}
+/// One typed decision: state + question + options in, calibrated distribution out.
+///
+/// The prompt is the checkpoint's own contract
+/// (`<<LABEL>>desc...<<SEP>>Question: ...\n\nContext:\n...`, wrapped as
+/// `[CLS] ... [SEP]`), so the tokenizer and the head see exactly what the
+/// reference engine produces.
+#[ic_cdk::update]
+fn decide(req:DecideRequest)->Result<DecideReply>{
+    let caller=ic_cdk::api::msg_caller();admitted(caller)?;
+    decide_once(req,read(|s|s.budget))
+}
+/// `decide` over a query call.
+///
+/// Same prompt contract and same validation, under the 5B query budget. A real decision
+/// prompt is far longer than that: the measured 52-token call costs 16.83e9, so this
+/// entry point refuses realistic requests with `Capacity` rather than pretending they
+/// were scored. It exists for short interactive cases and for clients that already know
+/// their prompt fits; it is not a way to make long decisions cheaper.
+#[ic_cdk::query]
+fn decide_query(req:DecideRequest)->Result<DecideReply>{
+    let caller=ic_cdk::api::msg_caller();admitted(caller)?;
+    decide_once(req,QUERY_BUDGET)
 }
 #[derive(CandidType,Serialize,Deserialize,Clone)]
 pub struct BatchQuestion{pub id:String,pub question:String,pub options:Vec<OptionSpec>,pub abstention:bool}
@@ -637,3 +799,77 @@ fn softmax(xs:&[f32])->Result<Vec<f32>>{
 }
 ic_cdk::export_candid!();
 pub fn candid_interface()->String{__export_service()}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+    /// The budget guard is pure arithmetic, so it is testable off-wasm. Nothing here
+    /// calls `ic0`: `instruction_counter` and the caller APIs are only read from the
+    /// entry points, which these tests exercise through the guard functions.
+    fn state(cost_fixed:u64,cost_per_token:u64)->Persistent{
+        Persistent{owner:Principal::from_slice(&[1]),active_model:[0;32],upload:None,
+            callers:BTreeMap::new(),workflow:EngineState::new([0;32]),max_input_tokens:MAX_INPUT_TOKENS,
+            cost_fixed,cost_per_token,budget:UPDATE_BUDGET}
+    }
+    #[test]
+    fn the_query_budget_is_the_protocol_limit(){
+        assert_eq!(QUERY_BUDGET,5_000_000_000);
+        assert_eq!(UPDATE_BUDGET,40_000_000_000);
+    }
+    #[test]
+    fn legacy_snapshot_defaults_the_workflow_registry(){
+        let old=LegacyPersistent{owner:Principal::from_slice(&[1]),active_model:[7;32],upload:None,callers:BTreeMap::new(),max_input_tokens:128,cost_fixed:COST_FIXED,cost_per_token:COST_PER_TOKEN,budget:UPDATE_BUDGET};
+        let bytes=ic_laya_core::storage::encode(&old).unwrap();
+        let restored=ic_laya_core::storage::decode::<Persistent>(&bytes).or_else(|_|->Result<Persistent>{
+            let old:LegacyPersistent=ic_laya_core::storage::decode(&bytes)?;
+            Ok(Persistent{owner:old.owner,active_model:old.active_model,upload:old.upload,callers:old.callers,workflow:EngineState::new(old.active_model),max_input_tokens:old.max_input_tokens,cost_fixed:old.cost_fixed,cost_per_token:old.cost_per_token,budget:old.budget})
+        }).unwrap();
+        assert_eq!(restored.workflow.active_model,[7;32]);
+    }
+    #[test]
+    fn the_default_model_advertises_fourteen_query_tokens(){
+        let s=state(COST_FIXED,COST_PER_TOKEN);
+        assert_eq!(max_tokens_within(&s,QUERY_BUDGET),14);
+        assert!(guard_within(&s,14,QUERY_BUDGET).is_ok());
+        assert!(matches!(guard_within(&s,15,QUERY_BUDGET),Err(Error::Capacity)));
+    }
+    #[test]
+    fn the_measured_slope_raises_the_query_ceiling(){
+        // 3.068e8/token is the *fitted marginal* slope of the two recorded points
+        // (T=6 and T=120, docs/VERDICT_ENGINE.md 5.1.1/5.3). `I(120)/120 = 3.081e8`
+        // is an average and still carries the fixed cost, so it is not the slope.
+        let s=state(COST_FIXED,306_804_548);
+        assert_eq!(max_tokens_within(&s,QUERY_BUDGET),15);
+    }
+    #[test]
+    fn the_measured_fit_relaxes_the_update_ceiling_to_the_policy_bound(){
+        // Installing the two-point fit is the documented way to stop refusing inputs the
+        // hardware can afford. The update ceiling then lands on the *policy* bound, not on
+        // a budget computation: 129 fits 40B, and MAX_INPUT_TOKENS caps it at 128.
+        let s=state(159_525_640,306_804_548);
+        assert_eq!(max_tokens_within(&s,UPDATE_BUDGET),MAX_INPUT_TOKENS);
+        assert!(guard_within(&s,MAX_INPUT_TOKENS as usize,UPDATE_BUDGET).is_ok());
+    }
+    #[test]
+    fn the_update_guard_still_pins_the_measured_ceiling(){
+        let s=state(COST_FIXED,COST_PER_TOKEN);
+        assert!(guard_budget(&s,120).is_ok());
+        assert!(matches!(guard_budget(&s,126),Err(Error::Capacity)));
+        // 121..128 fit the budget under the fitted model and are refused by the default
+        // one; the default is the conservative choice, not the accurate one.
+        let fitted=state(159_525_640,306_804_548);
+        assert!(matches!(guard_budget(&s,121),Err(Error::Capacity)));
+        assert!(guard_budget(&fitted,121).is_ok());
+        assert!(guard_budget(&fitted,128).is_ok());
+    }
+    #[test]
+    fn the_advertised_length_is_never_refused_by_the_guard(){
+        for per_token in [COST_PER_TOKEN,306_804_548,121_000_000]{
+            for budget in [QUERY_BUDGET,UPDATE_BUDGET]{
+                let s=state(COST_FIXED,per_token);
+                let t=max_tokens_within(&s,budget) as usize;
+                assert!(guard_within(&s,t,budget).is_ok(),"T={t} per_token={per_token} budget={budget}");
+            }
+        }
+    }
+}

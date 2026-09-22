@@ -15,10 +15,3 @@ serde_json.workspace = true
 [[bin]]
 name = "verdict-infer"
 path = "src/bin/verdict_infer.rs"
-
-[features]
-# int8 dense weights: measured -27.2% instructions per decision in the canister
-# (27,175,008,431 vs 37,311,793,353 at T=120) and 198/200 argmax agreement with the
-# author's recorded decisions instead of 1000/1000. Off by default so the parity gate
-# keeps testing the lossless path; the canister build opts in.
-int8 = []

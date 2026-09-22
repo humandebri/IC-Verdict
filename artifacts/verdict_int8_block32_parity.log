@@ -1,0 +1,11 @@
+format=ic-verdict-int8-pack-v1
+model_bytes=170408640
+cases=1000 skipped_no_truth=0 argmax_match=997/1000 (99.70%) longest_input_tokens=150 temp=1.4265149
+top-probability |p-gold|: max=0.051595 mean=0.002726
+segments: offset=0 125/125; 125 125/125; 250 124/125; 375 124/125; 500 124/125; 625 125/125; 750 125/125; 875 125/125
+mismatches:
+- test_oos_00139: get_physical_card -> __insufficient_evidence__ (safe abstention)
+- test_in_00673: pending_top_up -> __insufficient_evidence__ (safe abstention)
+- test_oos_00033: __insufficient_evidence__ -> lost_or_stolen_phone (unsafe abstention escape)
+quality_gate=min_argmax_ratio=0.995 unsafe_abstention_escape=0
+result=FAIL ratio_pass=true unsafe_abstention_escape=1
