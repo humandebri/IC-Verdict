@@ -1,4 +1,4 @@
-# IC-Laya — Rust implementation v0.2
+# IC-Verdict — Rust implementation v0.2
 
 **Choice・Noul・Score / 英語 / ICP canister / 型付き判断 / 制約付きmock Tx**
 
