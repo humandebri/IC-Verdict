@@ -1,7 +1,6 @@
 # Browser-owned Tetris with a generic model query
 
-> Implemented in the workspace; production release is pending. The currently
-> deployed behavior is recorded in [MAINNET.md](MAINNET.md).
+> Published on 2026-09-24. Deployment details are in [MAINNET.md](MAINNET.md).
 
 The browser owns the 200-cell board, piece sequence, legal-placement search,
 features, candidate selection, animation and next board. The canister does no
@@ -54,7 +53,28 @@ and an upgrade from it to the final model-only Wasm. The final Wasm is
 `build/verdict-engine.wasm` (SHA-256
 `2c403877b2fac5c4563fe33fa71712174ed4818c1a499fbdf0621eaa2afff680`).
 
-Production is still on the old canister and Web release. Publication needs the
-`production` identity in macOS Keychain and a Cloudflare Wrangler login on this
-host. After access is restored, publish the compatibility Wasm, warm it, switch
-the Web, then publish the final model-only Wasm and warm it again.
+## Production release (2026-09-24)
+
+The existing canister `qojfj-6qaaa-aaaam-qjkaq-cai` was upgraded to the
+compatibility Wasm, and all 142 model tensors were warmed. Anonymous
+`decide_query` then succeeded with the retained model digest
+`0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0`.
+Worker `openjev` was published as version
+`51a2dde9-f9d2-425f-b921-1d58b6617a2a`. A public Chrome smoke test
+completed one model turn with 41 input tokens, one decision query and no game
+update; comparison mode completed two turns with no canister traffic.
+
+After that check, the same canister was upgraded to the final model-only Wasm
+and all 142 tensors were warmed again. The installed module hash is
+`2c403877b2fac5c4563fe33fa71712174ed4818c1a499fbdf0621eaa2afff680`.
+Anonymous `info` reported the original model digest and `warmed = true`, and
+anonymous `decide_query` succeeded. A second public Chrome smoke test confirmed
+one model turn with 41 tokens and one decision query, then two comparison turns
+with no canister traffic. The canister was Running with 732,530,282,054 cycles
+at the final status snapshot. No model upload, funding, DNS or controller change
+was performed.
+
+The `production` keyring alias was unavailable in this shell. Deployment used
+the existing `bridge-seal-log-reader` identity, which resolves to the same
+controller principal recorded in [MAINNET.md](MAINNET.md). Wrangler OAuth was
+available with elevated filesystem access.

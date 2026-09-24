@@ -1,5 +1,26 @@
 # OpenJev mainnet deployment
 
+## Browser-owned Tetris and generic model query release (2026-09-24)
+
+- Public site: https://openjev.kinic.xyz, Worker `openjev` version
+  `51a2dde9-f9d2-425f-b921-1d58b6617a2a`.
+- The existing canister was first upgraded to compatibility Wasm
+  `584657715086775ff0e785053b175c777d27261abd13029b71bc1aeeb662204e`
+  and warmed. After the Web switch and public smoke, it was upgraded to the
+  final model-only Wasm
+  `2c403877b2fac5c4563fe33fa71712174ed4818c1a499fbdf0621eaa2afff680`
+  and warmed again. The old Tetris-specific API is absent from the final Candid.
+- The original model digest was retained. Anonymous `decide_query` succeeded on
+  both versions. The public Chrome smoke after the final upgrade completed one
+  model turn with one decision query and no game update; comparison mode
+  completed two turns without canister traffic.
+- Final status snapshot: Running, 732,530,282,054 cycles. No model upload,
+  funding, DNS or controller change. Deployment used `bridge-seal-log-reader`,
+  which has the same principal as `production`; the `production` Keychain alias
+  itself was unavailable. Wrangler OAuth was authenticated.
+- See [TETRIS_BROWSER_MODEL_QUERY.md](TETRIS_BROWSER_MODEL_QUERY.md) for the
+  browser/canister boundary, local checks and release sequence.
+
 Created on 2026-09-22. Balances below are creation-time snapshots.
 
 - Network: `ic`
