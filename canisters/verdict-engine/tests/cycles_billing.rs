@@ -1,10 +1,16 @@
 //! Isolated real-Wasm tests; never connects to mainnet or an existing replica.
 //! Build with tools/build_one.sh verdict-engine, then run with --ignored.
-use candid::{Decode, Encode, Principal};
+use candid::{CandidType, Decode, Encode, Principal};
 use ic_laya_core::{Error, Result, SpecialTokens};
 use pocket_ic::PocketIcBuilder;
+use serde::Deserialize;
 use std::{fs, path::PathBuf};
 use verdict_engine::{CyclesPricing, ExecutionPricing, InferReply};
+
+#[derive(CandidType, Deserialize)]
+struct LegacyPlacementQuery {
+    board: Vec<u8>, seed: u32, turn: u32, lines: u32, mode: u8,
+}
 
 #[test]
 #[ignore = "requires built Wasm and a local POCKET_IC_BIN"]
@@ -45,6 +51,29 @@ fn cycles_payment_queries_and_upgrade() {
     };
     warm();
     if old.is_some() {
+        if std::env::var_os("CHECK_COMPAT_LEGACY_QUERY").is_some() {
+            let prior:serde_json::Value=serde_json::from_slice(&fs::read(root.join("artifacts/tetris-prompt-search/production-query-check.json")).unwrap()).unwrap();
+            let mut first=None;
+            for row in prior["results"].as_array().unwrap() {
+                let recorded=&row["receipt"];
+                let selected=recorded["selected"].as_u64().unwrap() as usize;
+                let placement = LegacyPlacementQuery { board: serde_json::from_value(recorded["before"].clone()).unwrap(),
+                    seed: recorded["seed"].as_u64().unwrap() as u32, turn: recorded["turn"].as_u64().unwrap() as u32,
+                    lines: (recorded["total_lines"].as_u64().unwrap()-recorded["candidates"][selected]["lines"].as_u64().unwrap()) as u32,
+                    mode: 1 };
+                let result = Decode!(&query(owner, "tetris_placement_query", Encode!(&placement).unwrap()), std::result::Result<String,String>).unwrap().unwrap();
+                let parsed:serde_json::Value=serde_json::from_str(&result).unwrap();
+                assert_eq!(parsed["candidates"], recorded["candidates"]);
+                assert_eq!(parsed["legal_count"], recorded["legal_count"]);
+                assert_eq!(parsed["piece"], recorded["piece"]);
+                assert_eq!(parsed["next"], recorded["next"]);
+                assert_eq!(parsed["rules"], recorded["rules"]);
+                if first.is_none(){first=Some(placement);}
+            }
+            let placement = LegacyPlacementQuery { mode: 0, ..first.unwrap() };
+            let result = Decode!(&query(Principal::anonymous(), "tetris_placement_query", Encode!(&placement).unwrap()), std::result::Result<String,String>).unwrap().unwrap();
+            assert!(result.contains("\"input_tokens\""));
+        }
         pic.upgrade_canister(canister, wasm.clone(), Encode!().unwrap(), None).unwrap();
         assert!(Decode!(&query(owner, "cycles_pricing", Encode!().unwrap()), Result<CyclesPricing>).unwrap().is_err());
         warm();
@@ -100,6 +129,9 @@ fn cycles_payment_queries_and_upgrade() {
     let decide_args = Encode!(&decision).unwrap();
     Decode!(&forward("decide", decide_args.clone(), deposit), Result<verdict_engine::DecideReply>).unwrap().unwrap();
     Decode!(&query(Principal::anonymous(), "decide_query", decide_args.clone()), Result<verdict_engine::DecideReply>).unwrap().unwrap();
+    let mut oversized=decision.clone();oversized.question="q".repeat(4097);
+    assert_eq!(Decode!(&query(Principal::anonymous(), "decide_query", Encode!(&oversized).unwrap()),
+        Result<verdict_engine::DecideReply>).unwrap().err(),Some(Error::TooLong));
     assert!(matches!(Decode!(&call(owner, "decide_query", decide_args), Result<verdict_engine::DecideReply>).unwrap(), Err(Error::Denied(_))));
     let batch = verdict_engine::BatchRequest { state: "evidence".into(), temperature: 1.0,
         questions: vec![verdict_engine::BatchQuestion { id: "one".into(), question: "choose".into(),

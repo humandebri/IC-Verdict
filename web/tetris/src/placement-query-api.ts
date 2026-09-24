@@ -52,11 +52,20 @@ export async function choosePlacement(game:Game,status:Status,query:(request:Req
 }
 export async function connectQuery(host:string,canisterId:string){
  const local=['localhost','127.0.0.1','[::1]'].includes(new URL(host).hostname);
- const agent=await HttpAgent.create({host});
- const actor=Actor.createActor(queryIdl,{agent,canisterId});
- const fetchStatus=async():Promise<Status>=>{
+ const createActor=async()=>{
+  if(!canisterId)throw new Error('Canister ID is not configured');
+  const agent=await HttpAgent.create({host});
   if(local)await agent.fetchRootKey();
-  const [info,limits]=await Promise.all([actor.info() as Promise<{model:Uint8Array;warmed:boolean}>,actor.query_limits() as Promise<{max_tokens:number}>]);
+  return Actor.createActor(queryIdl,{agent,canisterId});
+ };
+ let cachedActor:ReturnType<typeof createActor>|undefined;
+ const actor=()=>cachedActor??=createActor().catch(error=>{
+  cachedActor=undefined;
+  throw error;
+ });
+ const fetchStatus=async():Promise<Status>=>{
+  const a=await actor();
+  const [info,limits]=await Promise.all([a.info() as Promise<{model:Uint8Array;warmed:boolean}>,a.query_limits() as Promise<{max_tokens:number}>]);
  return {enabled:info.warmed&&limits.max_tokens>=41,warmed:info.warmed,model:info.model,max_tokens:limits.max_tokens};
  };
  let cachedStatus:Promise<Status>|undefined;
@@ -65,7 +74,7 @@ export async function connectQuery(host:string,canisterId:string){
   return value;
  },error=>{cachedStatus=undefined;throw error;});
  const query=async(request:Request):Promise<ModelReply>=>{
-  const r=await actor.decide_query(request) as {Ok?:ModelReply;Err?:unknown};
+  const r=await (await actor()).decide_query(request) as {Ok?:ModelReply;Err?:unknown};
   if(!r.Ok)throw new Error(`Model query failed: ${JSON.stringify(r.Err)}`);
   return r.Ok;
  };

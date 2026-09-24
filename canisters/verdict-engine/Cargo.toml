@@ -31,3 +31,4 @@ rand_chacha = { version = "0.9", default-features = false }
 [dev-dependencies]
 pocket-ic = "=15.0.0"
 wat = "=1.257.1"
+serde_json.workspace = true

@@ -1,13 +1,14 @@
 import {beforeEach,expect,it,vi} from 'vitest';
-const mock=vi.hoisted(()=>({info:vi.fn(),limits:vi.fn(),decide:vi.fn(),create:vi.fn()}));
+const mock=vi.hoisted(()=>({info:vi.fn(),limits:vi.fn(),decide:vi.fn(),create:vi.fn(),agent:vi.fn()}));
 vi.mock('@icp-sdk/core/agent',()=>({
- HttpAgent:{create:async()=>({})},
+ HttpAgent:{create:()=>mock.agent()},
  Actor:{createActor:()=>{mock.create();return {info:mock.info,query_limits:mock.limits,decide_query:mock.decide};}},
 }));
 import {connectQuery} from './placement-query-api';
 
 beforeEach(()=>{
  vi.clearAllMocks();
+ mock.agent.mockResolvedValue({});
  mock.info.mockResolvedValue({warmed:true,model:Uint8Array.from(Array(32).fill(7))});
  mock.limits.mockResolvedValue({max_tokens:52});
  mock.decide.mockImplementation(async request=>({Ok:{ids:request.options.map((o:{id:string})=>o.id),selected:'0',
@@ -15,10 +16,11 @@ beforeEach(()=>{
   model:Uint8Array.from(Array(32).fill(7)),confidence:1,input_tokens:41,measured_instructions:3_000_000_000n}}));
 });
 it('comparison play performs no canister method call',async()=>{
- const client=await connectQuery('https://icp-api.io','aaaaa-aa');
+ const client=await connectQuery('https://icp-api.io','');
  const result=await client.step(client.start(11,1));
  expect(result.query_count).toBe(0);expect(mock.info).not.toHaveBeenCalled();
  expect(mock.limits).not.toHaveBeenCalled();expect(mock.decide).not.toHaveBeenCalled();
+ expect(mock.create).not.toHaveBeenCalled();
 });
 it('model play sends descriptions in one generic query',async()=>{
  const client=await connectQuery('https://icp-api.io','aaaaa-aa');
@@ -42,4 +44,12 @@ it('rechecks status after a transient query failure',async()=>{
  await expect(client.status()).rejects.toThrow('temporary failure');
  expect((await client.status()).enabled).toBe(true);
  expect(mock.info).toHaveBeenCalledTimes(2);
+});
+it('recreates the actor after agent initialization fails',async()=>{
+ const client=await connectQuery('https://icp-api.io','aaaaa-aa');
+ mock.agent.mockRejectedValueOnce(new Error('temporary agent failure'));
+ await expect(client.status()).rejects.toThrow('temporary agent failure');
+ expect((await client.status()).enabled).toBe(true);
+ expect(mock.agent).toHaveBeenCalledTimes(2);
+ expect(mock.create).toHaveBeenCalledTimes(1);
 });

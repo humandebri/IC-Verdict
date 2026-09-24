@@ -48,6 +48,12 @@ pub const UPDATE_BUDGET:u64=40_000_000_000;
 /// (`T <= (QUERY_BUDGET - COST_FIXED) / COST_PER_TOKEN`), with an encoding margin.
 /// `query_limits()` reports the derived value; nothing hardcodes it.
 pub const QUERY_BUDGET:u64=5_000_000_000;
+/// Bound public query text before prompt construction and tokenization. The token
+/// count guard runs afterward, so it cannot protect that preprocessing work.
+const MAX_PUBLIC_QUERY_TEXT_BYTES:usize=16*1024;
+const MAX_PUBLIC_QUERY_QUESTION_BYTES:usize=4*1024;
+const MAX_PUBLIC_QUERY_OPTION_BYTES:usize=1024;
+const MAX_PUBLIC_QUERY_ID_BYTES:usize=128;
 /// Keep a margin for the reply encoding and the tokenizer, which the linear model
 /// above does not cover. This is an estimate, not a bound for every possible input.
 const BUDGET_MARGIN_PERMILLE:u64=1005;
@@ -784,6 +790,19 @@ pub struct DecideReply{
     pub input_tokens:u32,
     pub measured_instructions:u64,
 }
+fn guard_public_query_text(req:&DecideRequest)->Result<()> {
+    if req.question.len()>MAX_PUBLIC_QUERY_QUESTION_BYTES {return Err(Error::TooLong);}
+    let mut total=req.state.len().saturating_add(req.question.len());
+    if total>MAX_PUBLIC_QUERY_TEXT_BYTES {return Err(Error::TooLong);}
+    for option in &req.options {
+        if option.id.len()>MAX_PUBLIC_QUERY_ID_BYTES || option.text.len()>MAX_PUBLIC_QUERY_OPTION_BYTES {
+            return Err(Error::TooLong);
+        }
+        total=total.saturating_add(option.id.len()).saturating_add(option.text.len());
+        if total>MAX_PUBLIC_QUERY_TEXT_BYTES {return Err(Error::TooLong);}
+    }
+    Ok(())
+}
 /// Shared body of `decide` (update) and `decide_query` (query).
 ///
 /// Every prompt, policy and shape check lives here, so the two entry points cannot end
@@ -845,6 +864,7 @@ fn decide(req:DecideRequest)->PhantomData<Result<DecideReply>>{
 #[ic_cdk::query]
 fn decide_query(req:DecideRequest)->Result<DecideReply>{
     billing::query_only()?;
+    guard_public_query_text(&req)?;
     decide_once(req,QUERY_BUDGET)
 }
 #[derive(CandidType,Serialize,Deserialize,Clone)]
@@ -952,6 +972,21 @@ pub fn candid_interface()->String{__export_service()}
 #[cfg(test)]
 mod tests{
     use super::*;
+    #[test]
+    fn public_query_rejects_oversized_text_before_tokenization(){
+        let mut req=DecideRequest{state:"Min holes".into(),question:String::new(),
+            options:vec![OptionSpec{id:"0".into(),text:"min holes".into()}],
+            abstention:false,temperature:1.0};
+        assert!(guard_public_query_text(&req).is_ok());
+        req.question="q".repeat(MAX_PUBLIC_QUERY_QUESTION_BYTES+1);
+        assert!(matches!(guard_public_query_text(&req),Err(Error::TooLong)));
+        req.question.clear();req.options[0].text="x".repeat(MAX_PUBLIC_QUERY_OPTION_BYTES+1);
+        assert!(matches!(guard_public_query_text(&req),Err(Error::TooLong)));
+        req.options[0].text="min holes".into();req.options[0].id="i".repeat(MAX_PUBLIC_QUERY_ID_BYTES+1);
+        assert!(matches!(guard_public_query_text(&req),Err(Error::TooLong)));
+        req.options[0].id="0".into();req.state=" ".repeat(MAX_PUBLIC_QUERY_TEXT_BYTES);
+        assert!(matches!(guard_public_query_text(&req),Err(Error::TooLong)));
+    }
     fn question(id:&str)->BatchQuestion{
         BatchQuestion{id:id.into(),question:"choose".into(),options:vec![OptionSpec{id:"yes".into(),text:"yes".into()}],abstention:true}
     }
