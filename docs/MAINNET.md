@@ -1,5 +1,18 @@
 # OpenJev mainnet deployment
 
+## Public Candid release (2026-09-24)
+
+- The same canister was upgraded with the unchanged model code and a public
+  `candid:service` Wasm metadata section. Installed Wasm SHA-256:
+  `337c800eaede4148f961405b936150ff5e523dd48e616ecac0a266691041a6b3`.
+- Anonymous metadata retrieval returned the generated 15,116-byte Candid
+  exactly (SHA-256 `2c4f385868a8e45a0311e0c4be029bffddb8dc233248c9d7b95779c9dbefb67b`).
+  Read it on the [ICP Dashboard](https://dashboard.internetcomputer.org/canister/qojfj-6qaaa-aaaam-qjkaq-cai)
+  or with `icp canister metadata qojfj-6qaaa-aaaam-qjkaq-cai candid:service -n ic --identity anonymous`.
+- `tools/build_one.sh verdict-engine` now embeds its generated `.did` as public
+  metadata so future builds retain Candid discoverability. The model was
+  re-warmed after upgrade; no model re-upload, funding, DNS or controller change.
+
 ## Browser-owned Tetris and generic model query release (2026-09-24)
 
 - Public site: https://openjev.kinic.xyz, Worker `openjev` version

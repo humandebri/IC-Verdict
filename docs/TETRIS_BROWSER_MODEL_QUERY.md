@@ -49,9 +49,9 @@ Its Candid exposes the old read-only placement/status queries alongside public
 `decide_query`; it has no game update methods. Its placement query uses the
 same feature-diverse candidate selection as the current public release.
 PocketIC verified the candidate lists against three saved production replies
-and an upgrade from it to the final model-only Wasm. The final Wasm is
-`build/verdict-engine.wasm` (SHA-256
-`2c403877b2fac5c4563fe33fa71712174ed4818c1a499fbdf0621eaa2afff680`).
+and an upgrade from it to the final model-only Wasm. The originally released
+model-only Wasm had SHA-256
+`2c403877b2fac5c4563fe33fa71712174ed4818c1a499fbdf0621eaa2afff680`.
 
 ## Production release (2026-09-24)
 

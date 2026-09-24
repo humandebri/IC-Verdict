@@ -4,6 +4,8 @@
 
 設計だけではなく、Rust workspace、推論演算、canister adapter、テスト、checkpoint変換ツールを実装したソースパッケージです。
 
+公開デモ: [openjev.kinic.xyz](https://openjev.kinic.xyz) · [本番canisterとCandid](https://dashboard.internetcomputer.org/canister/qojfj-6qaaa-aaaam-qjkaq-cai)。公開Candidは`icp canister metadata qojfj-6qaaa-aaaam-qjkaq-cai candid:service -n ic --identity anonymous`でも取得できます。
+
 ## 外部アプリからの利用と料金
 
 IC-Verdictは、文章と選択肢を受け取り、モデルが選んだ結果とスコアを返す推論APIです。別のcanisterから呼び出す場合は、サイクルを添付して推論updateを利用できます。支払いはサイクルのみで、KINICやICPなどのICRCトークン払いには対応していません。
@@ -17,10 +19,10 @@ IC-Verdictは、文章と選択肢を受け取り、モデルが選んだ結果�
 | `decide` / `decide_batch` | 文章と選択肢から、1件／複数の質問を評価 | 必要なサイクルを添付すれば、事前の呼び出し元登録は不要。有料update |
 | `infer_tokens` | トークンIDを直接渡して推論 | 同上。有料update |
 | `evaluate` | 登録済みschemaを使い、再取得可能な評価結果を得る | 呼び出し元の事前登録が必要。有料update |
-| `decide_query` / `infer_tokens_query` | 短い入力をqueryで推論 | ownerまたは許可済みの呼び出し元のみ。無料 |
-| `tetris_decide_query` / `tetris_decide_v2_query` / `tetris_decide_v3_query` | Tetrisデモ専用の推論 | デモが有効な場合は匿名で利用可能。無料query |
+| `decide_query` | 短い文章と選択肢をqueryで判定 | 匿名callerも利用可能。無料 |
+| `infer_tokens_query` | 短いトークン列をqueryで推論 | ownerまたは許可済みの呼び出し元のみ。無料 |
 
-通常のqueryにサイクルを添付する必要はありません。入力上限は`query_limits()`で確認できますが、Tetris専用APIには追加の制限があります。queryの応答は合意・認証された結果ではないため、資金移動の根拠には使わないでください。上記の推論queryをupdate経由で呼ぶと、推論前に拒否されます。
+通常のqueryにサイクルを添付する必要はありません。入力上限は`query_limits()`で確認できます。公開`decide_query`には文字列のバイト数制限もあります。queryの応答は合意・認証された結果ではないため、資金移動の根拠には使わないでください。上記の推論queryをupdate経由で呼ぶと、推論前に拒否されます。
 
 ### updateの料金と呼び出し手順
 
@@ -154,9 +156,7 @@ packは全2次元重みをper-row INT8（`i8_row_symmetric`）で保持し、旧
 
 ### Query-only テトリスデモ
 
-`web/tetris` は、ブラウザで盤面を管理し、INT8モデルへ左右・右回転・落下・待機を繰り返し問い合わせるデモです。
-ゲーム専用queryは匿名公開でき、汎用推論queryは許可制です。課金対応版の`decide`・`decide_batch`・`infer_tokens`は、サイクル添付で利用できます（冒頭の利用案内を参照）。
-現在の操作方式・制限・検証は [TETRIS_CONTROLS.md](docs/TETRIS_CONTROLS.md)、旧方式の記録は [TETRIS_DEMO.md](docs/TETRIS_DEMO.md) を参照してください。
+`web/tetris` は、ブラウザで盤面・合法配置・候補・次盤面を計算し、1手ごとに短い候補文を汎用`decide_query`へ送るデモです。比較モードはcanisterと通信しません。公開方式と検証は [TETRIS_BROWSER_MODEL_QUERY.md](docs/TETRIS_BROWSER_MODEL_QUERY.md)、旧方式の記録は [TETRIS_DEMO.md](docs/TETRIS_DEMO.md) を参照してください。
 
 
 判断バックエンドは**openJev 151M（GLiClass uni-encoder）**です。canonical tensor名・prompt形式・headの意味は

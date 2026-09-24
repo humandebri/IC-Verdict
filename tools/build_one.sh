@@ -19,4 +19,7 @@ target_dir="$(run metadata --no-deps --format-version 1 | "${PYTHON:-python3}" -
 wasm="$target_dir/wasm32-unknown-unknown/release/$artifact.wasm"
 test -f "$wasm" || { echo "expected Wasm artifact not found: $wasm" >&2; exit 1; }
 cp "$wasm" "build/$package.wasm"
+if [[ "$package" == verdict-engine ]]; then
+  "${PYTHON:-python3}" tools/attach_candid.py embed "build/$package.wasm" "build/$package.did"
+fi
 echo "Built build/$package.wasm and .did; no deployment performed."
