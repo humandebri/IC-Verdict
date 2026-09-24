@@ -1,4 +1,4 @@
-# Public model query guide / 汎用モデルqueryの使い方
+# Public model query guide
 
 ## English
 

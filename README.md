@@ -6,7 +6,7 @@
 
 公開デモ: [openjev.kinic.xyz](https://openjev.kinic.xyz) · [本番canisterとCandid](https://dashboard.internetcomputer.org/canister/qojfj-6qaaa-aaaam-qjkaq-cai)。公開Candidは`icp canister metadata qojfj-6qaaa-aaaam-qjkaq-cai candid:service -n ic --identity anonymous`でも取得できます。
 
-外部アプリからの公開queryは[Public model query guide / 汎用モデルqueryの使い方](docs/PUBLIC_MODEL_QUERY.md)を参照してください。英語、日本語の順で掲載しています。
+外部アプリからの公開queryは[Public model query guide](docs/PUBLIC_MODEL_QUERY.md)を参照してください。英語、日本語の順で掲載しています。
 
 ## 外部アプリからの利用と料金
 
