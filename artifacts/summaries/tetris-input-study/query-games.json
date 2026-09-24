@@ -1,0 +1,601 @@
+{
+  "source": "artifacts/tetris-input-study/query-games.json",
+  "source_sha256": "eee560b4d0e336461a0aa65aec202ecb8b2041a2cdcf3ac9e515154043b308eb",
+  "source_bytes": 2768561,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "provenance": {
+      "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+      "fixtures": "0d051061a23ae51e15e240d57e0d0aa8208a12daa871661b4fec8fa20234d33f",
+      "clock": "real local canister query results; fixed-latency games charge exactly 1000ms per choice (cached identical prompts permitted); live-latency games use actual uncached RTT; one in-flight query per game, at most four independent games/fixtures concurrently",
+      "host": "http://localhost:8011",
+      "canister": "4fbx2-kt777-77775-aaabq-cai",
+      "wasm": "0x0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b"
+    },
+    "games": [
+      {
+        "seed": 1,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 14,
+        "truncated": false,
+        "metrics": {
+          "queries": 130,
+          "late": 14,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 116,
+          "errors": 0,
+          "responses": 130,
+          "latencyTotal": 130000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 1,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 14,
+        "truncated": false,
+        "metrics": {
+          "queries": 122,
+          "late": 14,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 108,
+          "errors": 0,
+          "responses": 122,
+          "latencyTotal": 122000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 2,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 14,
+        "truncated": false,
+        "metrics": {
+          "queries": 124,
+          "late": 13,
+          "blocked": 1,
+          "stale": 0,
+          "executed": 110,
+          "errors": 0,
+          "responses": 124,
+          "latencyTotal": 124000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 2,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 11,
+        "truncated": false,
+        "metrics": {
+          "queries": 88,
+          "late": 7,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 81,
+          "errors": 0,
+          "responses": 88,
+          "latencyTotal": 88000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 3,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 14,
+        "truncated": false,
+        "metrics": {
+          "queries": 135,
+          "late": 14,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 121,
+          "errors": 0,
+          "responses": 135,
+          "latencyTotal": 135000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 3,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 13,
+        "truncated": false,
+        "metrics": {
+          "queries": 115,
+          "late": 13,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 102,
+          "errors": 0,
+          "responses": 115,
+          "latencyTotal": 115000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 4,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 13,
+        "truncated": false,
+        "metrics": {
+          "queries": 120,
+          "late": 13,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 107,
+          "errors": 0,
+          "responses": 120,
+          "latencyTotal": 120000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 4,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 11,
+        "truncated": false,
+        "metrics": {
+          "queries": 71,
+          "late": 8,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 63,
+          "errors": 0,
+          "responses": 71,
+          "latencyTotal": 71000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 5,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 11,
+        "truncated": false,
+        "metrics": {
+          "queries": 90,
+          "late": 10,
+          "blocked": 1,
+          "stale": 0,
+          "executed": 79,
+          "errors": 0,
+          "responses": 90,
+          "latencyTotal": 90000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 5,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 18,
+        "truncated": false,
+        "metrics": {
+          "queries": 143,
+          "late": 17,
+          "blocked": 1,
+          "stale": 0,
+          "executed": 125,
+          "errors": 0,
+          "responses": 143,
+          "latencyTotal": 143000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 6,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 14,
+        "truncated": false,
+        "metrics": {
+          "queries": 128,
+          "late": 14,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 114,
+          "errors": 0,
+          "responses": 128,
+          "latencyTotal": 128000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 6,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 10,
+        "truncated": false,
+        "metrics": {
+          "queries": 67,
+          "late": 5,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 62,
+          "errors": 0,
+          "responses": 67,
+          "latencyTotal": 67000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 7,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 12,
+        "truncated": false,
+        "metrics": {
+          "queries": 112,
+          "late": 12,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 100,
+          "errors": 0,
+          "responses": 112,
+          "latencyTotal": 112000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 7,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 15,
+        "truncated": false,
+        "metrics": {
+          "queries": 136,
+          "late": 13,
+          "blocked": 1,
+          "stale": 0,
+          "executed": 122,
+          "errors": 0,
+          "responses": 136,
+          "latencyTotal": 136000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 8,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 12,
+        "truncated": false,
+        "metrics": {
+          "queries": 105,
+          "late": 10,
+          "blocked": 1,
+          "stale": 0,
+          "executed": 94,
+          "errors": 0,
+          "responses": 105,
+          "latencyTotal": 105000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 8,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 13,
+        "truncated": false,
+        "metrics": {
+          "queries": 116,
+          "late": 12,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 104,
+          "errors": 0,
+          "responses": 116,
+          "latencyTotal": 116000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 9,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 15,
+        "truncated": false,
+        "metrics": {
+          "queries": 140,
+          "late": 14,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 126,
+          "errors": 0,
+          "responses": 140,
+          "latencyTotal": 140000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 9,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 16,
+        "truncated": false,
+        "metrics": {
+          "queries": 136,
+          "late": 12,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 124,
+          "errors": 0,
+          "responses": 136,
+          "latencyTotal": 136000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 10,
+        "variant": "history-short",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 14,
+        "truncated": false,
+        "metrics": {
+          "queries": 122,
+          "late": 14,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 108,
+          "errors": 0,
+          "responses": 122,
+          "latencyTotal": 122000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 10,
+        "variant": "columns-explicit",
+        "actualLatency": false,
+        "lines": 0,
+        "pieces": 11,
+        "truncated": false,
+        "metrics": {
+          "queries": 79,
+          "late": 11,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 68,
+          "errors": 0,
+          "responses": 79,
+          "latencyTotal": 79000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      }
+    ]
+  },
+  "omitted": [
+    {
+      "path": "$.games[0].turns",
+      "count": 130,
+      "sha256": "6009aa0909e1e540e8a3df200bf5e027583a86df254b811b3fdd822f2fdb6d7f"
+    },
+    {
+      "path": "$.games[1].turns",
+      "count": 122,
+      "sha256": "92a54b94889c8ad6d999c127831a82a1b61ef430f486dff7a2ed81bc35a84bfe"
+    },
+    {
+      "path": "$.games[2].turns",
+      "count": 124,
+      "sha256": "13fcfd27cbd7577a76f75494a4cc7235f37bb5ecbe1a9a014105ca3b6d4d1546"
+    },
+    {
+      "path": "$.games[3].turns",
+      "count": 88,
+      "sha256": "cf577d4242b5e22ee17019211542a651b203a9fa03f23f05b440f1fd96e00601"
+    },
+    {
+      "path": "$.games[4].turns",
+      "count": 135,
+      "sha256": "76285f4131908bc223d0f76ee808eda01cd06820e79137cbb392a3655ea91e7a"
+    },
+    {
+      "path": "$.games[5].turns",
+      "count": 115,
+      "sha256": "12063b296acfb65d2e8f251ad7beb21dab64fbd707f3006512f20fb0917cc18e"
+    },
+    {
+      "path": "$.games[6].turns",
+      "count": 120,
+      "sha256": "a9cb291f04695d5f841ec429be6ec0360f1d452f67574c0313825553370b66e5"
+    },
+    {
+      "path": "$.games[7].turns",
+      "count": 71,
+      "sha256": "1f428bec5969c5f5c086155401178b1920e72cb36af2a1cb17f6389454deed4c"
+    },
+    {
+      "path": "$.games[8].turns",
+      "count": 90,
+      "sha256": "36fb14480e64607d9755725d574206988001cb6de95567f276b9c9198253c6ae"
+    },
+    {
+      "path": "$.games[9].turns",
+      "count": 143,
+      "sha256": "33fcbacd0985f51f5da03a0dafbe722c0d426a1af9d65dc0064477aecfabc060"
+    },
+    {
+      "path": "$.games[10].turns",
+      "count": 128,
+      "sha256": "53575bcf9fefdc6d9c31984193c901ef02ccfa98656e2e18283c960294ad31ff"
+    },
+    {
+      "path": "$.games[11].turns",
+      "count": 67,
+      "sha256": "39b07b5efcea7eb3790952a3febb0a9282f8e9345d410d04bff297be549e0c0b"
+    },
+    {
+      "path": "$.games[12].turns",
+      "count": 112,
+      "sha256": "61e11e446ec91dda15218932d70754631684f121411c80a51a7c38e8f2ea9cbc"
+    },
+    {
+      "path": "$.games[13].turns",
+      "count": 136,
+      "sha256": "cb0a01706c600bd5a95781c96f13fd3de825183f69f58959228741a7dfe8702e"
+    },
+    {
+      "path": "$.games[14].turns",
+      "count": 105,
+      "sha256": "f36544531f210e1f4f19f06c0dd736cf1f09fcdfa94cbb6b137e657fa46a275c"
+    },
+    {
+      "path": "$.games[15].turns",
+      "count": 116,
+      "sha256": "c65f1f4781e82d470d7932c8272e7d413f64f9a2f9ec2f77afe6590620b24000"
+    },
+    {
+      "path": "$.games[16].turns",
+      "count": 140,
+      "sha256": "39bfec3916eb71eed2c8eb4ea586b131f112beec7042e7a87755a58b07792450"
+    },
+    {
+      "path": "$.games[17].turns",
+      "count": 136,
+      "sha256": "6700605e62149e9d0f3ef038d5f2d05d5edcee5356f7c487363ac58aed8b399b"
+    },
+    {
+      "path": "$.games[18].turns",
+      "count": 122,
+      "sha256": "e648274d536a6b01c6197dd7230babb0252298c1707392797f70c77f39ec751f"
+    },
+    {
+      "path": "$.games[19].turns",
+      "count": 79,
+      "sha256": "fa63a4a80344739f6d1be77fe400ac2e9fc3d27c493eaf8f51e4b5d99a6cbf4a"
+    }
+  ]
+}

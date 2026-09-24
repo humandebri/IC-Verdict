@@ -1,0 +1,131 @@
+{
+  "created_utc": "2026-09-22T22:00:16.592990+00:00",
+  "canister": "4xhad-gd777-77775-aaacq-cai",
+  "endpoint": "http://localhost:8011/",
+  "mode": "kernels",
+  "classes": 2,
+  "compact_classes": false,
+  "input_kind": "canonical short prompt padded with PAD",
+  "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101",
+  "initial_info": "(\n  record {\n    model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n    pack_format = \"ic-verdict-int8-pack-v1\";\n    max_input_tokens = 128 : nat32;\n    max_classes = 25 : nat32;\n    cost_per_token = 100_000_000 : nat64;\n    callers = 0 : nat64;\n    cost_fixed = 170_000_000 : nat64;\n    model_bytes = 152_245_512 : nat64;\n    warmed = false;\n    budget = 40_000_000_000 : nat64;\n    tensors = 0 : nat64;\n    upload_complete = true;\n    heap_bytes = 1_966_080 : nat64;\n  },\n)\n",
+  "initial_query_limits": "(\n  record {\n    max_input_tokens = 128 : nat32;\n    cost_per_token = 100_000_000 : nat64;\n    cost_fixed = 170_000_000 : nat64;\n    margin_permille = 1_005 : nat64;\n    max_tokens = 48 : nat32;\n    budget = 5_000_000_000 : nat64;\n  },\n)\n",
+  "rows": [
+    {
+      "status": "ok",
+      "wall_seconds": 2.134528249996947,
+      "raw": "(\n  variant {\n    Ok = record {\n      k = 768 : nat32;\n      m = 40 : nat32;\n      n = 2_304 : nat32;\n      max_abs_diff_vs_f32 = 0.0022822618 : float32;\n      instructions_per_mac = 0.5669984417197145 : float64;\n      iterations = 3 : nat32;\n      instructions = 120_394_544 : nat64;\n      max_rel_diff_vs_f32 = 0.49913576 : float32;\n      quantize_activations_instructions = 1_176_425 : nat64;\n      per_iteration = 40_131_514 : nat64;\n      simd_used = true;\n      quantize_weights_instructions = 286_380_289 : nat64;\n    }\n  },\n)\n",
+      "tokens": 40,
+      "n": 2304,
+      "k": 768,
+      "per_iteration": 40131514,
+      "quantize_activations_instructions": 1176425,
+      "quantize_weights_instructions": 286380289,
+      "instructions_per_mac": 0.5669984323007089
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 1.031970915995771,
+      "raw": "(\n  variant {\n    Ok = record {\n      k = 768 : nat32;\n      m = 40 : nat32;\n      n = 768 : nat32;\n      max_abs_diff_vs_f32 = 0.0022822618 : float32;\n      instructions_per_mac = 0.5670394332320602 : float64;\n      iterations = 3 : nat32;\n      instructions = 40_134_416 : nat64;\n      max_rel_diff_vs_f32 = 0.49913576 : float32;\n      quantize_activations_instructions = 1_176_425 : nat64;\n      per_iteration = 13_378_138 : nat64;\n      simd_used = true;\n      quantize_weights_instructions = 95_460_865 : nat64;\n    }\n  },\n)\n",
+      "tokens": 40,
+      "n": 768,
+      "k": 768,
+      "per_iteration": 13378138,
+      "quantize_activations_instructions": 1176425,
+      "quantize_weights_instructions": 95460865,
+      "instructions_per_mac": 0.5670394049750433
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 1.757759750005789,
+      "raw": "(\n  variant {\n    Ok = record {\n      k = 1_152 : nat32;\n      m = 40 : nat32;\n      n = 768 : nat32;\n      max_abs_diff_vs_f32 = 0.0032919645 : float32;\n      instructions_per_mac = 0.5573599262002074 : float64;\n      iterations = 3 : nat32;\n      instructions = 59_173_967 : nat64;\n      max_rel_diff_vs_f32 = 0.62962997 : float32;\n      quantize_activations_instructions = 1_842_191 : nat64;\n      per_iteration = 19_724_655 : nat64;\n      simd_used = true;\n      quantize_weights_instructions = 143_722_980 : nat64;\n    }\n  },\n)\n",
+      "tokens": 40,
+      "n": 768,
+      "k": 1152,
+      "per_iteration": 19724655,
+      "quantize_activations_instructions": 1842191,
+      "quantize_weights_instructions": 143722980,
+      "instructions_per_mac": 0.5573599073621962
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 2.098850541980937,
+      "raw": "(\n  variant {\n    Ok = record {\n      k = 768 : nat32;\n      m = 48 : nat32;\n      n = 2_304 : nat32;\n      max_abs_diff_vs_f32 = 0.0022822618 : float32;\n      instructions_per_mac = 0.5649637606899434 : float64;\n      iterations = 3 : nat32;\n      instructions = 143_955_008 : nat64;\n      max_rel_diff_vs_f32 = 0.49913576 : float32;\n      quantize_activations_instructions = 1_411_685 : nat64;\n      per_iteration = 47_985_002 : nat64;\n      simd_used = true;\n      quantize_weights_instructions = 287_540_464 : nat64;\n    }\n  },\n)\n",
+      "tokens": 48,
+      "n": 2304,
+      "k": 768,
+      "per_iteration": 47985002,
+      "quantize_activations_instructions": 1411685,
+      "quantize_weights_instructions": 287540464,
+      "instructions_per_mac": 0.564963752840772
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 1.0189375000190921,
+      "raw": "(\n  variant {\n    Ok = record {\n      k = 768 : nat32;\n      m = 48 : nat32;\n      n = 768 : nat32;\n      max_abs_diff_vs_f32 = 0.0022822618 : float32;\n      instructions_per_mac = 0.5649982970437886 : float64;\n      iterations = 3 : nat32;\n      instructions = 47_987_936 : nat64;\n      max_rel_diff_vs_f32 = 0.49913576 : float32;\n      quantize_activations_instructions = 1_411_685 : nat64;\n      per_iteration = 15_995_978 : nat64;\n      simd_used = true;\n      quantize_weights_instructions = 95_801_092 : nat64;\n    }\n  },\n)\n",
+      "tokens": 48,
+      "n": 768,
+      "k": 768,
+      "per_iteration": 15995978,
+      "quantize_activations_instructions": 1411685,
+      "quantize_weights_instructions": 95801092,
+      "instructions_per_mac": 0.5649982734962746
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 1.165313707984751,
+      "raw": "(\n  variant {\n    Ok = record {\n      k = 1_152 : nat32;\n      m = 48 : nat32;\n      n = 768 : nat32;\n      max_abs_diff_vs_f32 = 0.0032919645 : float32;\n      instructions_per_mac = 0.5552307803934984 : float64;\n      iterations = 3 : nat32;\n      instructions = 70_737_503 : nat64;\n      max_rel_diff_vs_f32 = 0.62962997 : float32;\n      quantize_activations_instructions = 2_194_384 : nat64;\n      per_iteration = 23_579_167 : nat64;\n      simd_used = true;\n      quantize_weights_instructions = 143_722_940 : nat64;\n    }\n  },\n)\n",
+      "tokens": 48,
+      "n": 768,
+      "k": 1152,
+      "per_iteration": 23579167,
+      "quantize_activations_instructions": 2194384,
+      "quantize_weights_instructions": 143722940,
+      "instructions_per_mac": 0.5552307646951558
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 2.6413887910021003,
+      "raw": "(\n  variant {\n    Ok = record {\n      k = 768 : nat32;\n      m = 64 : nat32;\n      n = 2_304 : nat32;\n      max_abs_diff_vs_f32 = 0.0022822618 : float32;\n      instructions_per_mac = 0.563382234102414 : float64;\n      iterations = 3 : nat32;\n      instructions = 191_402_705 : nat64;\n      max_rel_diff_vs_f32 = 0.57348394 : float32;\n      quantize_activations_instructions = 2_142_152 : nat64;\n      per_iteration = 63_800_901 : nat64;\n      simd_used = true;\n      quantize_weights_instructions = 287_580_464 : nat64;\n    }\n  },\n)\n",
+      "tokens": 64,
+      "n": 2304,
+      "k": 768,
+      "per_iteration": 63800901,
+      "quantize_activations_instructions": 2142152,
+      "quantize_weights_instructions": 287580464,
+      "instructions_per_mac": 0.5633822282155355
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 1.1006800000031944,
+      "raw": "(\n  variant {\n    Ok = record {\n      k = 768 : nat32;\n      m = 64 : nat32;\n      n = 768 : nat32;\n      max_abs_diff_vs_f32 = 0.0022822618 : float32;\n      instructions_per_mac = 0.5634122866171377 : float64;\n      iterations = 3 : nat32;\n      instructions = 63_804_305 : nat64;\n      max_rel_diff_vs_f32 = 0.57348394 : float32;\n      quantize_activations_instructions = 2_102_152 : nat64;\n      per_iteration = 21_268_101 : nat64;\n      simd_used = true;\n      quantize_weights_instructions = 95_821_013 : nat64;\n    }\n  },\n)\n",
+      "tokens": 64,
+      "n": 768,
+      "k": 768,
+      "per_iteration": 21268101,
+      "quantize_activations_instructions": 2102152,
+      "quantize_weights_instructions": 95821013,
+      "instructions_per_mac": 0.5634122689565023
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 1.585589207999874,
+      "raw": "(\n  variant {\n    Ok = record {\n      k = 1_152 : nat32;\n      m = 64 : nat32;\n      n = 768 : nat32;\n      max_abs_diff_vs_f32 = 0.0032919645 : float32;\n      instructions_per_mac = 0.553212954674238 : float64;\n      iterations = 3 : nat32;\n      instructions = 93_973_904 : nat64;\n      max_rel_diff_vs_f32 = 0.7674321 : float32;\n      quantize_activations_instructions = 3_279_178 : nat64;\n      per_iteration = 31_324_634 : nat64;\n      simd_used = true;\n      quantize_weights_instructions = 143_762_911 : nat64;\n    }\n  },\n)\n",
+      "tokens": 64,
+      "n": 768,
+      "k": 1152,
+      "per_iteration": 31324634,
+      "quantize_activations_instructions": 3279178,
+      "quantize_weights_instructions": 143762911,
+      "instructions_per_mac": 0.5532129429004811
+    }
+  ],
+  "source_hashes_note": "Working-tree snapshot only; module_hash identifies the installed Wasm. Sources can differ during candidate builds.",
+  "query_repeats_note": "Identical queries can hit the replica cache; repetitions are not independent timing samples.",
+  "source_hashes": {
+    "crates/verdict-simd/src/lib.rs": "e054dee18031e728ce53817939f438da72bc57850e21ddf9373f7a34bca73108",
+    "crates/modernbert-candle/src/lib.rs": "9fc2c02a38b932502de588cbe26e83ce9b14b81adc2dbac14fe99665103795e6",
+    "crates/verdict-candle/src/lib.rs": "fc9466ffc0943cf06de153b0daa888e4f74fcbc43f08d7696d93cc01a455c28b",
+    "canisters/verdict-engine/src/lib.rs": "009cd47084454d55f53d6ca013cc2fd9a50da6b43c31c6c48afdfdbdd2ff871f"
+  },
+  "respect_guard": false
+}

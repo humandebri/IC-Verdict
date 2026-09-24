@@ -24,6 +24,7 @@ Two identities are in play, and they are deliberately different:
 from __future__ import annotations
 
 import argparse
+import billing_cli
 import base64
 import json
 import os
@@ -216,7 +217,9 @@ def main() -> int:
     parser.add_argument("--query", action="store_true",
                         help="run the smoke inference through infer_tokens_query (5B budget) instead of "
                              "the update path; the ids must then be short enough for the query ceiling")
+    billing_cli.add_arguments(parser)
     args = parser.parse_args()
+    if not args.query or args.decide: billing_cli.require_payment(args)
 
     if not (BUILD / "verdict-engine.wasm").exists():
         raise Failure("missing build/verdict-engine.wasm; run bash tools/build_one.sh verdict-engine")
@@ -282,21 +285,11 @@ def deploy(icp: Icp, args: argparse.Namespace) -> int:
     command = [str(UPLOADER), "--url", args.replica, "--canister", canister,
                "--pem", str(args.owner_pem), "--no-upload",
                "--allow-caller", payer, "--query-infer" if args.query else "--infer", args.ids]
+    command += billing_cli.uploader_flags(args, paid=not args.query or args.decide)
+    if args.decide: command += ["--decide"]
     if subprocess.run(command, text=True, timeout=1800).returncode != 0:
         raise Failure("verdict-upload inference failed")
 
-    if args.decide:
-        print("decide ...")
-        record = ("record { state = %s; question = %s; options = vec { record { id = \"a\"; text = %s }; "
-                  "record { id = \"b\"; text = %s } }; abstention = true; temperature = 1.4265148639678955 }"
-                  % (json.dumps("I lost my wallet yesterday and need to stop my debit card immediately."),
-                     json.dumps("What is the primary customer inquiry?"),
-                     json.dumps("Reporting a lost or stolen card"),
-                     json.dumps("Disputing an unrecognized charge")))
-        reply = icp.call("decide", "(%s)" % record)
-        print(" ", " ".join(reply.split())[:900])
-        if "Err" in reply:
-            raise Failure("decide returned an error")
     print("\nVERDICT ENGINE LOCAL RUN OK")
     return 0
 

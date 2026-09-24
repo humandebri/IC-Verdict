@@ -1,0 +1,965 @@
+{
+  "source": "artifacts/tetris_query_v3_history_benchmark.json",
+  "source_sha256": "7579827da18b0a8075d2848880f0e8730c7bbf568929b60046d0fa250d65ded8",
+  "source_bytes": 6479300,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "rules": "nes-ntsc-query-v3-controls-history",
+    "host": "http://localhost:8011",
+    "canister": "4fbx2-kt777-77775-aaabq-cai",
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "started": "2026-09-22T22:34:27.424Z",
+    "completed": "2026-09-22T22:51:49.510Z",
+    "max_pieces": 100,
+    "clock": "virtual NTSC frames; measured local query RTT advances gravity (rounded up to a frame); one-second simulation dispatch interval; no rendering delay; maximum one RPC in flight",
+    "candidate_policy": "legal left/right/clockwise/down/wait; one input per decision; heuristic sees full board and searches all clockwise-only reachable landings; random uses an independent seeded stream; baselines have zero RTT",
+    "games": [
+      {
+        "seed": 1,
+        "policy": "model",
+        "lines": 0,
+        "score": 0,
+        "pieces": 14,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 134212.33036266948,
+        "decisions": 128,
+        "queries": 128,
+        "responses": 128,
+        "deadline_misses": 9,
+        "blocked": 0,
+        "executed": 119,
+        "errors": 0,
+        "mean_latency_ms": 693.0469953749995,
+        "max_latency_ms": 2601.964667,
+        "max_tokens": 52,
+        "instructions": "576005080691",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 1,
+        "policy": "heuristic",
+        "lines": 22,
+        "score": 4775,
+        "pieces": 74,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 637466.9710543306,
+        "decisions": 626,
+        "queries": 0,
+        "responses": 626,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 626,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 1,
+        "policy": "random",
+        "lines": 0,
+        "score": 25,
+        "pieces": 18,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 154978.13600271553,
+        "decisions": 152,
+        "queries": 0,
+        "responses": 152,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 152,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 2,
+        "policy": "model",
+        "lines": 0,
+        "score": 6,
+        "pieces": 13,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 119386.74316292505,
+        "decisions": 85,
+        "queries": 85,
+        "responses": 85,
+        "deadline_misses": 13,
+        "blocked": 2,
+        "executed": 70,
+        "errors": 0,
+        "mean_latency_ms": 1125.9677818588225,
+        "max_latency_ms": 6782.130292000002,
+        "max_tokens": 51,
+        "instructions": "376350615675",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 2,
+        "policy": "heuristic",
+        "lines": 14,
+        "score": 1675,
+        "pieces": 58,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 524369.8709458426,
+        "decisions": 516,
+        "queries": 0,
+        "responses": 516,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 516,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 2,
+        "policy": "random",
+        "lines": 0,
+        "score": 25,
+        "pieces": 15,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 139819.7634561755,
+        "decisions": 138,
+        "queries": 0,
+        "responses": 138,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 138,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 3,
+        "policy": "model",
+        "lines": 0,
+        "score": 0,
+        "pieces": 14,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 131017.59103343163,
+        "decisions": 68,
+        "queries": 68,
+        "responses": 68,
+        "deadline_misses": 12,
+        "blocked": 0,
+        "executed": 56,
+        "errors": 0,
+        "mean_latency_ms": 1782.8109404999966,
+        "max_latency_ms": 8130.220874999999,
+        "max_tokens": 52,
+        "instructions": "298946313899",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 3,
+        "policy": "heuristic",
+        "lines": 4,
+        "score": 531,
+        "pieces": 39,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 329989.94988252677,
+        "decisions": 325,
+        "queries": 0,
+        "responses": 325,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 325,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 3,
+        "policy": "random",
+        "lines": 0,
+        "score": 26,
+        "pieces": 20,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 168156.4357358217,
+        "decisions": 165,
+        "queries": 0,
+        "responses": 165,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 165,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 4,
+        "policy": "model",
+        "lines": 0,
+        "score": 0,
+        "pieces": 15,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 147989.64372000773,
+        "decisions": 89,
+        "queries": 89,
+        "responses": 89,
+        "deadline_misses": 15,
+        "blocked": 1,
+        "executed": 73,
+        "errors": 0,
+        "mean_latency_ms": 1612.8178356292133,
+        "max_latency_ms": 7947.757290999987,
+        "max_tokens": 52,
+        "instructions": "397210952086",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 4,
+        "policy": "heuristic",
+        "lines": 7,
+        "score": 686,
+        "pieces": 44,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 381854.5461806226,
+        "decisions": 375,
+        "queries": 0,
+        "responses": 375,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 375,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 4,
+        "policy": "random",
+        "lines": 0,
+        "score": 18,
+        "pieces": 12,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 114078.81688153508,
+        "decisions": 112,
+        "queries": 0,
+        "responses": 112,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 112,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 5,
+        "policy": "model",
+        "lines": 0,
+        "score": 9,
+        "pieces": 11,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 93828.82852902221,
+        "decisions": 71,
+        "queries": 71,
+        "responses": 71,
+        "deadline_misses": 10,
+        "blocked": 1,
+        "executed": 60,
+        "errors": 0,
+        "mean_latency_ms": 1190.181414887327,
+        "max_latency_ms": 4351.333207999996,
+        "max_tokens": 51,
+        "instructions": "314723397095",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 5,
+        "policy": "heuristic",
+        "lines": 1,
+        "score": 162,
+        "pieces": 26,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 206576.50402337484,
+        "decisions": 203,
+        "queries": 0,
+        "responses": 203,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 203,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 5,
+        "policy": "random",
+        "lines": 0,
+        "score": 25,
+        "pieces": 16,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 133946.102085233,
+        "decisions": 132,
+        "queries": 0,
+        "responses": 132,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 132,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 6,
+        "policy": "model",
+        "lines": 0,
+        "score": 0,
+        "pieces": 10,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 86291.24042410165,
+        "decisions": 36,
+        "queries": 36,
+        "responses": 36,
+        "deadline_misses": 9,
+        "blocked": 0,
+        "executed": 27,
+        "errors": 0,
+        "mean_latency_ms": 2455.6998645277763,
+        "max_latency_ms": 8495.739667000016,
+        "max_tokens": 52,
+        "instructions": "158544939424",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 6,
+        "policy": "heuristic",
+        "lines": 29,
+        "score": 10829,
+        "pieces": 100,
+        "game_over": false,
+        "truncated": true,
+        "simulation_ms": 890034.4100048587,
+        "decisions": 875,
+        "queries": 0,
+        "responses": 875,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 875,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 6,
+        "policy": "random",
+        "lines": 0,
+        "score": 26,
+        "pieces": 16,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 145360.6394803224,
+        "decisions": 143,
+        "queries": 0,
+        "responses": 143,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 143,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 7,
+        "policy": "model",
+        "lines": 0,
+        "score": 0,
+        "pieces": 12,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 104294.92768574414,
+        "decisions": 37,
+        "queries": 37,
+        "responses": 37,
+        "deadline_misses": 11,
+        "blocked": 1,
+        "executed": 25,
+        "errors": 0,
+        "mean_latency_ms": 2782.378273567572,
+        "max_latency_ms": 5897.8273749999935,
+        "max_tokens": 51,
+        "instructions": "158111684820",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 7,
+        "policy": "heuristic",
+        "lines": 3,
+        "score": 298,
+        "pieces": 35,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 292651.43397205934,
+        "decisions": 288,
+        "queries": 0,
+        "responses": 288,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 288,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 7,
+        "policy": "random",
+        "lines": 0,
+        "score": 27,
+        "pieces": 18,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 145926.37456987496,
+        "decisions": 143,
+        "queries": 0,
+        "responses": 143,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 143,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 8,
+        "policy": "model",
+        "lines": 0,
+        "score": 0,
+        "pieces": 12,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 109053.75814492136,
+        "decisions": 69,
+        "queries": 69,
+        "responses": 69,
+        "deadline_misses": 12,
+        "blocked": 0,
+        "executed": 57,
+        "errors": 0,
+        "mean_latency_ms": 1499.4906015072484,
+        "max_latency_ms": 6709.975708000013,
+        "max_tokens": 52,
+        "instructions": "306881808800",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 8,
+        "policy": "heuristic",
+        "lines": 28,
+        "score": 2882,
+        "pieces": 95,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 921865.3284258588,
+        "decisions": 906,
+        "queries": 0,
+        "responses": 906,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 906,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 8,
+        "policy": "random",
+        "lines": 0,
+        "score": 23,
+        "pieces": 11,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 97572.66368047282,
+        "decisions": 96,
+        "queries": 0,
+        "responses": 96,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 96,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 9,
+        "policy": "model",
+        "lines": 0,
+        "score": 0,
+        "pieces": 13,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 112514.72575159572,
+        "decisions": 45,
+        "queries": 45,
+        "responses": 45,
+        "deadline_misses": 12,
+        "blocked": 0,
+        "executed": 33,
+        "errors": 0,
+        "mean_latency_ms": 2421.590460200008,
+        "max_latency_ms": 8057.648874999955,
+        "max_tokens": 52,
+        "instructions": "193714880678",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 9,
+        "policy": "heuristic",
+        "lines": 13,
+        "score": 2516,
+        "pieces": 54,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 423502.6323320932,
+        "decisions": 417,
+        "queries": 0,
+        "responses": 417,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 417,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 9,
+        "policy": "random",
+        "lines": 0,
+        "score": 20,
+        "pieces": 13,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 115709.46508083357,
+        "decisions": 114,
+        "queries": 0,
+        "responses": 114,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 114,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 10,
+        "policy": "model",
+        "lines": 0,
+        "score": 0,
+        "pieces": 12,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 103496.24285343468,
+        "decisions": 73,
+        "queries": 73,
+        "responses": 73,
+        "deadline_misses": 12,
+        "blocked": 0,
+        "executed": 61,
+        "errors": 0,
+        "mean_latency_ms": 1318.4483002328795,
+        "max_latency_ms": 6430.983250000048,
+        "max_tokens": 52,
+        "instructions": "323726194302",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 10,
+        "policy": "heuristic",
+        "lines": 37,
+        "score": 5457,
+        "pieces": 100,
+        "game_over": false,
+        "truncated": true,
+        "simulation_ms": 965160.7020439677,
+        "decisions": 948,
+        "queries": 0,
+        "responses": 948,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 948,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 10,
+        "policy": "random",
+        "lines": 0,
+        "score": 22,
+        "pieces": 12,
+        "game_over": true,
+        "truncated": false,
+        "simulation_ms": 107173.52093552618,
+        "decisions": 106,
+        "queries": 0,
+        "responses": 106,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "executed": 106,
+        "errors": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0",
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      }
+    ],
+    "totals": {
+      "model": {
+        "lines": 0,
+        "pieces": 126,
+        "queries": 701,
+        "errors": 0,
+        "deadline_misses": 115,
+        "blocked": 5,
+        "simulation_ms": 1142086.0316678537,
+        "truncated_runs": 0,
+        "mean_latency_ms": 1474.6482568088454,
+        "max_latency_ms": 8495.739667000016,
+        "max_tokens": 52,
+        "instructions": "3104215867470"
+      },
+      "heuristic": {
+        "lines": 158,
+        "pieces": 625,
+        "queries": 0,
+        "errors": 0,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "simulation_ms": 5573472.348865534,
+        "truncated_runs": 2,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0"
+      },
+      "random": {
+        "lines": 0,
+        "pieces": 151,
+        "queries": 0,
+        "errors": 0,
+        "deadline_misses": 0,
+        "blocked": 0,
+        "simulation_ms": 1322721.9179085107,
+        "truncated_runs": 0,
+        "mean_latency_ms": 0,
+        "max_latency_ms": 0,
+        "max_tokens": 0,
+        "instructions": "0"
+      }
+    }
+  },
+  "omitted": [
+    {
+      "path": "$.games[0].turns",
+      "count": 128,
+      "sha256": "b6d49d231ee54d1f33de0d803afd44e132a3ab0ed6f3149a5e5b292d7b2c0276"
+    },
+    {
+      "path": "$.games[1].turns",
+      "count": 626,
+      "sha256": "1cbe89774b0a5b35f370820bcfb2fa5a3cf0bfe4652355cf2eb8b99e5771580b"
+    },
+    {
+      "path": "$.games[2].turns",
+      "count": 152,
+      "sha256": "e9c80da07f1e1392031813c3f4f870e69c450b18d3e383c7738660fcdfb83ed8"
+    },
+    {
+      "path": "$.games[3].turns",
+      "count": 85,
+      "sha256": "613f6f1bfbda779da26bb11f14fac6f7218744c8e8596f668fe94b1f78a45bfb"
+    },
+    {
+      "path": "$.games[4].turns",
+      "count": 516,
+      "sha256": "5b5ecdadf904a842590a2a8dc8d621555d18eb11392201de391ef3cdf7ad7451"
+    },
+    {
+      "path": "$.games[5].turns",
+      "count": 138,
+      "sha256": "d81a00ac9f3079ba7bd8a52e4b92bb03045cc99bfd000a9d28abb1a48d3b74c4"
+    },
+    {
+      "path": "$.games[6].turns",
+      "count": 68,
+      "sha256": "63594010f69d69f9bc1a3f44d9a496b3556b1dcf90f186356ca9066c7eb63848"
+    },
+    {
+      "path": "$.games[7].turns",
+      "count": 325,
+      "sha256": "d89188b90a2107a37ff1ba31b1b99c3e06d4d02c27cecf323cb53a9fc204beb7"
+    },
+    {
+      "path": "$.games[8].turns",
+      "count": 165,
+      "sha256": "d767d887cee3741a1fb0ca54f6e5880376c4e84f5e987b7df7cd6aa0286124f6"
+    },
+    {
+      "path": "$.games[9].turns",
+      "count": 89,
+      "sha256": "d49202ec45751622c410c2e18c90e1be516885f785e4d530d559d95c33aab08b"
+    },
+    {
+      "path": "$.games[10].turns",
+      "count": 375,
+      "sha256": "070b7c0803cdabbbe22e050ad25a271ad1930ccfd2f8eb138e5cb6238e3d9591"
+    },
+    {
+      "path": "$.games[11].turns",
+      "count": 112,
+      "sha256": "52c1c0296b9c1a9efcc37cb2e4d82310b48ab6220e0e9ecb9f2254ba2e3f0362"
+    },
+    {
+      "path": "$.games[12].turns",
+      "count": 71,
+      "sha256": "db209c0ce6e3e33f3f183ecfc4c612a5392048cd3ed74b9eb870b08d2bace53c"
+    },
+    {
+      "path": "$.games[13].turns",
+      "count": 203,
+      "sha256": "8b84b0caec7fab09b83ca99f51369db5ad57ac7a7dc5f4d8f65b31b0398a6acb"
+    },
+    {
+      "path": "$.games[14].turns",
+      "count": 132,
+      "sha256": "d0e264c60eb4a02232f491cdafe0c3161226a632c28e30dddbc6c618839403ae"
+    },
+    {
+      "path": "$.games[15].turns",
+      "count": 36,
+      "sha256": "67ab2bf1340557ee19bc8494acc1d4bd34a748eba3451092e91e989464c5ce6b"
+    },
+    {
+      "path": "$.games[16].turns",
+      "count": 875,
+      "sha256": "c584c7eb30130f34aaf01ade7714e44c91944c56a25f622e2cc028bdb15ab010"
+    },
+    {
+      "path": "$.games[17].turns",
+      "count": 143,
+      "sha256": "7b108dad0440e90d2bfc6dd4b343ceb5dc2b2a432a355f5088a4eb6edc1f601e"
+    },
+    {
+      "path": "$.games[18].turns",
+      "count": 37,
+      "sha256": "a6fa7311d74ed173cbda3e998d61486c3c0ac133763684ccbb2d406390fd5579"
+    },
+    {
+      "path": "$.games[19].turns",
+      "count": 288,
+      "sha256": "8b321976620ba725dfa4c48181ed2cf0f7a45cf61137c591a081b15e26c4f0d9"
+    },
+    {
+      "path": "$.games[20].turns",
+      "count": 143,
+      "sha256": "63f0d0fc8a7ab32484d7a32f45f58b56ec3e573a45299e4160b577d460065b44"
+    },
+    {
+      "path": "$.games[21].turns",
+      "count": 69,
+      "sha256": "cca7ad8afe3ac72c2175bed4cc30ae8b2b9a24f2f5f0459bdc869d8de58deba0"
+    },
+    {
+      "path": "$.games[22].turns",
+      "count": 906,
+      "sha256": "faf78c7e5eede6eab2224f8acd0bbd62c66f931a08ad699453e7d10515e5a98a"
+    },
+    {
+      "path": "$.games[23].turns",
+      "count": 96,
+      "sha256": "4fa172f2a3c1bdcf2b8aee036a13563ee3bfcd8ba8c59f8ef375a5ce3390935a"
+    },
+    {
+      "path": "$.games[24].turns",
+      "count": 45,
+      "sha256": "978746d8579c199251ef6e797ae653de6edc565ac9c2d2345ad9396c5eb42d3e"
+    },
+    {
+      "path": "$.games[25].turns",
+      "count": 417,
+      "sha256": "4f39a01bf566f0fdc746c911653d9efd02d57db725dfca891f0d13832eb264cf"
+    },
+    {
+      "path": "$.games[26].turns",
+      "count": 114,
+      "sha256": "225e8f24693a6e7ba689662eb8542dcfef1e7952183decbede391211624861a9"
+    },
+    {
+      "path": "$.games[27].turns",
+      "count": 73,
+      "sha256": "63e11012cd3e1d2fcb97705b99f69270cdd443552935145aaca1cc32f3b8a663"
+    },
+    {
+      "path": "$.games[28].turns",
+      "count": 948,
+      "sha256": "44390edacc2a2bc1485bdfea7ab1679616236e9bd7f59b291cad397c042f4eb7"
+    },
+    {
+      "path": "$.games[29].turns",
+      "count": 106,
+      "sha256": "8a3aaf7eee65ffc17839361be5ea94ee7cbe5effa86c26021609f173d77cc025"
+    }
+  ]
+}

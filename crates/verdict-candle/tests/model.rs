@@ -87,6 +87,12 @@ fn detailed_profiling_only_adds_repeated_markers(){
     assert!(names.contains(&"layer.attn"),"expected per-layer markers");
     let layers=names.iter().filter(|n|**n=="layer.attn").count();
     assert_eq!(layers,cfg().layers,"one marker per encoder layer");
+    for name in ["attn.qkv","attn.layout","attn.out","layer.mlp_norm","layer.mlp_resid"] {
+        assert_eq!(names.iter().filter(|n|**n==name).count(),layers,"{name}");
+    }
+    let qkv=names.iter().position(|n|*n=="attn.qkv").unwrap();
+    let rope=names.iter().position(|n|*n=="rope.apply").unwrap();
+    assert!(qkv<rope,"QKV work must end before RoPE timing begins");
 }
 
 /// The profiled path must refuse the same inputs the production path refuses.

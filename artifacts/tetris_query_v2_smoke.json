@@ -1,0 +1,39 @@
+{
+  "canister": "4fbx2-kt777-77775-aaabq-cai",
+  "endpoint": "http://localhost:8011/",
+  "wasm_sha256": "d928b2190bf53369a65657006536f5bcb4a8df70302e9be31dd5316aa9cd150b",
+  "checks": [
+    "existing test target enabled and warm",
+    "enabled flag retained and warm-up required",
+    "model retained without reupload",
+    "v2 advertises 40-token ceiling",
+    "legacy API still accepts original request",
+    "2 candidates return 2 scores",
+    "2 candidates fit query token and instruction limits",
+    "3 candidates return 3 scores",
+    "3 candidates fit query token and instruction limits",
+    "4 candidates return 4 scores",
+    "4 candidates fit query token and instruction limits",
+    "one option rejected",
+    "five options rejected",
+    "piece bounds rejected",
+    "NEXT bounds rejected",
+    "roughness bounds rejected",
+    "holes bounds rejected",
+    "height bounds rejected",
+    "lines bounds rejected",
+    "anonymous cannot enable or disable",
+    "operator switch disables both adapters",
+    "generic inference remains protected"
+  ],
+  "status_before": "(\n  record {\n    model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n    enabled = true;\n    max_tokens = 36 : nat32;\n    warmed = true;\n  },\n)\n",
+  "legacy_before": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      scores = vec { 0.73395705 : float32; 0.26604298 : float32 };\n      measured_instructions = 2_624_532_561 : nat64;\n      selected = 0 : nat8;\n      prompt = \"<<LABEL>>holes 0 height 4 lines 1<<LABEL>>holes 200 height 20 lines 4<<SEP>>Tetris: choose placement.\";\n      input_tokens = 24 : nat32;\n    }\n  },\n)\n",
+  "status_after": "(\n  record {\n    model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n    enabled = true;\n    max_tokens = 40 : nat32;\n    warmed = true;\n  },\n)\n",
+  "legacy_after": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      scores = vec { 0.73395705 : float32; 0.26604298 : float32 };\n      measured_instructions = 2_619_577_309 : nat64;\n      selected = 0 : nat8;\n      prompt = \"<<LABEL>>holes 0 height 4 lines 1<<LABEL>>holes 200 height 20 lines 4<<SEP>>Tetris: choose placement.\";\n      input_tokens = 24 : nat32;\n    }\n  },\n)\n",
+  "v2_replies": [
+    "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      scores = vec { 0.95413154 : float32; 0.045868423 : float32 };\n      measured_instructions = 2_793_864_301 : nat64;\n      selected = 0 : nat8;\n      prompt = \"<<LABEL>>holes200 height20 lines0<<LABEL>>holes0 height1 lines4<<SEP>>Tetris T next I rough180\";\n      input_tokens = 25 : nat32;\n    }\n  },\n)\n",
+    "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      scores = vec {\n        0.673112 : float32;\n        0.2911195 : float32;\n        0.035768554 : float32;\n      };\n      measured_instructions = 3_517_546_846 : nat64;\n      selected = 0 : nat8;\n      prompt = \"<<LABEL>>holes200 height20 lines0<<LABEL>>holes200 height20 lines0<<LABEL>>holes0 height1 lines4<<SEP>>Tetris T next I rough180\";\n      input_tokens = 32 : nat32;\n    }\n  },\n)\n",
+    "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      scores = vec {\n        0.36896268 : float32;\n        0.34053996 : float32;\n        0.2738041 : float32;\n        0.016693247 : float32;\n      };\n      measured_instructions = 4_470_822_155 : nat64;\n      selected = 0 : nat8;\n      prompt = \"<<LABEL>>holes200 height20 lines0<<LABEL>>holes200 height20 lines0<<LABEL>>holes200 height20 lines0<<LABEL>>holes0 height1 lines4<<SEP>>Tetris T next I rough180\";\n      input_tokens = 39 : nat32;\n    }\n  },\n)\n"
+  ],
+  "passed": true
+}

@@ -1,0 +1,104 @@
+{
+  "synthetic_and_long": [
+    {
+      "tokens": 38,
+      "before": 4314178221,
+      "after": 3893892914,
+      "saved_percent": 9.741955141171255,
+      "exact_logits": true
+    },
+    {
+      "tokens": 39,
+      "before": 4886317695,
+      "after": 3987822018,
+      "saved_percent": 18.3879913890863,
+      "exact_logits": true
+    },
+    {
+      "tokens": 40,
+      "before": 4443811560,
+      "after": 3994978351,
+      "saved_percent": 10.100185458809152,
+      "exact_logits": true
+    },
+    {
+      "tokens": 41,
+      "before": 5032079583,
+      "after": 4177718474,
+      "saved_percent": 16.978290881692516,
+      "exact_logits": true
+    },
+    {
+      "tokens": 42,
+      "before": 4742015288,
+      "after": 4293091337,
+      "saved_percent": 9.46694440517797,
+      "exact_logits": true
+    },
+    {
+      "tokens": 43,
+      "before": 5315002350,
+      "after": 4442839958,
+      "saved_percent": 16.40944508707508,
+      "exact_logits": true
+    },
+    {
+      "tokens": 44,
+      "before": 4941151964,
+      "after": 4455831141,
+      "saved_percent": 9.822017750838796,
+      "exact_logits": true
+    },
+    {
+      "tokens": 45,
+      "before": 5531649425,
+      "after": 4640421765,
+      "saved_percent": 16.111427017991108,
+      "exact_logits": true
+    },
+    {
+      "tokens": 46,
+      "before": 5242429913,
+      "after": 4756804590,
+      "saved_percent": 9.263363193387908,
+      "exact_logits": true
+    },
+    {
+      "tokens": 47,
+      "before": 5816472897,
+      "after": 4803391212,
+      "saved_percent": 17.417457330928578,
+      "exact_logits": true
+    },
+    {
+      "tokens": 48,
+      "before": 5371597739,
+      "after": 4797331812,
+      "saved_percent": 10.690784286220733,
+      "exact_logits": true
+    },
+    {
+      "tokens": 120,
+      "before": 14559052908,
+      "after": 13158412440,
+      "saved_percent": 9.620409217898828,
+      "exact_logits": true
+    },
+    {
+      "tokens": 128,
+      "before": 15670269425,
+      "after": 14144015410,
+      "saved_percent": 9.739807106092558,
+      "exact_logits": true
+    }
+  ],
+  "real_exact_logits_tokens": [
+    32,
+    37,
+    38,
+    41,
+    42,
+    44
+  ],
+  "final_module_hash": "0xa3de6a00af386bf9aa2967291d1ea657d3e8a9e1cd65f911a90ca056cde60389"
+}

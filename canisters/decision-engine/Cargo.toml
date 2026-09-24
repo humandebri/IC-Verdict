@@ -14,7 +14,6 @@ canister-common.workspace = true
 ic-cdk.workspace = true
 candid.workspace = true
 serde.workspace = true
-serde_json.workspace = true
 # Wasm only: candle-core/tokenizers pull getrandom 0.3 transitively (via rand_core
 # and ahash) and getrandom 0.3 has no backend on wasm32-unknown-unknown. The
 # workspace .cargo/config.toml selects its "custom" backend for that target and

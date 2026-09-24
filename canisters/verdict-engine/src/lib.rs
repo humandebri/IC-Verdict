@@ -2,9 +2,9 @@
 //!
 //! Scope: this canister exists to answer one question with evidence — does the
 //! ported GLiClass forward actually run inside a canister, and what does one
-//! question cost in instructions? It therefore has no ledger, no workflow and no
-//! fund movement: it loads a pack, runs a forward pass and reports the measured
-//! instruction count with the logits.
+//! question cost in instructions? Public inference updates accept attached cycles
+//! at three times the configured execution tariff and measured instructions.
+//! Ordinary inference queries remain free; replicated query execution is refused.
 //!
 //! The model side is `verdict-candle`; its encoder is `modernbert-candle`, the shared
 //! ModernBERT implementation.
@@ -21,6 +21,9 @@ use ic_laya_core::schema::{self,TextTokenizer};
 use serde::{Deserialize,Serialize};
 use std::cell::RefCell;
 use std::collections::BTreeMap;
+use std::marker::PhantomData;
+mod billing;
+pub use billing::{CyclesPricing,ExecutionPricing};
 
 #[cfg(target_arch = "wasm32")]
 #[path = "../../decision-engine/src/getrandom_ic.rs"]
@@ -29,11 +32,12 @@ mod getrandom_ic;
 /// Refuse inputs longer than this. It is a policy bound; the *budget* guard is
 /// `estimated_cost`, which uses the measured cost model below.
 pub const MAX_INPUT_TOKENS:u32=128;
-/// Per-row INT8 fit from the real-model local measurements (docs/VERDICT_ENGINE.md
-/// 5.3). Restores a 40-token query ceiling. Upgrades preserve an owner's existing
-/// cost model; use set_cost_model explicitly when changing the stored model.
-pub const COST_FIXED:u64=48_746_986;
-pub const COST_PER_TOKEN:u64=121_028_580;
+/// Per-row INT8 estimate calibrated with fused CPU data movement
+/// (docs/QUERY_OPTIMIZATION_V3.md). Admits 53 tokens with the encoding margin.
+/// It is not a global upper bound: attention becomes quadratic at longer lengths.
+/// Upgrades preserve an owner's stored fit; set_cost_model explicitly opts it in.
+pub const COST_FIXED:u64=170_000_000;
+pub const COST_PER_TOKEN:u64=90_000_000;
 /// ICP's per-update instruction limit.
 pub const UPDATE_BUDGET:u64=40_000_000_000;
 /// ICP's per-query instruction limit (canister resource limits: 40B per update call,
@@ -72,6 +76,45 @@ struct Persistent{
 #[derive(Clone,Serialize,Deserialize)]
 struct LegacyPersistent{owner:Principal,active_model:Digest,upload:Option<Upload>,callers:BTreeMap<Principal,u32>,max_input_tokens:u32,
     #[serde(default="default_cost_fixed")] cost_fixed:u64,#[serde(default="default_cost_per_token")] cost_per_token:u64,#[serde(default="default_budget")] budget:u64}
+// An explicit wrapper avoids relying on serde defaults for bincode field additions.
+#[derive(Clone,Serialize,Deserialize)]
+struct DemoSnapshot { version:u32, state:Persistent, tetris_enabled:bool }
+#[derive(Clone,Serialize,Deserialize)]
+struct BillingSnapshot { version:u32, state:Persistent, tetris_enabled:bool, execution_pricing:Option<ExecutionPricing> }
+#[derive(Clone,Serialize,Deserialize)]
+struct GameSnapshot { version:u32, state:Persistent, tetris_enabled:bool, execution_pricing:Option<ExecutionPricing>, games:LegacyGameStore }
+#[derive(Clone,Serialize,Deserialize)]
+struct LegacyGameStore { games:BTreeMap<u32,LegacyGame>, records:BTreeMap<u32,Vec<u8>>, next_game:u32, next_record:u32, model_turns_left:u32 }
+#[derive(Clone,Serialize,Deserialize)]
+struct LegacyGame { id:u32, owner:Principal, nonce:u64, seed:u32, mode:u8, board:Vec<u8>, turn:u32, lines:u32, over:bool, last_record:Option<u32>, model:Digest }
+#[derive(Clone,Serialize,Deserialize)]
+struct ModelSnapshot { version:u32, state:Persistent, execution_pricing:Option<ExecutionPricing> }
+fn save_snapshot(s:&Persistent) {
+    canister_common::persist_or_trap(&ModelSnapshot{version:4,state:s.clone(),execution_pricing:billing::get()});
+}
+#[cfg(test)]
+mod snapshot_migration_tests {
+    use super::*;
+    #[test]
+    fn old_game_snapshot_decodes_without_copying_game_state_into_model_snapshot() {
+        let state=Persistent{owner:Principal::from_slice(&[1]),active_model:[7;32],upload:None,
+            callers:BTreeMap::new(),workflow:EngineState::new([7;32]),max_input_tokens:128,
+            cost_fixed:COST_FIXED,cost_per_token:COST_PER_TOKEN,budget:UPDATE_BUDGET};
+        let game=LegacyGame{id:1,owner:state.owner,nonce:3,seed:184,mode:0,board:vec![0;200],
+            turn:2,lines:1,over:false,last_record:Some(1),model:[7;32]};
+        let old=GameSnapshot{version:3,state:state.clone(),tetris_enabled:true,
+            execution_pricing:None,games:LegacyGameStore{games:BTreeMap::from([(1,game)]),
+                records:BTreeMap::from([(1,vec![1,2,3])]),next_game:2,next_record:2,model_turns_left:0}};
+        let old_bytes=ic_laya_core::storage::encode(&old).unwrap();
+        assert!(ic_laya_core::storage::decode::<ModelSnapshot>(&old_bytes).is_err());
+        let restored:GameSnapshot=ic_laya_core::storage::decode(&old_bytes).unwrap();
+        assert_eq!(restored.state.active_model,[7;32]);
+        let new=ModelSnapshot{version:4,state:restored.state,execution_pricing:restored.execution_pricing};
+        let new_bytes=ic_laya_core::storage::encode(&new).unwrap();
+        assert!(new_bytes.len()<old_bytes.len());
+        assert_eq!(ic_laya_core::storage::decode::<ModelSnapshot>(&new_bytes).unwrap().state.active_model,[7;32]);
+    }
+}
 fn default_cost_fixed()->u64{COST_FIXED}
 fn default_cost_per_token()->u64{COST_PER_TOKEN}
 fn default_budget()->u64{UPDATE_BUDGET}
@@ -146,20 +189,41 @@ fn init(owner:Principal){
     if owner==Principal::anonymous() || owner==Principal::management_canister(){ic_cdk::trap("invalid owner");}
     let s=Persistent{owner,active_model:[0;32],upload:None,callers:BTreeMap::new(),workflow:EngineState::new([0;32]),max_input_tokens:MAX_INPUT_TOKENS,
         cost_fixed:COST_FIXED,cost_per_token:COST_PER_TOKEN,budget:UPDATE_BUDGET};
-    canister_common::persist_or_trap(&s);STATE.with(|x|*x.borrow_mut()=Some(s));
+    save_snapshot(&s);STATE.with(|x|*x.borrow_mut()=Some(s));
 }
 #[ic_cdk::pre_upgrade]
-fn pre_upgrade(){read(canister_common::persist_or_trap);}
+fn pre_upgrade(){read(save_snapshot);}
 #[ic_cdk::post_upgrade]
 fn post_upgrade(){
     // The heap model is never kept across an upgrade: the pack bytes and upload
     // metadata survive in stable memory, the Candle tensors do not.
-    let s:Persistent=canister_common::restore().or_else(|_|->Result<Persistent>{
+    let model=canister_common::restore::<ModelSnapshot>();
+    let latest=canister_common::restore::<GameSnapshot>();
+    let current=canister_common::restore::<BillingSnapshot>();
+    let s:Persistent=if let Ok(snapshot)=model {
+        if snapshot.version!=4 {ic_cdk::trap("unsupported model snapshot");}
+        if let Some(pricing)=snapshot.execution_pricing {pricing.validate().unwrap_or_else(|e|ic_cdk::trap(e.to_string()));}
+        billing::set(snapshot.execution_pricing);
+        snapshot.state
+    } else if let Ok(snapshot)=latest {
+        if snapshot.version!=3 {ic_cdk::trap("unsupported game snapshot");}
+        if let Some(pricing)=snapshot.execution_pricing {pricing.validate().unwrap_or_else(|e|ic_cdk::trap(e.to_string()));}
+        billing::set(snapshot.execution_pricing);
+        snapshot.state
+    } else if let Ok(snapshot)=current {
+        if snapshot.version!=2 {ic_cdk::trap("unsupported billing snapshot");}
+        if let Some(pricing)=snapshot.execution_pricing {pricing.validate().unwrap_or_else(|e|ic_cdk::trap(e.to_string()));}
+        billing::set(snapshot.execution_pricing);
+        snapshot.state
+    } else if let Ok(snapshot)=canister_common::restore::<DemoSnapshot>() {
+        if snapshot.version!=1 {ic_cdk::trap("unsupported demo snapshot");}
+        snapshot.state
+    } else {canister_common::restore().or_else(|_|->Result<Persistent>{
         let old:LegacyPersistent=canister_common::restore()?;let mut workflow=EngineState::new(old.active_model);
         for caller in old.callers.keys().copied(){workflow.allow_caller(caller,1000)?;}
         Ok(Persistent{owner:old.owner,active_model:old.active_model,upload:old.upload,callers:old.callers,workflow,
             max_input_tokens:old.max_input_tokens,cost_fixed:old.cost_fixed,cost_per_token:old.cost_per_token,budget:old.budget})
-    }).unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
+    }).unwrap_or_else(|e|ic_cdk::trap(e.to_string()))};
     MODEL.with(|x|*x.borrow_mut()=None);BUILDER.with(|x|*x.borrow_mut()=None);TOKENIZER.with(|x|*x.borrow_mut()=None);
     STATE.with(|x|*x.borrow_mut()=Some(s));
 }
@@ -204,6 +268,16 @@ fn allow_caller(caller:Principal)->Result<()>{
 }
 #[ic_cdk::update]
 fn set_caller_quota(caller:Principal,per_minute:u32)->Result<()>{owner()?;mutate(|s|s.workflow.allow_caller(caller,per_minute))}
+
+/// Configure the subnet's execution tariff; None suspends paid inference.
+#[ic_cdk::update]
+fn set_execution_pricing(pricing:Option<ExecutionPricing>)->Result<()>{
+    owner()?;
+    if let Some(p)=pricing {p.validate()?;p.fee(UPDATE_BUDGET)?;}
+    billing::set(pricing);Ok(())
+}
+#[ic_cdk::query]
+fn cycles_pricing()->Result<CyclesPricing>{billing::quote()}
 
 #[ic_cdk::update]
 fn register_schema(schema_value:ic_laya_core::Schema,qtype_id:u32)->Result<ic_laya_core::CompiledSchema>{
@@ -383,6 +457,12 @@ fn bench_int8(m:u32,n:u32,k:u32,iterations:u32)->Result<Int8BenchReply>{
     let quantize_activations_instructions=ic_cdk::api::instruction_counter().saturating_sub(before);
     let mut out=vec![0f32;m*n];
     let simd_used=verdict_simd::matmul_i8(&xq,&wq,&xsx,&wsx,m,k,n,&mut out);
+    // Check the actual Wasm SIMD path against the quantized scalar reference,
+    // outside the timing region. F32 error alone cannot validate a new kernel.
+    let mut exact=vec![0f32;m*n];
+    verdict_simd::matmul_i8_scalar(&xq,&wq,&xsx,&wsx,m,k,n,&mut exact);
+    if out.iter().zip(&exact).any(|(a,b)|a.to_bits()!=b.to_bits()){return Err(Error::Numeric);}
+    drop(exact);
     // Reference: f32 product with the same layout ([n,k] weights transposed conceptually).
     let mut want=vec![0f32;m*n];
     for i in 0..m { for j in 0..n {
@@ -589,10 +669,9 @@ fn infer_once(s:&Persistent,input_ids:Vec<u32>,budget:u64)->Result<InferReply>{
 /// The instruction count is measured around the forward pass only, so it excludes
 /// Candid decoding of the arguments and the reply encoding. `measured_instructions`
 /// is the number the 40B update-call limit applies to.
-#[ic_cdk::update]
-fn infer_tokens(input_ids:Vec<u32>)->Result<InferReply>{
-    let caller=ic_cdk::api::msg_caller();admitted(caller)?;
-    read(|s|infer_once(s,input_ids,s.budget))
+#[ic_cdk::update(manual_reply = true)]
+fn infer_tokens(input_ids:Vec<u32>)->PhantomData<Result<InferReply>>{
+    billing::paid(||read(|s|infer_once(s,input_ids,s.budget)))
 }
 /// `infer_tokens` over a query call: the same forward pass under the 5B query budget.
 ///
@@ -606,13 +685,17 @@ fn infer_tokens(input_ids:Vec<u32>)->Result<InferReply>{
 /// is illegal in a query, and loading it would exceed the 5B limit anyway.
 #[ic_cdk::query]
 fn infer_tokens_query(input_ids:Vec<u32>)->Result<InferReply>{
+    billing::query_only()?;
     let caller=ic_cdk::api::msg_caller();admitted(caller)?;
     read(|s|infer_once(s,input_ids,QUERY_BUDGET))
 }
 
 /// Workflow-compatible, durable one-question evaluation using the resident checkpoint.
-#[ic_cdk::update]
-fn evaluate(req:ic_laya_core::DecisionRequest)->Result<ic_laya_core::Receipt>{
+#[ic_cdk::update(manual_reply = true)]
+fn evaluate(req:ic_laya_core::DecisionRequest)->PhantomData<Result<ic_laya_core::Receipt>>{
+    billing::paid(||evaluate_once(req))
+}
+fn evaluate_once(req:ic_laya_core::DecisionRequest)->Result<ic_laya_core::Receipt>{
     let caller=ic_cdk::api::msg_caller();let now=ic_cdk::api::time();admitted(caller)?;
     let (max_input_tokens,cost_fixed,cost_per_token,budget)=read(|s|(s.max_input_tokens,s.cost_fixed,s.cost_per_token,s.budget));
     mutate(|s|s.workflow.evaluate_with(caller,req,now,|compiled,_,state|{
@@ -750,21 +833,18 @@ fn decide_once(req:DecideRequest,budget:u64)->Result<DecideReply>{
 /// (`<<LABEL>>desc...<<SEP>>Question: ...\n\nContext:\n...`, wrapped as
 /// `[CLS] ... [SEP]`), so the tokenizer and the head see exactly what the
 /// reference engine produces.
-#[ic_cdk::update]
-fn decide(req:DecideRequest)->Result<DecideReply>{
-    let caller=ic_cdk::api::msg_caller();admitted(caller)?;
-    decide_once(req,read(|s|s.budget))
+#[ic_cdk::update(manual_reply = true)]
+fn decide(req:DecideRequest)->PhantomData<Result<DecideReply>>{
+    billing::paid(||decide_once(req,read(|s|s.budget)))
 }
 /// `decide` over a query call.
 ///
-/// Same prompt contract and same validation, under the 5B query budget. A real decision
-/// prompt is far longer than that: the measured 52-token call costs 16.83e9, so this
-/// entry point refuses realistic requests with `Capacity` rather than pretending they
-/// were scored. It exists for short interactive cases and for clients that already know
-/// their prompt fits; it is not a way to make long decisions cheaper.
+/// Public to anonymous callers. The same prompt validation and tokenizer apply under
+/// the 5B query budget; requests beyond the installed cost guard return `Capacity`.
+/// Replicated execution is refused, and callers can read `query_limits` first.
 #[ic_cdk::query]
 fn decide_query(req:DecideRequest)->Result<DecideReply>{
-    let caller=ic_cdk::api::msg_caller();admitted(caller)?;
+    billing::query_only()?;
     decide_once(req,QUERY_BUDGET)
 }
 #[derive(CandidType,Serialize,Deserialize,Clone)]
@@ -818,9 +898,11 @@ fn batch_results(questions:&[BatchQuestion],ids:&[String],counts:&[usize],logits
 /// scored against one `[CLS]` representation, so the per-question distributions shift
 /// (argmax was unchanged in the sample, logits moved by up to 1.7) and a batched layout
 /// needs its own calibration.
-#[ic_cdk::update]
-fn decide_batch(req:BatchRequest)->Result<BatchReply>{
-    let caller=ic_cdk::api::msg_caller();admitted(caller)?;
+#[ic_cdk::update(manual_reply = true)]
+fn decide_batch(req:BatchRequest)->PhantomData<Result<BatchReply>>{
+    billing::paid(||decide_batch_once(req))
+}
+fn decide_batch_once(req:BatchRequest)->Result<BatchReply>{
     if req.state.is_empty() || req.state.len()>ic_laya_core::MAX_STATE_BYTES{return Err(Error::TooLong);}
     if req.questions.is_empty() || req.questions.len()>8{return Err(Error::TooLong);}
     if !req.temperature.is_finite()||req.temperature<=0.0||req.temperature>100.0{return Err(Error::Numeric);}
@@ -939,12 +1021,21 @@ mod tests{
         assert_eq!(restored.workflow.active_model,[7;32]);
     }
     #[test]
-    fn the_default_model_advertises_forty_query_tokens(){
+    fn the_default_model_advertises_fifty_two_query_tokens(){
         let s=state(COST_FIXED,COST_PER_TOKEN);
-        assert_eq!(max_tokens_within(&s,QUERY_BUDGET),40);
-        assert!(guard_within(&s,40,QUERY_BUDGET).is_ok());
-        assert!(matches!(guard_within(&s,41,QUERY_BUDGET),Err(Error::Capacity)));
+        assert_eq!(max_tokens_within(&s,QUERY_BUDGET),53);
+        assert!(guard_within(&s,53,QUERY_BUDGET).is_ok());
+        assert!(matches!(guard_within(&s,54,QUERY_BUDGET),Err(Error::Capacity)));
         assert_eq!(max_tokens_within(&s,UPDATE_BUDGET),128);
+    }
+    #[test]
+    fn stored_pre_optimization_fit_keeps_its_existing_query_policy(){
+        let s=state(48_746_986,121_028_580);
+        let bytes=ic_laya_core::storage::encode(&s).unwrap();
+        let restored:Persistent=ic_laya_core::storage::decode(&bytes).unwrap();
+        assert_eq!(max_tokens_within(&restored,QUERY_BUDGET),40);
+        assert_eq!(restored.cost_fixed,48_746_986);
+        assert_eq!(restored.cost_per_token,121_028_580);
     }
     #[test]
     fn the_measured_slope_raises_the_query_ceiling(){

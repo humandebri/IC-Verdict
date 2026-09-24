@@ -4,6 +4,40 @@
 
 設計だけではなく、Rust workspace、推論演算、canister adapter、テスト、checkpoint変換ツールを実装したソースパッケージです。
 
+## 外部アプリからの利用と料金
+
+IC-Verdictは、文章と選択肢を受け取り、モデルが選んだ結果とスコアを返す推論APIです。別のcanisterから呼び出す場合は、サイクルを添付して推論updateを利用できます。支払いはサイクルのみで、KINICやICPなどのICRCトークン払いには対応していません。
+
+**提供状況（2026-09-23）：サイクル課金はソース実装・ローカル検証済みですが、本番には未反映です。** 以下は課金対応版の仕様です。利用開始には運営側での配備と実行単価の設定が必要です。
+
+### APIと利用条件
+
+| API | 用途 | 利用条件・料金 |
+|---|---|---|
+| `decide` / `decide_batch` | 文章と選択肢から、1件／複数の質問を評価 | 必要なサイクルを添付すれば、事前の呼び出し元登録は不要。有料update |
+| `infer_tokens` | トークンIDを直接渡して推論 | 同上。有料update |
+| `evaluate` | 登録済みschemaを使い、再取得可能な評価結果を得る | 呼び出し元の事前登録が必要。有料update |
+| `decide_query` / `infer_tokens_query` | 短い入力をqueryで推論 | ownerまたは許可済みの呼び出し元のみ。無料 |
+| `tetris_decide_query` / `tetris_decide_v2_query` / `tetris_decide_v3_query` | Tetrisデモ専用の推論 | デモが有効な場合は匿名で利用可能。無料query |
+
+通常のqueryにサイクルを添付する必要はありません。入力上限は`query_limits()`で確認できますが、Tetris専用APIには追加の制限があります。queryの応答は合意・認証された結果ではないため、資金移動の根拠には使わないでください。上記の推論queryをupdate経由で呼ぶと、推論前に拒否されます。
+
+### updateの料金と呼び出し手順
+
+利用料金は、**実行固定費と実測命令数から計算した実行費の3倍**です。実行単価は配備先のサブネットに合わせて運営側が設定します。計測には引数のデコード、入力検証、推論、応答のエンコードを含みます。末尾の課金・応答コピー処理、継続的なメモリ保管料、呼び出し側の通信費は含みません。
+
+1. `cycles_pricing()`をqueryで呼び、`required_attachment`を取得します。これは実行上限分の添付額であり、確定料金ではありません。
+2. 呼び出し元canisterから、Rust CDKの`.with_cycles(required_attachment)`などでサイクルを添付して推論updateを呼びます。
+3. サービスは実測した料金分だけを受領します。余剰分はICが呼び出し元canisterへ自動返却します。
+
+料金設定がない場合や添付額が不足する場合は、推論を実行せず、サイクルも受領しません。受付後に入力検証などで`Err`を返した場合は、その呼び出しで使用した計算分を課金します。`evaluate`で保存済みの結果を再取得した場合は、再推論せず、検証・読み出し・応答生成分を課金します。
+
+**ブラウザや通常のCLIからの直接呼び出しでは、サイクルを添付できません。** 有料updateには、呼び出し元canisterか認可されたproxyが必要です。ブラウザのTetrisデモは無料queryを使うため、支払い不要です。
+
+同梱の計測・回帰ツールは`--proxy PRINCIPAL --max-cycles N`で支払いに対応しています。executorはownerが`set_engine_cycles`で添付額を設定します。設定・proxyの認可・旧版からの移行手順は下記の課金仕様を参照してください。
+
+料金の計算式・設定例・エラー時の扱いは[サイクル課金仕様](docs/CYCLES_BILLING.md)を参照してください。APIの型定義は`bash tools/build_one.sh verdict-engine`で生成される`build/verdict-engine.did`で確認できます。
+
 > **検証状態 (v0.2):** Rust toolchainのある環境で実際にビルド・テストしました。`cargo test --workspace`は**97件PASS**、`python3 -m unittest discover -s tests`は**33件PASS**、**4 canister分のWasmとCandidを生成済み**です。`tools/verify.py --rust --require-rust --manifest --verdict --local-integration`は**17行中14件PASS**（`artifacts/verification.json`。`NOT_RUN`は温まったreplicaを要する`openjev_canister_instructions`と`openjev_query_canister`、および実送金の`real_ledger_transfer`のみ）。実checkpoint parityはargmax 1000/1000、ローカルreplica統合試験は**replica停止状態からの起動**でPASSしました。
 >
 > **Layaバックエンドは削除しました。** 実Laya checkpointは一度もロードしておらず（weightは未取得）、合成weightからの外挿では40B上限の12〜14倍だったためです（記録は[docs/archive/PERFORMANCE_MEASUREMENTS.md](docs/archive/PERFORMANCE_MEASUREMENTS.md)）。判断バックエンドはopenJev 151M（GLiClass）に置き換え、実checkpointで実測しています: 著者記録の1000件とargmax 1000/1000一致、120トークンで1決定は既定F32が36.98e9、int8が14.57e9 instructions（[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md)）。実ledger送金は引き続き未検証（heapは実checkpoint warmで1.02 GiBを`heap_bytes`で実測済み）で、`fixtures/`はランダムweightです。
@@ -23,7 +57,7 @@
 | engine / executor / mock ledger | Rustの4 canister | Wasm/Candidをビルド済み。ローカルreplicaで統合試験PASS |
 | native例、Candid生成、ローカルmock bootstrap、CI | スクリプト・設定を同梱 | native/Wasm/local統合を実行済み |
 
-**実資金の送金は無効です。** `LimitedLive`を指定しても`LiveDisabled`を返します。実装したoutcallは、専用のmock識別APIを確認したledgerだけに向けます。mock ledgerは残高を模擬するテストダブルで、実在の資産を扱いません。
+**executorからの実トークン送金は無効です。** `LimitedLive`を指定しても`LiveDisabled`を返します。実装したoutcallは、専用のmock識別APIを確認したledgerだけに向けます。mock ledgerは残高を模擬するテストダブルで、実在の資産を扱いません。
 
 ## 2. ディレクトリ
 
@@ -118,6 +152,13 @@ packは全2次元重みをper-row INT8（`i8_row_symmetric`）で保持し、旧
 
 ## 6. 判断バックエンド
 
+### Query-only テトリスデモ
+
+`web/tetris` は、ブラウザで盤面を管理し、INT8モデルへ左右・右回転・落下・待機を繰り返し問い合わせるデモです。
+ゲーム専用queryは匿名公開でき、汎用推論queryは許可制です。課金対応版の`decide`・`decide_batch`・`infer_tokens`は、サイクル添付で利用できます（冒頭の利用案内を参照）。
+現在の操作方式・制限・検証は [TETRIS_CONTROLS.md](docs/TETRIS_CONTROLS.md)、旧方式の記録は [TETRIS_DEMO.md](docs/TETRIS_DEMO.md) を参照してください。
+
+
 判断バックエンドは**openJev 151M（GLiClass uni-encoder）**です。canonical tensor名・prompt形式・headの意味は
 [docs/GLICLASS_FORWARD_SPEC.md](docs/GLICLASS_FORWARD_SPEC.md)、実測（instructions・parity・コスト削減）は
 [docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md)に記録しています。
@@ -130,6 +171,8 @@ packは全2次元重みをper-row INT8（`i8_row_symmetric`）で保持し、旧
 未完了なのは用途別calibration、実モデルworkflow接続のlocal replica受入、cycles実測、対象本番ledgerの確認です。checkpoint parity、Rust/Wasmビルド、instruction/heap、mock非同期障害試験は実施済みです。
 
 現状は安全側の有限容量PoCです。512 workflow、64 registryの上限は残り、compactionは未実装です。executorはstable tableへ移行し、旧bounded snapshotをupgrade時に自動変換します。人間reviewの承認再開endpoint、蒸留、実ledger adapterの有効化は未実装です。
+
+mock送金の応答を失った場合は`reconcile_mock`で照合します。ownerが`abandon_unknown`で保留した後も、upgrade・期限切れ・grant失効・pauseの影響を受けず、元の依頼者またはownerが照合できます。一致する送金の証拠がある場合だけ予約額を確定し、見つからない場合は保留と予約を維持します。確定後の再照合は同じ結果を返し、送金を追加しません。
 
 次の着手順は、**INT8品質・instructions gate → 実モデルworkflow接続のlocal replica常時検査 → 用途別calibration → 実ledger adapter**です。[実装状況](docs/IMPLEMENTATION_STATUS.md)と[検証記録](artifacts/verification.json)を先に確認してください。
 
@@ -167,3 +210,8 @@ JevBench生入力は中央値95・平均95.8トークンで、予算外は上側
 **既定F32で14トークン**（`artifacts/verdict_query_sweep.json`）、**int8ビルドでは40トークン**
 （`artifacts/verdict_query_sweep_int8.json`）。queryはcyclesを消費せず合意も不要ですが、応答は
 **certifiedではない**ため、資金を動かす判断には使いません（[docs/VERDICT_ENGINE.md](docs/VERDICT_ENGINE.md) 5.3節）。
+
+**2026-09-23の追加最適化で、per-row INT8の既定汎用query上限を53トークンへ拡張しました。**
+16/8/4行×16列のSIMD、64要素ずつの内積処理、行列積内部の端数処理を使い、ローカル実モデルで検証しています。
+既存canisterの保存済みcost modelはupgradeで保持されるため、適用には最適化Wasmと明示的な設定更新が必要です。
+本番への配備は未実施です（[計測結果・検証・適用条件](docs/QUERY_OPTIMIZATION_V3.md)）。

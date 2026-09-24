@@ -1,0 +1,34 @@
+{
+  "provenance": {
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+    "fixtures": "0d051061a23ae51e15e240d57e0d0aa8208a12daa871661b4fec8fa20234d33f",
+    "clock": "real local canister query results; fixed-latency games charge exactly 1000ms per choice (cached identical prompts permitted); live-latency games use actual uncached RTT; one in-flight query per game, at most four independent games/fixtures concurrently",
+    "host": "http://localhost:8011",
+    "canister": "4fbx2-kt777-77775-aaabq-cai",
+    "wasm": "0x0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b"
+  },
+  "compared": 250,
+  "differences": [
+    {
+      "variant": "columns-explicit",
+      "id": "left-dev-00",
+      "native_action": 3,
+      "query_action": 0,
+      "native_scores": [
+        0.28114011883735657,
+        0.2092035561800003,
+        0.04777389019727707,
+        0.2826981544494629,
+        0.17918428778648376
+      ],
+      "query_scores": [
+        0.2821228802204132,
+        0.20832166075706482,
+        0.04772293567657471,
+        0.28142249584198,
+        0.18041002750396729
+      ]
+    }
+  ]
+}

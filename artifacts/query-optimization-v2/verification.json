@@ -1,0 +1,31 @@
+{
+  "query_accepted": 90,
+  "query_guard_refused": 3,
+  "query_instruction_limit_failures": 0,
+  "max_observed_forward_instructions": 4778768127,
+  "max_observed_forward_case": {
+    "artifact": "final-maxclasses",
+    "tokens": 52
+  },
+  "minimum_forward_headroom_percent": 4.424637460000003,
+  "exact_logits_cases": {
+    "final-query": 43,
+    "final-maxclasses": 22,
+    "final-short": 3,
+    "final-real": 10,
+    "final-long": 3,
+    "latency_inputs": 6
+  },
+  "wasm_i64_reference_cases": 9840,
+  "rust_tests": "PASS: verdict-simd, verdict-candle, modernbert-candle, verdict-engine",
+  "wasm_clippy_lib": "PASS with -D warnings (native-only CLI excluded)",
+  "native_simd_clippy_all_targets": "PASS with -D warnings",
+  "python_contract_tests": 11,
+  "cost_fixed": 170000000,
+  "cost_per_token": 92000000,
+  "margin_permille": 1005,
+  "max_tokens": 52,
+  "upgrade_preserved_previous_cost_model": true,
+  "production_deployment": false,
+  "additional_latency_query_successes": 6
+}

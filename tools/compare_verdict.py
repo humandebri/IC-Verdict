@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Compare two already-warm canisters on a managed loopback replica; never installs."""
 import argparse
+import billing_cli
 import json
 import re
 import subprocess
@@ -18,20 +19,29 @@ def main():
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--diagnostic-case',type=Path)
     p.add_argument('--resume',action='store_true',help='keep completed rows in --out')
+    p.add_argument('--unpaid-baseline',action='store_true',help='explicitly compare against a pre-billing baseline via direct calls')
     p.add_argument('--lengths',default='8,16,32,64,96,120,128',help='synthetic token lengths')
+    billing_cli.add_arguments(p)
     args=p.parse_args()
+    billing_cli.require_payment(args)
     common=['-e','local','--project-root-override',str(args.project)]
     status=json.loads(subprocess.check_output(['icp','network','status','--json',*common],text=True))
     if not status.get('managed') or urlparse(status['api_url']).hostname not in {'localhost','127.0.0.1','::1'}:
         raise ValueError('only a managed loopback replica is permitted')
     def call(name,method,argument):
-        r=subprocess.run(['icp','canister','call',name,method,argument,'--identity',args.identity,'--candid',str(args.did),*common],capture_output=True,text=True)
+        flags=['--query'] if method=='cycles_pricing' else []
+        if method in billing_cli.PAID_METHODS and not (args.unpaid_baseline and name==args.baseline):
+            flags+=billing_cli.proxy_flags(args,call(name,'cycles_pricing','()'))
+        r=subprocess.run(['icp','canister','call',name,method,argument,'--identity',args.identity,'--candid',str(args.did),*common,*flags],capture_output=True,text=True)
         text=r.stdout+r.stderr
         if r.returncode or 'Err =' in text:
             if 'Capacity' in text:return {'guard_refused':True}
             if 'instruction limit' in text or 'IC0522' in text:return {'instruction_limit':True}
             raise RuntimeError(text)
         return text
+    if args.execution_pricing:
+        for name in [args.baseline,args.candidate]:
+            if not (args.unpaid_baseline and name==args.baseline):call(name,'set_execution_pricing',billing_cli.pricing_arg(args.execution_pricing))
     report=json.loads(args.out.read_text()) if args.resume else {'endpoint':status['api_url'],'heap':{},'rows':[]}
     if report['endpoint'] != status['api_url']:raise ValueError('resume endpoint differs')
     for name in [args.baseline,args.candidate]:

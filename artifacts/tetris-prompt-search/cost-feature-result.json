@@ -1,0 +1,879 @@
+{
+  "correct": 72,
+  "total": 72,
+  "per_metric": {
+    "lines": 24,
+    "holes": 24,
+    "height": 24
+  },
+  "max_tokens": 41,
+  "token_checks": 256,
+  "rows": [
+    {
+      "metric": "lines",
+      "order": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        0,
+        2,
+        1,
+        3
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        0,
+        3,
+        1,
+        2
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        0,
+        3,
+        2,
+        1
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        1,
+        2,
+        0,
+        3
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        1,
+        3,
+        0,
+        2
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        2,
+        0,
+        3,
+        1
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        2,
+        1,
+        0,
+        3
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        2,
+        1,
+        3,
+        0
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        3,
+        0,
+        2,
+        1
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        3,
+        1,
+        0,
+        2
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        3,
+        1,
+        2,
+        0
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        3,
+        2,
+        0,
+        1
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "lines",
+      "order": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "selected": 3,
+      "expected": 3,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        0,
+        2,
+        1,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        0,
+        3,
+        1,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        0,
+        3,
+        2,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        1,
+        2,
+        0,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        1,
+        3,
+        0,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        2,
+        0,
+        3,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        2,
+        1,
+        0,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        2,
+        1,
+        3,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        3,
+        0,
+        2,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        3,
+        1,
+        0,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        3,
+        1,
+        2,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        3,
+        2,
+        0,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "holes",
+      "order": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        0,
+        1,
+        3,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        0,
+        2,
+        1,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        0,
+        2,
+        3,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        0,
+        3,
+        1,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        0,
+        3,
+        2,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        1,
+        0,
+        3,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        1,
+        2,
+        0,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        1,
+        3,
+        0,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        1,
+        3,
+        2,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        2,
+        0,
+        3,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        2,
+        1,
+        0,
+        3
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        2,
+        1,
+        3,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        3,
+        0,
+        2,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        3,
+        1,
+        0,
+        2
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        3,
+        1,
+        2,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        3,
+        2,
+        0,
+        1
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    },
+    {
+      "metric": "height",
+      "order": [
+        3,
+        2,
+        1,
+        0
+      ],
+      "selected": 0,
+      "expected": 0,
+      "correct": true
+    }
+  ],
+  "unique_inferences": 36,
+  "note": "Exhaustive single-feature rank/order checks, not independent accuracy samples. Values collapse to the same rank labels."
+}

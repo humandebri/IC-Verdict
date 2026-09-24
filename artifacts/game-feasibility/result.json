@@ -1,0 +1,120 @@
+{
+  "gates": {
+    "snake/state": {
+      "correct": 14,
+      "total": 24
+    },
+    "snake/outcome": {
+      "correct": 23,
+      "total": 24
+    },
+    "2048/state": {
+      "correct": 12,
+      "total": 24
+    },
+    "2048/outcome": {
+      "correct": 17,
+      "total": 24
+    }
+  },
+  "games": {
+    "snake/state": {
+      "steps": 10.8,
+      "food": 2.2,
+      "stops": [
+        "collision",
+        "collision",
+        "collision",
+        "collision",
+        "collision"
+      ]
+    },
+    "snake/outcome": {
+      "steps": 20.2,
+      "food": 3.0,
+      "stops": [
+        "collision",
+        "collision",
+        "collision",
+        "collision",
+        "collision"
+      ]
+    },
+    "snake/random": {
+      "steps": 12.6,
+      "food": 0.4,
+      "stops": [
+        "collision",
+        "collision",
+        "collision",
+        "collision",
+        "collision"
+      ]
+    },
+    "snake/greedy": {
+      "steps": 67.6,
+      "food": 13.6,
+      "stops": [
+        "collision",
+        "collision",
+        "collision",
+        "collision",
+        "collision"
+      ]
+    },
+    "2048/state": {
+      "steps": 22.8,
+      "score": 16.8,
+      "max_tile": 4.4,
+      "invalid": 16.0,
+      "stops": [
+        "16_consecutive_noops",
+        "16_consecutive_noops",
+        "16_consecutive_noops",
+        "16_consecutive_noops",
+        "16_consecutive_noops"
+      ]
+    },
+    "2048/outcome": {
+      "steps": 150.0,
+      "score": 1673.6,
+      "max_tile": 179.2,
+      "invalid": 0.0,
+      "stops": [
+        "step_limit",
+        "step_limit",
+        "step_limit",
+        "step_limit",
+        "step_limit"
+      ]
+    },
+    "2048/random": {
+      "steps": 114.6,
+      "score": 796.8,
+      "max_tile": 76.8,
+      "invalid": 19.6,
+      "stops": [
+        "game_over",
+        "step_limit",
+        "step_limit",
+        "game_over",
+        "game_over"
+      ]
+    },
+    "2048/greedy": {
+      "steps": 145.6,
+      "score": 1399.2,
+      "max_tile": 115.2,
+      "invalid": 0.0,
+      "stops": [
+        "step_limit",
+        "step_limit",
+        "step_limit",
+        "step_limit",
+        "game_over"
+      ]
+    }
+  },
+  "native_inferences": 631,
+  "max_tokens": 46
+}

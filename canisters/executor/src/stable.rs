@@ -15,6 +15,8 @@ const OPERATIONS:MemoryId=MemoryId::new(2);
 const GRANTS:MemoryId=MemoryId::new(3);
 const REQUESTS:MemoryId=MemoryId::new(4);
 const NONCES:MemoryId=MemoryId::new(5);
+// Separate cell: existing metadata/snapshots keep their original encoding.
+const ENGINE_CYCLES:MemoryId=MemoryId::new(6);
 const FORMAT:u32=1;
 
 #[derive(Clone,Serialize,Deserialize)]
@@ -28,7 +30,10 @@ thread_local!{
     static GRANT_MAP:RefCell<StableBTreeMap<Digest,Vec<u8>,Memory>>=RefCell::new(StableBTreeMap::init(memory(GRANTS)));
     static REQUEST_MAP:RefCell<StableBTreeMap<Digest,Vec<u8>,Memory>>=RefCell::new(StableBTreeMap::init(memory(REQUESTS)));
     static NONCE_MAP:RefCell<StableBTreeMap<Principal,u64,Memory>>=RefCell::new(StableBTreeMap::init(memory(NONCES)));
+    static ENGINE_CYCLES_CELL:RefCell<StableCell<u128,Memory>>=RefCell::new(StableCell::init(memory(ENGINE_CYCLES),0));
 }
+pub fn engine_cycles()->u128{ENGINE_CYCLES_CELL.with(|x|*x.borrow().get())}
+pub fn set_engine_cycles(cycles:u128){ENGINE_CYCLES_CELL.with(|x|{x.borrow_mut().set(cycles);});}
 fn memory(id:MemoryId)->Memory{MANAGER.with(|m|m.borrow().get(id))}
 fn encode<T:Serialize>(value:&T)->Result<Vec<u8>>{bincode::DefaultOptions::new().with_fixint_encoding().serialize(value).map_err(|_|Error::Storage)}
 fn decode<T:DeserializeOwned>(bytes:&[u8])->Result<T>{bincode::DefaultOptions::new().with_fixint_encoding().reject_trailing_bytes().deserialize(bytes).map_err(|_|Error::Storage)}
@@ -90,6 +95,16 @@ mod tests{
     use ic_laya_core::demo::*;
     fn commit(s:&mut ExecutorState){sync(s).unwrap();s.changes=Changes::default();}
     fn same(s:&ExecutorState){assert_eq!(encode(s).unwrap(),encode(&load().unwrap()).unwrap());}
+    #[test]
+    fn adding_cycles_cell_preserves_existing_tables(){
+        // Seed IDs 0..5 before ID 6 has ever been initialized, as in an old install.
+        let (s,_,_,_)=setup().unwrap();replace_all(&s).unwrap();
+        assert_eq!(engine_cycles(),0);same(&s);
+        let amount=u128::from(u64::MAX)+1;
+        set_engine_cycles(amount);
+        let restored=StableCell::init(memory(ENGINE_CYCLES),0u128);
+        assert_eq!(*restored.get(),amount);same(&s);
+    }
     #[test]
     fn write_set_survives_async_transitions_errors_and_recovery(){
         let (mut s,mut engine,op,grant)=setup().unwrap();replace_all(&s).unwrap();s.changes=Changes::default();

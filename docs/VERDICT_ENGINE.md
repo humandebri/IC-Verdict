@@ -60,6 +60,8 @@ Laya（421M、F32、128トークンで494〜567B）と同じ結論だが、151M�
 
 ### 3.1 実checkpointとの一致（外部証拠）
 
+packの`--out`には存在しないパスを指定します。既存pack・空ディレクトリ・ファイル・symlinkは上書きせず拒否します。再生成時は別の出力先を使ってください。入力検証後に出力先を排他的に作成し、通常の書込みエラーでは今回作成したファイルを削除します。強制終了で残った未完成ディレクトリも次回は拒否するため、内容を確認してから別名で再実行してください。
+
 `reports/v2/predictions_v2.jsonl`（著者自身が記録した argmax と校正済み確率）を、
 `data/real_banking_test.jsonl` の入力で再実行して突き合わせる。
 
@@ -86,6 +88,11 @@ cargo build --release -p verdict-candle
 `max_classes` 超過の拒否、tensor set不一致の拒否を含む。
 
 ## 4. canisterでの実行
+
+課金対応版では、以下のupdateを含むコマンドに`--proxy PRINCIPAL --max-cycles N`を追加します。
+再install後の初期単価は`--execution-pricing BASE,NUMERATOR,DENOMINATOR`で設定してください。
+使用するowner PEMのidentityをproxyのcontrollerとして認可する必要があります。
+無料の`--query`のみの実行には支払い引数は不要です。詳細は[サイクル課金仕様](CYCLES_BILLING.md)を参照してください。
 
 ```bash
 bash tools/build_one.sh verdict-engine
@@ -596,6 +603,11 @@ rope.table に計上されていた**ためだった。位相計測では「重�
 この endpoint は誤解を招くので削除した。
 
 ### 5.1.12 int8 カーネルの8行化と、カーネル路線の限界
+
+2026-09-23追記: 以下は8行×4列版を測った当時の記録。
+その後16/8/4行×8列と端数処理の改善で、48行の主形状は約0.681 instructions/MACまで下がった。
+「実用上の床」という当時の見立ては更新した。追加最適化では約0.591 instructions/MACまで下がった。
+現行の53-token query受入は[QUERY_OPTIMIZATION_V3.md](QUERY_OPTIMIZATION_V3.md)を参照。
 
 | 版 | instr/MAC | 対 gemm | T=120 全体 | 対 f32 |
 |---|---|---|---|---|

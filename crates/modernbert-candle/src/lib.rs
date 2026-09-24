@@ -5,7 +5,7 @@
 //! backend. The Laya decision head and its pack format were removed when that model was
 //! dropped (see docs/VERDICT_ENGINE.md).
 #![forbid(unsafe_code)]
-use candle_core::{Device,Tensor,D};
+use candle_core::{Device,Storage,Tensor,D};
 use serde::{Deserialize,Serialize};
 
 type CResult<T> = candle_core::Result<T>;
@@ -53,8 +53,19 @@ impl Linear {
             let k=*dims.last().ok_or(candle_core::Error::Msg("empty input".into()))?;
             if k!=q.in_features{return Err(candle_core::Error::Msg("quantised input width".into()));}
             let m=dims[..dims.len()-1].iter().product::<usize>().max(1);
-            let flat=x.flatten_all()?.to_vec1::<f32>()?;
-            let (aq,asx)=verdict_simd::quantize_acts_i16(&flat,m,k);
+            // Most encoder inputs are contiguous CPU tensors. Borrow their storage
+            // while quantizing instead of copying every f32 before every projection.
+            let (storage,layout)=x.storage_and_layout();
+            let (aq,asx)=match (&*storage,layout.contiguous_offsets()) {
+                (Storage::Cpu(cpu),Some((start,end)))=>{
+                    verdict_simd::quantize_acts_i16(&cpu.as_slice::<f32>()?[start..end],m,k)
+                }
+                _=>{
+                    drop(storage);
+                    let flat=x.flatten_all()?.to_vec1::<f32>()?;
+                    verdict_simd::quantize_acts_i16(&flat,m,k)
+                }
+            };
             let mut out=vec![0f32;m*q.out_features];
             if q.block_size<k{let _=verdict_simd::matmul_i8_blocked(&aq,&q.w,&asx,&q.scales,m,k,q.out_features,q.block_size,&mut out);}else{let _=verdict_simd::matmul_i8(&aq,&q.w,&asx,&q.scales,m,k,q.out_features,&mut out);}
             let mut shape=dims[..dims.len()-1].to_vec();shape.push(q.out_features);
@@ -71,6 +82,31 @@ pub struct Norm { weight:Tensor,bias:Option<Tensor>,eps:f64 }
 impl Norm {
     pub fn new(weight:Tensor,bias:Option<Tensor>,eps:f64)->Self{Self{weight,bias,eps}}
     pub fn forward(&self,x:&Tensor)->CResult<Tensor>{
+        if self.bias.is_none() {
+            if let Ok((rows,cols))=x.dims2() { if cols>0 {
+                let (xs,xl)=x.storage_and_layout();
+                let (ws,wl)=self.weight.storage_and_layout();
+                if let (Storage::Cpu(xc),Storage::Cpu(wc),Some((xb,xe)),Some((wb,we)))=
+                    (&*xs,&*ws,xl.contiguous_offsets(),wl.contiguous_offsets()) {
+                    let data=&xc.as_slice::<f32>()?[xb..xe];
+                    let weight=&wc.as_slice::<f32>()?[wb..we];
+                    if weight.len()==cols {
+                        let inv=(1.0f64/cols as f64) as f32;
+                        let mut out=vec![0f32;rows*cols];
+                        for row in 0..rows {
+                            let src=&data[row*cols..(row+1)*cols];
+                            let dst=&mut out[row*cols..(row+1)*cols];
+                            let mean=src.iter().copied().sum::<f32>()*inv;
+                            for col in 0..cols {dst[col]=src[col]-mean;}
+                            let var=dst.iter().map(|v|v*v).sum::<f32>()*inv;
+                            let denom=(var+self.eps as f32).sqrt();
+                            for col in 0..cols {dst[col]=dst[col]/denom*weight[col];}
+                        }
+                        return Tensor::from_vec(out,(rows,cols),x.device());
+                    }
+                }
+            }}
+        }
         let mean=x.mean_keepdim(D::Minus1)?;
         let centered=x.broadcast_sub(&mean)?;
         let var=centered.sqr()?.mean_keepdim(D::Minus1)?;
@@ -128,17 +164,41 @@ fn rope_table(t:usize,d:usize,theta:f64,mark:&mut dyn FnMut(&'static str))->CRes
     let denom:Vec<f64>=(0..half).map(|i|theta.powf((2*i) as f64/d as f64)).collect();
     let mut cos=Vec::with_capacity(t*half);let mut sin=Vec::with_capacity(t*half);
     for pos in 0..t {let p=pos as f64;for d in denom.iter().take(half){let a=p/d;cos.push(a.cos() as f32);sin.push(a.sin() as f32);}}
-    mark("rope.table");
     let cos=Tensor::from_vec(cos,(1,t,half),&Device::Cpu)?;let sin=Tensor::from_vec(sin,(1,t,half),&Device::Cpu)?;
+    mark("rope.table");
     Ok(RopeTable{cos,sin})
 }
 fn rope_apply(x:&Tensor,table:&RopeTable,mark:&mut dyn FnMut(&'static str))->CResult<Tensor>{
-    let (_,_t,d)=x.dims3()?;let half=d/2;
+    let (heads,t,d)=x.dims3()?;let half=d/2;
+    let (xs,xl)=x.storage_and_layout();
+    let (cs,cl)=table.cos.storage_and_layout();
+    let (ss,sl)=table.sin.storage_and_layout();
+    if d.is_multiple_of(2) { if let (Storage::Cpu(xc),Storage::Cpu(cc),Storage::Cpu(sc),Some((xb,xe)),Some((cb,ce)),Some((sb,se)))=
+        (&*xs,&*cs,&*ss,xl.contiguous_offsets(),cl.contiguous_offsets(),sl.contiguous_offsets()) {
+        let xdata=&xc.as_slice::<f32>()?[xb..xe];
+        let cos=&cc.as_slice::<f32>()?[cb..ce];
+        let sin=&sc.as_slice::<f32>()?[sb..se];
+        if xdata.len()!=heads*t*d || cos.len()!=t*half || sin.len()!=t*half {
+            return Err(candle_core::Error::Msg("invalid rope buffer shape".into()));
+        }
+        let mut out=vec![0f32;heads*t*d];
+        for head in 0..heads {for pos in 0..t {for i in 0..half {
+            let base=(head*t+pos)*d;
+            let trig=pos*half+i;
+            let a=xdata[base+i];let b=xdata[base+half+i];
+            out[base+i]=a*cos[trig]-b*sin[trig];
+            out[base+half+i]=b*cos[trig]+a*sin[trig];
+        }}}
+        mark("rope.apply");
+        return Tensor::from_vec(out,(heads,t,d),x.device());
+    }}
+    drop((xs,cs,ss));
     let a=x.narrow(2,0,half)?;let b=x.narrow(2,half,half)?;
     let left=(a.broadcast_mul(&table.cos)?-b.broadcast_mul(&table.sin)?)?;
     let right=(b.broadcast_mul(&table.cos)?+a.broadcast_mul(&table.sin)?)?;
+    let rotated=Tensor::cat(&[&left,&right],2)?;
     mark("rope.apply");
-    Tensor::cat(&[&left,&right],2)
+    Ok(rotated)
 }
 /// Shared within a forward pass; do not allocate all-zero masks for short inputs.
 pub fn attention_masks(layers:&[EncoderLayer],tokens:usize)->CResult<std::collections::BTreeMap<usize,Tensor>>{
@@ -183,9 +243,11 @@ impl Attention {
     fn forward_cached(&self,x:&Tensor,table:Option<&RopeTable>,mask:Option<&Tensor>,
                       mark:&mut dyn FnMut(&'static str))->CResult<Tensor>{
         let (t,h)=x.dims2()?;let d=h/self.heads;let y=self.qkv.forward(x)?;
+        mark("attn.qkv");
         let mut q=y.narrow(1,0,h)?.reshape((t,self.heads,d))?.transpose(0,1)?.contiguous()?;
         let mut k=y.narrow(1,h,h)?.reshape((t,self.heads,d))?.transpose(0,1)?.contiguous()?;
         let v=y.narrow(1,2*h,h)?.reshape((t,self.heads,d))?.transpose(0,1)?.contiguous()?;
+        mark("attn.layout");
         if let Some(table)=table {q=rope_apply(&q,table,mark)?;k=rope_apply(&k,table,mark)?;}
         mark("attn.pre");
         let mut scores=(q.contiguous()?.matmul(&k.transpose(1,2)?.contiguous()?)?*(1.0/(d as f64).sqrt()))?;
@@ -196,7 +258,9 @@ impl Attention {
         mark("attn.softmax");
         let merged=weights.matmul(&v)?.transpose(0,1)?.contiguous()?.reshape((t,h))?;
         mark("attn.core");
-        self.out.forward(&merged)
+        let out=self.out.forward(&merged)?;
+        mark("attn.out");
+        Ok(out)
     }
 }
 #[derive(Clone)]
@@ -227,12 +291,16 @@ impl EncoderLayer {
         mark("layer.attn");
         let x=(x+attended)?;
         mark("layer.attn_resid");
-        let y=self.wi.forward(&self.mlp_norm.forward(&x)?)?;let half=y.dim(1)?/2;
+        let normalized=self.mlp_norm.forward(&x)?;
+        mark("layer.mlp_norm");
+        let y=self.wi.forward(&normalized)?;let half=y.dim(1)?/2;
         mark("layer.mlp_up");
         let gate=(y.narrow(1,0,half)?.gelu_erf()?*y.narrow(1,half,half)?)?;
         mark("layer.mlp_act");
-        let out=(&x+self.wo.forward(&gate)?)?;
+        let projected=self.wo.forward(&gate)?;
         mark("layer.mlp_down");
+        let out=(&x+projected)?;
+        mark("layer.mlp_resid");
         Ok(out)
     }
 }
@@ -267,6 +335,40 @@ pub mod encoder {
 #[cfg(test)]
 mod tests{
     use super::*;
+    #[test]
+    fn fused_norm_matches_tensor_path_within_tolerance(){
+        let x=Tensor::from_vec((0..(3*768)).map(|i|((i*17%101) as f32-50.0)*0.017).collect(),(3,768),&Device::Cpu).unwrap();
+        let w=Tensor::from_vec((0..768).map(|i|1.0+(i%13) as f32*0.001).collect(),768,&Device::Cpu).unwrap();
+        let norm=Norm::new(w.clone(),None,1e-5);
+        let mean=x.mean_keepdim(D::Minus1).unwrap();
+        let centered=x.broadcast_sub(&mean).unwrap();
+        let var=centered.sqr().unwrap().mean_keepdim(D::Minus1).unwrap();
+        let reference=centered.broadcast_div(&(var+1e-5).unwrap().sqrt().unwrap()).unwrap().broadcast_mul(&w).unwrap().flatten_all().unwrap().to_vec1::<f32>().unwrap();
+        let actual=norm.forward(&x).unwrap().flatten_all().unwrap().to_vec1::<f32>().unwrap();
+        assert!(actual.iter().zip(reference).all(|(a,b)|(a-b).abs()<=1e-5));
+    }
+    #[test]
+    fn rope_direct_buffer_matches_tensor_operations(){
+        let x=Tensor::from_vec((0..48).map(|i|i as f32*0.037-0.8).collect(),(2,3,8),&Device::Cpu).unwrap();
+        let table=rope_table(3,8,10000.,&mut |_|{}).unwrap();
+        let a=x.narrow(2,0,4).unwrap();let b=x.narrow(2,4,4).unwrap();
+        let left=(a.broadcast_mul(&table.cos).unwrap()-b.broadcast_mul(&table.sin).unwrap()).unwrap();
+        let right=(b.broadcast_mul(&table.cos).unwrap()+a.broadcast_mul(&table.sin).unwrap()).unwrap();
+        let expected=Tensor::cat(&[&left,&right],2).unwrap().flatten_all().unwrap().to_vec1::<f32>().unwrap();
+        let got=rope_apply(&x,&table,&mut |_|{}).unwrap().flatten_all().unwrap().to_vec1::<f32>().unwrap();
+        assert_eq!(got,expected);
+    }
+    #[test]
+    fn quantized_linear_handles_contiguous_offsets_and_strides(){
+        let linear=Linear::new_quantized(QuantWeight{w:vec![1,-2,3,-4,4,3,-2,-1],scales:vec![0.02,0.03],out_features:2,in_features:4,block_size:4},None);
+        let base=Tensor::from_vec((0..16).map(|i|i as f32*0.1-0.4).collect(),(4,4),&Device::Cpu).unwrap();
+        let offset=base.narrow(0,1,2).unwrap();
+        let copied=Tensor::from_vec(offset.flatten_all().unwrap().to_vec1::<f32>().unwrap(),(2,4),&Device::Cpu).unwrap();
+        assert_eq!(linear.forward(&offset).unwrap().to_vec2::<f32>().unwrap(),linear.forward(&copied).unwrap().to_vec2::<f32>().unwrap());
+        let strided=base.transpose(0,1).unwrap();
+        let copied=Tensor::from_vec(strided.flatten_all().unwrap().to_vec1::<f32>().unwrap(),(4,4),&Device::Cpu).unwrap();
+        assert_eq!(linear.forward(&strided).unwrap().to_vec2::<f32>().unwrap(),linear.forward(&copied).unwrap().to_vec2::<f32>().unwrap());
+    }
     #[test]
     fn mask_boundary_and_cached_forward_match(){
         assert!(attention_mask(5,Some(4)).unwrap().is_none());

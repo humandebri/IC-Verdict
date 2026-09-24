@@ -14,11 +14,11 @@ canister-common.workspace = true
 ic-cdk.workspace = true
 candid.workspace = true
 serde.workspace = true
-serde_json.workspace = true
 verdict-candle.workspace = true
 hf-tokenizer.workspace = true
 candle-core.workspace = true
 verdict-simd.workspace = true
+sha2.workspace = true
 
 # Same wasm-only getrandom backend as decision-engine; the module is shared by
 # path rather than copied, because `getrandom` is non-optional in the graph:
@@ -27,4 +27,7 @@ verdict-simd.workspace = true
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom = { version = "0.3", default-features = false }
 rand_chacha = { version = "0.9", default-features = false }
-sha2.workspace = true
+
+[dev-dependencies]
+pocket-ic = "=15.0.0"
+wat = "=1.257.1"

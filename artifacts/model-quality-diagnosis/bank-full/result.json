@@ -1,0 +1,43 @@
+{
+  "cases": 1000,
+  "matched": 996,
+  "missing": 0,
+  "unsafe_abstention_escape": 1,
+  "shards": [
+    {
+      "shard": 0,
+      "cases": 250,
+      "missing": 0,
+      "matched": 249,
+      "unsafe_abstention_escape": 0,
+      "cases_sha256": "10b15f49f06325bbf5f074c892cffa2731a9bcabb5c21e97e20e7a282e97a392"
+    },
+    {
+      "shard": 1,
+      "cases": 250,
+      "missing": 0,
+      "matched": 249,
+      "unsafe_abstention_escape": 0,
+      "cases_sha256": "c782e59de04ad4fc3f652efd76d61a11b25ade57e2bcfeaa6d1be5f0f7ee8907"
+    },
+    {
+      "shard": 2,
+      "cases": 250,
+      "missing": 0,
+      "matched": 249,
+      "unsafe_abstention_escape": 0,
+      "cases_sha256": "79e629a47c57bf2a0b14acbd6d4a575f001d6cb6d70e0f3c461f47a92ab0eb24"
+    },
+    {
+      "shard": 3,
+      "cases": 250,
+      "missing": 0,
+      "matched": 249,
+      "unsafe_abstention_escape": 1,
+      "cases_sha256": "11c282ca4d9fa14474ded113b4927c2fd2d5de218a88c2e14a0ab084cd30ac6c"
+    }
+  ],
+  "binary_sha256": "678bf8e43b5893c4a4bbb7e789544bf803bc9f8017f27c798de4955e8db4fa39",
+  "canister_calls": 0,
+  "ratio": 0.996
+}

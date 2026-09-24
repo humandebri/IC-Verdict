@@ -1,0 +1,812 @@
+[
+  {
+    "candidate": "final-kernels",
+    "m": 40,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 49741477,
+    "instructions": 42672730,
+    "reduction_percent": 14.210971258452975,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9"
+  },
+  {
+    "candidate": "final-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 16581157,
+    "instructions": 14225146,
+    "reduction_percent": 14.208966238001363,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9"
+  },
+  {
+    "candidate": "final-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 24594474,
+    "instructions": 21074079,
+    "reduction_percent": 14.313764140676478,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9"
+  },
+  {
+    "candidate": "final-kernels",
+    "m": 48,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 57853762,
+    "instructions": 50237792,
+    "reduction_percent": 13.16417418110165,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9"
+  },
+  {
+    "candidate": "final-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 19285378,
+    "instructions": 16746848,
+    "reduction_percent": 13.162977671477327,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9"
+  },
+  {
+    "candidate": "final-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 28613127,
+    "instructions": 24803653,
+    "reduction_percent": 13.313728345734454,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9"
+  },
+  {
+    "candidate": "final-kernels",
+    "m": 64,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 77138272,
+    "instructions": 66983641,
+    "reduction_percent": 13.164192996182233,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9"
+  },
+  {
+    "candidate": "final-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 25713760,
+    "instructions": 22329049,
+    "reduction_percent": 13.163034110919602,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9"
+  },
+  {
+    "candidate": "final-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 38150757,
+    "instructions": 33071454,
+    "reduction_percent": 13.313767273346633,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9"
+  },
+  {
+    "candidate": "tile16x16-k64-kernels",
+    "m": 40,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 49741477,
+    "instructions": 42672724,
+    "reduction_percent": 14.210983320820969,
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999"
+  },
+  {
+    "candidate": "tile16x16-k64-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 16581157,
+    "instructions": 14225140,
+    "reduction_percent": 14.20900242365476,
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999"
+  },
+  {
+    "candidate": "tile16x16-k64-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 24594474,
+    "instructions": 21074073,
+    "reduction_percent": 14.313788536400496,
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999"
+  },
+  {
+    "candidate": "tile16x16-k64-kernels",
+    "m": 48,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 57853762,
+    "instructions": 50237786,
+    "reduction_percent": 13.164184552078051,
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999"
+  },
+  {
+    "candidate": "tile16x16-k64-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 19285378,
+    "instructions": 16746842,
+    "reduction_percent": 13.163008783130925,
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999"
+  },
+  {
+    "candidate": "tile16x16-k64-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 28613127,
+    "instructions": 24803647,
+    "reduction_percent": 13.313749315130774,
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999"
+  },
+  {
+    "candidate": "tile16x16-k64-kernels",
+    "m": 64,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 77138272,
+    "instructions": 66983635,
+    "reduction_percent": 13.16420077442233,
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999"
+  },
+  {
+    "candidate": "tile16x16-k64-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 25713760,
+    "instructions": 22329043,
+    "reduction_percent": 13.163057444729986,
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999"
+  },
+  {
+    "candidate": "tile16x16-k64-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 38150757,
+    "instructions": 33071448,
+    "reduction_percent": 13.313783000426438,
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999"
+  },
+  {
+    "candidate": "tile16x16-kernels",
+    "m": 40,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 49741477,
+    "instructions": 46354678,
+    "reduction_percent": 6.808802641706835,
+    "module_hash": "0x5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3"
+  },
+  {
+    "candidate": "tile16x16-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 16581157,
+    "instructions": 15452374,
+    "reduction_percent": 6.807625065006018,
+    "module_hash": "0x5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3"
+  },
+  {
+    "candidate": "tile16x16-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 24594474,
+    "instructions": 22917915,
+    "reduction_percent": 6.8168117764990654,
+    "module_hash": "0x5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3"
+  },
+  {
+    "candidate": "tile16x16-kernels",
+    "m": 48,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 57853762,
+    "instructions": 55068653,
+    "reduction_percent": 4.814049948903931,
+    "module_hash": "0x5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3"
+  },
+  {
+    "candidate": "tile16x16-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 19285378,
+    "instructions": 18357005,
+    "reduction_percent": 4.813869865553066,
+    "module_hash": "0x5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3"
+  },
+  {
+    "candidate": "tile16x16-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 28613127,
+    "instructions": 27223378,
+    "reduction_percent": 4.857032927579008,
+    "module_hash": "0x5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3"
+  },
+  {
+    "candidate": "tile16x16-kernels",
+    "m": 64,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 77138272,
+    "instructions": 73424791,
+    "reduction_percent": 4.814057799998428,
+    "module_hash": "0x5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3"
+  },
+  {
+    "candidate": "tile16x16-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 25713760,
+    "instructions": 24475927,
+    "reduction_percent": 4.813893417376535,
+    "module_hash": "0x5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3"
+  },
+  {
+    "candidate": "tile16x16-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 38150757,
+    "instructions": 36297756,
+    "reduction_percent": 4.857049101279953,
+    "module_hash": "0x5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3"
+  },
+  {
+    "candidate": "tile16x32-k64-kernels",
+    "m": 40,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 49741477,
+    "instructions": 41698743,
+    "reduction_percent": 16.16906952722775,
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed"
+  },
+  {
+    "candidate": "tile16x32-k64-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 16581157,
+    "instructions": 13900503,
+    "reduction_percent": 16.166869416892926,
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed"
+  },
+  {
+    "candidate": "tile16x32-k64-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 24594474,
+    "instructions": 20545100,
+    "reduction_percent": 16.46456842297176,
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed"
+  },
+  {
+    "candidate": "tile16x32-k64-kernels",
+    "m": 48,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 57853762,
+    "instructions": 49783760,
+    "reduction_percent": 13.948966706780453,
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed"
+  },
+  {
+    "candidate": "tile16x32-k64-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 19285378,
+    "instructions": 16595504,
+    "reduction_percent": 13.94773802203929,
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed"
+  },
+  {
+    "candidate": "tile16x32-k64-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 28613127,
+    "instructions": 24515365,
+    "reduction_percent": 14.321265900088441,
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed"
+  },
+  {
+    "candidate": "tile16x32-k64-kernels",
+    "m": 64,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 77138272,
+    "instructions": 66378267,
+    "reduction_percent": 13.948983715891384,
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed"
+  },
+  {
+    "candidate": "tile16x32-k64-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 25713760,
+    "instructions": 22127259,
+    "reduction_percent": 13.94778904368712,
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed"
+  },
+  {
+    "candidate": "tile16x32-k64-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 38150757,
+    "instructions": 32687072,
+    "reduction_percent": 14.32130167168112,
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed"
+  },
+  {
+    "candidate": "tile16x32-kernels",
+    "m": 40,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 49741477,
+    "instructions": 45434306,
+    "reduction_percent": 8.659113600506874,
+    "module_hash": "0xb1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b"
+  },
+  {
+    "candidate": "tile16x32-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 16581157,
+    "instructions": 15145586,
+    "reduction_percent": 8.657845770352457,
+    "module_hash": "0xb1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b"
+  },
+  {
+    "candidate": "tile16x32-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 24594474,
+    "instructions": 22417303,
+    "reduction_percent": 8.852277141605057,
+    "module_hash": "0xb1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b"
+  },
+  {
+    "candidate": "tile16x32-kernels",
+    "m": 48,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 57853762,
+    "instructions": 54051515,
+    "reduction_percent": 6.572168980126136,
+    "module_hash": "0xb1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b"
+  },
+  {
+    "candidate": "tile16x32-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 19285378,
+    "instructions": 18017963,
+    "reduction_percent": 6.57189607587676,
+    "module_hash": "0xb1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b"
+  },
+  {
+    "candidate": "tile16x32-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 28613127,
+    "instructions": 26653648,
+    "reduction_percent": 6.848181955086563,
+    "module_hash": "0xb1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b"
+  },
+  {
+    "candidate": "tile16x32-kernels",
+    "m": 64,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 77138272,
+    "instructions": 72068607,
+    "reduction_percent": 6.572178593785461,
+    "module_hash": "0xb1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b"
+  },
+  {
+    "candidate": "tile16x32-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 25713760,
+    "instructions": 24023871,
+    "reduction_percent": 6.571924914909366,
+    "module_hash": "0xb1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b"
+  },
+  {
+    "candidate": "tile16x32-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 38150757,
+    "instructions": 35538116,
+    "reduction_percent": 6.848202251923863,
+    "module_hash": "0xb1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b"
+  },
+  {
+    "candidate": "tile32x16-kernels",
+    "m": 40,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 49741477,
+    "instructions": 45678380,
+    "reduction_percent": 8.1684285329927,
+    "module_hash": "0x7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8"
+  },
+  {
+    "candidate": "tile32x16-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 16581157,
+    "instructions": 15226988,
+    "reduction_percent": 8.16691501081619,
+    "module_hash": "0x7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8"
+  },
+  {
+    "candidate": "tile32x16-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 24594474,
+    "instructions": 22538737,
+    "reduction_percent": 8.358532083263903,
+    "module_hash": "0x7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8"
+  },
+  {
+    "candidate": "tile32x16-kernels",
+    "m": 48,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 57853762,
+    "instructions": 54392378,
+    "reduction_percent": 5.982988625700781,
+    "module_hash": "0x7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8"
+  },
+  {
+    "candidate": "tile32x16-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 19285378,
+    "instructions": 18131642,
+    "reduction_percent": 5.98243913082751,
+    "module_hash": "0x7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8"
+  },
+  {
+    "candidate": "tile32x16-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 28613127,
+    "instructions": 26844223,
+    "reduction_percent": 6.1821415044919785,
+    "module_hash": "0x7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8"
+  },
+  {
+    "candidate": "tile32x16-kernels",
+    "m": 64,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 77138272,
+    "instructions": 72072007,
+    "reduction_percent": 6.567770924399241,
+    "module_hash": "0x7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8"
+  },
+  {
+    "candidate": "tile32x16-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 25713760,
+    "instructions": 24024967,
+    "reduction_percent": 6.567662605546598,
+    "module_hash": "0x7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8"
+  },
+  {
+    "candidate": "tile32x16-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 38150757,
+    "instructions": 35539212,
+    "reduction_percent": 6.845329438679293,
+    "module_hash": "0x7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8"
+  },
+  {
+    "candidate": "tile32x32-k128-kernels",
+    "m": 40,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 49741477,
+    "instructions": 40131514,
+    "reduction_percent": 19.31981834797547,
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101"
+  },
+  {
+    "candidate": "tile32x32-k128-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 16581157,
+    "instructions": 13378138,
+    "reduction_percent": 19.31722255569982,
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101"
+  },
+  {
+    "candidate": "tile32x32-k128-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 24594474,
+    "instructions": 19724655,
+    "reduction_percent": 19.800460054563473,
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101"
+  },
+  {
+    "candidate": "tile32x32-k128-kernels",
+    "m": 48,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 57853762,
+    "instructions": 47985002,
+    "reduction_percent": 17.058112832835313,
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101"
+  },
+  {
+    "candidate": "tile32x32-k128-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 19285378,
+    "instructions": 15995978,
+    "reduction_percent": 17.05644556202114,
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101"
+  },
+  {
+    "candidate": "tile32x32-k128-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 28613127,
+    "instructions": 23579167,
+    "reduction_percent": 17.59318371599161,
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101"
+  },
+  {
+    "candidate": "tile32x32-k128-kernels",
+    "m": 64,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 77138272,
+    "instructions": 63800901,
+    "reduction_percent": 17.29021230861899,
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101"
+  },
+  {
+    "candidate": "tile32x32-k128-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 25713760,
+    "instructions": 21268101,
+    "reduction_percent": 17.289027353448116,
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101"
+  },
+  {
+    "candidate": "tile32x32-k128-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 38150757,
+    "instructions": 31324634,
+    "reduction_percent": 17.89249686447899,
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101"
+  },
+  {
+    "candidate": "tile32x32-k64-kernels",
+    "m": 40,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 49741477,
+    "instructions": 41383450,
+    "reduction_percent": 16.802932892402854,
+    "module_hash": "0x296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6"
+  },
+  {
+    "candidate": "tile32x32-k64-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 16581157,
+    "instructions": 13795450,
+    "reduction_percent": 16.80043799114863,
+    "module_hash": "0x296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6"
+  },
+  {
+    "candidate": "tile32x32-k64-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 24594474,
+    "instructions": 20350623,
+    "reduction_percent": 17.25530295951847,
+    "module_hash": "0x296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6"
+  },
+  {
+    "candidate": "tile32x32-k64-kernels",
+    "m": 48,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 57853762,
+    "instructions": 49468490,
+    "reduction_percent": 14.493909661397641,
+    "module_hash": "0x296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6"
+  },
+  {
+    "candidate": "tile32x32-k64-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 19285378,
+    "instructions": 16490474,
+    "reduction_percent": 14.492347518415249,
+    "module_hash": "0x296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6"
+  },
+  {
+    "candidate": "tile32x32-k64-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 28613127,
+    "instructions": 24320911,
+    "reduction_percent": 15.000863065403514,
+    "module_hash": "0x296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6"
+  },
+  {
+    "candidate": "tile32x32-k64-kernels",
+    "m": 64,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 77138272,
+    "instructions": 65747493,
+    "reduction_percent": 14.766702318662261,
+    "module_hash": "0x296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6"
+  },
+  {
+    "candidate": "tile32x32-k64-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 25713760,
+    "instructions": 21916965,
+    "reduction_percent": 14.765615763700058,
+    "module_hash": "0x296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6"
+  },
+  {
+    "candidate": "tile32x32-k64-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 38150757,
+    "instructions": 32297930,
+    "reduction_percent": 15.34131288666173,
+    "module_hash": "0x296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6"
+  },
+  {
+    "candidate": "tile32x32-kernels",
+    "m": 40,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 49741477,
+    "instructions": 44220435,
+    "reduction_percent": 11.09947338314864,
+    "module_hash": "0x916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc"
+  },
+  {
+    "candidate": "tile32x32-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 16581157,
+    "instructions": 14741091,
+    "reduction_percent": 11.097331748321304,
+    "module_hash": "0x916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc"
+  },
+  {
+    "candidate": "tile32x32-kernels",
+    "m": 40,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 24594474,
+    "instructions": 21770600,
+    "reduction_percent": 11.481741792892175,
+    "module_hash": "0x916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc"
+  },
+  {
+    "candidate": "tile32x32-kernels",
+    "m": 48,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 57853762,
+    "instructions": 52837667,
+    "reduction_percent": 8.670300472422177,
+    "module_hash": "0x916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc"
+  },
+  {
+    "candidate": "tile32x32-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 19285378,
+    "instructions": 17613491,
+    "reduction_percent": 8.669194868775708,
+    "module_hash": "0x916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc"
+  },
+  {
+    "candidate": "tile32x32-kernels",
+    "m": 48,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 28613127,
+    "instructions": 26006968,
+    "reduction_percent": 9.108263490390268,
+    "module_hash": "0x916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc"
+  },
+  {
+    "candidate": "tile32x32-kernels",
+    "m": 64,
+    "n": 2304,
+    "k": 768,
+    "baseline_instructions": 77138272,
+    "instructions": 69640677,
+    "reduction_percent": 9.71968233874878,
+    "module_hash": "0x916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc"
+  },
+  {
+    "candidate": "tile32x32-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 768,
+    "baseline_instructions": 25713760,
+    "instructions": 23214693,
+    "reduction_percent": 9.718792584203939,
+    "module_hash": "0x916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc"
+  },
+  {
+    "candidate": "tile32x32-kernels",
+    "m": 64,
+    "n": 768,
+    "k": 1152,
+    "baseline_instructions": 38150757,
+    "instructions": 34244522,
+    "reduction_percent": 10.238944931027183,
+    "module_hash": "0x916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc"
+  }
+]

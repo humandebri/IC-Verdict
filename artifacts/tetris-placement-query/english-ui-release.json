@@ -1,0 +1,13 @@
+{
+  "url": "https://openjev.kinic.xyz",
+  "worker_version": "7853f415-03e5-4810-b44b-bc66bf733961",
+  "canister_changed": false,
+  "document_language": "en",
+  "local_single_start_click_turns": 23,
+  "local_japanese_text_found": false,
+  "mobile_width": 390,
+  "mobile_scroll_width": 390,
+  "production_smoke": "passed",
+  "production_single_start_click_turns_at_check": 3,
+  "production_japanese_text_found": false
+}

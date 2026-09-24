@@ -1,0 +1,17 @@
+{
+  "source": "artifacts/model-quality-diagnosis/games.json",
+  "source_sha256": "545a6839b22bf3fdfa3f76a960f119836fefe3d20fbe0138a72fa83dda819b8c",
+  "source_bytes": 160240,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "omitted": true,
+    "see_raw_source": true
+  },
+  "omitted": [
+    {
+      "path": "$",
+      "count": 288,
+      "sha256": "a5897893b3c2ed17002f2845299d9c2b2bdf6025f82b6bd8835a6459b29e0028"
+    }
+  ]
+}

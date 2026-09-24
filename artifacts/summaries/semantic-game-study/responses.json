@@ -1,0 +1,17 @@
+{
+  "source": "artifacts/semantic-game-study/responses.json",
+  "source_sha256": "147631c3dd5a95cb9f549d28a1aa5fff1fa1bc8d220d514fd3dc2397870315e3",
+  "source_bytes": 111676,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "omitted": true,
+    "see_raw_source": true
+  },
+  "omitted": [
+    {
+      "path": "$",
+      "count": 288,
+      "sha256": "f870977ffc033aec6dc59845959aa548b9fbce7d3cbfe4b7c8e30696f402a4a9"
+    }
+  ]
+}

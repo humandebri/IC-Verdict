@@ -1,0 +1,392 @@
+{
+  "source": "artifacts/query-optimization-v3/baseline-phases.json",
+  "source_sha256": "e1b6643ab4893447aeaf717611d8bc2580a00bd812785324e837e46145d4cbd2",
+  "source_bytes": 396227,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "created_utc": "2026-09-23T02:21:50.270669+00:00",
+    "canister": "4xhad-gd777-77775-aaacq-cai",
+    "endpoint": "http://localhost:8011/",
+    "mode": "profile",
+    "classes": 2,
+    "compact_classes": false,
+    "input_kind": "canonical short prompt padded with PAD",
+    "vary_inputs": false,
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9",
+    "initial_info": "(\n  record {\n    model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n    pack_format = \"ic-verdict-int8-pack-v1\";\n    max_input_tokens = 128 : nat32;\n    max_classes = 25 : nat32;\n    cost_per_token = 92_000_000 : nat64;\n    callers = 0 : nat64;\n    cost_fixed = 170_000_000 : nat64;\n    model_bytes = 152_245_512 : nat64;\n    warmed = true;\n    budget = 40_000_000_000 : nat64;\n    tensors = 0 : nat64;\n    upload_complete = true;\n    heap_bytes = 177_143_808 : nat64;\n  },\n)\n",
+    "initial_query_limits": "(\n  record {\n    max_input_tokens = 128 : nat32;\n    cost_per_token = 92_000_000 : nat64;\n    cost_fixed = 170_000_000 : nat64;\n    margin_permille = 1_005 : nat64;\n    max_tokens = 52 : nat32;\n    budget = 5_000_000_000 : nat64;\n  },\n)\n",
+    "rows": [
+      {
+        "status": "ok",
+        "wall_seconds": 0.7701771249994636,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 40,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 3618606557,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5247558,
+          "rope.table": 1250403,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 63249912,
+          "attn.qkv": 987999838,
+          "attn.layout": 23715643,
+          "rope.apply": 115756567,
+          "attn.pre": 141491,
+          "attn.scores": 127143692,
+          "attn.mask": 14967,
+          "attn.softmax": 78541653,
+          "attn.core": 82806929,
+          "attn.out": 348340997,
+          "layer.attn": 172385,
+          "layer.attn_resid": 14632651,
+          "layer.mlp_norm": 67095861,
+          "layer.mlp_up": 987600165,
+          "layer.mlp_act": 176044226,
+          "layer.mlp_down": 515598203,
+          "layer.mlp_resid": 14636398,
+          "encoder": 3011096,
+          "text_projector": 2151019,
+          "class_projector": 3386583,
+          "dot_decode": 65727
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8290465419995598,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 48,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4321675213,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 6375909,
+          "rope.table": 1336726,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 75997177,
+          "attn.qkv": 1161830886,
+          "attn.layout": 28169619,
+          "rope.apply": 138279580,
+          "attn.pre": 145952,
+          "attn.scores": 168632752,
+          "attn.mask": 74997,
+          "attn.softmax": 112460578,
+          "attn.core": 115747195,
+          "attn.out": 409934268,
+          "layer.attn": 190287,
+          "layer.attn_resid": 17539884,
+          "layer.mlp_norm": 79499829,
+          "layer.mlp_up": 1161326322,
+          "layer.mlp_act": 210776249,
+          "layer.mlp_down": 606627445,
+          "layer.mlp_resid": 17542907,
+          "encoder": 3602653,
+          "text_projector": 2129509,
+          "class_projector": 3386216,
+          "dot_decode": 65679
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8520487499772571,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 52,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4763145490,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 7061341,
+          "rope.table": 1561618,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 82295014,
+          "attn.qkv": 1276451697,
+          "attn.layout": 30089778,
+          "rope.apply": 149774398,
+          "attn.pre": 143081,
+          "attn.scores": 195600488,
+          "attn.mask": 54950,
+          "attn.softmax": 132236376,
+          "attn.core": 133779608,
+          "attn.out": 450224996,
+          "layer.attn": 194365,
+          "layer.attn_resid": 18995674,
+          "layer.mlp_norm": 86189715,
+          "layer.mlp_up": 1275943271,
+          "layer.mlp_act": 228017349,
+          "layer.mlp_down": 666049176,
+          "layer.mlp_resid": 18999204,
+          "encoder": 3899706,
+          "text_projector": 2128494,
+          "class_projector": 3386919,
+          "dot_decode": 65678
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8548585829848889,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 53,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4956547572,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 7132146,
+          "rope.table": 1567728,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 83789524,
+          "attn.qkv": 1327047160,
+          "attn.layout": 30748071,
+          "rope.apply": 152518992,
+          "attn.pre": 143132,
+          "attn.scores": 211531128,
+          "attn.mask": 74950,
+          "attn.softmax": 148214523,
+          "attn.core": 139692213,
+          "attn.out": 467518024,
+          "layer.attn": 194231,
+          "layer.attn_resid": 19359103,
+          "layer.mlp_norm": 87898667,
+          "layer.mlp_up": 1326439365,
+          "layer.mlp_act": 232275016,
+          "layer.mlp_down": 691483904,
+          "layer.mlp_resid": 19362468,
+          "encoder": 3973763,
+          "text_projector": 2128274,
+          "class_projector": 3386919,
+          "dot_decode": 65678
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.9218183330085594,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 64,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5891030085,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 8615658,
+          "rope.table": 1737224,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 100641355,
+          "attn.qkv": 1544982956,
+          "attn.layout": 36799862,
+          "rope.apply": 183283698,
+          "attn.pre": 143312,
+          "attn.scores": 278414728,
+          "attn.mask": 74949,
+          "attn.softmax": 200278987,
+          "attn.core": 196700343,
+          "attn.out": 545440480,
+          "layer.attn": 213551,
+          "layer.attn_resid": 23354009,
+          "layer.mlp_norm": 105887975,
+          "layer.mlp_up": 1544375724,
+          "layer.mlp_act": 279803247,
+          "layer.mlp_down": 806531070,
+          "layer.mlp_resid": 23357082,
+          "encoder": 4789608,
+          "text_projector": 2130063,
+          "class_projector": 3405984,
+          "dot_decode": 65627
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.975481250003213,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 128,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 12878489681,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 16038775,
+          "rope.table": 3531780,
+          "attn.mask_setup": 1181428,
+          "layer.attn_norm": 200603183,
+          "attn.qkv": 3077686932,
+          "attn.layout": 72458046,
+          "rope.apply": 367334027,
+          "attn.pre": 142028,
+          "attn.scores": 955854710,
+          "attn.mask": 59320627,
+          "attn.softmax": 739459632,
+          "attn.core": 737427913,
+          "attn.out": 1086811098,
+          "layer.attn": 186283,
+          "layer.attn_resid": 46597411,
+          "layer.mlp_norm": 210272980,
+          "layer.mlp_up": 3076657485,
+          "layer.mlp_act": 558256903,
+          "layer.mlp_down": 1606955327,
+          "layer.mlp_resid": 46602642,
+          "encoder": 9524631,
+          "text_projector": 2133595,
+          "class_projector": 3386537,
+          "dot_decode": 65708
+        }
+      }
+    ],
+    "source_hashes_note": "Working-tree snapshot only; module_hash identifies the installed Wasm. Sources can differ during candidate builds.",
+    "query_repeats_note": "Identical queries can hit the replica cache; repetitions are not independent timing samples.",
+    "source_hashes": {
+      "crates/verdict-simd/src/lib.rs": "9c85571012d4a0b61e5cb43bb70856677000a4462dfa3bc9398369843509e2b1",
+      "crates/modernbert-candle/src/lib.rs": "fc3235f640ad5306ff49ef7fa04af219c073b38863c9c8a8fff7ff0aacbc7e86",
+      "crates/verdict-candle/src/lib.rs": "fc9466ffc0943cf06de153b0daa888e4f74fcbc43f08d7696d93cc01a455c28b",
+      "canisters/verdict-engine/src/lib.rs": "9ba4af04afca8fab7ebdd481dd5124ac26196d278d5eb27c4a9a0198fc43a03b"
+    },
+    "respect_guard": false
+  },
+  "omitted": [
+    {
+      "path": "$.rows[0].raw",
+      "count": 27175,
+      "sha256": "609708ceb1864ed2a7019d6f009ae72ecf7f120e3f75c5a0ba099750e796eaf4"
+    },
+    {
+      "path": "$.rows[0].ids",
+      "count": 40,
+      "sha256": "ce3c36880b4ac4fcf6194673ae044adfbd2ebaa5aa25d32f0cf6ea8924599cac"
+    },
+    {
+      "path": "$.rows[0].phases",
+      "count": 404,
+      "sha256": "2f6eba848a7d4bac90cfecace59aa90f127446f01b0b63bdcdea0f41118086cc"
+    },
+    {
+      "path": "$.rows[1].raw",
+      "count": 27187,
+      "sha256": "b9e58eeea0550be5ddec946e1d9e7a980a8435e06db4699c957ef054ec411a62"
+    },
+    {
+      "path": "$.rows[1].ids",
+      "count": 48,
+      "sha256": "61512065331324353398fe5ad30574988c99d002e833d59034f4b7e7aca57935"
+    },
+    {
+      "path": "$.rows[1].phases",
+      "count": 404,
+      "sha256": "44cd01e3f592b05aa726eb19316c9f6932a0ea71fb149f9e305530f305b2c256"
+    },
+    {
+      "path": "$.rows[2].raw",
+      "count": 27194,
+      "sha256": "4b4a2b360fc2844b4fab9b17071c04d828d542104cc695913f6d3514b6412b8b"
+    },
+    {
+      "path": "$.rows[2].ids",
+      "count": 52,
+      "sha256": "1c2ff50a9b63fa8407816981b5e3b7ef874c059896d83a40d70518b079f888e4"
+    },
+    {
+      "path": "$.rows[2].phases",
+      "count": 404,
+      "sha256": "3acf1850c88c55913ba255ebcbaf9f8b97206d636a3be388683cd33cc9ce5af0"
+    },
+    {
+      "path": "$.rows[3].raw",
+      "count": 27191,
+      "sha256": "16223bb1f3233e5fe75e2166146e1f9f301f5a431362e5d6beb9d260a350ef38"
+    },
+    {
+      "path": "$.rows[3].ids",
+      "count": 53,
+      "sha256": "e8989b26157f4f981463ef7b46a504e08bf2b9fd0593bcdb606c93ddda5dda74"
+    },
+    {
+      "path": "$.rows[3].phases",
+      "count": 404,
+      "sha256": "683a8951dc8f922679b2e1ad59669c33a20759fbb09d464a53e494e3e2b35858"
+    },
+    {
+      "path": "$.rows[4].raw",
+      "count": 27309,
+      "sha256": "47827aa574edbbfc8d9e3c04de42ba6a6b526c46e77ffa956a451f065bf18e33"
+    },
+    {
+      "path": "$.rows[4].ids",
+      "count": 64,
+      "sha256": "749399d61bc8e63adce85a0b1de8e01d3a11631e60246b371b7d2df6894c5af8"
+    },
+    {
+      "path": "$.rows[4].phases",
+      "count": 404,
+      "sha256": "a4de48cccd11657858cf20d999d8308ae4b0b01afef223d7c227403ad54039d8"
+    },
+    {
+      "path": "$.rows[5].raw",
+      "count": 27491,
+      "sha256": "73fe55f6fe3d3c655716f19828a7227d405e03688ef52a11c3746a9ac410a67a"
+    },
+    {
+      "path": "$.rows[5].ids",
+      "count": 128,
+      "sha256": "101976836ecc4eb221bbce5f872c356109ae0db7733c2bf6063846f0dc8e8369"
+    },
+    {
+      "path": "$.rows[5].phases",
+      "count": 404,
+      "sha256": "a5d8ea8c4628f2ade4f75991840a23dbd5fd38c51ed8e1f5fa2780a05483826c"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ The fixed fixture IDs require a fresh canister for each run.
 import sys,json,re,time,hashlib,subprocess
 from pathlib import Path
 import argparse
+import billing_cli
 from urllib.parse import urlparse
 from local_integration import decode_blobs,blob
 ROOT=Path(__file__).resolve().parents[1]
@@ -16,15 +17,20 @@ parser.add_argument('--project',type=Path,required=True)
 parser.add_argument('--identity',required=True)
 parser.add_argument('--controller',required=True)
 parser.add_argument('--canister',default='verdict-engine')
+billing_cli.add_arguments(parser)
 args=parser.parse_args()
+billing_cli.require_payment(args)
 PROJECT=args.project
 CANISTER=args.canister
 if PROJECT.resolve()==ROOT.resolve():raise ValueError('use a disposable test project')
 common=['-e','local','--project-root-override',str(PROJECT)]
 def run(args,identity=args.identity):
  return subprocess.check_output(['icp',*args,'--identity',identity,*common],text=True)
-def call(method,args='()'):
- out=run(['canister','call',CANISTER,method,args,'--candid',str(ROOT/'build/verdict-engine.did')])
+def call(method,value='()',query=False):
+ flags=['--query'] if query else []
+ if method in billing_cli.PAID_METHODS:
+  flags+=billing_cli.proxy_flags(args,call('cycles_pricing',query=True))
+ out=run(['canister','call',CANISTER,method,value,'--candid',str(ROOT/'build/verdict-engine.did'),*flags])
  if 'Err =' in out:raise RuntimeError(out)
  return out
 status=json.loads(subprocess.check_output(['icp','network','status','--json',*common],text=True))
@@ -35,7 +41,8 @@ expected_model=hashlib.sha256((ROOT/'fixtures/verdict-tiny/manifest.json').read_
 info=call('info')
 model_blob=re.search(r'model = (blob\s+"(?:[^"\\]|\\.)*")',info)[1]
 if decode_blobs(model_blob)[0]!=expected_model:raise ValueError('regression requires the verdict-tiny fixture')
-call('allow_caller',f'(principal "{owner}")')
+if args.execution_pricing:call('set_execution_pricing',billing_cli.pricing_arg(args.execution_pricing))
+call('allow_caller',f'(principal "{args.proxy}")')
 schema='record {id="Efficiency";version=1:nat64;primitive=variant {Noul};instructions="choose";options=vec {record {id="false";text="false"};record {id="true";text="true"}}}'
 out=call('register_schema',f'({schema},1:nat32)')
 def field(name):

@@ -2,12 +2,13 @@
 """Record PASS / FAIL / NOT_RUN independently. Never substitute Python for Rust."""
 from __future__ import annotations
 import argparse,ast,datetime,json,os,re,shutil,subprocess,sys,tomllib
+import billing_cli
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
 # Vendored/cache trees that must never be scanned as project source. `.cargohome`
 # holds the Cargo registry used by tools/verdict-upload (thousands of .rs files).
-SKIP={".venv","target",".cargohome",".icphome",".icp","__pycache__"}
+SKIP={".venv","target",".cargohome",".icphome",".icp","__pycache__","node_modules"}
 def skipped(path):
     return any(part in SKIP for part in path.parts)
 
@@ -45,7 +46,9 @@ def main():
                    help="also sweep the openJev canister on an already-warm local replica (tools/measure_verdict.py --skip-upload)")
     p.add_argument("--verdict-query",action="store_true",
                    help="also sweep the 5B query path on an already-warm local replica (tools/measure_verdict.py --query --skip-upload)")
+    billing_cli.add_arguments(p)
     args=p.parse_args();records=[]
+    if args.verdict_canister:billing_cli.require_payment(args)
     artifacts=ROOT/"artifacts";artifacts.mkdir(exist_ok=True)
     def run(name,cmd,log,timeout=300):
         try:
@@ -135,7 +138,7 @@ def main():
     # that says nothing about either check.
     if args.verdict_canister:
         run("openjev_canister_instructions",[sys.executable,"tools/measure_verdict.py",
-            "--skip-upload","--sweep","120"],"verdict_sweep.log",3600)
+            "--skip-upload","--sweep","120",*billing_cli.uploader_flags(args)],"verdict_sweep.log",3600)
     else:
         records.append(dict(check="openjev_canister_instructions",status="NOT_RUN",
           reason="Pass --verdict-canister with a warm local replica; see docs/VERDICT_ENGINE.md"))

@@ -1,0 +1,17 @@
+{
+  "url": "http://127.0.0.1:5185",
+  "browser": "Playwright Chromium",
+  "start_clicks": 1,
+  "observed_turns": 22,
+  "observed_lines": 4,
+  "paused": true,
+  "lang": "en",
+  "visible_japanese": false,
+  "mobile_width": 390,
+  "horizontal_overflow": false,
+  "console_errors": 0,
+  "update_calls": 0,
+  "observed_model_passes_per_turn": 1,
+  "observed_queries_per_turn": 1,
+  "session_closed": true
+}

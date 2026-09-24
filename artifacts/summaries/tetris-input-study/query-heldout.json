@@ -1,0 +1,75 @@
+{
+  "source": "artifacts/tetris-input-study/query-heldout.json",
+  "source_sha256": "ca1e6d63f3f344e045f81645a93e2d2acb6cb2f95057b916902db243e717155b",
+  "source_bytes": 59863,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "provenance": {
+      "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+      "fixtures": "0d051061a23ae51e15e240d57e0d0aa8208a12daa871661b4fec8fa20234d33f",
+      "clock": "real local canister query results; fixed-latency games charge exactly 1000ms per choice (cached identical prompts permitted); live-latency games use actual uncached RTT; one in-flight query per game, at most four independent games/fixtures concurrently",
+      "host": "http://localhost:8011",
+      "canister": "4fbx2-kt777-77775-aaabq-cai",
+      "wasm": "0x0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b"
+    },
+    "heldout": [
+      {
+        "variant": {
+          "format": "history",
+          "labels": "short",
+          "id": "history-short"
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "summary": {
+          "n": 50,
+          "accuracy": 0.28,
+          "correct": 14,
+          "rotation_accuracy": 0,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_offered": 40,
+          "rotation_chosen": 0,
+          "repeated": 50
+        }
+      },
+      {
+        "variant": {
+          "format": "columns",
+          "labels": "explicit",
+          "id": "columns-explicit"
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "summary": {
+          "n": 50,
+          "accuracy": 0.32,
+          "correct": 16,
+          "rotation_accuracy": 0,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_offered": 40,
+          "rotation_chosen": 0,
+          "repeated": 12
+        }
+      }
+    ]
+  },
+  "omitted": [
+    {
+      "path": "$.heldout[0].rows",
+      "count": 50,
+      "sha256": "991521959f40469f0a569018dfa9c5fa956a1a97bcd1b525bce8f9f08fde7e99"
+    },
+    {
+      "path": "$.heldout[1].rows",
+      "count": 50,
+      "sha256": "a5045bb8998c9057df9f529cdd22ea8621b6c0c8fedc9d4ce03d3349c63d1a8b"
+    }
+  ]
+}

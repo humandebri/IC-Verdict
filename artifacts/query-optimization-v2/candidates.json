@@ -1,0 +1,47 @@
+{
+  "tile32x32-k64": {
+    "simd_sha256": "2a8712eed5730c67e30e602fa38e5e5515548da967d4a397506a9e84494766eb",
+    "wasm_sha256": "296e3bcc643b4854a49331c0619775e97a016d2277803add25d24d14cc9547c6",
+    "wasm_bytes": 6166226
+  },
+  "baseline": {
+    "simd_sha256": "e7a27649db72536c9459e0f8f3c2f450aa8e28d404e24c2e8922a1f27854394a",
+    "wasm_sha256": "a3de6a00af386bf9aa2967291d1ea657d3e8a9e1cd65f911a90ca056cde60389",
+    "wasm_bytes": 5618476
+  },
+  "tile32x32-k128": {
+    "simd_sha256": "e054dee18031e728ce53817939f438da72bc57850e21ddf9373f7a34bca73108",
+    "wasm_sha256": "5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101",
+    "wasm_bytes": 6553842
+  },
+  "tile32x16": {
+    "simd_sha256": "01268d578e9a012c5be4ca7ba11acccceec788f746b973818e31fb1ac0370945",
+    "wasm_sha256": "7bce49f3198f22004f6dcbebc74b69d91b729cc937cae8ecb27c6dc233ac15a8",
+    "wasm_bytes": 5770090
+  },
+  "tile16x32": {
+    "simd_sha256": "4fb464eb9e68f717907c2006c168ac933daa4d302b2540f70637997fe7655fb1",
+    "wasm_sha256": "b1e7f4bee67e032331fb5565da0eb6b95577709969fdfca24eaf5a07ffce2d9b",
+    "wasm_bytes": 5755542
+  },
+  "tile32x32": {
+    "simd_sha256": "8045388fa7472cef96bce93c2c76a498d52c2c6c24417719c8d40a4022f9f50f",
+    "wasm_sha256": "916752af0471e21236b117c1ce84a3ba0784b53896840289643f3d771275e8bc",
+    "wasm_bytes": 5972311
+  },
+  "tile16x16": {
+    "simd_sha256": "632bd209d296b91d62f1851150a51c38f8682f1e24758ad5c6c1db179a3dc7cc",
+    "wasm_sha256": "5e72fac071069b44fde9ba35444a831a87890452a402cc6c8c9a050ab65564e3",
+    "wasm_bytes": 5662146
+  },
+  "tile16x32-k64": {
+    "simd_sha256": "f9d91f5d462ff7847e77cd7c1c3dfb4975d5bafb7ecb2be83252c2114a546827",
+    "wasm_sha256": "b4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed",
+    "wasm_bytes": 5848079
+  },
+  "tile16x16-k64": {
+    "simd_sha256": "d248ce5893e127852c10876bbd323548bfacd724b5c9d29d60e17f72be67b8c6",
+    "wasm_sha256": "b17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999",
+    "wasm_bytes": 5710387
+  }
+}

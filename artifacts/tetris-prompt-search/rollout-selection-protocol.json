@@ -1,0 +1,29 @@
+{
+  "development_seeds": [
+    11,
+    23,
+    37,
+    53,
+    71,
+    89,
+    107,
+    131
+  ],
+  "provisional": "full_holes/5",
+  "compression_challengers": [
+    "omit_holes/5",
+    "space/1"
+  ],
+  "selection": "Prefer a shorter challenger only if mean lines >= 90% of 5.625 and mean turns >= 90% of 39.875; choose lower mean input tokens among qualifying challengers.",
+  "fresh_seeds": [
+    211,
+    223,
+    227,
+    229,
+    233,
+    239,
+    241,
+    251
+  ],
+  "fresh_gate": "Mean lines and turns must exceed original baseline; line-clearing games must increase; compare same-candidate heuristic and random separately. No claim of beating heuristic required."
+}

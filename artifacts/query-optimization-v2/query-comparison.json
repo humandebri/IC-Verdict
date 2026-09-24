@@ -1,0 +1,32 @@
+[
+  {
+    "tokens": 39,
+    "before": 3984633265,
+    "after": 3608457580,
+    "reduction_percent": 9.440660155709457
+  },
+  {
+    "tokens": 40,
+    "before": 3991823564,
+    "after": 3615937614,
+    "reduction_percent": 9.41639689163376
+  },
+  {
+    "tokens": 41,
+    "before": 4174571984,
+    "after": 3798662556,
+    "reduction_percent": 9.004741790074732
+  },
+  {
+    "tokens": 47,
+    "before": 4800191185,
+    "after": 4325457140,
+    "reduction_percent": 9.889898687441544
+  },
+  {
+    "tokens": 48,
+    "before": 4794197936,
+    "after": 4319490582,
+    "reduction_percent": 9.901705360043355
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "/tmp/query-profile-baseline.wasm": "b4da1963c401f72a4d34913018edd644a29d3250b856917a7befda44b3e7e123",
+  "/tmp/query-profile-instrumented.wasm": "43dc7743e4ab11aa237752d31b6b94604501221bc89fce12dbee763142e15a8f",
+  "models/verdict-pack/manifest.json": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+  "tools/profile_query.py": "551594ef6501d746fa80f7cf27dbaf6e9488d1f2f936acae8e26c8b337482e91",
+  "/tmp/query-profile-tail-candidate.wasm": "d928b2190bf53369a65657006536f5bcb4a8df70302e9be31dd5316aa9cd150b",
+  "candidate_simd_source_sha256": "b68e3d59a997cb29401464a5055fec97eb92b5a0dd04e8f80f561b57a90e9471",
+  "crates/verdict-simd/src/lib.rs": "712e99f534198edc568f51a3599270c8922f574997bd135c70efaa8aaa432eb0",
+  "/tmp/query-profile-simd-original.rs": "712e99f534198edc568f51a3599270c8922f574997bd135c70efaa8aaa432eb0"
+}

@@ -1,0 +1,14 @@
+{
+  "decisions_audited": 2279,
+  "checks": [
+    "20 complete games, seeds 1..10 for each variant",
+    "all action IDs, scores and argmax consistent",
+    "all charged latencies exactly 1000 ms",
+    "all tokens <=52 and reported instructions <5B",
+    "every previous pose/action/outcome and earlier-action history audited; resets per piece",
+    "all execution/late/query counters agree with records",
+    "production frontend build assets unchanged",
+    "actual-RTT seed-42 games completed with no query errors or token/instruction violations"
+  ],
+  "actual_latency_games_checked": 2
+}

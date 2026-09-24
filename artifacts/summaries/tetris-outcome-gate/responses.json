@@ -1,0 +1,28 @@
+{
+  "source": "artifacts/tetris-outcome-gate/responses.json",
+  "source_sha256": "108cbfde5a4119abcde7a37a8b3216902a47c9645b775730c4545c3c38d9d0d2",
+  "source_bytes": 114394,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "provenance": {
+      "started": "2026-09-23T00:38:29Z",
+      "host": "http://localhost:8011/",
+      "canister": "4fbx2-kt777-77775-aaabq-cai",
+      "wasm": "0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b",
+      "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+      "fixtures": "6c1848cd55ad943403dff65ab753456bd8d883e70462f11c2e0aa8728c232a1b"
+    },
+    "rows": {
+      "omitted": true,
+      "see_raw_source": true
+    }
+  },
+  "omitted": [
+    {
+      "path": "$.rows",
+      "count": 100,
+      "sha256": "bdc0a717d30be0269b64f1ca8ad7e49f81ebf8c5983685f49ba0f8a0fb55b093"
+    }
+  ]
+}

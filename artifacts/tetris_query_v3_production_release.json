@@ -1,0 +1,14 @@
+{
+  "canister": "qojfj-6qaaa-aaaam-qjkaq-cai",
+  "previous_wasm_sha256": "b4da1963c401f72a4d34913018edd644a29d3250b856917a7befda44b3e7e123",
+  "wasm_sha256": "0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b",
+  "worker": "openjev",
+  "account": "9029b5f9de5b2e820eaf4ed562bcb0e7",
+  "previous_worker_version": "2c90baef-582a-4976-9516-b7f29ecf1dcf",
+  "assets": {
+    "web/tetris/dist/index.html": "8ecebd599869b50f611aec474f2112641b549ca4fcf890fc64a96052771cd2d7",
+    "web/tetris/dist/assets/index-CRT3BO3f.js": "2f39b7b6d73cb0c5cb894293ef05bddaf0950c660be949b5cd15a3582cab14c4",
+    "web/tetris/dist/assets/index-CX9y5giU.css": "b3cdd3392e53321e0d1aba59379e2b41a2e31f2162b02a2cf3a382ca45226214"
+  },
+  "worker_version": "5c07f5a5-f6e9-43aa-860b-4583e58e4ace"
+}

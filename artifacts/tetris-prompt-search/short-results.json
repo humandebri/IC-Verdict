@@ -1,0 +1,1562 @@
+[
+  {
+    "name": "space/0",
+    "variant": {
+      "style": "space",
+      "text": "Min holes"
+    },
+    "tokens": 37,
+    "metrics": {
+      "real": {
+        "tests": 28,
+        "best": 18,
+        "dominated": 8,
+        "stable": 4,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 24,
+        "best": 17,
+        "dominated": 7,
+        "stable": 7,
+        "cases": 12
+      }
+    },
+    "rows": [
+      {
+        "case": "real-0",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-0",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-1",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-1",
+        "kind": "real",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": false
+      },
+      {
+        "case": "real-2",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-3",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-3",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-6",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-6",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": false
+      },
+      {
+        "case": "real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-7",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-2",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-2",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-3",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-5",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-0",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-1",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-3",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-0",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-3",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-4",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      }
+    ]
+  },
+  {
+    "name": "space/1",
+    "variant": {
+      "style": "space",
+      "text": "Min holes,then height"
+    },
+    "tokens": 40,
+    "metrics": {
+      "real": {
+        "tests": 28,
+        "best": 23,
+        "dominated": 3,
+        "stable": 9,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 24,
+        "best": 20,
+        "dominated": 4,
+        "stable": 10,
+        "cases": 12
+      }
+    },
+    "rows": [
+      {
+        "case": "real-0",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-0",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-1",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-1",
+        "kind": "real",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-2",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-2",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-3",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-3",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-6",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-6",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-7",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": false
+      },
+      {
+        "case": "real-7",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-2",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-2",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-3",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-1",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-1",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-3",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-3",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-3",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      }
+    ]
+  },
+  {
+    "name": "same/0",
+    "variant": {
+      "style": "same",
+      "text": "Min holes"
+    },
+    "tokens": 37,
+    "metrics": {
+      "real": {
+        "tests": 28,
+        "best": 16,
+        "dominated": 9,
+        "stable": 4,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 24,
+        "best": 17,
+        "dominated": 7,
+        "stable": 7,
+        "cases": 12
+      }
+    },
+    "rows": [
+      {
+        "case": "real-0",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-0",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-1",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-1",
+        "kind": "real",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": false
+      },
+      {
+        "case": "real-2",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-3",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-3",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-6",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-6",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": false
+      },
+      {
+        "case": "real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-7",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-2",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-2",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-3",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-5",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-0",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-1",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-3",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-0",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-3",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-4",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      }
+    ]
+  },
+  {
+    "name": "same/1",
+    "variant": {
+      "style": "same",
+      "text": "Min holes,then height"
+    },
+    "tokens": 40,
+    "metrics": {
+      "real": {
+        "tests": 28,
+        "best": 22,
+        "dominated": 6,
+        "stable": 8,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 24,
+        "best": 20,
+        "dominated": 4,
+        "stable": 10,
+        "cases": 12
+      }
+    },
+    "rows": [
+      {
+        "case": "real-0",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-0",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-1",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-1",
+        "kind": "real",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-2",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-2",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-3",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-3",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-6",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-6",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "real-7",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-2",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-2",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-3",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-1",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-3",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-3",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-3",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "hold-dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-4",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "hold-dominance-5",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      }
+    ]
+  }
+]

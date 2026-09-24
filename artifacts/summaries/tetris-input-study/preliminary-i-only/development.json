@@ -1,0 +1,163 @@
+{
+  "source": "artifacts/tetris-input-study/preliminary-i-only/development.json",
+  "source_sha256": "60ff4d9de5149250ca9e8d2dadedd97d1a1f9c1a93e2a6ed4ce0e6a8d93c7e58",
+  "source_bytes": 400542,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "provenance": {
+      "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+      "fixtures": "2dc9e2c07c71fb86548fdea4fe5733f0b692c85278987864600337e798ae97df",
+      "clock": "native frozen INT8 weights; game gravity charged fixed 1000 ms per decision; measured native CPU time is not query RTT"
+    },
+    "development": [
+      {
+        "variant": {
+          "format": "history",
+          "labels": "short",
+          "id": "history-short"
+        },
+        "summary": {
+          "n": 50,
+          "correct": 20,
+          "accuracy": 0.4,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_accuracy": 0,
+          "rotation_offered": 50,
+          "rotation_chosen": 0,
+          "repeated": 50,
+          "repeat_eligible": 50,
+          "max_tokens": 52
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "variant": {
+          "format": "no-history",
+          "labels": "short",
+          "id": "no-history-short"
+        },
+        "summary": {
+          "n": 50,
+          "correct": 10,
+          "accuracy": 0.2,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_accuracy": 0,
+          "rotation_offered": 50,
+          "rotation_chosen": 0,
+          "repeated": 0,
+          "repeat_eligible": 50,
+          "max_tokens": 40
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "variant": {
+          "format": "no-history",
+          "labels": "explicit",
+          "id": "no-history-explicit"
+        },
+        "summary": {
+          "n": 50,
+          "correct": 10,
+          "accuracy": 0.2,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_accuracy": 0,
+          "rotation_offered": 50,
+          "rotation_chosen": 0,
+          "repeated": 0,
+          "repeat_eligible": 50,
+          "max_tokens": 45
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "variant": {
+          "format": "columns",
+          "labels": "short",
+          "id": "columns-short"
+        },
+        "summary": {
+          "n": 50,
+          "correct": 10,
+          "accuracy": 0.2,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_accuracy": 0,
+          "rotation_offered": 50,
+          "rotation_chosen": 0,
+          "repeated": 0,
+          "repeat_eligible": 50,
+          "max_tokens": 47
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "variant": {
+          "format": "columns",
+          "labels": "explicit",
+          "id": "columns-explicit"
+        },
+        "summary": {
+          "n": 50,
+          "correct": 14,
+          "accuracy": 0.28,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_accuracy": 0,
+          "rotation_offered": 50,
+          "rotation_chosen": 0,
+          "repeated": 2,
+          "repeat_eligible": 50,
+          "max_tokens": 52
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      }
+    ]
+  },
+  "omitted": [
+    {
+      "path": "$.development[0].rows",
+      "count": 50,
+      "sha256": "24bc5a2b4afa20b25d7f3f1496856e61d230d60eb1ce63601fdef5ea3613345a"
+    },
+    {
+      "path": "$.development[1].rows",
+      "count": 50,
+      "sha256": "2bfefaa4087b78f843e527fdc262883b9ee28d4b546438b5bfe8370ffe108ea9"
+    },
+    {
+      "path": "$.development[2].rows",
+      "count": 50,
+      "sha256": "5c8b64fa32c569ae6d86fd6f0692ba490a36bb8db1e12dc628b67b8086bda9cb"
+    },
+    {
+      "path": "$.development[3].rows",
+      "count": 50,
+      "sha256": "e67a1ef7f07cfb0f24152eafdc63e45def258ccf54cb8b0cfa5f722fb0fbbb30"
+    },
+    {
+      "path": "$.development[4].rows",
+      "count": 50,
+      "sha256": "7caacbfcd318c158495a724432ef2e69d59f6146be62530ce0778406f04ef2ef"
+    }
+  ]
+}

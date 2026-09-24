@@ -1,0 +1,14 @@
+{
+  "wasm_sha256": "35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9",
+  "model_manifest_sha256": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+  "local_canister": "4xhad-gd777-77775-aaacq-cai",
+  "endpoint": "http://localhost:8011/",
+  "production_deployment": false,
+  "source_snapshot_sha256": {
+    "crates/verdict-simd/src/lib.rs": "9c85571012d4a0b61e5cb43bb70856677000a4462dfa3bc9398369843509e2b1",
+    "crates/verdict-simd/examples/wasm_check.rs": "394df19f347113cc3e577a03ea3b5e974acfbabd65462796d700930db5467dc1",
+    "canisters/verdict-engine/src/lib.rs": "b03ea0369550b3b691a84c5f91758f58bb057d032682a24d5cc40cd8b48bf872",
+    "tools/profile_query.py": "3fc681fa9b513af6355041e3585ff37428ca7397478c687abd1f7e02e6c87dec"
+  },
+  "source_snapshot_note": "Snapshot at final validation; other pre-existing workspace changes are preserved. Installed module hashes in measurement reports identify the actual measured Wasm."
+}

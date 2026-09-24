@@ -1,0 +1,15 @@
+{
+  "provenance": {
+    "started": "2026-09-23T00:38:29Z",
+    "host": "http://localhost:8011/",
+    "canister": "4fbx2-kt777-77775-aaabq-cai",
+    "wasm": "0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b",
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+    "fixtures": "6c1848cd55ad943403dff65ab753456bd8d883e70462f11c2e0aa8728c232a1b"
+  },
+  "max_tokens": 51,
+  "checks": 1398,
+  "worst_prompt": "<<LABEL>>left lines0 holes0 height0<<LABEL>>right lines0 holes0 height0<<LABEL>>rotate lines0 holes0 height0<<LABEL>>down lines0 holes0 height0<<LABEL>>wait lines0 holes0 height0<<SEP>>Tetris. Choose next move.",
+  "proof": "Every numeric domain exhausted at fixed ByteLevel pretoken boundaries; concatenated IDs checked, plus all omitted/safe/game-over combinations."
+}

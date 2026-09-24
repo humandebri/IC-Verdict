@@ -1,0 +1,123 @@
+{
+  "selected": "explicit",
+  "accepted": false,
+  "tokens": {
+    "baseline": {
+      "min": 43,
+      "max": 43
+    },
+    "explicit": {
+      "min": 39,
+      "max": 39
+    },
+    "compact": {
+      "min": 38,
+      "max": 38
+    },
+    "tuple": {
+      "min": 38,
+      "max": 38
+    }
+  },
+  "development": {
+    "baseline": {
+      "real": {
+        "tests": 32,
+        "best": 16,
+        "dominated": 13,
+        "stable_cases": 3,
+        "cases": 8
+      },
+      "dominance": {
+        "tests": 24,
+        "best": 7,
+        "dominated": 17,
+        "stable_cases": 2,
+        "cases": 6
+      }
+    },
+    "explicit": {
+      "real": {
+        "tests": 32,
+        "best": 14,
+        "dominated": 16,
+        "stable_cases": 1,
+        "cases": 8
+      },
+      "dominance": {
+        "tests": 24,
+        "best": 8,
+        "dominated": 16,
+        "stable_cases": 4,
+        "cases": 6
+      }
+    },
+    "compact": {
+      "real": {
+        "tests": 32,
+        "best": 10,
+        "dominated": 20,
+        "stable_cases": 0,
+        "cases": 8
+      },
+      "dominance": {
+        "tests": 24,
+        "best": 5,
+        "dominated": 19,
+        "stable_cases": 1,
+        "cases": 6
+      }
+    },
+    "tuple": {
+      "real": {
+        "tests": 32,
+        "best": 14,
+        "dominated": 13,
+        "stable_cases": 3,
+        "cases": 8
+      },
+      "dominance": {
+        "tests": 24,
+        "best": 6,
+        "dominated": 18,
+        "stable_cases": 2,
+        "cases": 6
+      }
+    }
+  },
+  "held_out": {
+    "baseline": {
+      "real": {
+        "tests": 144,
+        "best": 56,
+        "dominated": 73,
+        "stable_cases": 0,
+        "cases": 6
+      },
+      "dominance": {
+        "tests": 144,
+        "best": 23,
+        "dominated": 121,
+        "stable_cases": 2,
+        "cases": 6
+      }
+    },
+    "explicit": {
+      "real": {
+        "tests": 144,
+        "best": 53,
+        "dominated": 74,
+        "stable_cases": 0,
+        "cases": 6
+      },
+      "dominance": {
+        "tests": 144,
+        "best": 19,
+        "dominated": 125,
+        "stable_cases": 2,
+        "cases": 6
+      }
+    }
+  },
+  "unique_inferences": 800
+}

@@ -14,4 +14,3 @@ canister-common.workspace = true
 ic-cdk.workspace = true
 candid.workspace = true
 serde.workspace = true
-serde_json.workspace = true

@@ -1,0 +1,6 @@
+{
+  "binary_sha256": "678bf8e43b5893c4a4bbb7e789544bf803bc9f8017f27c798de4955e8db4fa39",
+  "cases": 1000,
+  "shards": 4,
+  "canister_calls": 0
+}

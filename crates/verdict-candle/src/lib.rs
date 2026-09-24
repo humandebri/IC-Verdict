@@ -268,6 +268,7 @@ impl VerdictModel {
                     else {self.encoder.rope_tables(tokens,hidden,&mut |_|{})}
                     .map_err(|e|Error::ModelUnavailable(e.to_string()))?;
         let masks=modernbert_candle::attention_masks(&self.encoder.layers,tokens).map_err(|e|Error::ModelUnavailable(e.to_string()))?;
+        if detailed {mark("attn.mask_setup");}
         for layer in &self.encoder.layers {
             let table=modernbert_candle::table_for(&tables,layer.theta());
             let mask=layer.distance().and_then(|d|masks.get(&d));

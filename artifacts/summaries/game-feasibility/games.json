@@ -1,0 +1,17 @@
+{
+  "source": "artifacts/game-feasibility/games.json",
+  "source_sha256": "72a53b816ef90b5cf153c70ba1848c173627bc688609600c4cd2833ab18931ce",
+  "source_bytes": 1031292,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "omitted": true,
+    "see_raw_source": true
+  },
+  "omitted": [
+    {
+      "path": "$",
+      "count": 40,
+      "sha256": "9afc3377aaa699eef9fcd387e4b303263c7de1cf5f7b5e8b010db9353f4b5db5"
+    }
+  ]
+}

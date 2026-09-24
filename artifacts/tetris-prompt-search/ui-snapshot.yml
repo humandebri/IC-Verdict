@@ -1,0 +1,78 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - link "openJevARCADE" [ref=e5] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e6]: LOCAL CANISTER
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - paragraph [ref=e11]: ON-CANISTER INFERENCE / 151M
+        - heading "One more block." [level=1] [ref=e12]:
+          - text: One more
+          - emphasis [ref=e13]: block.
+        - generic [ref=e14]: A 151M model picks each placement inside an ICP canister.
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - generic [ref=e18]: TETRIS / 151M MODEL
+            - generic [ref=e19]: DECIDING
+          - img "Tetris board" [ref=e21]
+        - complementary [ref=e226]:
+          - generic [ref=e227]:
+            - heading "NEXT" [level=2] [ref=e228]
+            - img "Next piece" [ref=e264]
+          - generic [ref=e230]:
+            - heading "LINES" [level=2] [ref=e231]
+            - strong [ref=e232]: "04"
+            - heading "TURNS" [level=2] [ref=e233]
+            - strong [ref=e234]: "21"
+          - generic [ref=e235]:
+            - text: 151M
+            - generic [ref=e236]:
+              - text: PARAMETERS
+              - text: RUNNING ON ICP
+      - button "Resume →" [disabled] [ref=e308]:
+        - text: Resume
+        - generic [ref=e238]: →
+      - generic [ref=e270]:
+        - button "Step once" [disabled] [ref=e271]
+        - button "New game" [disabled] [ref=e272]
+      - paragraph [ref=e239]: Choosing a placement and playing the move…
+      - paragraph [ref=e240]: Placement-based play · Board state stays in your browser
+      - group [ref=e241]:
+        - generic "Comparison mode & seed" [ref=e242] [cursor=pointer]
+        - option "151M model" [selected]
+        - option "Heuristic only (no model)"
+    - generic [ref=e243]:
+      - generic [ref=e244]:
+        - heading "This decision" [level=2] [ref=e245]
+        - generic [ref=e246]: ON-CANISTER
+      - generic [ref=e273]:
+        - term [ref=e274]: Candidates
+        - definition [ref=e275]:
+          - text: 4 offered
+          - generic [ref=e276]: / 17 legal placements
+        - term [ref=e277]: Heuristic recommendation
+        - definition [ref=e278]: Rotate right · column 2
+        - term [ref=e279]: 151M choice
+        - definition [ref=e280]: Rotate right · column 2
+        - term [ref=e281]: Measured query response
+        - definition [ref=e282]: 0.42 s including network time
+        - term [ref=e283]: Model instructions / input
+        - definition [ref=e284]: 3,685,820,677 / 41 tokens
+        - term [ref=e285]: Inference
+        - definition [ref=e286]: 1 model pass / 1 query
+        - term [ref=e287]: Response log
+        - definition [ref=e288]:
+          - text: Turn 22
+          - button "Save input / output JSON" [ref=e289] [cursor=pointer]
+      - group [ref=e290]:
+        - generic "Inspect candidates & features" [ref=e291] [cursor=pointer]
+      - group [ref=e248]:
+        - generic "What the code and model do" [ref=e249] [cursor=pointer]
+        - paragraph [ref=e253]: Code computes legal placements, groups identical line/holes/height outcomes, and offers up to four different outcomes by feature distance. It does not use the heuristic score to pick candidates.
+        - paragraph [ref=e254]: The heuristic compares the same candidates using 10 × cleared lines − 8 × holes − height. Code converts cleared lines to a shortfall from the most lines any offered candidate clears. It describes holes, height, and this shortfall as min, mid, max, or equal; lower is better for each. In one query, the 151M model reads these descriptions and chooses a placement. The combined heuristic score is not sent to the model.
+        - paragraph [ref=e255]: Comparison mode uses the same seeded piece sequence without calling the model.
+  - group [ref=e250]:
+    - generic "About queries & response logs" [ref=e251] [cursor=pointer]
+  - generic [ref=e252]: 151M PARAMETERS · INTERNET COMPUTER

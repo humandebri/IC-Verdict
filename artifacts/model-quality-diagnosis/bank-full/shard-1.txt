@@ -1,0 +1,5 @@
+progress cases=100 argmax_match=99 max_dev_so_far=0.029303
+progress cases=200 argmax_match=199 max_dev_so_far=0.046551
+cases=250 skipped_no_truth=0 argmax_match=249/250 (99.60%) longest_input_tokens=139 temp=1.4265149
+top-probability |p-gold|: max=0.054124 mean=0.005032
+quality-gate min_cases=250 min_argmax_ratio=0.0000 unsafe_abstention_escape=0

@@ -1,0 +1,67 @@
+{
+  "benchmark": {
+    "rules": "nes-ntsc-query-v3-controls",
+    "seed": 42,
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "canister": "4fbx2-kt777-77775-aaabq-cai",
+    "score": 10,
+    "lines": 0,
+    "level": 0,
+    "pieces": 2,
+    "gameOver": false,
+    "queries": 17,
+    "late": 0,
+    "blocked": 0,
+    "stale": 0,
+    "executed": 17,
+    "errors": 0,
+    "responses": 17,
+    "latencyTotal": 12834.899999815227,
+    "latencyMax": 10202.4,
+    "valid": true
+  },
+  "reply": {
+    "action": 3,
+    "actions": [
+      0,
+      2,
+      3,
+      4
+    ],
+    "scores": [
+      0.1960204392671585,
+      0.16367384791374207,
+      0.3553854525089264,
+      0.2849201560020447
+    ],
+    "input_tokens": 38,
+    "measured_instructions": "3536417100",
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "prompt": "<<LABEL>>left<<LABEL>>rotate<<LABEL>>down<<LABEL>>wait<<SEP>>Clear lines. Tetris Z x8 y16 r0 next S heights 0 0 0 0 0 0 1 1 1 1 holes0"
+  },
+  "input": {
+    "piece": 4,
+    "next": 3,
+    "x": 8,
+    "y": 16,
+    "rotation": 0,
+    "heights": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "holes": 0,
+    "legal_mask": 29
+  },
+  "history": "#17 \u00b7 Piece 2 \u00b7 \u2193 \u00b7 executed\n#16 \u00b7 Piece 2 \u00b7 \u2193 \u00b7 executed\n#15 \u00b7 Piece 2 \u00b7 \u2193 \u00b7 executed\n#14 \u00b7 Piece 2 \u00b7 \u2193 \u00b7 executed\n#13 \u00b7 Piece 2 \u00b7 \u2193 \u00b7 executed\n#12 \u00b7 Piece 2 \u00b7 \u2193 \u00b7 executed\n#11 \u00b7 Piece 2 \u00b7 \u2193 \u00b7 executed\n#10 \u00b7 Piece 2 \u00b7 \u2193 \u00b7 executed\n#9 \u00b7 Piece 2 \u00b7 \u2192 \u00b7 executed\n#8 \u00b7 Piece 2 \u00b7 \u2192 \u00b7 executed\n#7 \u00b7 Piece 2 \u00b7 \u2192 \u00b7 executed\n#6 \u00b7 Piece 1 \u00b7 \u2193 \u00b7 executed",
+  "errors": [],
+  "query_requests": 19,
+  "overflow": false
+}

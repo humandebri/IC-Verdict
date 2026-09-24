@@ -101,6 +101,44 @@ def safetensors(path: Path, shorten: str | None = None) -> None:
 
 
 class PackVerdictTests(unittest.TestCase):
+    def test_existing_outputs_and_concurrent_export_are_safe(self):
+        with tempfile.TemporaryDirectory() as directory:
+            tmp = Path(directory)
+            (tmp / 'config.json').write_text(json.dumps(CONFIG))
+            (tmp / 'tokenizer.json').write_text('{}')
+            safetensors(tmp / 'model.safetensors')
+            out = tmp / 'pack'
+            command = [sys.executable, str(PACK), '--safetensors', str(tmp / 'model.safetensors'),
+                       '--config', str(tmp / 'config.json'), '--tokenizer', str(tmp / 'tokenizer.json'),
+                       '--out', str(out), '--source-repo', 'local-test', '--source-revision', 'a' * 40]
+            def run(cmd=command):
+                return subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+            # Two exporters targeting the same name must never share output files.
+            processes = [subprocess.Popen(command, cwd=ROOT, stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE) for _ in range(2)]
+            for process in processes: process.communicate()
+            self.assertEqual(sorted(p.returncode for p in processes), [0, 1])
+            before = {p.name: p.read_bytes() for p in out.iterdir()}
+            for cmd in [command, command[:-1] + ['invalid-revision']]:
+                self.assertNotEqual(run(cmd).returncode, 0)
+                self.assertEqual(before, {p.name: p.read_bytes() for p in out.iterdir()})
+            for p in out.iterdir(): p.unlink()
+            self.assertNotEqual(run().returncode, 0)  # even an empty directory
+            self.assertEqual(list(out.iterdir()), [])
+            out.rmdir()
+            out.write_bytes(b'keep file')
+            self.assertNotEqual(run().returncode, 0)
+            self.assertEqual(out.read_bytes(), b'keep file')
+            out.unlink()
+            target = tmp / 'missing'
+            out.symlink_to(target, target_is_directory=True)
+            self.assertNotEqual(run().returncode, 0)
+            self.assertTrue(out.is_symlink())
+            self.assertFalse(target.exists())
+            out.unlink()
+            self.assertNotEqual(run(command[:-1] + ['invalid-revision']).returncode, 0)
+            self.assertFalse(out.exists())
+
     def _run(self, config: dict, *extra: str, verify=None) -> subprocess.CompletedProcess:
         with tempfile.TemporaryDirectory() as directory:
             tmp = Path(directory)

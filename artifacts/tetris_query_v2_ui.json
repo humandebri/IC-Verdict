@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "browser": "Chromium",
+  "mocked_api": true,
+  "checks": [
+    "English document language",
+    "English UI copy including collapsed rules",
+    "one start button",
+    "gravity moves while query is still unresolved",
+    "no invented query reply during wait",
+    "real returned fields preserved",
+    "four scores rendered",
+    "fourth choice displayed without binary mapping",
+    "displayed input matches actual request including current piece, NEXT and terrain",
+    "expired request never overlaps a new query",
+    "piece locks without a response",
+    "late result is shown but not applied",
+    "network error does not stop the game",
+    "hidden tab is explicitly marked unsuitable for benchmark comparison",
+    "mobile no overflow"
+  ],
+  "mobile_width": 390
+}

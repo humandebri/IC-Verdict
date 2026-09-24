@@ -1,0 +1,55 @@
+--- turn-start/verdict-simd/src/lib.rs
++++ tile16x16/verdict-simd/src/lib.rs
+@@ -425,7 +425,7 @@
+     }
+ }
+ 
+-/// A 16/8/4-row by eight-column tile shares loaded vectors. K is 768 or 1152;
++/// A 16/8/4-row by sixteen-column tile shares loaded vectors. K is 768 or 1152;
+ /// R is 16, 8, or 4, selected only by the dispatch and tail calls below. Literal
+ /// macro indices let LLVM retain accumulators in Wasm locals, not a memory array.
+ #[cfg(target_arch = "wasm32")]
+@@ -433,10 +433,10 @@
+ #[allow(clippy::too_many_arguments)]
+ unsafe fn matmul_i8_simd_tile<const K:usize,const R:usize>(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,n:usize,out:&mut[f32]) {
+     use core::arch::wasm32::*;
+-    let full=m/R*R;let n8=n/8*8;
++    let full=m/R*R;let nc=n/16*16;
+     for i in (0..full).step_by(R) {
+-        for j in (0..n8).step_by(8) {
+-            let mut acc=[[i32x4_splat(0);8];16];
++        for j in (0..nc).step_by(16) {
++            let mut acc=[[i32x4_splat(0);16];16];
+             for p in (0..K).step_by(32) {
+                 let mut x=[[i32x4_splat(0);4];16];
+                 macro_rules! load_rows {($($r:literal),*)=>{$(
+@@ -453,7 +453,7 @@
+                         i32x4_dot_i16x8(x[$r][2],$w2)),i32x4_dot_i16x8(x[$r][3],$w3));}
+                 )*};}
+                 macro_rules! columns {($($c:literal),*)=>{$(
+-                    // SAFETY: j+c < n8 <= n; each load reads eight bytes.
++                    // SAFETY: j+c < nc <= n; each load reads eight bytes.
+                     let wp=unsafe{w.as_ptr().add((j+$c)*K+p)};
+                     let w0=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.cast()))};
+                     let w1=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(8).cast()))};
+@@ -461,17 +461,17 @@
+                     let w3=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(24).cast()))};
+                     accumulate_rows!($c,w0,w1,w2,w3;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+                 )*};}
+-                columns!(0,1,2,3,4,5,6,7);
++                columns!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+             }
+             let reduce=|v| (i32x4_extract_lane::<0>(v)+i32x4_extract_lane::<1>(v)+i32x4_extract_lane::<2>(v)+i32x4_extract_lane::<3>(v)) as f32;
+             macro_rules! store_row {($r:literal;$($c:literal),*)=>{$(
+                 // SAFETY: full tile bounds and caller-checked scale/output slices.
+                 if $r<R {unsafe{*out.as_mut_ptr().add((i+$r)*n+j+$c)=reduce(acc[$r][$c]) * *sx.get_unchecked(i+$r) * *sw.get_unchecked(j+$c)};}
+             )*};}
+-            macro_rules! store_rows {($($r:literal),*)=>{$(store_row!($r;0,1,2,3,4,5,6,7);)*};}
++            macro_rules! store_rows {($($r:literal),*)=>{$(store_row!($r;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);)*};}
+             store_rows!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+         }
+-        for j in n8..n {for r in 0..R {
++        for j in nc..n {for r in 0..R {
+             let mut sum=0i32;
+             for p in 0..K {sum+=unsafe{*a.get_unchecked((i+r)*K+p) as i32 * *w.get_unchecked(j*K+p) as i32};}
+             unsafe{*out.get_unchecked_mut((i+r)*n+j)=sum as f32 * *sx.get_unchecked(i+r) * *sw.get_unchecked(j)};

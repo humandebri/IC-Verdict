@@ -43,6 +43,7 @@ canister's own guard refuses.
 from __future__ import annotations
 
 import argparse
+import billing_cli
 import json
 import os
 import re
@@ -130,6 +131,7 @@ def infer(icp: Icp, args, canister: str, principal: str, owner: Path, ids: list[
         command += ["--profile" if profile else "--infer", ",".join(str(i) for i in ids)]
         if profile and detailed:
             command.append("--profile-detailed")
+    command += billing_cli.uploader_flags(args, paid=not (query or profile))
     completed = subprocess.run(command, capture_output=True, text=True, timeout=1800)
     output = completed.stdout + completed.stderr
     if completed.returncode != 0:
@@ -338,7 +340,9 @@ def main() -> int:
     parser.add_argument("--top-up", default="", help="cycles to add before an upload")
     parser.add_argument("--skip-upload", action="store_true")
     parser.add_argument("--keep", action="store_true")
+    billing_cli.add_arguments(parser)
     args = parser.parse_args()
+    if not args.query: billing_cli.require_payment(args)
 
     if not (BUILD / "verdict-engine.wasm").exists():
         raise Failure("missing build/verdict-engine.wasm; run bash tools/build_one.sh verdict-engine")

@@ -1,0 +1,130 @@
+{
+  "source": "artifacts/tetris-input-study/native-partial-games.json",
+  "source_sha256": "d63cf1f08dcb7e7fcae9d6f964394ec38bec33247262dc3f6415d264702ef0fe",
+  "source_bytes": 425479,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "provenance": {
+      "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+      "fixtures": "0d051061a23ae51e15e240d57e0d0aa8208a12daa871661b4fec8fa20234d33f",
+      "clock": "native frozen INT8 weights; game gravity charged fixed 1000 ms per decision; measured native CPU time is not query RTT"
+    },
+    "games": [
+      {
+        "seed": 1,
+        "variant": "history-short",
+        "lines": 0,
+        "pieces": 14,
+        "truncated": false,
+        "metrics": {
+          "queries": 130,
+          "late": 14,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 116,
+          "errors": 0,
+          "responses": 130,
+          "latencyTotal": 130000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 1,
+        "variant": "columns-explicit",
+        "lines": 0,
+        "pieces": 14,
+        "truncated": false,
+        "metrics": {
+          "queries": 122,
+          "late": 14,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 108,
+          "errors": 0,
+          "responses": 122,
+          "latencyTotal": 122000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 2,
+        "variant": "history-short",
+        "lines": 0,
+        "pieces": 14,
+        "truncated": false,
+        "metrics": {
+          "queries": 124,
+          "late": 13,
+          "blocked": 1,
+          "stale": 0,
+          "executed": 110,
+          "errors": 0,
+          "responses": 124,
+          "latencyTotal": 124000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 2,
+        "variant": "columns-explicit",
+        "lines": 0,
+        "pieces": 11,
+        "truncated": false,
+        "metrics": {
+          "queries": 90,
+          "late": 9,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 81,
+          "errors": 0,
+          "responses": 90,
+          "latencyTotal": 90000,
+          "latencyMax": 1000,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      }
+    ]
+  },
+  "omitted": [
+    {
+      "path": "$.games[0].turns",
+      "count": 130,
+      "sha256": "cd64ed7c62c6d238b8fbfc13a312ab0baa7127a3ded286caa763670643d0172c"
+    },
+    {
+      "path": "$.games[1].turns",
+      "count": 122,
+      "sha256": "fd8b55d16db299e9536468e43bbae8a194afa8bb8067fa91f2dc1e876a162208"
+    },
+    {
+      "path": "$.games[2].turns",
+      "count": 124,
+      "sha256": "038ac9689d2e6df112a5263bc239e99f23afcaf65fbb4b8c548ed87089c471b9"
+    },
+    {
+      "path": "$.games[3].turns",
+      "count": 90,
+      "sha256": "98c4c628169afb0b4a45935435f6e073ac8694cbdcf0294a1377d552dd18e1e5"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ use safetensors::{Dtype,SafeTensors};
 use serde_json::Value;
 use std::collections::{BTreeMap,BTreeSet};
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path,PathBuf};
 use verdict_candle::{expected_tensors,is_matrix_weight,pack::{Encoding,Manifest,TensorEntry,FORMAT},VerdictConfig};
 
 struct Args{source:PathBuf,config:PathBuf,tokenizer:PathBuf,out:PathBuf,repo:String,revision:String,test:bool,random:bool}
@@ -53,8 +53,40 @@ fn payload(name:&str,shape:&[usize],values:&[f32])->(Encoding,Vec<u8>){
     if is_matrix_weight(name){let rows=shape[0];let cols=shape[1];let(q,s)=verdict_simd::quantize_rows_i8(values,rows,cols);let mut out=Vec::with_capacity(q.len()+4*s.len());out.extend(q.iter().map(|v|*v as u8));for v in s{out.extend_from_slice(&v.to_le_bytes());}(Encoding::I8RowSymmetric,out)}
     else{let mut out=Vec::with_capacity(values.len()*4);for v in values{out.extend_from_slice(&v.to_le_bytes());}(Encoding::F32Le,out)}
 }
+/// Own only the directory and files created by this invocation. A competing
+/// exporter loses create_dir and must never clean up the winner's output.
+struct Output { path:PathBuf, files:Vec<PathBuf>, complete:bool }
+impl Output {
+    fn new(path:&Path)->Result<Self,String>{
+        std::fs::create_dir(path).map_err(|e|format!("cannot create output {} (must not already exist): {e}",path.display()))?;
+        Ok(Self{path:path.to_owned(),files:Vec::new(),complete:false})
+    }
+    fn file(&mut self,name:&str)->Result<std::fs::File,String>{
+        let path=self.path.join(name);
+        let file=std::fs::File::create_new(&path).map_err(|e|e.to_string())?;
+        self.files.push(path);Ok(file)
+    }
+}
+impl Drop for Output {
+    fn drop(&mut self){if !self.complete {
+        for file in self.files.iter().rev(){let _=std::fs::remove_file(file);}
+        // Never recursively remove files another process may have put here.
+        let _=std::fs::remove_dir(&self.path);
+    }}
+}
 fn run()->Result<(),String>{
     let a=args()?;if a.random&&!a.test{return Err("--random requires --test".into());}
+    // symlink_metadata also catches dangling symlinks. create_dir below remains
+    // the authoritative, atomic exclusion check after input validation.
+    match std::fs::symlink_metadata(&a.out){
+        Ok(_)=>return Err(format!("output already exists: {}; choose a new --out",a.out.display())),
+        Err(e) if e.kind()==std::io::ErrorKind::NotFound=>{},
+        Err(e)=>return Err(e.to_string()),
+    }
+    let revision=if a.revision.is_empty()&&a.test{"0".repeat(40)}else{a.revision.clone()};
+    if !a.test&&(revision.len()!=40||!revision.bytes().all(|b|b.is_ascii_hexdigit())){return Err("real pack requires a 40-hex source revision".into());}
+    if a.repo.is_empty()||revision.is_empty(){return Err("source repo and revision must not be empty".into());}
+    let tokenizer=std::fs::read(&a.tokenizer).map_err(|e|e.to_string())?;
     let raw_cfg:Value=serde_json::from_slice(&std::fs::read(&a.config).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;let mut cfg=config(&raw_cfg)?;
     let source=if a.random{None}else{Some(std::fs::read(&a.source).map_err(|e|e.to_string())?)};
     let st=source.as_ref().map(|b|SafeTensors::deserialize(b).map_err(|e|e.to_string())).transpose()?;
@@ -64,11 +96,53 @@ fn run()->Result<(),String>{
     if let Some(st)=&st{for(name,view)in st.iter(){if name=="model.logit_scale"{continue;}
         if let Some(c)=canonical(name){if view.dtype()!=Dtype::F32{return Err(format!("{name}: expected F32"));}found.insert(c,name.into());}else{unmapped.insert(name.into());}}if !unmapped.is_empty(){return Err(format!("unmapped checkpoint tensors: {:?}",unmapped.iter().take(5).collect::<Vec<_>>()));}}
     if !a.random&&(found.len()!=expected.len()||expected.keys().any(|k|!found.contains_key(k))){return Err("checkpoint tensor set mismatch".into());}
-    std::fs::create_dir_all(&a.out).map_err(|e|e.to_string())?;let mut file=std::fs::File::create(a.out.join("model.bin")).map_err(|e|e.to_string())?;
+    // Validate every source tensor before creating any output. Keep only one
+    // decoded tensor at a time, rather than an extra full-model copy.
+    if let Some(st)=&st{for(name,shape)in &expected{
+        let view=st.tensor(&found[name]).map_err(|e|e.to_string())?;
+        if view.shape()!=shape{return Err(format!("{name}: shape mismatch"));}
+        floats(view.data())?;
+    }}
+    if let Some(parent)=a.out.parent().filter(|p|!p.as_os_str().is_empty()){
+        std::fs::create_dir_all(parent).map_err(|e|e.to_string())?;
+    }
+    let mut output=Output::new(&a.out)?;let mut file=output.file("model.bin")?;
     let mut entries=Vec::new();let mut offset=0u64;
     for(name,shape)in &expected{let n=shape.iter().product::<usize>();let values=if a.random{random_floats(n)}else{let view=st.as_ref().unwrap().tensor(&found[name]).map_err(|e|e.to_string())?;if view.shape()!=shape{return Err(format!("{name}: shape mismatch"));}floats(view.data())?};if values.len()!=n{return Err(format!("{name}: length mismatch"));}let(encoding,bytes)=payload(name,shape,&values);file.write_all(&bytes).map_err(|e|e.to_string())?;entries.push(TensorEntry{name:name.clone(),shape:shape.clone(),encoding,offset,length:bytes.len()as u64,sha256:hash(&bytes)});offset+=bytes.len()as u64;}
-    let revision=if a.revision.is_empty()&&a.test{"0".repeat(40)}else{a.revision};if !a.test&&(revision.len()!=40||!revision.bytes().all(|b|b.is_ascii_hexdigit())){return Err("real pack requires a 40-hex source revision".into());}
-    let tokenizer=std::fs::read(&a.tokenizer).map_err(|e|e.to_string())?;let manifest=Manifest{format:FORMAT.into(),source_repo:a.repo,source_revision:revision,test_only:a.test,tokenizer_sha256:hash(&tokenizer),config:cfg,total_bytes:offset,tensors:entries};manifest.validate().map_err(|e|e.to_string())?;
-    std::fs::write(a.out.join("manifest.json"),serde_json::to_vec_pretty(&manifest).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;println!("wrote {} tensors, {} bytes ({:.1} MiB), format={FORMAT}",manifest.tensors.len(),offset,offset as f64/1048576.0);Ok(())
+    let manifest=Manifest{format:FORMAT.into(),source_repo:a.repo,source_revision:revision,test_only:a.test,tokenizer_sha256:hash(&tokenizer),config:cfg,total_bytes:offset,tensors:entries};manifest.validate().map_err(|e|e.to_string())?;
+    file.sync_all().map_err(|e|e.to_string())?;
+    let bytes=serde_json::to_vec_pretty(&manifest).map_err(|e|e.to_string())?;
+    let mut manifest_file=output.file("manifest.json")?;
+    manifest_file.write_all(&bytes).and_then(|_|manifest_file.sync_all()).map_err(|e|e.to_string())?;
+    output.complete=true;
+    println!("wrote {} tensors, {} bytes ({:.1} MiB), format={FORMAT}",manifest.tensors.len(),offset,offset as f64/1048576.0);Ok(())
 }
 fn main(){if let Err(e)=run(){eprintln!("error: {e}");std::process::exit(1)}}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn incomplete_output_is_removed_without_deleting_foreign_files() {
+        let root=std::env::temp_dir().join(format!("verdict-pack-cleanup-{}",std::process::id()));
+        std::fs::create_dir(&root).unwrap();
+        let out=root.join("pack");
+        {
+            let mut output=Output::new(&out).unwrap();
+            output.file("model.bin").unwrap().write_all(b"partial model").unwrap();
+            // A failed second create must not truncate or claim an existing file.
+            std::fs::write(out.join("manifest.json"),b"foreign").unwrap();
+            assert!(output.file("manifest.json").is_err());
+        }
+        assert!(!out.join("model.bin").exists());
+        assert_eq!(std::fs::read(out.join("manifest.json")).unwrap(),b"foreign");
+        std::fs::remove_file(out.join("manifest.json")).unwrap();
+        std::fs::remove_dir(&out).unwrap();
+        {
+            let mut output=Output::new(&out).unwrap();
+            output.file("model.bin").unwrap().write_all(b"partial").unwrap();
+        }
+        assert!(!out.exists());
+        std::fs::remove_dir(root).unwrap();
+    }
+}

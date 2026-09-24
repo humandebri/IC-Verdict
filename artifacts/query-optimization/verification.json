@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "query_successful_cases_with_guard_enabled": 78,
+  "guard_refused_cases": 5,
+  "max_observed_query_forward": {
+    "artifact": "final-maxclasses",
+    "tokens": 47,
+    "instructions": 4821506417
+  },
+  "minimum_forward_headroom_percent": 3.5698716600000013,
+  "exact_model_logits_cases": 13,
+  "exact_real_logits_cases": 6,
+  "wasm_i64_reference_cases": 3480,
+  "rust_model_and_kernel_and_canister_tests": "PASS",
+  "wasm_clippy_warnings_denied": "PASS",
+  "native_simd_clippy_warnings_denied": "PASS",
+  "python_query_contract_tests": 11,
+  "wasm_build": "PASS",
+  "final_module_hash": "a3de6a00af386bf9aa2967291d1ea657d3e8a9e1cd65f911a90ca056cde60389",
+  "new_query_cost_model": {
+    "fixed": 170000000,
+    "per_token": 100000000,
+    "margin_permille": 1005,
+    "max_tokens": 48
+  },
+  "upgrade_kept_previous_cost_model": true,
+  "local_canister": "4xhad-gd777-77775-aaacq-cai",
+  "network": "http://localhost:8011/",
+  "production_deployment": false
+}

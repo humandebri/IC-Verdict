@@ -14,6 +14,7 @@
 //!
 //! The identity must be the canister's owner: `begin_upload`, `upload_chunk` and
 //! the warm-up calls are owner-only.
+mod paid;
 use candid::{Decode, Encode, Principal};
 use ic_agent::identity::BasicIdentity;
 use ic_agent::Agent;
@@ -62,7 +63,13 @@ struct Args {
     f16: Option<String>,
     decide_batch: bool,
     decide_many: u32,
+    proxy: Option<Principal>,
+    max_cycles: Option<u128>,
+    execution_pricing: Option<ExecutionPricing>,
 }
+
+#[derive(candid::Deserialize, candid::CandidType)]
+struct ExecutionPricing { base_cycles: u64, instruction_cycles_numerator: u64, instruction_cycles_denominator: u64 }
 
 #[derive(candid::Deserialize, candid::CandidType)]
 struct OptionSpec { id: String, text: String }
@@ -194,10 +201,20 @@ fn parse_args() -> Result<Args, String> {
     let mut decide_many = 0u32;
     let mut profile = None;
     let mut profile_detailed = false;
+    let mut proxy = None;
+    let mut max_cycles = None;
+    let mut execution_pricing = None;
     let mut rest = std::env::args().skip(1);
     while let Some(flag) = rest.next() {
         let mut value = || rest.next().ok_or_else(|| format!("{flag} needs a value"));
         match flag.as_str() {
+            "--proxy" => proxy = Some(Principal::from_text(value()?).map_err(|e| format!("--proxy: {e}"))?),
+            "--max-cycles" => max_cycles = Some(value()?.parse::<u128>().map_err(|e| format!("--max-cycles: {e}"))?),
+            "--execution-pricing" => {
+                let parts=value()?.split(',').map(str::parse::<u64>).collect::<Result<Vec<_>,_>>().map_err(|e| e.to_string())?;
+                if parts.len()!=3 || parts.contains(&0) {return Err("--execution-pricing requires positive base,numerator,denominator".into());}
+                execution_pricing=Some(ExecutionPricing {base_cycles:parts[0],instruction_cycles_numerator:parts[1],instruction_cycles_denominator:parts[2]});
+            },
             "--url" => url = value()?,
             "--canister" => canister = Some(value()?),
             "--pem" => pem = Some(PathBuf::from(value()?)),
@@ -256,6 +273,7 @@ fn parse_args() -> Result<Args, String> {
         f16,
         decide_batch,
         decide_many,
+        proxy, max_cycles, execution_pricing,
     })
 }
 
@@ -280,6 +298,10 @@ async fn run() -> Result<(), String> {
     }
     if args.no_upload && (args.pack.is_some() || args.tokenizer.is_some()) {
         return Err("--no-upload does not take --pack/--tokenizer".into());
+    }
+    let needs_payment=args.infer.is_some() || args.decide || args.decide_batch || args.decide_many>0;
+    if needs_payment && (args.proxy.is_none() || args.max_cycles.unwrap_or(0)==0) {
+        return Err("paid inference requires --proxy PRINCIPAL --max-cycles N; use --query-infer for free short queries".into());
     }
     // `--no-upload` reuses a canister that is already warm, so the pack is only
     // read when there is something to push.
@@ -311,6 +333,12 @@ async fn run() -> Result<(), String> {
         agent.fetch_root_key().await.map_err(|e| format!("root key: {e}"))?;
     }
     let canister = Principal::from_text(&args.canister).map_err(|e| format!("canister principal: {e}"))?;
+
+    if let Some(pricing)=&args.execution_pricing {
+        let raw=agent.update(&canister,"set_execution_pricing")
+            .with_arg(Encode!(&Some(pricing)).map_err(|e| e.to_string())?).call_and_wait().await.map_err(|e| e.to_string())?;
+        Decode!(&raw, Result<(),ic_laya_core::Error>).map_err(|e| e.to_string())?.map_err(|e| e.to_string())?;
+    }
 
     let special = SpecialTokens {
         cls: args.cls,
@@ -479,12 +507,8 @@ async fn run() -> Result<(), String> {
             .filter(|part| !part.trim().is_empty())
             .map(|part| part.trim().parse::<u32>().map_err(|e| format!("id {part}: {e}")))
             .collect::<Result<_, _>>()?;
-        let reply = agent
-            .update(&canister, "infer_tokens")
-            .with_arg(Encode!(&tokens).map_err(|e| e.to_string())?)
-            .call_and_wait()
-            .await
-            .map_err(|e| format!("infer_tokens: {e}"))?;
+        let reply = paid::call(&agent,canister,args.proxy.unwrap(),args.max_cycles.unwrap(),"infer_tokens",
+            Encode!(&tokens).map_err(|e| e.to_string())?).await?;
         let reply = Decode!(&reply, Result<InferReply, ic_laya_core::Error>)
             .map_err(|e| format!("infer_tokens reply: {e}"))?;
         let reply = match reply {
@@ -699,9 +723,8 @@ async fn run() -> Result<(), String> {
                     ],
                     abstention: true, temperature: 1.4265148639678955,
                 };
-                let reply = agent.update(&canister, "decide")
-                    .with_arg(Encode!(&request).map_err(|e| e.to_string())?)
-                    .call_and_wait().await.map_err(|e| format!("decide {id}: {e}"))?;
+                let reply = paid::call(&agent,canister,args.proxy.unwrap(),args.max_cycles.unwrap(),"decide",
+                    Encode!(&request).map_err(|e| e.to_string())?).await?;
                 let reply = Decode!(&reply, Result<DecideReply, ic_laya_core::Error>)
                     .map_err(|e| format!("decide reply: {e}"))?.map_err(|e| format!("decide rejected: {e:?}"))?;
                 println!("  separate {id}: {} {:.4} tokens={} instr={}", reply.selected, reply.confidence,
@@ -722,9 +745,8 @@ async fn run() -> Result<(), String> {
                 }).collect(),
                 temperature: 1.4265148639678955,
             };
-            let reply = agent.update(&canister, "decide_batch")
-                .with_arg(Encode!(&request).map_err(|e| e.to_string())?)
-                .call_and_wait().await.map_err(|e| format!("decide_batch: {e}"))?;
+            let reply = paid::call(&agent,canister,args.proxy.unwrap(),args.max_cycles.unwrap(),"decide_batch",
+                Encode!(&request).map_err(|e| e.to_string())?).await?;
             let reply = Decode!(&reply, Result<BatchReply, ic_laya_core::Error>)
                 .map_err(|e| format!("decide_batch reply: {e}"))?.map_err(|e| format!("decide_batch rejected: {e:?}"))?;
             for q in &reply.questions {
@@ -747,12 +769,8 @@ async fn run() -> Result<(), String> {
             abstention: true,
             temperature: 1.4265148639678955,
         };
-        let reply = agent
-            .update(&canister, "decide")
-            .with_arg(Encode!(&request).map_err(|e| e.to_string())?)
-            .call_and_wait()
-            .await
-            .map_err(|e| format!("decide: {e}"))?;
+        let reply = paid::call(&agent,canister,args.proxy.unwrap(),args.max_cycles.unwrap(),"decide",
+            Encode!(&request).map_err(|e| e.to_string())?).await?;
         let reply = Decode!(&reply, Result<DecideReply, ic_laya_core::Error>)
             .map_err(|e| format!("decide reply: {e}"))?
             .map_err(|e| format!("decide rejected: {e:?}"))?;

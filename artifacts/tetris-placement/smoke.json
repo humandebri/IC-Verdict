@@ -1,0 +1,17 @@
+{
+  "scope": "local only",
+  "endpoint": "http://localhost:8011",
+  "canister": "4fbx2-kt777-77775-aaabq-cai",
+  "wasm_sha256": "ed2dc08bdbb105c4409722a637197a01728fea1a00f53af98b64753db2940e32",
+  "record_id": 1,
+  "legal_count": 34,
+  "candidate_count": 12,
+  "recommended": 0,
+  "selected": 3,
+  "input_tokens": 99,
+  "inference_instructions": "9511038548",
+  "browser_response_ms_display": 1500,
+  "certificate_verified_by": "@icp-sdk/core Certificate.create + certified index SHA256 + record SHA256",
+  "local_root_key": true,
+  "production_deployed": false
+}

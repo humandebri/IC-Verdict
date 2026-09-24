@@ -1,0 +1,27 @@
+{
+  "winner": "full_holes/5",
+  "text": "Min holes",
+  "style": "full_holes",
+  "candidate_sampler": "features-diverse",
+  "compressed_metrics": {
+    "omit_holes/5": {
+      "turns": 44.5,
+      "lines": 5.0
+    },
+    "space/1": {
+      "turns": 32.0,
+      "lines": 1.375
+    }
+  },
+  "reason": "Both compression challengers failed the predeclared game-quality gate.",
+  "fresh_seeds": [
+    211,
+    223,
+    227,
+    229,
+    233,
+    239,
+    241,
+    251
+  ]
+}

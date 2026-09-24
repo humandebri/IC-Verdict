@@ -1,0 +1,6 @@
+{
+  "build/verdict-engine.wasm": "94633b5860cae6018cbaa082b09b6443772a72e1e76f4ad9a8e098b4949371fe",
+  "crates/verdict-simd/src/lib.rs": "17c19ffb6b784b05f5f8e89700aa4eae7cc0cc21a22153ee26c12a77ae0bb6ad",
+  "canisters/verdict-engine/src/lib.rs": "1ac444cade8d432a08196acfb404b1c79c7a15a50605a33154cfc29884866689",
+  "models/verdict-pack/manifest.json": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0"
+}

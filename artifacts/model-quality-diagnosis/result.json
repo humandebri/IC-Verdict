@@ -1,0 +1,92 @@
+{
+  "bank": {
+    "total": 100,
+    "f32_author_match": 100,
+    "native_author_match": 99,
+    "f32_correct": 94,
+    "native_correct": 95,
+    "max_f32_author_confidence_delta": 2.0815001788854204e-06
+  },
+  "games": {
+    "terrarium": {
+      "total": 96,
+      "f32_correct": 72,
+      "decoded_correct": 72,
+      "native_correct": 72,
+      "f32_native_agreement": 96,
+      "decoded_native_agreement": 96
+    },
+    "last_exit": {
+      "total": 96,
+      "f32_correct": 47,
+      "decoded_correct": 46,
+      "native_correct": 46,
+      "f32_native_agreement": 95,
+      "decoded_native_agreement": 96
+    },
+    "hundred": {
+      "total": 96,
+      "f32_correct": 76,
+      "decoded_correct": 76,
+      "native_correct": 76,
+      "f32_native_agreement": 96,
+      "decoded_native_agreement": 96
+    }
+  },
+  "formatted": {
+    "terrarium/question_context": {
+      "total": 24,
+      "correct": 18,
+      "abstain": 0,
+      "max_tokens": 46
+    },
+    "terrarium/sdk_choice": {
+      "total": 24,
+      "correct": 13,
+      "abstain": 7,
+      "max_tokens": 58
+    },
+    "last_exit/question_context": {
+      "total": 24,
+      "correct": 12,
+      "abstain": 0,
+      "max_tokens": 44
+    },
+    "last_exit/sdk_choice": {
+      "total": 24,
+      "correct": 2,
+      "abstain": 20,
+      "max_tokens": 55
+    },
+    "hundred/question_context": {
+      "total": 24,
+      "correct": 18,
+      "abstain": 0,
+      "max_tokens": 50
+    },
+    "hundred/sdk_choice": {
+      "total": 24,
+      "correct": 18,
+      "abstain": 0,
+      "max_tokens": 62
+    },
+    "terrarium/label_prefix": {
+      "total": 24,
+      "correct": 17,
+      "abstain": 0,
+      "max_tokens": 53
+    },
+    "last_exit/label_prefix": {
+      "total": 24,
+      "correct": 9,
+      "abstain": 0,
+      "max_tokens": 50
+    },
+    "hundred/label_prefix": {
+      "total": 24,
+      "correct": 18,
+      "abstain": 0,
+      "max_tokens": 57
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "held_query": true,
+  "queries_while_held": 1,
+  "before_y_pixels": 0,
+  "after_y_pixels": 48,
+  "natural_drop_rows": 2,
+  "real_reply_after_release": true
+}

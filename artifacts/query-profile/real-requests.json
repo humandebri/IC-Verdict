@@ -1,0 +1,170 @@
+[
+  {
+    "tokens": 32,
+    "case": {
+      "question": "What is the request?",
+      "text": "I lost my card.",
+      "candidates": [
+        {
+          "id": "lost",
+          "description": "lost card"
+        },
+        {
+          "id": "dispute",
+          "description": "dispute payment"
+        },
+        {
+          "id": "__insufficient_evidence__",
+          "description": "insufficient evidence"
+        }
+      ]
+    }
+  },
+  {
+    "tokens": 37,
+    "case": {
+      "question": "What is the request?",
+      "text": "I lost my card yesterday and need a replacement.",
+      "candidates": [
+        {
+          "id": "lost",
+          "description": "lost card"
+        },
+        {
+          "id": "dispute",
+          "description": "dispute payment"
+        },
+        {
+          "id": "__insufficient_evidence__",
+          "description": "insufficient evidence"
+        }
+      ]
+    }
+  },
+  {
+    "tokens": 38,
+    "case": {
+      "question": "What is the request?",
+      "text": "My bank card was stolen at the station this morning.",
+      "candidates": [
+        {
+          "id": "lost",
+          "description": "lost card"
+        },
+        {
+          "id": "dispute",
+          "description": "dispute payment"
+        },
+        {
+          "id": "__insufficient_evidence__",
+          "description": "insufficient evidence"
+        }
+      ]
+    }
+  },
+  {
+    "tokens": 41,
+    "case": {
+      "question": "What is the request?",
+      "text": "I lost my wallet yesterday and need to stop my debit card immediately.",
+      "candidates": [
+        {
+          "id": "lost",
+          "description": "lost card"
+        },
+        {
+          "id": "dispute",
+          "description": "dispute payment"
+        },
+        {
+          "id": "__insufficient_evidence__",
+          "description": "insufficient evidence"
+        }
+      ]
+    }
+  },
+  {
+    "tokens": 42,
+    "case": {
+      "question": "What is the request?",
+      "text": "I cannot find my card and need to block it before anyone uses it.",
+      "candidates": [
+        {
+          "id": "lost",
+          "description": "lost card"
+        },
+        {
+          "id": "dispute",
+          "description": "dispute payment"
+        },
+        {
+          "id": "__insufficient_evidence__",
+          "description": "insufficient evidence"
+        }
+      ]
+    }
+  },
+  {
+    "tokens": 44,
+    "case": {
+      "question": "What is the request?",
+      "text": "I lost my wallet yesterday and need to stop my debit card immediately. Please help.",
+      "candidates": [
+        {
+          "id": "lost",
+          "description": "lost card"
+        },
+        {
+          "id": "dispute",
+          "description": "dispute payment"
+        },
+        {
+          "id": "__insufficient_evidence__",
+          "description": "insufficient evidence"
+        }
+      ]
+    }
+  },
+  {
+    "tokens": 45,
+    "case": {
+      "question": "What is the request?",
+      "text": "I lost my wallet yesterday and need to stop my debit card immediately. Please help me.",
+      "candidates": [
+        {
+          "id": "lost",
+          "description": "lost card"
+        },
+        {
+          "id": "dispute",
+          "description": "dispute payment"
+        },
+        {
+          "id": "__insufficient_evidence__",
+          "description": "insufficient evidence"
+        }
+      ]
+    }
+  },
+  {
+    "tokens": 46,
+    "case": {
+      "question": "What is the request?",
+      "text": "I lost my wallet yesterday and need to stop my debit card immediately. Please help me now.",
+      "candidates": [
+        {
+          "id": "lost",
+          "description": "lost card"
+        },
+        {
+          "id": "dispute",
+          "description": "dispute payment"
+        },
+        {
+          "id": "__insufficient_evidence__",
+          "description": "insufficient evidence"
+        }
+      ]
+    }
+  }
+]

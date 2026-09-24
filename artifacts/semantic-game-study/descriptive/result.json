@@ -1,0 +1,98 @@
+{
+  "terrarium": {
+    "correct": 72,
+    "total": 96,
+    "completed": 96,
+    "all_eight_pair_variants_correct": 4,
+    "pairs": 12,
+    "per_label": {
+      "eat": {
+        "correct": 24,
+        "total": 24
+      },
+      "flee": {
+        "correct": 24,
+        "total": 24
+      },
+      "investigate": {
+        "correct": 15,
+        "total": 24
+      },
+      "ignore": {
+        "correct": 9,
+        "total": 24
+      }
+    },
+    "selected": {
+      "eat": 36,
+      "flee": 33,
+      "investigate": 17,
+      "ignore": 10
+    },
+    "order_consistent": 42,
+    "order_comparisons": 48,
+    "passes_screen": false
+  },
+  "last_exit": {
+    "correct": 46,
+    "total": 96,
+    "completed": 96,
+    "all_eight_pair_variants_correct": 0,
+    "pairs": 12,
+    "per_label": {
+      "consistent": {
+        "correct": 21,
+        "total": 32
+      },
+      "contradictory": {
+        "correct": 25,
+        "total": 32
+      },
+      "insufficient information": {
+        "correct": 0,
+        "total": 32
+      }
+    },
+    "selected": {
+      "contradictory": 64,
+      "consistent": 32
+    },
+    "order_consistent": 44,
+    "order_comparisons": 48,
+    "passes_screen": false
+  },
+  "hundred": {
+    "correct": 76,
+    "total": 96,
+    "completed": 96,
+    "all_eight_pair_variants_correct": 2,
+    "pairs": 12,
+    "per_label": {
+      "eat": {
+        "correct": 21,
+        "total": 24
+      },
+      "rest": {
+        "correct": 16,
+        "total": 24
+      },
+      "work": {
+        "correct": 22,
+        "total": 24
+      },
+      "help": {
+        "correct": 17,
+        "total": 24
+      }
+    },
+    "selected": {
+      "eat": 32,
+      "rest": 22,
+      "work": 24,
+      "help": 18
+    },
+    "order_consistent": 41,
+    "order_comparisons": 48,
+    "passes_screen": false
+  }
+}

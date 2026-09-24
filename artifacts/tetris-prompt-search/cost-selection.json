@@ -1,0 +1,19 @@
+{
+  "winner": "cost/0",
+  "metrics": {
+    "turns": 51.625,
+    "lines": 9.5
+  },
+  "text": "Min holes",
+  "fresh_seeds": [
+    277,
+    281,
+    283,
+    293,
+    307,
+    311,
+    313,
+    317
+  ],
+  "selection": "Frozen before fresh game trials; use per-feature costs and original diverse sampling."
+}

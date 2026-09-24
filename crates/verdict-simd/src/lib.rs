@@ -84,7 +84,7 @@ pub fn matmul_i8_blocked(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:
     assert!(a.len()>=mk&&w.len()>=nk&&sx.len()>=m&&sw.len()>=nb&&out.len()>=mn);
     if m==0||n==0||k==0{out[..mn].fill(0.0);return false;}
     #[cfg(target_arch="wasm32")]
-    if block==32&&k%32==0{unsafe{matmul_i8_block32_simd(a,w,sx,sw,m,k,n,out)};return true;}
+    if block==32&&k.is_multiple_of(32){unsafe{matmul_i8_block32_simd(a,w,sx,sw,m,k,n,out)};return true;}
     #[cfg(not(target_arch="wasm32"))]
     {
         use rayon::prelude::*;
@@ -99,6 +99,7 @@ pub fn matmul_i8_blocked(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:
 
 #[cfg(target_arch="wasm32")]
 #[target_feature(enable="simd128")]
+#[allow(clippy::too_many_arguments)]
 unsafe fn matmul_i8_block32_simd(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:usize,out:&mut[f32]){
     use core::arch::wasm32::*;let blocks=k/32;
     for i in 0..m{for j in 0..n{let mut total=0.0f32;for b in 0..blocks{let ap=unsafe{a.as_ptr().add(i*k+b*32)};let wp=unsafe{w.as_ptr().add(j*k+b*32)};let mut acc=i32x4_splat(0);for p in [0usize,8,16,24]{let av=unsafe{v128_load(ap.add(p).cast())};let wv=i16x8_extend_low_i8x16(unsafe{v128_load64_zero(wp.add(p).cast())});acc=i32x4_add(acc,i32x4_dot_i16x8(av,wv));}let sum=i32x4_extract_lane::<0>(acc)+i32x4_extract_lane::<1>(acc)+i32x4_extract_lane::<2>(acc)+i32x4_extract_lane::<3>(acc);total+=sum as f32*sw[j*blocks+b];}out[i*n+j]=total*sx[i];}}
@@ -129,6 +130,7 @@ pub fn matmul_i8_block32_candidate(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,
 #[cfg(target_arch="wasm32")]
 #[target_feature(enable="simd128")]
 #[allow(clippy::too_many_arguments)]
+#[allow(clippy::needless_range_loop)] // Row/column indices address multiple tile buffers.
 unsafe fn block32_tile<const M:usize>(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,k:usize,n:usize,out:&mut[f32]){
     use core::arch::wasm32::*;
     let blocks=k/32;
@@ -202,7 +204,7 @@ pub fn quantize_acts_i16(src: &[f32], rows: usize, cols: usize) -> (Vec<i16>, Ve
         scales[r] = if max > 0.0 { max / range } else { 1.0 };
         let out = &mut q[r * cols..r * cols + cols];
         #[cfg(target_arch = "wasm32")]
-        if cols % 8 == 0 {
+        if cols.is_multiple_of(8) {
             // SAFETY: the loop runs while `p + 8 <= cols`, so both the 8-wide load and
             // the 8-wide store stay inside the row slices.
             unsafe { quantize_row_i16_simd(row, out, inv_scale) };
@@ -234,22 +236,31 @@ unsafe fn quantize_row_i16_simd(row: &[f32], out: &mut [i16], inv_scale: f32) {
 }
 
 
-/// `out[m, n] = a[m, k] · w[n, k]ᵀ` with both sides pre-widened to i16.
+/// `out[m, n] = a[m, k] · w[n, k]ᵀ` with i16 activations and i8 weights.
 ///
 /// Returns `true` when the wasm SIMD path ran; the scalar path is the reference used
 /// by the native tests.
 #[must_use]
 #[allow(clippy::too_many_arguments)] // Hot kernel ABI keeps dimensions and buffers explicit.
 pub fn matmul_i8(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, k: usize, n: usize, out: &mut [f32]) -> bool {
-    assert!(a.len() >= m * k && w.len() >= n * k && sx.len() >= m && sw.len() >= n && out.len() >= m * n);
+    let mk=m.checked_mul(k).expect("shape overflow");
+    let nk=n.checked_mul(k).expect("shape overflow");
+    let mn=m.checked_mul(n).expect("shape overflow");
+    assert!(a.len() >= mk && w.len() >= nk && sx.len() >= m && sw.len() >= n && out.len() >= mn);
     #[cfg(target_arch = "wasm32")]
     {
-        if k % 8 == 0 {
-            // SAFETY: see the module-level note; `k % 8 == 0` keeps every 8-wide load
+        if k.is_multiple_of(8) {
+            // SAFETY: see the module-level note; `k.is_multiple_of(8)` keeps every 8-wide load
             // inside one row and all pointers come from slices checked above.
             match k {
-                768 => unsafe { matmul_i8_simd_k8::<768>(a, w, sx, sw, m, n, out) },
-                1152 => unsafe { matmul_i8_simd_k8::<1152>(a, w, sx, sw, m, n, out) },
+                768 => unsafe {
+                    if n.is_multiple_of(16) { matmul_i8_simd_tile::<768,16,16>(a, w, sx, sw, m, n, out) }
+                    else { matmul_i8_simd_tile::<768,16,8>(a, w, sx, sw, m, n, out) }
+                },
+                1152 => unsafe {
+                    if n.is_multiple_of(16) { matmul_i8_simd_tile::<1152,16,16>(a, w, sx, sw, m, n, out) }
+                    else { matmul_i8_simd_tile::<1152,16,8>(a, w, sx, sw, m, n, out) }
+                },
                 _ => unsafe { matmul_i8_simd(a, w, sx, sw, m, k, n, out) },
             }
             return true;
@@ -282,6 +293,7 @@ pub fn matmul_i8_scalar(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, k
 /// offsets.
 #[cfg(target_arch = "wasm32")]
 #[target_feature(enable = "simd128")]
+#[allow(clippy::too_many_arguments)]
 unsafe fn matmul_i8_simd_k2<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, n: usize, out: &mut [f32]) {
     use core::arch::wasm32::*;
     let n4 = n / 4 * 4;
@@ -324,16 +336,16 @@ unsafe fn matmul_i8_simd_k2<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(24).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(xa3, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(xb3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(K).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xa0, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xb0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 8).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(K + 8).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xa1, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xb1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 16).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(K + 16).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xa2, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xb2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 24).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(K + 24).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xa3, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xb3, wv));
                 let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
@@ -371,7 +383,7 @@ unsafe fn matmul_i8_simd_k2<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
                 let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0).cast())) };
                 c00 = i32x4_add(c00, i32x4_dot_i16x8(xav, wv));
                 c10 = i32x4_add(c10, i32x4_dot_i16x8(xbv, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
+                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(K).cast())) };
                 c01 = i32x4_add(c01, i32x4_dot_i16x8(xav, wv));
                 c11 = i32x4_add(c11, i32x4_dot_i16x8(xbv, wv));
                 let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
@@ -412,532 +424,102 @@ unsafe fn matmul_i8_simd_k2<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
         }
         i += 2;
     }
-    // Odd row left over: plain scalar row.
-    while i < m {
-        for j in 0..n {
-            let mut acc = 0i32;
-            for p in 0..K { acc += unsafe { *a.as_ptr().add(i * K + p) as i32 * *w.as_ptr().add(j * K + p) as i32 }; }
-            unsafe { *out.as_mut_ptr().add(i * n + j) = acc as f32 * sx[i] * sw[j] };
-        }
-        i += 1;
+    // The final row uses the same bounded eight-lane loads as the main tiles.
+    if i < m {
+        // SAFETY: i < m, and K is 768 or 1152; sliced buffers cover m-i rows.
+        unsafe { matmul_i8_simd(&a[i * K..], w, &sx[i..], sw, m - i, K, n, &mut out[i * n..]) };
     }
 }
 
-/// Four output rows per pass: each 8-wide weight vector now feeds four rows.
-///
-/// Same idea as the two-row kernel, one step further. The tail (`m % 4` rows) is handed
-/// to the two-row kernel, which in turn handles its own odd row. Measured in
-/// docs/VERDICT_ENGINE.md 5.1.11.
+/// Share loaded vectors across 16/8/4 rows and 16 columns. Other widths retain
+/// eight-column tiles so small matrices do not fall into a large scalar tail.
+/// K is 768 or 1152 (both multiples of 64); R is 16, 8, or 4; C is 16 or 8.
+/// These are selected only by the dispatch and tail calls below. Literal
+/// macro indices let LLVM retain accumulators in Wasm locals, not a memory array.
 #[cfg(target_arch = "wasm32")]
-#[target_feature(enable = "simd128")]
-unsafe fn matmul_i8_simd_k4<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, n: usize, out: &mut [f32]) {
+#[target_feature(enable="simd128")]
+#[allow(clippy::too_many_arguments)]
+unsafe fn matmul_i8_simd_tile<const K:usize,const R:usize,const C:usize>(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,n:usize,out:&mut[f32]) {
     use core::arch::wasm32::*;
-    let n4 = n / 4 * 4;
-    let m4 = m / 4 * 4;
-    let mut i = 0;
-    while i < m4 {
-        let r: [*const i16; 4] = [
-            unsafe { a.as_ptr().add(i * K) },
-            unsafe { a.as_ptr().add((i + 1) * K) },
-            unsafe { a.as_ptr().add((i + 2) * K) },
-            unsafe { a.as_ptr().add((i + 3) * K) },
-        ];
-        let o: [*mut f32; 4] = [
-            unsafe { out.as_mut_ptr().add(i * n) },
-            unsafe { out.as_mut_ptr().add((i + 1) * n) },
-            unsafe { out.as_mut_ptr().add((i + 2) * n) },
-            unsafe { out.as_mut_ptr().add((i + 3) * n) },
-        ];
-        let mut j = 0;
-        while j < n4 {
-            let mut c00 = i32x4_splat(0); let mut c01 = i32x4_splat(0); let mut c02 = i32x4_splat(0); let mut c03 = i32x4_splat(0);
-            let mut c10 = i32x4_splat(0); let mut c11 = i32x4_splat(0); let mut c12 = i32x4_splat(0); let mut c13 = i32x4_splat(0);
-            let mut c20 = i32x4_splat(0); let mut c21 = i32x4_splat(0); let mut c22 = i32x4_splat(0); let mut c23 = i32x4_splat(0);
-            let mut c30 = i32x4_splat(0); let mut c31 = i32x4_splat(0); let mut c32 = i32x4_splat(0); let mut c33 = i32x4_splat(0);
-            let wbase = unsafe { w.as_ptr().add(j * K) };
-            let mut wp = wbase;
-            let mut xp: [*const i16; 4] = [r[0], r[1], r[2], r[3]];
-            let mut p = 0;
-            while p + 32 <= K {
-                let x0_0 = unsafe { v128_load(xp[0].add(0).cast()) };
-                let x0_1 = unsafe { v128_load(xp[0].add(8).cast()) };
-                let x0_2 = unsafe { v128_load(xp[0].add(16).cast()) };
-                let x0_3 = unsafe { v128_load(xp[0].add(24).cast()) };
-                let x1_0 = unsafe { v128_load(xp[1].add(0).cast()) };
-                let x1_1 = unsafe { v128_load(xp[1].add(8).cast()) };
-                let x1_2 = unsafe { v128_load(xp[1].add(16).cast()) };
-                let x1_3 = unsafe { v128_load(xp[1].add(24).cast()) };
-                let x2_0 = unsafe { v128_load(xp[2].add(0).cast()) };
-                let x2_1 = unsafe { v128_load(xp[2].add(8).cast()) };
-                let x2_2 = unsafe { v128_load(xp[2].add(16).cast()) };
-                let x2_3 = unsafe { v128_load(xp[2].add(24).cast()) };
-                let x3_0 = unsafe { v128_load(xp[3].add(0).cast()) };
-                let x3_1 = unsafe { v128_load(xp[3].add(8).cast()) };
-                let x3_2 = unsafe { v128_load(xp[3].add(16).cast()) };
-                let x3_3 = unsafe { v128_load(xp[3].add(24).cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_0, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_0, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_0, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 8).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_1, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_1, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_1, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 16).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_2, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_2, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_2, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 24).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_3, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_3, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_3, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_0, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_0, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_0, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 8).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_1, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_1, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_1, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 16).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_2, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_2, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_2, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 24).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_3, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_3, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_3, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_0, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_0, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_0, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 8).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_1, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_1, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_1, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 16).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_2, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_2, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_2, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 24).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_3, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_3, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_3, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_0, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_0, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_0, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 8).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_1, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_1, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_1, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 16).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_2, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_2, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_2, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 24).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_3, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_3, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_3, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_3, wv));
-                for rr in 0..4 { xp[rr] = unsafe { xp[rr].add(32) }; }
-                wp = unsafe { wp.add(32) };
-                p += 32;
+    let full=m/R*R;let nc=n/C*C;
+    for i in (0..full).step_by(R) {
+        for j in (0..nc).step_by(C) {
+            let mut acc=[[i32x4_splat(0);16];16];
+            for p in (0..K).step_by(64) {
+                let mut x=[[i32x4_splat(0);8];16];
+                macro_rules! load_rows {($($r:literal),*)=>{$(
+                    if $r<R {
+                    // SAFETY: i+r < full <= m and p+64 <= K.
+                    let ap=unsafe{a.as_ptr().add((i+$r)*K+p)};
+                    x[$r]=unsafe{[
+                        v128_load(ap.cast()),v128_load(ap.add(8).cast()),
+                        v128_load(ap.add(16).cast()),v128_load(ap.add(24).cast()),
+                        v128_load(ap.add(32).cast()),v128_load(ap.add(40).cast()),
+                        v128_load(ap.add(48).cast()),v128_load(ap.add(56).cast()),
+                    ]};
+                    }
+                )*};}
+                load_rows!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+                macro_rules! accumulate_rows {($c:literal,$w0:ident,$w1:ident,$w2:ident,$w3:ident,$w4:ident,$w5:ident,$w6:ident,$w7:ident;$($r:literal),*)=>{$(
+                    if $r<R {acc[$r][$c]=i32x4_add(i32x4_add(i32x4_add(i32x4_add(acc[$r][$c],
+                        i32x4_dot_i16x8(x[$r][0],$w0)),i32x4_dot_i16x8(x[$r][1],$w1)),
+                        i32x4_dot_i16x8(x[$r][2],$w2)),i32x4_dot_i16x8(x[$r][3],$w3));
+                    acc[$r][$c]=i32x4_add(i32x4_add(i32x4_add(i32x4_add(acc[$r][$c],
+                        i32x4_dot_i16x8(x[$r][4],$w4)),i32x4_dot_i16x8(x[$r][5],$w5)),
+                        i32x4_dot_i16x8(x[$r][6],$w6)),i32x4_dot_i16x8(x[$r][7],$w7));}
+                )*};}
+                macro_rules! columns {($($c:literal),*)=>{$(
+                    if $c<C {
+                    // SAFETY: j+c < nc <= n; each load reads eight bytes.
+                    let wp=unsafe{w.as_ptr().add((j+$c)*K+p)};
+                    let w0=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.cast()))};
+                    let w1=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(8).cast()))};
+                    let w2=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(16).cast()))};
+                    let w3=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(24).cast()))};
+                    let w4=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(32).cast()))};
+                    let w5=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(40).cast()))};
+                    let w6=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(48).cast()))};
+                    let w7=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(56).cast()))};
+                    accumulate_rows!($c,w0,w1,w2,w3,w4,w5,w6,w7;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+                    }
+                )*};}
+                columns!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
             }
-            while p < K {
-                let x0v = unsafe { v128_load(xp[0].cast()) };
-                let x1v = unsafe { v128_load(xp[1].cast()) };
-                let x2v = unsafe { v128_load(xp[2].cast()) };
-                let x3v = unsafe { v128_load(xp[3].cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0v, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1v, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2v, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0v, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1v, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2v, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0v, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1v, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2v, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0v, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1v, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2v, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3v, wv));
-                for rr in 0..4 { xp[rr] = unsafe { xp[rr].add(8) }; }
-                wp = unsafe { wp.add(8) };
-                p += 8;
-            }
-            let reduce = |acc: v128| -> f32 {
-                (i32x4_extract_lane::<0>(acc) + i32x4_extract_lane::<1>(acc)
-                    + i32x4_extract_lane::<2>(acc) + i32x4_extract_lane::<3>(acc)) as f32
-            };
-            unsafe {
-                *o[0].add(j + 0) = reduce(c00) * sx[i + 0] * sw[j + 0];
-                *o[0].add(j + 1) = reduce(c01) * sx[i + 0] * sw[j + 1];
-                *o[0].add(j + 2) = reduce(c02) * sx[i + 0] * sw[j + 2];
-                *o[0].add(j + 3) = reduce(c03) * sx[i + 0] * sw[j + 3];
-                *o[1].add(j + 0) = reduce(c10) * sx[i + 1] * sw[j + 0];
-                *o[1].add(j + 1) = reduce(c11) * sx[i + 1] * sw[j + 1];
-                *o[1].add(j + 2) = reduce(c12) * sx[i + 1] * sw[j + 2];
-                *o[1].add(j + 3) = reduce(c13) * sx[i + 1] * sw[j + 3];
-                *o[2].add(j + 0) = reduce(c20) * sx[i + 2] * sw[j + 0];
-                *o[2].add(j + 1) = reduce(c21) * sx[i + 2] * sw[j + 1];
-                *o[2].add(j + 2) = reduce(c22) * sx[i + 2] * sw[j + 2];
-                *o[2].add(j + 3) = reduce(c23) * sx[i + 2] * sw[j + 3];
-                *o[3].add(j + 0) = reduce(c30) * sx[i + 3] * sw[j + 0];
-                *o[3].add(j + 1) = reduce(c31) * sx[i + 3] * sw[j + 1];
-                *o[3].add(j + 2) = reduce(c32) * sx[i + 3] * sw[j + 2];
-                *o[3].add(j + 3) = reduce(c33) * sx[i + 3] * sw[j + 3];
-            }
-            j += 4;
+            let reduce=|v| (i32x4_extract_lane::<0>(v)+i32x4_extract_lane::<1>(v)+i32x4_extract_lane::<2>(v)+i32x4_extract_lane::<3>(v)) as f32;
+            macro_rules! store_row {($r:literal;$($c:literal),*)=>{$(
+                // SAFETY: full tile bounds and caller-checked scale/output slices.
+                if $r<R && $c<C {unsafe{*out.as_mut_ptr().add((i+$r)*n+j+$c)=reduce(acc[$r][$c]) * *sx.get_unchecked(i+$r) * *sw.get_unchecked(j+$c)};}
+            )*};}
+            macro_rules! store_rows {($($r:literal),*)=>{$(store_row!($r;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);)*};}
+            store_rows!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
         }
-        while j < n {
-            for rr in 0..4 {
-                let mut acc = 0i32;
-                for p in 0..K { acc += unsafe { *r[rr].add(p) as i32 * *w.as_ptr().add(j * K + p) as i32 }; }
-                unsafe { *o[rr].add(j) = acc as f32 * sx[i + rr] * sw[j] };
-            }
-            j += 1;
-        }
-        i += 4;
+        for j in nc..n {for r in 0..R {
+            let mut sum=0i32;
+            for p in 0..K {sum+=unsafe{*a.get_unchecked((i+r)*K+p) as i32 * *w.get_unchecked(j*K+p) as i32};}
+            unsafe{*out.get_unchecked_mut((i+r)*n+j)=sum as f32 * *sx.get_unchecked(i+r) * *sw.get_unchecked(j)};
+        }}
     }
-    if m4 < m {
-        unsafe { matmul_i8_simd_k2::<K>(&a[m4 * K..], w, &sx[m4..], sw, m - m4, n, &mut out[m4 * n..]) };
-    }
-}
-
-/// Eight output rows per pass. The tail (`m % 8`) is handed to the four-row kernel.
-#[cfg(target_arch = "wasm32")]
-#[target_feature(enable = "simd128")]
-unsafe fn matmul_i8_simd_k8<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, n: usize, out: &mut [f32]) {
-    use core::arch::wasm32::*;
-    let n4 = n / 4 * 4;
-    let m8 = m / 8 * 8;
-    let mut i = 0;
-    while i < m8 {
-        let mut r: [*const i16; 8] = [core::ptr::null(); 8];
-        let mut o: [*mut f32; 8] = [core::ptr::null_mut(); 8];
-        for k in 0..8 {
-            r[k] = unsafe { a.as_ptr().add((i + k) * K) };
-            o[k] = unsafe { out.as_mut_ptr().add((i + k) * n) };
+    if full<m {
+        // SAFETY: each sliced buffer covers the remaining m-full rows.
+        let a=&a[full*K..];let sx=&sx[full..];let out=&mut out[full*n..];
+        let remaining=m-full;
+        // A tile missing one row costs less than 8+4+2+1 / 4+2+1 / 2+1.
+        // Pad only this quantized matrix product, never the model token sequence:
+        // zero scratch rows cannot affect any real row's dot product or scale.
+        if remaining==R-1 {
+            let mut padded_a=vec![0i16;R*K];
+            padded_a[..remaining*K].copy_from_slice(&a[..remaining*K]);
+            let mut padded_sx=vec![1f32;R];
+            padded_sx[..remaining].copy_from_slice(&sx[..remaining]);
+            let mut padded_out=vec![0f32;R*n];
+            // SAFETY: full R-row scratch buffers, unchanged checked weights/scales.
+            unsafe{matmul_i8_simd_tile::<K,R,C>(&padded_a,w,&padded_sx,sw,R,n,&mut padded_out)};
+            out[..remaining*n].copy_from_slice(&padded_out[..remaining*n]);
+            return;
         }
-        let mut j = 0;
-        while j < n4 {
-            let mut c00 = i32x4_splat(0); let mut c01 = i32x4_splat(0); let mut c02 = i32x4_splat(0); let mut c03 = i32x4_splat(0);
-            let mut c10 = i32x4_splat(0); let mut c11 = i32x4_splat(0); let mut c12 = i32x4_splat(0); let mut c13 = i32x4_splat(0);
-            let mut c20 = i32x4_splat(0); let mut c21 = i32x4_splat(0); let mut c22 = i32x4_splat(0); let mut c23 = i32x4_splat(0);
-            let mut c30 = i32x4_splat(0); let mut c31 = i32x4_splat(0); let mut c32 = i32x4_splat(0); let mut c33 = i32x4_splat(0);
-            let mut c40 = i32x4_splat(0); let mut c41 = i32x4_splat(0); let mut c42 = i32x4_splat(0); let mut c43 = i32x4_splat(0);
-            let mut c50 = i32x4_splat(0); let mut c51 = i32x4_splat(0); let mut c52 = i32x4_splat(0); let mut c53 = i32x4_splat(0);
-            let mut c60 = i32x4_splat(0); let mut c61 = i32x4_splat(0); let mut c62 = i32x4_splat(0); let mut c63 = i32x4_splat(0);
-            let mut c70 = i32x4_splat(0); let mut c71 = i32x4_splat(0); let mut c72 = i32x4_splat(0); let mut c73 = i32x4_splat(0);
-            let wbase = unsafe { w.as_ptr().add(j * K) };
-            let mut wp = wbase;
-            let mut xp: [*const i16; 8] = r;
-            let mut p = 0;
-            while p + 32 <= K {
-                let x0_0 = unsafe { v128_load(xp[0].add(0).cast()) };
-                let x0_1 = unsafe { v128_load(xp[0].add(8).cast()) };
-                let x0_2 = unsafe { v128_load(xp[0].add(16).cast()) };
-                let x0_3 = unsafe { v128_load(xp[0].add(24).cast()) };
-                let x1_0 = unsafe { v128_load(xp[1].add(0).cast()) };
-                let x1_1 = unsafe { v128_load(xp[1].add(8).cast()) };
-                let x1_2 = unsafe { v128_load(xp[1].add(16).cast()) };
-                let x1_3 = unsafe { v128_load(xp[1].add(24).cast()) };
-                let x2_0 = unsafe { v128_load(xp[2].add(0).cast()) };
-                let x2_1 = unsafe { v128_load(xp[2].add(8).cast()) };
-                let x2_2 = unsafe { v128_load(xp[2].add(16).cast()) };
-                let x2_3 = unsafe { v128_load(xp[2].add(24).cast()) };
-                let x3_0 = unsafe { v128_load(xp[3].add(0).cast()) };
-                let x3_1 = unsafe { v128_load(xp[3].add(8).cast()) };
-                let x3_2 = unsafe { v128_load(xp[3].add(16).cast()) };
-                let x3_3 = unsafe { v128_load(xp[3].add(24).cast()) };
-                let x4_0 = unsafe { v128_load(xp[4].add(0).cast()) };
-                let x4_1 = unsafe { v128_load(xp[4].add(8).cast()) };
-                let x4_2 = unsafe { v128_load(xp[4].add(16).cast()) };
-                let x4_3 = unsafe { v128_load(xp[4].add(24).cast()) };
-                let x5_0 = unsafe { v128_load(xp[5].add(0).cast()) };
-                let x5_1 = unsafe { v128_load(xp[5].add(8).cast()) };
-                let x5_2 = unsafe { v128_load(xp[5].add(16).cast()) };
-                let x5_3 = unsafe { v128_load(xp[5].add(24).cast()) };
-                let x6_0 = unsafe { v128_load(xp[6].add(0).cast()) };
-                let x6_1 = unsafe { v128_load(xp[6].add(8).cast()) };
-                let x6_2 = unsafe { v128_load(xp[6].add(16).cast()) };
-                let x6_3 = unsafe { v128_load(xp[6].add(24).cast()) };
-                let x7_0 = unsafe { v128_load(xp[7].add(0).cast()) };
-                let x7_1 = unsafe { v128_load(xp[7].add(8).cast()) };
-                let x7_2 = unsafe { v128_load(xp[7].add(16).cast()) };
-                let x7_3 = unsafe { v128_load(xp[7].add(24).cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_0, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_0, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_0, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_0, wv));
-                c40 = i32x4_add(c40, i32x4_dot_i16x8(x4_0, wv));
-                c50 = i32x4_add(c50, i32x4_dot_i16x8(x5_0, wv));
-                c60 = i32x4_add(c60, i32x4_dot_i16x8(x6_0, wv));
-                c70 = i32x4_add(c70, i32x4_dot_i16x8(x7_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 8).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_1, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_1, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_1, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_1, wv));
-                c40 = i32x4_add(c40, i32x4_dot_i16x8(x4_1, wv));
-                c50 = i32x4_add(c50, i32x4_dot_i16x8(x5_1, wv));
-                c60 = i32x4_add(c60, i32x4_dot_i16x8(x6_1, wv));
-                c70 = i32x4_add(c70, i32x4_dot_i16x8(x7_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 16).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_2, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_2, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_2, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_2, wv));
-                c40 = i32x4_add(c40, i32x4_dot_i16x8(x4_2, wv));
-                c50 = i32x4_add(c50, i32x4_dot_i16x8(x5_2, wv));
-                c60 = i32x4_add(c60, i32x4_dot_i16x8(x6_2, wv));
-                c70 = i32x4_add(c70, i32x4_dot_i16x8(x7_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0 * K + 24).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0_3, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1_3, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2_3, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3_3, wv));
-                c40 = i32x4_add(c40, i32x4_dot_i16x8(x4_3, wv));
-                c50 = i32x4_add(c50, i32x4_dot_i16x8(x5_3, wv));
-                c60 = i32x4_add(c60, i32x4_dot_i16x8(x6_3, wv));
-                c70 = i32x4_add(c70, i32x4_dot_i16x8(x7_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_0, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_0, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_0, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_0, wv));
-                c41 = i32x4_add(c41, i32x4_dot_i16x8(x4_0, wv));
-                c51 = i32x4_add(c51, i32x4_dot_i16x8(x5_0, wv));
-                c61 = i32x4_add(c61, i32x4_dot_i16x8(x6_0, wv));
-                c71 = i32x4_add(c71, i32x4_dot_i16x8(x7_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 8).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_1, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_1, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_1, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_1, wv));
-                c41 = i32x4_add(c41, i32x4_dot_i16x8(x4_1, wv));
-                c51 = i32x4_add(c51, i32x4_dot_i16x8(x5_1, wv));
-                c61 = i32x4_add(c61, i32x4_dot_i16x8(x6_1, wv));
-                c71 = i32x4_add(c71, i32x4_dot_i16x8(x7_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 16).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_2, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_2, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_2, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_2, wv));
-                c41 = i32x4_add(c41, i32x4_dot_i16x8(x4_2, wv));
-                c51 = i32x4_add(c51, i32x4_dot_i16x8(x5_2, wv));
-                c61 = i32x4_add(c61, i32x4_dot_i16x8(x6_2, wv));
-                c71 = i32x4_add(c71, i32x4_dot_i16x8(x7_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K + 24).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0_3, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1_3, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2_3, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3_3, wv));
-                c41 = i32x4_add(c41, i32x4_dot_i16x8(x4_3, wv));
-                c51 = i32x4_add(c51, i32x4_dot_i16x8(x5_3, wv));
-                c61 = i32x4_add(c61, i32x4_dot_i16x8(x6_3, wv));
-                c71 = i32x4_add(c71, i32x4_dot_i16x8(x7_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_0, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_0, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_0, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_0, wv));
-                c42 = i32x4_add(c42, i32x4_dot_i16x8(x4_0, wv));
-                c52 = i32x4_add(c52, i32x4_dot_i16x8(x5_0, wv));
-                c62 = i32x4_add(c62, i32x4_dot_i16x8(x6_0, wv));
-                c72 = i32x4_add(c72, i32x4_dot_i16x8(x7_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 8).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_1, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_1, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_1, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_1, wv));
-                c42 = i32x4_add(c42, i32x4_dot_i16x8(x4_1, wv));
-                c52 = i32x4_add(c52, i32x4_dot_i16x8(x5_1, wv));
-                c62 = i32x4_add(c62, i32x4_dot_i16x8(x6_1, wv));
-                c72 = i32x4_add(c72, i32x4_dot_i16x8(x7_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 16).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_2, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_2, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_2, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_2, wv));
-                c42 = i32x4_add(c42, i32x4_dot_i16x8(x4_2, wv));
-                c52 = i32x4_add(c52, i32x4_dot_i16x8(x5_2, wv));
-                c62 = i32x4_add(c62, i32x4_dot_i16x8(x6_2, wv));
-                c72 = i32x4_add(c72, i32x4_dot_i16x8(x7_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K + 24).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0_3, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1_3, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2_3, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3_3, wv));
-                c42 = i32x4_add(c42, i32x4_dot_i16x8(x4_3, wv));
-                c52 = i32x4_add(c52, i32x4_dot_i16x8(x5_3, wv));
-                c62 = i32x4_add(c62, i32x4_dot_i16x8(x6_3, wv));
-                c72 = i32x4_add(c72, i32x4_dot_i16x8(x7_3, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_0, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_0, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_0, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_0, wv));
-                c43 = i32x4_add(c43, i32x4_dot_i16x8(x4_0, wv));
-                c53 = i32x4_add(c53, i32x4_dot_i16x8(x5_0, wv));
-                c63 = i32x4_add(c63, i32x4_dot_i16x8(x6_0, wv));
-                c73 = i32x4_add(c73, i32x4_dot_i16x8(x7_0, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 8).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_1, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_1, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_1, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_1, wv));
-                c43 = i32x4_add(c43, i32x4_dot_i16x8(x4_1, wv));
-                c53 = i32x4_add(c53, i32x4_dot_i16x8(x5_1, wv));
-                c63 = i32x4_add(c63, i32x4_dot_i16x8(x6_1, wv));
-                c73 = i32x4_add(c73, i32x4_dot_i16x8(x7_1, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 16).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_2, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_2, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_2, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_2, wv));
-                c43 = i32x4_add(c43, i32x4_dot_i16x8(x4_2, wv));
-                c53 = i32x4_add(c53, i32x4_dot_i16x8(x5_2, wv));
-                c63 = i32x4_add(c63, i32x4_dot_i16x8(x6_2, wv));
-                c73 = i32x4_add(c73, i32x4_dot_i16x8(x7_2, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K + 24).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0_3, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1_3, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2_3, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3_3, wv));
-                c43 = i32x4_add(c43, i32x4_dot_i16x8(x4_3, wv));
-                c53 = i32x4_add(c53, i32x4_dot_i16x8(x5_3, wv));
-                c63 = i32x4_add(c63, i32x4_dot_i16x8(x6_3, wv));
-                c73 = i32x4_add(c73, i32x4_dot_i16x8(x7_3, wv));
-                for rr in 0..8 { xp[rr] = unsafe { xp[rr].add(32) }; }
-                wp = unsafe { wp.add(32) };
-                p += 32;
-            }
-            while p < K {
-                let x0v = unsafe { v128_load(xp[0].cast()) };
-                let x1v = unsafe { v128_load(xp[1].cast()) };
-                let x2v = unsafe { v128_load(xp[2].cast()) };
-                let x3v = unsafe { v128_load(xp[3].cast()) };
-                let x4v = unsafe { v128_load(xp[4].cast()) };
-                let x5v = unsafe { v128_load(xp[5].cast()) };
-                let x6v = unsafe { v128_load(xp[6].cast()) };
-                let x7v = unsafe { v128_load(xp[7].cast()) };
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(0).cast())) };
-                c00 = i32x4_add(c00, i32x4_dot_i16x8(x0v, wv));
-                c10 = i32x4_add(c10, i32x4_dot_i16x8(x1v, wv));
-                c20 = i32x4_add(c20, i32x4_dot_i16x8(x2v, wv));
-                c30 = i32x4_add(c30, i32x4_dot_i16x8(x3v, wv));
-                c40 = i32x4_add(c40, i32x4_dot_i16x8(x4v, wv));
-                c50 = i32x4_add(c50, i32x4_dot_i16x8(x5v, wv));
-                c60 = i32x4_add(c60, i32x4_dot_i16x8(x6v, wv));
-                c70 = i32x4_add(c70, i32x4_dot_i16x8(x7v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(1 * K).cast())) };
-                c01 = i32x4_add(c01, i32x4_dot_i16x8(x0v, wv));
-                c11 = i32x4_add(c11, i32x4_dot_i16x8(x1v, wv));
-                c21 = i32x4_add(c21, i32x4_dot_i16x8(x2v, wv));
-                c31 = i32x4_add(c31, i32x4_dot_i16x8(x3v, wv));
-                c41 = i32x4_add(c41, i32x4_dot_i16x8(x4v, wv));
-                c51 = i32x4_add(c51, i32x4_dot_i16x8(x5v, wv));
-                c61 = i32x4_add(c61, i32x4_dot_i16x8(x6v, wv));
-                c71 = i32x4_add(c71, i32x4_dot_i16x8(x7v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(2 * K).cast())) };
-                c02 = i32x4_add(c02, i32x4_dot_i16x8(x0v, wv));
-                c12 = i32x4_add(c12, i32x4_dot_i16x8(x1v, wv));
-                c22 = i32x4_add(c22, i32x4_dot_i16x8(x2v, wv));
-                c32 = i32x4_add(c32, i32x4_dot_i16x8(x3v, wv));
-                c42 = i32x4_add(c42, i32x4_dot_i16x8(x4v, wv));
-                c52 = i32x4_add(c52, i32x4_dot_i16x8(x5v, wv));
-                c62 = i32x4_add(c62, i32x4_dot_i16x8(x6v, wv));
-                c72 = i32x4_add(c72, i32x4_dot_i16x8(x7v, wv));
-                let wv = unsafe { i16x8_extend_low_i8x16(v128_load64_zero(wp.add(3 * K).cast())) };
-                c03 = i32x4_add(c03, i32x4_dot_i16x8(x0v, wv));
-                c13 = i32x4_add(c13, i32x4_dot_i16x8(x1v, wv));
-                c23 = i32x4_add(c23, i32x4_dot_i16x8(x2v, wv));
-                c33 = i32x4_add(c33, i32x4_dot_i16x8(x3v, wv));
-                c43 = i32x4_add(c43, i32x4_dot_i16x8(x4v, wv));
-                c53 = i32x4_add(c53, i32x4_dot_i16x8(x5v, wv));
-                c63 = i32x4_add(c63, i32x4_dot_i16x8(x6v, wv));
-                c73 = i32x4_add(c73, i32x4_dot_i16x8(x7v, wv));
-                for rr in 0..8 { xp[rr] = unsafe { xp[rr].add(8) }; }
-                wp = unsafe { wp.add(8) };
-                p += 8;
-            }
-            let reduce = |acc: v128| -> f32 {
-                (i32x4_extract_lane::<0>(acc) + i32x4_extract_lane::<1>(acc)
-                    + i32x4_extract_lane::<2>(acc) + i32x4_extract_lane::<3>(acc)) as f32
-            };
-            unsafe {
-                *o[0].add(j + 0) = reduce(c00) * sx[i + 0] * sw[j + 0];
-                *o[0].add(j + 1) = reduce(c01) * sx[i + 0] * sw[j + 1];
-                *o[0].add(j + 2) = reduce(c02) * sx[i + 0] * sw[j + 2];
-                *o[0].add(j + 3) = reduce(c03) * sx[i + 0] * sw[j + 3];
-                *o[1].add(j + 0) = reduce(c10) * sx[i + 1] * sw[j + 0];
-                *o[1].add(j + 1) = reduce(c11) * sx[i + 1] * sw[j + 1];
-                *o[1].add(j + 2) = reduce(c12) * sx[i + 1] * sw[j + 2];
-                *o[1].add(j + 3) = reduce(c13) * sx[i + 1] * sw[j + 3];
-                *o[2].add(j + 0) = reduce(c20) * sx[i + 2] * sw[j + 0];
-                *o[2].add(j + 1) = reduce(c21) * sx[i + 2] * sw[j + 1];
-                *o[2].add(j + 2) = reduce(c22) * sx[i + 2] * sw[j + 2];
-                *o[2].add(j + 3) = reduce(c23) * sx[i + 2] * sw[j + 3];
-                *o[3].add(j + 0) = reduce(c30) * sx[i + 3] * sw[j + 0];
-                *o[3].add(j + 1) = reduce(c31) * sx[i + 3] * sw[j + 1];
-                *o[3].add(j + 2) = reduce(c32) * sx[i + 3] * sw[j + 2];
-                *o[3].add(j + 3) = reduce(c33) * sx[i + 3] * sw[j + 3];
-                *o[4].add(j + 0) = reduce(c40) * sx[i + 4] * sw[j + 0];
-                *o[4].add(j + 1) = reduce(c41) * sx[i + 4] * sw[j + 1];
-                *o[4].add(j + 2) = reduce(c42) * sx[i + 4] * sw[j + 2];
-                *o[4].add(j + 3) = reduce(c43) * sx[i + 4] * sw[j + 3];
-                *o[5].add(j + 0) = reduce(c50) * sx[i + 5] * sw[j + 0];
-                *o[5].add(j + 1) = reduce(c51) * sx[i + 5] * sw[j + 1];
-                *o[5].add(j + 2) = reduce(c52) * sx[i + 5] * sw[j + 2];
-                *o[5].add(j + 3) = reduce(c53) * sx[i + 5] * sw[j + 3];
-                *o[6].add(j + 0) = reduce(c60) * sx[i + 6] * sw[j + 0];
-                *o[6].add(j + 1) = reduce(c61) * sx[i + 6] * sw[j + 1];
-                *o[6].add(j + 2) = reduce(c62) * sx[i + 6] * sw[j + 2];
-                *o[6].add(j + 3) = reduce(c63) * sx[i + 6] * sw[j + 3];
-                *o[7].add(j + 0) = reduce(c70) * sx[i + 7] * sw[j + 0];
-                *o[7].add(j + 1) = reduce(c71) * sx[i + 7] * sw[j + 1];
-                *o[7].add(j + 2) = reduce(c72) * sx[i + 7] * sw[j + 2];
-                *o[7].add(j + 3) = reduce(c73) * sx[i + 7] * sw[j + 3];
-            }
-            j += 4;
-        }
-        while j < n {
-            for rr in 0..8 {
-                let mut acc = 0i32;
-                for p in 0..K { acc += unsafe { *r[rr].add(p) as i32 * *w.as_ptr().add(j * K + p) as i32 }; }
-                unsafe { *o[rr].add(j) = acc as f32 * sx[i + rr] * sw[j] };
-            }
-            j += 1;
-        }
-        i += 8;
-    }
-    if m8 < m {
-        unsafe { matmul_i8_simd_k4::<K>(&a[m8 * K..], w, &sx[m8..], sw, m - m8, n, &mut out[m8 * n..]) };
+        unsafe{if R==16 {matmul_i8_simd_tile::<K,8,C>(a,w,sx,sw,m-full,n,out)}
+            else if R==8 {matmul_i8_simd_tile::<K,4,C>(a,w,sx,sw,m-full,n,out)}
+            else {matmul_i8_simd_k2::<K>(a,w,sx,sw,m-full,n,out)}};
     }
 }
 
@@ -958,6 +540,7 @@ unsafe fn dot4_i8(i8w: *const i8, x0: core::arch::wasm32::v128, x1: core::arch::
 
 #[cfg(target_arch = "wasm32")]
 #[target_feature(enable = "simd128")]
+#[allow(clippy::too_many_arguments)]
 unsafe fn matmul_i8_simd(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, k: usize, n: usize, out: &mut [f32]) {
     use core::arch::wasm32::*;
     let n4 = n / 4 * 4;
@@ -979,7 +562,7 @@ unsafe fn matmul_i8_simd(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, 
             let mut xp = arow;
             let mut p = 0;
             while p + 32 <= k {
-                // SAFETY: `k % 8 == 0` and `p + 32 <= k` keep every 8-wide window inside
+                // SAFETY: `k.is_multiple_of(8)` and `p + 32 <= k` keep every 8-wide window inside
                 // the row for both the activations and each of the four weight rows.
                 let x0 = unsafe { v128_load(xp.cast()) };
                 let x1 = unsafe { v128_load(xp.add(8).cast()) };
@@ -998,10 +581,10 @@ unsafe fn matmul_i8_simd(a: &[i16], w: &[i8], sx: &[f32], sw: &[f32], m: usize, 
             }
             while p < k {
                 let xv = unsafe { v128_load(xp.cast()) };
-                acc0 = unsafe { i32x4_add(acc0, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p0.cast()) }))) };
-                acc1 = unsafe { i32x4_add(acc1, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p1.cast()) }))) };
-                acc2 = unsafe { i32x4_add(acc2, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p2.cast()) }))) };
-                acc3 = unsafe { i32x4_add(acc3, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p3.cast()) }))) };
+                acc0 = i32x4_add(acc0, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p0.cast()) })));
+                acc1 = i32x4_add(acc1, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p1.cast()) })));
+                acc2 = i32x4_add(acc2, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p2.cast()) })));
+                acc3 = i32x4_add(acc3, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p3.cast()) })));
                 xp = unsafe { xp.add(8) };
                 p0 = unsafe { p0.add(8) };
                 p1 = unsafe { p1.add(8) };
@@ -1045,8 +628,8 @@ pub fn softmax_rows_inplace(data: &mut [f32], rows: usize, cols: usize) {
     for r in 0..rows {
         let row = &mut data[r * cols..r * cols + cols];
         #[cfg(target_arch = "wasm32")]
-        if cols % 4 == 0 {
-            // SAFETY: `cols % 4 == 0` keeps every 4-wide access inside the row.
+        if cols.is_multiple_of(4) {
+            // SAFETY: `cols.is_multiple_of(4)` keeps every 4-wide access inside the row.
             unsafe { softmax_row_simd(row) };
             continue;
         }
@@ -1120,7 +703,7 @@ mod tests {
                 want[i*n+j]=total*sx[i];
             }}
             let mut got=vec![0.;m*n];let _=matmul_i8_blocked(&a,&w,&sx,&sw,m,k,n,32,&mut got);assert_eq!(got,want);
-            if k%32==0{for tile in [2,4,8]{let _=matmul_i8_block32_candidate(&a,&w,&sx,&sw,m,k,n,&mut got,tile);assert_eq!(got,want);}}
+            if k.is_multiple_of(32){for tile in [2,4,8]{let _=matmul_i8_block32_candidate(&a,&w,&sx,&sw,m,k,n,&mut got,tile);assert_eq!(got,want);}}
         }
     }
     #[test]
@@ -1203,6 +786,30 @@ mod tests {
                 assert!((x - y).abs() / scale < 1e-4, "shape {m}x{k}x{n}: {x} vs {y}");
             }
         }
+    }
+
+    #[test]
+    fn model_width_tiles_and_tails_match_i64_exactly() {
+        for k in [768,1152] {
+            for m in [1,2,3,4,5,6,7,8,9,15,16,17,39,40,41,47,48,49] {
+                for n in [1,3,4,5,7,8,9] {
+                    let a:Vec<i16>=(0..m*k).map(|i|match i%5 {0=>8192,1=>-8192,_=>(i%16385) as i16-8192}).collect();
+                    let w:Vec<i8>=(0..n*k).map(|i|match i%5 {0=>127,1=>-127,_=>((i%255) as i16-127) as i8}).collect();
+                    let sx:Vec<f32>=(0..m).map(|i|0.00013*(1+i%7) as f32).collect();
+                    let sw:Vec<f32>=(0..n).map(|i|0.0017*(1+i%3) as f32).collect();
+                    let mut out=vec![f32::NAN;m*n];
+                    let _=matmul_i8(&a,&w,&sx,&sw,m,k,n,&mut out);
+                    let want=reference(&a,&w,&sx,&sw,m,k,n);
+                    assert!(out.iter().zip(want).all(|(a,b)|a.to_bits()==b.to_bits()),"shape {m}x{k}x{n}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    #[should_panic(expected="shape overflow")]
+    fn row_kernel_rejects_overflow_before_pointer_dispatch() {
+        let _=matmul_i8(&[],&[],&[],&[],usize::MAX,768,0,&mut []);
     }
 
     #[test]

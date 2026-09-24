@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "games": 30,
+  "history_linkages_checked": 7481,
+  "model_queries": 701,
+  "observed_token_counts": [
+    36,
+    38,
+    40,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+  ],
+  "model_action_counts": {
+    "0": 122,
+    "1": 352,
+    "4": 209,
+    "3": 18
+  },
+  "repeat_previous_when_legal": {
+    "repeated": 421,
+    "eligible": 460
+  },
+  "baseline_results_identical_to_initial_run": true,
+  "final_module_hash": "0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b"
+}

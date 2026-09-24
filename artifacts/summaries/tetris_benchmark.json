@@ -1,0 +1,237 @@
+{
+  "source": "artifacts/tetris_benchmark.json",
+  "source_sha256": "62d83fc9fafe9b3718fa2fc591bdd9fdc800ba3680829e83d4d5dd07b3f97fae",
+  "source_bytes": 640234,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "host": "http://localhost:8011",
+    "canister": "4fbx2-kt777-77775-aaabq-cai",
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "games": [
+      {
+        "seed": 1,
+        "model": {
+          "lines": 36,
+          "pieces": 100,
+          "ended": false
+        },
+        "baseline": {
+          "lines": 29,
+          "pieces": 100,
+          "ended": false
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 2,
+        "model": {
+          "lines": 26,
+          "pieces": 100,
+          "ended": false
+        },
+        "baseline": {
+          "lines": 27,
+          "pieces": 100,
+          "ended": false
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 3,
+        "model": {
+          "lines": 17,
+          "pieces": 81,
+          "ended": true
+        },
+        "baseline": {
+          "lines": 32,
+          "pieces": 100,
+          "ended": false
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 4,
+        "model": {
+          "lines": 10,
+          "pieces": 64,
+          "ended": true
+        },
+        "baseline": {
+          "lines": 11,
+          "pieces": 65,
+          "ended": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 5,
+        "model": {
+          "lines": 28,
+          "pieces": 100,
+          "ended": false
+        },
+        "baseline": {
+          "lines": 18,
+          "pieces": 84,
+          "ended": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 6,
+        "model": {
+          "lines": 21,
+          "pieces": 94,
+          "ended": true
+        },
+        "baseline": {
+          "lines": 20,
+          "pieces": 90,
+          "ended": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 7,
+        "model": {
+          "lines": 2,
+          "pieces": 45,
+          "ended": true
+        },
+        "baseline": {
+          "lines": 2,
+          "pieces": 45,
+          "ended": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 8,
+        "model": {
+          "lines": 4,
+          "pieces": 49,
+          "ended": true
+        },
+        "baseline": {
+          "lines": 29,
+          "pieces": 100,
+          "ended": false
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 9,
+        "model": {
+          "lines": 25,
+          "pieces": 100,
+          "ended": false
+        },
+        "baseline": {
+          "lines": 34,
+          "pieces": 100,
+          "ended": false
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 10,
+        "model": {
+          "lines": 2,
+          "pieces": 47,
+          "ended": true
+        },
+        "baseline": {
+          "lines": 37,
+          "pieces": 100,
+          "ended": false
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      }
+    ],
+    "started": "2026-09-22T08:59:23.216Z",
+    "completed": "2026-09-22T09:01:46.427Z"
+  },
+  "omitted": [
+    {
+      "path": "$.games[0].turns",
+      "count": 100,
+      "sha256": "dd9e0147cad35e53e6874805e25d70d7d1f52b06104405764e014a5c6221f752"
+    },
+    {
+      "path": "$.games[1].turns",
+      "count": 100,
+      "sha256": "912495b123abd958f2b9664aa2d7288c941f259d8ab4f678da261501396444b5"
+    },
+    {
+      "path": "$.games[2].turns",
+      "count": 81,
+      "sha256": "9f7361a55fd503608157902f51a3cd97ad873c8717b20336c05b3a2c5641095b"
+    },
+    {
+      "path": "$.games[3].turns",
+      "count": 64,
+      "sha256": "13d3f1d985b44bf9b26410236ab47d84483da1ea2a1a0c399131e3f082c3ca97"
+    },
+    {
+      "path": "$.games[4].turns",
+      "count": 100,
+      "sha256": "975a1f0b24f9a5956f498cfac7a9fa17b22e843852d9b8edd9e97e2c7ea1a80b"
+    },
+    {
+      "path": "$.games[5].turns",
+      "count": 94,
+      "sha256": "2788f1b44b8d9f190af9a98ff5a505e3f22018291bc012cb0379d6bd99e9e03f"
+    },
+    {
+      "path": "$.games[6].turns",
+      "count": 45,
+      "sha256": "c39166a76a3f8520819fe0e85365bbb98beaa23b6f95535c5b6df9bdb2e23c0c"
+    },
+    {
+      "path": "$.games[7].turns",
+      "count": 49,
+      "sha256": "cfb8424261901f644f52b4b5b60c171608160efd69aa30d11dfbd7d4b5107345"
+    },
+    {
+      "path": "$.games[8].turns",
+      "count": 100,
+      "sha256": "a264650196d922e1f32f5b1eb74c0610123b103e0a7e0017b1fcc737b8f63c5d"
+    },
+    {
+      "path": "$.games[9].turns",
+      "count": 47,
+      "sha256": "12b8bc918fe36720bba21183ad278b776fafd4a78739d1151013f289eaf5e52b"
+    }
+  ]
+}
