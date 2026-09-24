@@ -6,6 +6,8 @@
 
 公開デモ: [openjev.kinic.xyz](https://openjev.kinic.xyz) · [本番canisterとCandid](https://dashboard.internetcomputer.org/canister/qojfj-6qaaa-aaaam-qjkaq-cai)。公開Candidは`icp canister metadata qojfj-6qaaa-aaaam-qjkaq-cai candid:service -n ic --identity anonymous`でも取得できます。
 
+外部アプリからの公開queryは[汎用モデルqueryの使い方](docs/PUBLIC_MODEL_QUERY.md)を参照してください。
+
 ## 外部アプリからの利用と料金
 
 IC-Verdictは、文章と選択肢を受け取り、モデルが選んだ結果とスコアを返す推論APIです。別のcanisterから呼び出す場合は、サイクルを添付して推論updateを利用できます。支払いはサイクルのみで、KINICやICPなどのICRCトークン払いには対応していません。
