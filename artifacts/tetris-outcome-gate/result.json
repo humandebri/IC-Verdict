@@ -1,0 +1,73 @@
+{
+  "correct": 3,
+  "total": 100,
+  "accuracy": 0.03,
+  "per_action": {
+    "left": {
+      "total": 20,
+      "correct": 0
+    },
+    "right": {
+      "total": 20,
+      "correct": 0
+    },
+    "rotate": {
+      "total": 20,
+      "correct": 2
+    },
+    "down": {
+      "total": 20,
+      "correct": 0
+    },
+    "wait": {
+      "total": 20,
+      "correct": 1
+    }
+  },
+  "pairs_correct": 0,
+  "pairs_total": 50,
+  "paired_accuracy": 0.0,
+  "selected_counts": {
+    "left": 0,
+    "right": 3,
+    "rotate": 28,
+    "down": 0,
+    "wait": 69
+  },
+  "per_metric": {
+    "lines": {
+      "total": 34,
+      "correct": 2
+    },
+    "holes": {
+      "total": 34,
+      "correct": 0
+    },
+    "height": {
+      "total": 32,
+      "correct": 1
+    }
+  },
+  "gates": {
+    "accuracy": false,
+    "every_action": false,
+    "both_swapped_questions": false
+  },
+  "passed": false,
+  "provenance": {
+    "started": "2026-09-23T00:38:29Z",
+    "host": "http://localhost:8011/",
+    "canister": "4fbx2-kt777-77775-aaabq-cai",
+    "wasm": "0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b",
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+    "fixtures": "6c1848cd55ad943403dff65ab753456bd8d883e70462f11c2e0aa8728c232a1b"
+  },
+  "status": "complete",
+  "actual_queries": 101,
+  "query_errors": 0,
+  "max_tokens": 51,
+  "max_instructions": 4747040636,
+  "production_changed": false,
+  "next_step": "stop before search, v4 and UI implementation"
+}

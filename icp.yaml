@@ -35,3 +35,10 @@ canisters:
       steps:
         - type: script
           command: echo "use tools/build_one.sh; this step only satisfies the manifest"
+
+networks:
+  - name: local
+    mode: managed
+    gateway:
+      bind: 127.0.0.1
+      port: 8011

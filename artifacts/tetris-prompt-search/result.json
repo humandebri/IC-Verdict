@@ -1,0 +1,155 @@
+{
+  "winner": "ranks/compact",
+  "accepted": true,
+  "tokens": 51,
+  "baseline_tokens": 43,
+  "confirmation": {
+    "baseline": {
+      "real": {
+        "tests": 48,
+        "best": 7,
+        "dominated": 37,
+        "stable": 3,
+        "cases": 12
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 4,
+        "dominated": 44,
+        "stable": 1,
+        "cases": 12
+      }
+    },
+    "ranks/compact": {
+      "real": {
+        "tests": 48,
+        "best": 43,
+        "dominated": 5,
+        "stable": 8,
+        "cases": 12
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 48,
+        "dominated": 0,
+        "stable": 12,
+        "cases": 12
+      }
+    }
+  },
+  "development": {
+    "baseline": {
+      "real": {
+        "tests": 56,
+        "best": 25,
+        "dominated": 26,
+        "stable": 4,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 11,
+        "dominated": 37,
+        "stable": 6,
+        "cases": 12
+      }
+    },
+    "ranks/compact": {
+      "real": {
+        "tests": 56,
+        "best": 35,
+        "dominated": 15,
+        "stable": 6,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 42,
+        "dominated": 6,
+        "stable": 8,
+        "cases": 12
+      }
+    },
+    "units/target": {
+      "real": {
+        "tests": 56,
+        "best": 21,
+        "dominated": 26,
+        "stable": 4,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 27,
+        "dominated": 21,
+        "stable": 6,
+        "cases": 12
+      }
+    },
+    "units/compact": {
+      "real": {
+        "tests": 56,
+        "best": 15,
+        "dominated": 34,
+        "stable": 5,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 19,
+        "dominated": 29,
+        "stable": 3,
+        "cases": 12
+      }
+    },
+    "units/direction": {
+      "real": {
+        "tests": 56,
+        "best": 22,
+        "dominated": 28,
+        "stable": 4,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 21,
+        "dominated": 27,
+        "stable": 3,
+        "cases": 12
+      }
+    },
+    "cleared/priority": {
+      "real": {
+        "tests": 56,
+        "best": 17,
+        "dominated": 32,
+        "stable": 3,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 15,
+        "dominated": 33,
+        "stable": 7,
+        "cases": 12
+      }
+    },
+    "cleared/direction": {
+      "real": {
+        "tests": 56,
+        "best": 19,
+        "dominated": 30,
+        "stable": 2,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 16,
+        "dominated": 32,
+        "stable": 7,
+        "cases": 12
+      }
+    }
+  },
+  "unique_new_inferences": 1100
+}

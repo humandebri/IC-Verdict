@@ -1,0 +1,6 @@
+{
+  "cases": 3480,
+  "passed": true,
+  "milliseconds": 681.0706250000001,
+  "wasm_sha256": "7af64b1324eb5caa938de963154c8f3031ff33b0e45ab5d3b9406e9e1c515974"
+}

@@ -1,0 +1,21 @@
+{
+  "canister": "qojfj-6qaaa-aaaam-qjkaq-cai",
+  "url": "https://openjev.kinic.xyz",
+  "identity": "production",
+  "wasm_sha256": "e28b37bd2a31ce0352359b254029852088c30d4506939853d5352d9b966adf76",
+  "worker_version": "f7f52122-e960-4f3a-8cc9-4bf02af57ac9",
+  "candidate_limit": 4,
+  "queries_per_turn": 1,
+  "model_reuploaded": false,
+  "funding_added": false,
+  "production_smoke": "passed",
+  "gameplay_update_calls": 0,
+  "start_network_requests": 0,
+  "move_queries": 1,
+  "input_tokens": 43,
+  "model_instructions": "4019862822",
+  "response_seconds_display": 1.0,
+  "old_update_budget": 0,
+  "query_shared_turn_limit": null,
+  "console_errors": 0
+}

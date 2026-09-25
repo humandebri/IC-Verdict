@@ -1,0 +1,80 @@
+{
+  "benchmark": {
+    "rules": "nes-ntsc-query-v3-controls-history",
+    "seed": 42,
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "canister": "qojfj-6qaaa-aaaam-qjkaq-cai",
+    "score": 0,
+    "lines": 0,
+    "level": 0,
+    "pieces": 2,
+    "gameOver": false,
+    "queries": 31,
+    "late": 2,
+    "blocked": 0,
+    "stale": 0,
+    "executed": 29,
+    "errors": 0,
+    "responses": 30,
+    "latencyTotal": 26531.099999612576,
+    "latencyMax": 1100.7999999999993,
+    "valid": true
+  },
+  "reply": {
+    "action": 4,
+    "actions": [
+      0,
+      2,
+      3,
+      4
+    ],
+    "scores": [
+      0.003888275707140565,
+      0.002310416894033551,
+      0.006303862668573856,
+      0.9874974489212036
+    ],
+    "input_tokens": 50,
+    "measured_instructions": "4731809572",
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "prompt": "<<LABEL>>left<<LABEL>>rotate<<LABEL>>down<<LABEL>>wait<<SEP>>Clear lines. Tetris Z x8 y16 r0 next S heights 0 0 0 0 0 0 1 1 1 1 holes0 prev x8 y15 r0 wait executed history wait wait"
+  },
+  "input": {
+    "piece": 4,
+    "next": 3,
+    "x": 8,
+    "y": 16,
+    "rotation": 0,
+    "heights": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "holes": 0,
+    "legal_mask": 29,
+    "previous": [
+      {
+        "x": 8,
+        "y": 15,
+        "rotation": 0,
+        "action": 4,
+        "outcome": 0
+      }
+    ],
+    "history": [
+      4,
+      4
+    ]
+  },
+  "history": "#31 \u00b7 Piece 2 \u00b7 \u2026 \u00b7 late\n#30 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#29 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#28 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#27 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#26 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#25 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#24 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#23 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#22 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#21 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed\n#20 \u00b7 Piece 2 \u00b7 \u00b7 \u00b7 executed",
+  "errors": [],
+  "query_requests": 32,
+  "overflow": false
+}

@@ -1,0 +1,54 @@
+{
+  "parity": {
+    "matches": 4,
+    "total": 4
+  },
+  "permutation": {
+    "real": {
+      "cases": 8,
+      "tests": 192,
+      "same_candidate_all_orders": 0,
+      "heuristic_best": 81,
+      "dominated_choices": 91,
+      "selected_slots": {
+        "3": 29,
+        "0": 70,
+        "2": 55,
+        "1": 38
+      },
+      "mean_majority_consistency": 0.7916666666666666
+    },
+    "dominance": {
+      "cases": 6,
+      "tests": 144,
+      "same_candidate_all_orders": 2,
+      "heuristic_best": 40,
+      "dominated_choices": 104,
+      "selected_slots": {
+        "0": 46,
+        "1": 25,
+        "2": 42,
+        "3": 31
+      },
+      "mean_majority_consistency": 0.7569444444444445
+    }
+  },
+  "candidates": {
+    "all-heuristic": {
+      "boards": 128,
+      "missed_best": 80,
+      "mean_score_loss": 6.015625,
+      "max_score_loss": 30,
+      "feature_aliasing": 33
+    },
+    "four-heuristic": {
+      "boards": 119,
+      "missed_best": 67,
+      "mean_score_loss": 6.420168067226891,
+      "max_score_loss": 48,
+      "feature_aliasing": 29
+    }
+  },
+  "unique_inferences": 338,
+  "max_tokens": 43
+}

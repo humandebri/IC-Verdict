@@ -1,0 +1,19 @@
+{
+  "files": {
+    "models/verdict-151m/model.safetensors": "d252823994d47a7933217fc86449493299643af6a0c0d83d6bd5a7666d3253ef",
+    "models/verdict-pack/model.bin": "c70f28d115880a30ba02416ba318d67f293b00451a9f73e25993c13ac9787815",
+    "models/verdict-pack/manifest.json": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "models/verdict-151m/tokenizer.json": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+    "models/verdict-parity/cases.jsonl": "533f773c5167a402c30685c1f673bc68feb1d29c096d583a2cdfd9afb58a0426",
+    "models/verdict-parity/predictions.jsonl": "1d9274ac3bc0bf27e18919d874fbbead570b4e44f4166e06246f706844999f26",
+    "target/release/tetris_probe": "d92f08814cc677e1d9759f313b49368523d7273d22f2a7f43e47f1ba32a274b1",
+    "target/release/verdict-infer": "3ba857c24dec96c4efb86320107092174dc441c035b67b16bd46d24e27b898cb",
+    "tools/diagnose_verdict.py": "90286f3a74a2eb2d1c0fc588489af4107e662fa0b3ddbfff7310c17254870d14",
+    "tools/verdict_quality_diagnosis.py": "aefdbf4b15e244d2749b12f8049c795a90c9115c78184abe1aa559284b8bcad4"
+  },
+  "bank_sample": "first 100 records, existing fixed order",
+  "games": "all 288 descriptive-label requests",
+  "format_sample": "72 original cases, wording 0, forward label order",
+  "reference": "independent NumPy F32; validate against author predictions first",
+  "canister_calls": 0
+}

@@ -22,3 +22,75 @@ __pycache__/
 # reference implementation. Neither is project source.
 /.cache/
 /.axtmp/
+# Frontend dependencies, builds, test coverage and compiler caches.
+node_modules/
+/web/**/dist/
+/web/**/coverage/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files are local by default. These two contain public config only.
+.env
+.env.*
+!/web/tetris/.env.example
+!/web/tetris/.env.production
+.dev.vars
+.dev.vars.*
+
+# Browser/Cloudflare local state and generated logs. Small measurement records stay tracked.
+/.playwright-cli/
+.wrangler/
+/artifacts/**/*.log
+
+# macOS metadata, including AppleDouble files on external volumes.
+.DS_Store
+._*
+
+# Large raw measurement runs stay local; reviewed summaries and source hashes
+# live in artifacts/summaries/. Regenerate with tools/summarize_artifacts.py.
+/artifacts/query-optimization-v2/final-phases.json
+/artifacts/query-profile/phases.json
+/artifacts/tetris-input-study/development.json
+/artifacts/tetris-input-study/fixtures.json
+/artifacts/tetris-input-study/heldout.json
+/artifacts/tetris-input-study/native-partial-games.json
+/artifacts/tetris-input-study/preliminary-i-only/development.json
+/artifacts/tetris-input-study/preliminary-i-only/fixtures.json
+/artifacts/tetris-input-study/preliminary-i-only/heldout.json
+/artifacts/tetris-input-study/query-development.json
+/artifacts/tetris-input-study/query-games.json
+/artifacts/tetris-input-study/query-live-latency.json
+/artifacts/tetris_benchmark.json
+/artifacts/tetris_query_v2_benchmark.json
+/artifacts/tetris_query_v3_benchmark.json
+/artifacts/tetris_query_v3_history_benchmark.json
+
+# Additional large raw runs; retain derived summaries and source hashes.
+/artifacts/game-feasibility/assisted/games.json
+/artifacts/game-feasibility/assisted/inferences.json
+/artifacts/game-feasibility/games.json
+/artifacts/game-feasibility/gates.json
+/artifacts/game-feasibility/inferences.json
+/artifacts/game-feasibility/long-2048/games.json
+/artifacts/game-feasibility/long-2048/inferences.json
+/artifacts/model-quality-diagnosis/bank.json
+/artifacts/model-quality-diagnosis/formatted.json
+/artifacts/model-quality-diagnosis/games.json
+/artifacts/query-optimization/final-query.json
+/artifacts/query-optimization/padded-query.json
+/artifacts/query-optimization-v2/final-query.json
+/artifacts/query-optimization-v3/baseline-phases.json
+/artifacts/query-optimization-v3/candidate-phases.json
+/artifacts/query-optimization-v3/query-sweep.json
+/artifacts/query-profile/baseline-query.json
+/artifacts/semantic-game-study/descriptive/fixtures.json
+/artifacts/semantic-game-study/descriptive/inferences.json
+/artifacts/semantic-game-study/descriptive/responses.json
+/artifacts/semantic-game-study/fixtures.json
+/artifacts/semantic-game-study/inferences.json
+/artifacts/semantic-game-study/responses.json
+/artifacts/tetris-input-study/query-heldout.json
+/artifacts/tetris-outcome-gate/fixtures.json
+/artifacts/tetris-outcome-gate/responses.json

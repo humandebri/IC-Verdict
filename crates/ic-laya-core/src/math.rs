@@ -10,7 +10,6 @@ impl Distribution {
         Ok(Self(mass))
     }
     pub fn as_slice(&self)->&[u32]{&self.0}
-    pub fn into_vec(self)->Vec<u32>{self.0}
     pub fn argmax(&self)->usize {
         // Stable first-index tie break, not Iterator::max_by's last-equal semantics.
         let mut best=0; for i in 1..self.0.len(){ if self.0[i]>self.0[best]{best=i;} } best

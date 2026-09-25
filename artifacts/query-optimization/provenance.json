@@ -1,0 +1,41 @@
+{
+  "files": {
+    "build/verdict-engine.wasm": {
+      "sha256": "a3de6a00af386bf9aa2967291d1ea657d3e8a9e1cd65f911a90ca056cde60389",
+      "bytes": 5618476
+    },
+    "build/verdict-engine.did": {
+      "sha256": "bb5d95f8f33b886ab4c66d9273fa1dfc5564fe1a8a9eec078a2161bc0ccc9c37",
+      "bytes": 15419
+    },
+    "crates/verdict-simd/src/lib.rs": {
+      "sha256": "e7a27649db72536c9459e0f8f3c2f450aa8e28d404e24c2e8922a1f27854394a",
+      "bytes": 44352
+    },
+    "crates/verdict-simd/Cargo.toml": {
+      "sha256": "454b050e5a659cfcf708ef8c29b313a56d92660e88e089d5176ecb0f26b7bdd2",
+      "bytes": 281
+    },
+    "crates/verdict-simd/examples/wasm_check.rs": {
+      "sha256": "9e6445e98ee7c7d714a0cf6f79624310a680d8deaa67bc8dbf979c666e212049",
+      "bytes": 1941
+    },
+    "canisters/verdict-engine/src/lib.rs": {
+      "sha256": "009cd47084454d55f53d6ca013cc2fd9a50da6b43c31c6c48afdfdbdd2ff871f",
+      "bytes": 67718
+    },
+    "models/verdict-pack/manifest.json": {
+      "sha256": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "bytes": 87913
+    },
+    "tools/profile_query.py": {
+      "sha256": "3987d02f4186827fd751067bcab8f2e0b595d2bf1b0fcf5f161e8df0210d25de",
+      "bytes": 9688
+    },
+    "tools/check_verdict_simd_wasm.mjs": {
+      "sha256": "8f6af0f54766e39991dbd3c022ecd5484a3405857c41e73c87af9e7f34a93016",
+      "bytes": 874
+    }
+  },
+  "note": "A cfg(test)-only shape overflow assertion was added after the final Wasm build; executable production code is unchanged."
+}

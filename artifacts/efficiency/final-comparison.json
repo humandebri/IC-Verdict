@@ -1,0 +1,41 @@
+{
+  "endpoint": "http://localhost:8012/",
+  "heap": {
+    "baseline": 355729408,
+    "verdict-engine": 185925632
+  },
+  "rows": [
+    {
+      "input": "synthetic",
+      "tokens": 120,
+      "results": {
+        "baseline": {
+          "instructions": 39782583123,
+          "logits": "2.0995433 : float32;\n        2.1157162 : float32;\n        2.09583 : float32;\n        2.2161863 : float32;\n        3.2202876 : float32;"
+        },
+        "verdict-engine": {
+          "instructions": 39769124903,
+          "logits": "2.0995433 : float32;\n        2.1157162 : float32;\n        2.09583 : float32;\n        2.2161863 : float32;\n        3.2202876 : float32;"
+        }
+      },
+      "exact_logits": true,
+      "instruction_ratio": 0.9996617057278963
+    },
+    {
+      "input": "test_oos_00033",
+      "tokens": 98,
+      "results": {
+        "baseline": {
+          "instructions": 32266024894,
+          "logits": "-5.388343 : float32;\n        1.0788264 : float32;\n        -8.766554 : float32;\n        -7.203793 : float32;\n        1.1289697 : float32;"
+        },
+        "verdict-engine": {
+          "instructions": 32257144118,
+          "logits": "-5.388343 : float32;\n        1.0788264 : float32;\n        -8.766554 : float32;\n        -7.203793 : float32;\n        1.1289697 : float32;"
+        }
+      },
+      "exact_logits": true,
+      "instruction_ratio": 0.9997247638644929
+    }
+  ]
+}

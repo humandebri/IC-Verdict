@@ -1,0 +1,22 @@
+diff --git a/crates/verdict-simd/src/lib.rs b/crates/verdict-simd/src/lib.rs
+index 90d9b1b..e5b704d 100644
+--- a/crates/verdict-simd/src/lib.rs
++++ b/crates/verdict-simd/src/lib.rs
+@@ -412,14 +412,9 @@ unsafe fn matmul_i8_simd_k2<const K: usize>(a: &[i16], w: &[i8], sx: &[f32], sw:
+         }
+         i += 2;
+     }
+-    // Odd row left over: plain scalar row.
+-    while i < m {
+-        for j in 0..n {
+-            let mut acc = 0i32;
+-            for p in 0..K { acc += unsafe { *a.as_ptr().add(i * K + p) as i32 * *w.as_ptr().add(j * K + p) as i32 }; }
+-            unsafe { *out.as_mut_ptr().add(i * n + j) = acc as f32 * sx[i] * sw[j] };
+-        }
+-        i += 1;
++    // Measurement candidate: reuse the one-row SIMD kernel for the odd tail.
++    if i < m {
++        unsafe { matmul_i8_simd(&a[i * K..], w, &sx[i..], sw, m - i, K, n, &mut out[i * n..]) };
+     }
+ }
+ 

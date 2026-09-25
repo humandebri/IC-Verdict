@@ -1,0 +1,27 @@
+{
+  "source": "artifacts/tetris-input-study/fixtures.json",
+  "source_sha256": "a38d9aba6da0f801c5a85aa788e343173e6463b1c6b8e5d910b46e4394d102e8",
+  "source_bytes": 387753,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "provenance": {
+      "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+      "fixtures": "0d051061a23ae51e15e240d57e0d0aa8208a12daa871661b4fec8fa20234d33f",
+      "clock": "native frozen INT8 weights; game gravity charged fixed 1000 ms per decision; measured native CPU time is not query RTT"
+    },
+    "oracle": "test only: one control then gravity; line count priority; no acceptable action, oracle score or future board is present in inference input",
+    "split": "cavity pivot x <= 4 development; x >= 5 held out; boards disjoint",
+    "cases": {
+      "omitted": true,
+      "see_raw_source": true
+    }
+  },
+  "omitted": [
+    {
+      "path": "$.cases",
+      "count": 100,
+      "sha256": "03a1df59a0da569c72ad1b29d2f4cf8a3b0e1c6a7d64a7b5ff6470bea272263a"
+    }
+  ]
+}

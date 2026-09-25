@@ -1,0 +1,15 @@
+truncated set: exit=1, expected=1
+cases=1 skipped_no_truth=0 argmax_match=1/1 (100.00%) longest_input_tokens=118 temp=1.4265149
+top-probability |p-gold|: max=0.003668 mean=0.003668
+quality-gate min_cases=1000 min_argmax_ratio=0.9950 unsafe_abstention_escape=0
+
+one-case diagnostic: exit=0, expected=0
+cases=1 skipped_no_truth=0 argmax_match=1/1 (100.00%) longest_input_tokens=118 temp=1.4265149
+top-probability |p-gold|: max=0.003668 mean=0.003668
+quality-gate min_cases=1 min_argmax_ratio=0.9950 unsafe_abstention_escape=0
+
+unsafe escape: exit=1, expected=1
+cases=1 skipped_no_truth=0 argmax_match=0/1 (0.00%) longest_input_tokens=98 temp=1.4265149
+top-probability |p-gold|: max=0.005032 mean=0.005032
+quality-gate min_cases=1 min_argmax_ratio=0.9950 unsafe_abstention_escape=1
+MISMATCH test_oos_00033: want __insufficient_evidence__ (0.500597) got lost_or_stolen_phone (0.505629) tokens=98 labels=5

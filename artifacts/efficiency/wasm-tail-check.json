@@ -1,0 +1,34 @@
+[
+  {
+    "m": 7,
+    "n": 9,
+    "k": 64,
+    "tile": 0,
+    "instructions": 14732,
+    "exact_vs_production": true
+  },
+  {
+    "m": 7,
+    "n": 9,
+    "k": 64,
+    "tile": 2,
+    "instructions": 38897,
+    "exact_vs_production": true
+  },
+  {
+    "m": 7,
+    "n": 9,
+    "k": 64,
+    "tile": 4,
+    "instructions": 16505,
+    "exact_vs_production": true
+  },
+  {
+    "m": 7,
+    "n": 9,
+    "k": 64,
+    "tile": 8,
+    "instructions": 24933,
+    "exact_vs_production": true
+  }
+]

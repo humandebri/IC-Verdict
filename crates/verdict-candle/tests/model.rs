@@ -2,7 +2,7 @@
 //!
 //! These use a tiny deterministic config, so they prove the wiring, the head
 //! arithmetic and the pack path — not checkpoint quality. Checkpoint parity is
-//! `tests/golden.rs` (ignored by default: it needs the 605 MiB pack) and the
+//! `tests/golden.rs` (ignored by default: it needs the generated INT8 pack) and the
 //! `verdict-infer check` run recorded in docs/VERDICT_ENGINE.md.
 use candle_core::{DType,Device,Tensor};
 use ic_laya_core::{hash,BackendKind,SpecialTokens};
@@ -39,6 +39,14 @@ fn weights(c:&VerdictConfig)->BTreeMap<String,Tensor>{
         m.insert(name,Tensor::from_slice(&data,shape.clone(),&Device::Cpu).expect("tensor"));
     }
     m
+}
+fn pack_payload(name:&str,t:&Tensor)->(pack::Encoding,Vec<u8>){
+    let values=t.flatten_all().expect("flat").to_vec1::<f32>().expect("vec");
+    if verdict_candle::is_matrix_weight(name){
+        let(rows,cols)=t.dims2().expect("matrix");let(q,scales)=verdict_simd::quantize_rows_i8(&values,rows,cols);
+        let mut out=q.iter().map(|v|*v as u8).collect::<Vec<_>>();for s in scales{out.extend_from_slice(&s.to_le_bytes());}
+        (pack::Encoding::I8RowSymmetric,out)
+    }else{(pack::Encoding::F32Le,values.iter().flat_map(|x|x.to_le_bytes()).collect())}
 }
 
 fn model()->(VerdictModel,BTreeMap<String,Tensor>){
@@ -79,6 +87,12 @@ fn detailed_profiling_only_adds_repeated_markers(){
     assert!(names.contains(&"layer.attn"),"expected per-layer markers");
     let layers=names.iter().filter(|n|**n=="layer.attn").count();
     assert_eq!(layers,cfg().layers,"one marker per encoder layer");
+    for name in ["attn.qkv","attn.layout","attn.out","layer.mlp_norm","layer.mlp_resid"] {
+        assert_eq!(names.iter().filter(|n|**n==name).count(),layers,"{name}");
+    }
+    let qkv=names.iter().position(|n|*n=="attn.qkv").unwrap();
+    let rope=names.iter().position(|n|*n=="rope.apply").unwrap();
+    assert!(qkv<rope,"QKV work must end before RoPE timing begins");
 }
 
 /// The profiled path must refuse the same inputs the production path refuses.
@@ -122,12 +136,8 @@ fn head_matches_an_independent_recomputation_from_the_encoder_output(){
     // the same int8 quantisation the model applies (the model's dense weights are
     // int8; see docs/VERDICT_ENGINE.md 5.1.6). Without this the comparison would be
     // testing "int8 vs f32" instead of the head wiring.
-    // With `--features int8` the model quantises weights *and* activations per row, so
-    // the reference has to do the same or the comparison measures quantisation error
-    // rather than the wiring. Without the feature both are exact copies.
-    #[cfg(not(feature = "int8"))]
-    let dequant_acts=|t:&Tensor|->Tensor{t.clone()};
-    #[cfg(feature = "int8")]
+    // The production model always quantises weights and activations per row, so the
+    // independent reference applies the same numerical transform.
     let dequant_acts=|t:&Tensor|->Tensor{
         let dims=t.dims().to_vec();
         let k=*dims.last().expect("nonempty");
@@ -137,13 +147,10 @@ fn head_matches_an_independent_recomputation_from_the_encoder_output(){
         let out:Vec<f32>=q.iter().enumerate().map(|(i,&v)|(v as f32)*scales[i/k]).collect();
         Tensor::from_slice(&out,dims.as_slice(),&Device::Cpu).expect("dequant acts")
     };
-    #[cfg(not(feature = "int8"))]
-    let dequant=|t:&Tensor|->Tensor{t.clone()};
-    #[cfg(feature = "int8")]
     let dequant=|t:&Tensor|->Tensor{
         let (rows,cols)=t.dims2().expect("2d");
         let flat=t.flatten_all().expect("flat").to_vec1::<f32>().expect("vec");
-        let (q,scales)=verdict_simd::quantize_rows_i8(&flat,rows,cols);
+        let(q,scales)=verdict_simd::quantize_rows_i8(&flat,rows,cols);
         let out:Vec<f32>=q.iter().enumerate().map(|(i,&v)|(v as f32)*scales[i/cols]).collect();
         Tensor::from_slice(&out,(rows,cols),&Device::Cpu).expect("dequant")
     };
@@ -197,9 +204,8 @@ fn pack_round_trip_reproduces_the_model(){
     let (tokenizer,tok_hash)=(b"TEST-ONLY-TOKENIZER".to_vec(),hash(b"TEST-ONLY-TOKENIZER"));
     let mut tensors=Vec::new();let mut offset=0u64;
     for (name,shape) in &expected {
-        let bytes=w[name].flatten_all().expect("flat").to_vec1::<f32>().expect("vec")
-            .iter().flat_map(|x|x.to_le_bytes()).collect::<Vec<u8>>();
-        tensors.push(pack::TensorEntry{name:name.clone(),shape:shape.clone(),offset,length:bytes.len() as u64,sha256:hash(&bytes)});
+        let(encoding,bytes)=pack_payload(name,&w[name]);
+        tensors.push(pack::TensorEntry{name:name.clone(),shape:shape.clone(),encoding,offset,length:bytes.len() as u64,sha256:hash(&bytes)});
         offset+=bytes.len() as u64;
     }
     let manifest=pack::Manifest{
@@ -209,8 +215,7 @@ fn pack_round_trip_reproduces_the_model(){
     let raw=serde_json::to_vec(&manifest).expect("manifest");
     let mut builder=pack::Builder::new(&raw).expect("builder");
     while let Some(entry)=builder.next_entry().cloned(){
-        let bytes=w[&entry.name].flatten_all().expect("flat").to_vec1::<f32>().expect("vec")
-            .iter().flat_map(|x|x.to_le_bytes()).collect::<Vec<u8>>();
+        let(_,bytes)=pack_payload(&entry.name,&w[&entry.name]);
         builder.push(&bytes).expect("push");
     }
     let loaded=builder.finish().expect("finish");
@@ -228,9 +233,10 @@ fn pack_rejects_tensor_set_mismatch(){
     let mut tensors=Vec::new();let mut offset=0u64;
     for (name,shape) in &expected {
         let n:usize=shape.iter().product();
-        let length=(n*4) as u64;
+        let encoding=if verdict_candle::is_matrix_weight(name){pack::Encoding::I8RowSymmetric}else{pack::Encoding::F32Le};
+        let length=(if encoding==pack::Encoding::I8RowSymmetric{n+shape[0]*4}else{n*4})as u64;
         let shape=if name=="embeddings.weight"{vec![shape[0],shape[1]+1]}else{shape.clone()};
-        tensors.push(pack::TensorEntry{name:name.clone(),shape,offset,length,sha256:[0u8;32]});
+        tensors.push(pack::TensorEntry{name:name.clone(),shape,encoding,offset,length,sha256:[0u8;32]});
         offset+=length;
     }
     let manifest=pack::Manifest{
@@ -240,6 +246,19 @@ fn pack_rejects_tensor_set_mismatch(){
     let raw=serde_json::to_vec(&manifest).expect("manifest");
     assert!(pack::Builder::new(&raw).is_err());
     let _=DType::F32;
+}
+
+#[test]
+fn pack_rejects_f32_matrix_and_legacy_format(){
+    let c=cfg();let expected=expected_tensors(&c).expect("expected");let mut offset=0u64;let mut tensors=Vec::new();
+    for(name,shape)in expected{let n:usize=shape.iter().product();let encoding=if verdict_candle::is_matrix_weight(&name){pack::Encoding::I8RowSymmetric}else{pack::Encoding::F32Le};let length=(if encoding==pack::Encoding::I8RowSymmetric{n+shape[0]*4}else{n*4})as u64;tensors.push(pack::TensorEntry{name,shape,encoding,offset,length,sha256:[0;32]});offset+=length;}
+    let mut manifest=pack::Manifest{format:pack::FORMAT.into(),source_repo:"test".into(),source_revision:"test".into(),test_only:true,tokenizer_sha256:[0;32],config:c,total_bytes:offset,tensors};
+    let block_pack=serde_json::to_string(&manifest).expect("json").replace("i8_row_symmetric","i8_block32_symmetric");
+    assert!(pack::Builder::new(block_pack.as_bytes()).is_err(),"block32 must not silently use the row kernel");
+    manifest.tensors.iter_mut().find(|e|e.name=="embeddings.weight").expect("embedding").encoding=pack::Encoding::F32Le;
+    assert!(pack::Builder::new(&serde_json::to_vec(&manifest).expect("json")).is_err());
+    manifest.format="ic-verdict-f32-pack-v1".into();
+    assert!(pack::Builder::new(&serde_json::to_vec(&manifest).expect("json")).is_err());
 }
 
 /// The tokenizer emits its added-token literals wherever they appear, so a state or

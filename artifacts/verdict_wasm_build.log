@@ -1,35 +1,39 @@
-   Compiling ic-laya-core v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/ic-laya-core)
-   Compiling verdict-simd v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-simd)
+   Compiling candid v0.10.35
+   Compiling ic_principal v0.1.5
+   Compiling verdict-simd v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-simd)
 warning: unnecessary `unsafe` block
-   --> crates/verdict-simd/src/lib.rs:900:24
+   --> crates/verdict-simd/src/lib.rs:902:24
     |
-900 | ...   acc0 = unsafe { i32x4_add(acc0, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p0.cast()) }))) };
+902 | ...   acc0 = unsafe { i32x4_add(acc0, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p0.cast()) }))) };
     |              ^^^^^^ unnecessary `unsafe` block
     |
     = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
 
 warning: unnecessary `unsafe` block
-   --> crates/verdict-simd/src/lib.rs:901:24
-    |
-901 | ...   acc1 = unsafe { i32x4_add(acc1, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p1.cast()) }))) };
-    |              ^^^^^^ unnecessary `unsafe` block
-
-warning: unnecessary `unsafe` block
-   --> crates/verdict-simd/src/lib.rs:902:24
-    |
-902 | ...   acc2 = unsafe { i32x4_add(acc2, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p2.cast()) }))) };
-    |              ^^^^^^ unnecessary `unsafe` block
-
-warning: unnecessary `unsafe` block
    --> crates/verdict-simd/src/lib.rs:903:24
     |
-903 | ...   acc3 = unsafe { i32x4_add(acc3, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p3.cast()) }))) };
+903 | ...   acc1 = unsafe { i32x4_add(acc1, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p1.cast()) }))) };
     |              ^^^^^^ unnecessary `unsafe` block
 
-   Compiling modernbert-candle v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/modernbert-candle)
+warning: unnecessary `unsafe` block
+   --> crates/verdict-simd/src/lib.rs:904:24
+    |
+904 | ...   acc2 = unsafe { i32x4_add(acc2, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p2.cast()) }))) };
+    |              ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> crates/verdict-simd/src/lib.rs:905:24
+    |
+905 | ...   acc3 = unsafe { i32x4_add(acc3, i32x4_dot_i16x8(xv, i16x8_extend_low_i8x16(unsafe { v128_load64_zero(p3.cast()) }))) };
+    |              ^^^^^^ unnecessary `unsafe` block
+
+   Compiling modernbert-candle v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/modernbert-candle)
 warning: `verdict-simd` (lib) generated 4 warnings
-   Compiling hf-tokenizer v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/hf-tokenizer)
-   Compiling canister-common v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/canister-common)
-   Compiling verdict-candle v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-candle)
-   Compiling verdict-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/verdict-engine)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.08s
+   Compiling ic-laya-core v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/ic-laya-core)
+   Compiling ic-cdk-macros v0.20.3
+   Compiling ic-cdk v0.20.3
+   Compiling hf-tokenizer v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/hf-tokenizer)
+   Compiling canister-common v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/canister-common)
+   Compiling verdict-candle v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-candle)
+   Compiling verdict-engine v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/verdict-engine)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.63s

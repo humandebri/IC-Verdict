@@ -6,10 +6,9 @@ that read it (only a docstring claimed it pinned the fixtures), 24 entries that 
 matched the tree, and no coverage of the verdict subsystem. An integrity claim that
 cannot be checked is worse than no claim.
 
-Coverage is `git ls-files`, so the list describes what a checkout receives: build
-outputs, downloaded checkpoints and the generated fixture packs cannot make it depend on
-the machine. That also means the verdict subsystem only enters the list once it is
-tracked.
+Coverage is Git's tracked and non-ignored source files, so a newly created delivery file
+cannot silently escape the list before it is staged. Build outputs, downloaded
+checkpoints and generated fixture packs remain excluded by `.gitignore`.
 
     python3 tools/manifest.py --write     # last step of a delivery, after every edit
     python3 tools/manifest.py --check     # or: python3 tools/verify.py --manifest
@@ -44,9 +43,11 @@ def excluded(path: str) -> bool:
 
 
 def tracked() -> list[str]:
-    listed = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True)
+    listed = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+        cwd=ROOT, capture_output=True, text=True)
     if listed.returncode != 0:
-        raise SystemExit("manifest: `git ls-files` failed; the list covers tracked files only")
+        raise SystemExit("manifest: `git ls-files` failed")
     return sorted(p for p in listed.stdout.splitlines() if p and p != SELF and not excluded(p))
 
 

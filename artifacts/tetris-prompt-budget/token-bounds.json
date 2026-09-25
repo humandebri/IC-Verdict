@@ -1,0 +1,18 @@
+{
+  "baseline": {
+    "min": 43,
+    "max": 43
+  },
+  "explicit": {
+    "min": 39,
+    "max": 39
+  },
+  "compact": {
+    "min": 38,
+    "max": 38
+  },
+  "tuple": {
+    "min": 38,
+    "max": 38
+  }
+}

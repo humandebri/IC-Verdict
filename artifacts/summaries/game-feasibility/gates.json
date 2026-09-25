@@ -1,0 +1,17 @@
+{
+  "source": "artifacts/game-feasibility/gates.json",
+  "source_sha256": "8d7b21eca1273e2b77064898ccca8cedefe39080fd3d33bb0e570ed5ebe8e853",
+  "source_bytes": 20273,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "omitted": true,
+    "see_raw_source": true
+  },
+  "omitted": [
+    {
+      "path": "$",
+      "count": 96,
+      "sha256": "5d1d608ca04444051b850a6c4a9a6788196151e458ace1ee81b52efedd0ce206"
+    }
+  ]
+}

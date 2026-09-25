@@ -1,0 +1,97 @@
+{
+  "same_model": true,
+  "note": "Exact equality of decoded float32 Candid text for identical IDs on local Wasm; 11 synthetic cases, not full quality validation. Baseline here includes corrected profiling boundaries.",
+  "rows": [
+    {
+      "tokens": 38,
+      "logits_exact_match": true,
+      "before": 4314178221,
+      "after": 4310238533,
+      "saved": 3939688
+    },
+    {
+      "tokens": 39,
+      "logits_exact_match": true,
+      "before": 4886317695,
+      "after": 4476301458,
+      "saved": 410016237
+    },
+    {
+      "tokens": 40,
+      "logits_exact_match": true,
+      "before": 4443811560,
+      "after": 4439483409,
+      "saved": 4328151
+    },
+    {
+      "tokens": 41,
+      "logits_exact_match": true,
+      "before": 5032079583,
+      "after": 4622271289,
+      "saved": 409808294
+    },
+    {
+      "tokens": 42,
+      "logits_exact_match": true,
+      "before": 4742015288,
+      "after": 4737767048,
+      "saved": 4248240
+    },
+    {
+      "tokens": 43,
+      "logits_exact_match": true,
+      "before": 5315002350,
+      "after": 4905036647,
+      "saved": 409965703
+    },
+    {
+      "tokens": 44,
+      "logits_exact_match": true,
+      "before": 4941151964,
+      "after": 4936794415,
+      "saved": 4357549
+    },
+    {
+      "tokens": 45,
+      "logits_exact_match": true,
+      "before": 5531649425,
+      "after": 5121827656,
+      "saved": 409821769
+    },
+    {
+      "tokens": 46,
+      "logits_exact_match": true,
+      "before": 5242429913,
+      "after": 5237972370,
+      "saved": 4457543
+    },
+    {
+      "tokens": 47,
+      "logits_exact_match": true,
+      "before": 5816472897,
+      "after": 5406474671,
+      "saved": 409998226
+    },
+    {
+      "tokens": 48,
+      "logits_exact_match": true,
+      "before": 5371597739,
+      "after": 5367338475,
+      "saved": 4259264
+    }
+  ],
+  "instrumentation_same_logits_tokens": [
+    38,
+    39,
+    40,
+    42,
+    44
+  ],
+  "real_decide_same_logits_tokens": [
+    32,
+    37,
+    38,
+    42,
+    44
+  ]
+}

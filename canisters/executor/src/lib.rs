@@ -4,25 +4,31 @@ use candid::Principal;
 use canister_common::{Lookup,TransferError,TransferResult,to_icrc};
 use ic_laya_core::{workflow::*,*};
 use std::cell::RefCell;
+mod stable;
 thread_local!{static STATE:RefCell<Option<ExecutorState>>=const{RefCell::new(None)};}
 fn read<R>(f:impl FnOnce(&ExecutorState)->R)->R{STATE.with(|x|f(x.borrow().as_ref().expect("initialized")))}
 fn admitted()->Result<()> {
     let caller=ic_cdk::api::msg_caller();
     read(|s|if caller!=Principal::anonymous() && (caller==s.owner || s.grants.values().any(|g|g.delegate==caller)){Ok(())}else{Err(Error::Unauthorized)})
 }
-fn mutate<R>(f:impl FnOnce(&mut ExecutorState)->R)->R{STATE.with(|x|{let mut s=x.borrow_mut();let s=s.as_mut().expect("initialized");let r=f(s);if let Err(e)=s.check_invariants_light(){ic_cdk::trap(&format!("invariant: {e}"));}canister_common::persist_or_trap(s);r})}
+fn mutate<R>(f:impl FnOnce(&mut ExecutorState)->R)->R{STATE.with(|x|{let mut s=x.borrow_mut();let s=s.as_mut().expect("initialized");let r=f(s);stable::sync(s).unwrap_or_else(|e|ic_cdk::trap(format!("stable commit failed: {e}")));s.changes=Changes::default();r})}
 #[ic_cdk::init]
 fn init(owner:Principal,engine:Principal){
     if [owner,engine].iter().any(|&p|p==Principal::anonymous()||p==Principal::management_canister()){ic_cdk::trap("invalid principal");}
-    let s=ExecutorState::new(ic_cdk::api::canister_self(),owner,engine);canister_common::persist_or_trap(&s);STATE.with(|x|*x.borrow_mut()=Some(s));
+    let s=ExecutorState::new(ic_cdk::api::canister_self(),owner,engine);stable::replace_all(&s).unwrap_or_else(|e|ic_cdk::trap(e.to_string()));STATE.with(|x|*x.borrow_mut()=Some(s));
 }
 #[ic_cdk::pre_upgrade]
 fn pre_upgrade(){read(|s|{
     if s.requests.values().any(|r|matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_))){ic_cdk::trap("unresolved transfer: reconcile before ordinary upgrade");}
-    canister_common::persist_or_trap(s);
 });}
 #[ic_cdk::post_upgrade]
-fn post_upgrade(){let mut s:ExecutorState=canister_common::restore().unwrap_or_else(|e|ic_cdk::trap(&e.to_string()));s.recover_after_upgrade();s.check_invariants().unwrap_or_else(|e|ic_cdk::trap(&e.to_string()));canister_common::persist_or_trap(&s);STATE.with(|x|*x.borrow_mut()=Some(s));}
+fn post_upgrade(){
+    let legacy=stable::is_legacy_snapshot();
+    let mut s:ExecutorState=if legacy{canister_common::restore()}else{stable::load()}.unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
+    s.recover_after_upgrade();s.check_invariants().unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
+    if legacy{stable::replace_all(&s)}else{stable::sync(&s)}.unwrap_or_else(|e|ic_cdk::trap(e.to_string()));
+    s.changes=Changes::default();STATE.with(|x|*x.borrow_mut()=Some(s));
+}
 #[ic_cdk::update]
 fn register_plan(plan:Plan)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.install_plan(caller,plan))}
 #[ic_cdk::update]
@@ -47,13 +53,23 @@ fn revoke_grant(grant:Digest)->Result<()>{let caller=ic_cdk::api::msg_caller();r
 fn set_mode(mode:Mode)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.set_mode(caller,mode))}
 #[ic_cdk::update]
 fn pause(value:bool)->Result<()>{let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;mutate(|s|s.set_paused(caller,value))}
+/// Owner-approved attachment per evaluation, including each bounded retry.
+/// Zero preserves the free decision-engine path. For verdict-engine, configure
+/// cycles_pricing().required_attachment and fund this executor before advancing.
+#[ic_cdk::update]
+fn set_engine_cycles(cycles:u128)->Result<()>{
+    read(|s|s.assert_owner(ic_cdk::api::msg_caller()))?;
+    stable::set_engine_cycles(cycles);Ok(())
+}
+#[ic_cdk::query]
+fn engine_cycles()->u128{stable::engine_cycles()}
 #[ic_cdk::update]
 async fn register_mock_ledger(ledger:Principal)->Result<()> {
     let caller=ic_cdk::api::msg_caller();read(|s|s.assert_owner(caller))?;
     let response=ic_cdk::call::Call::bounded_wait(ledger,"ic_laya_mock_profile").change_timeout(10).await.map_err(|_|Error::Denied("mock handshake failed".into()))?;
     let marker:String=response.candid().map_err(|_|Error::BindingMismatch)?;
     if marker!=canister_common::MOCK_MAGIC{return Err(Error::Denied("not an IC-Laya mock ledger".into()));}
-    mutate(|s|{s.assert_owner(caller)?;if !s.mock_ledgers.contains(&ledger){if s.mock_ledgers.len()>=8{return Err(Error::Capacity);}s.mock_ledgers.push(ledger);}Ok(())})
+    mutate(|s|{s.assert_owner(caller)?;if !s.mock_ledgers.contains(&ledger){if s.mock_ledgers.len()>=8{return Err(Error::Capacity);}s.mock_ledgers.push(ledger);s.changes.meta=true;}Ok(())})
 }
 #[ic_cdk::update]
 fn submit(operation:Digest,grant:Digest,client_nonce:u64)->Result<Digest>{admitted()?;let caller=ic_cdk::api::msg_caller();mutate(|s|s.submit(caller,client_nonce,operation,grant,ic_cdk::api::time()))}
@@ -68,10 +84,13 @@ fn cancel(id:Digest)->Result<()>{admitted()?;let caller=ic_cdk::api::msg_caller(
 async fn advance(id:Digest)->Result<Status>{
     admitted()?;
     let caller=ic_cdk::api::msg_caller();
+    let cycles=stable::engine_cycles();
+    // Refuse before committing Evaluating when even the attachment is unfunded.
+    if cycles>ic_cdk::api::canister_cycle_balance(){return Err(Error::Budget);}
     let req=mutate(|s|s.begin_evaluation(caller,id,ic_cdk::api::time()))?;
     let eval_id=req.evaluation_id;let engine=read(|s|s.engine);
     // All metadata is stable before this await; no RefCell borrow crosses it.
-    let response=ic_cdk::call::Call::bounded_wait(engine,"evaluate").with_arg(req).change_timeout(30).await;
+    let response=ic_cdk::call::Call::bounded_wait(engine,"evaluate").with_arg(req).with_cycles(cycles).change_timeout(30).await;
     match response {
         Ok(response)=>{
             let decoded:std::result::Result<Result<Receipt>,_>=response.candid();
@@ -110,7 +129,12 @@ async fn retry_mock_transfer(id:Digest)->Result<Status>{admitted()?;let caller=i
 #[ic_cdk::update]
 async fn reconcile_mock(id:Digest)->Result<Status>{
     let caller=ic_cdk::api::msg_caller();let r=read(|s|s.get(caller,id))?;
-    if !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_)){return Err(Error::Transition);}
+    if matches!(r.status,Status::Succeeded(_)){return Ok(r.status);}
+    // Parking a transfer for upgrade must not remove its only recovery path.
+    // No current()/expiry check: reconciliation never sends another transfer.
+    if !matches!(r.status,Status::Submitted|Status::OutcomeUnknown(_)|Status::NeedsReview(_))
+        || r.reservation.is_none(){return Err(Error::Transition);}
+    let parked=matches!(r.status,Status::NeedsReview(_));
     let transfer=r.frozen.ok_or(Error::Storage)?;
     if !read(|s|s.mock_ledgers.contains(&transfer.proposal.ledger)){return Err(Error::Unauthorized);}
     let cmd=DispatchCommand{request:id,attempt:r.ledger_attempt,transfer};
@@ -119,6 +143,8 @@ async fn reconcile_mock(id:Digest)->Result<Status>{
     match lookup {
         Some(found) if found.frozen_hash==cmd.transfer.digest()=>mutate(|s|s.finish_ledger(&cmd,LedgerOutcome::Success(found.block_index))),
         Some(_)=>Err(Error::BindingMismatch),
+        // Keep a parked transfer parked when the ledger cannot prove success.
+        None if parked=>Err(Error::OutcomeUnknown),
         None=>mutate(|s|s.finish_ledger(&cmd,LedgerOutcome::Unknown("not found is not proof of non-execution".into()))),
     }
 }

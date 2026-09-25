@@ -1,0 +1,76 @@
+{
+  "source": "artifacts/tetris-input-study/heldout.json",
+  "source_sha256": "c7593077f08a6efc0c1ad3ee28d4f6e25cbbeccc62fb39c64beeeb0e43970a9d",
+  "source_bytes": 169683,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "provenance": {
+      "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+      "fixtures": "0d051061a23ae51e15e240d57e0d0aa8208a12daa871661b4fec8fa20234d33f",
+      "clock": "native frozen INT8 weights; game gravity charged fixed 1000 ms per decision; measured native CPU time is not query RTT"
+    },
+    "heldout": [
+      {
+        "variant": {
+          "format": "history",
+          "labels": "short",
+          "id": "history-short"
+        },
+        "summary": {
+          "n": 50,
+          "correct": 14,
+          "accuracy": 0.28,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_accuracy": 0,
+          "rotation_offered": 40,
+          "rotation_chosen": 0,
+          "repeated": 50,
+          "repeat_eligible": 50,
+          "max_tokens": 52
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "variant": {
+          "format": "columns",
+          "labels": "explicit",
+          "id": "columns-explicit"
+        },
+        "summary": {
+          "n": 50,
+          "correct": 16,
+          "accuracy": 0.32,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_accuracy": 0,
+          "rotation_offered": 40,
+          "rotation_chosen": 0,
+          "repeated": 11,
+          "repeat_eligible": 50,
+          "max_tokens": 52
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      }
+    ]
+  },
+  "omitted": [
+    {
+      "path": "$.heldout[0].rows",
+      "count": 50,
+      "sha256": "3c3a680ef70f18f5a091baccbd75245d168f9146264c079bd7d9c39f2f184362"
+    },
+    {
+      "path": "$.heldout[1].rows",
+      "count": 50,
+      "sha256": "f3cf49f1942b0b4c14ab5411968b2a7aa7c1753e9f9c323113ee63323b040c6d"
+    }
+  ]
+}

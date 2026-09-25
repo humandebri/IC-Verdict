@@ -1,0 +1,8 @@
+{
+  "native_inferences": 1188,
+  "games": 75,
+  "decisions": 7777,
+  "gate_questions": 96,
+  "replay": "all traces and aggregates reproduced from recorded native responses",
+  "canister_calls": 0
+}

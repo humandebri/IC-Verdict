@@ -60,6 +60,8 @@ Laya（421M、F32、128トークンで494〜567B）と同じ結論だが、151M�
 
 ### 3.1 実checkpointとの一致（外部証拠）
 
+packの`--out`には存在しないパスを指定します。既存pack・空ディレクトリ・ファイル・symlinkは上書きせず拒否します。再生成時は別の出力先を使ってください。入力検証後に出力先を排他的に作成し、通常の書込みエラーでは今回作成したファイルを削除します。強制終了で残った未完成ディレクトリも次回は拒否するため、内容を確認してから別名で再実行してください。
+
 `reports/v2/predictions_v2.jsonl`（著者自身が記録した argmax と校正済み確率）を、
 `data/real_banking_test.jsonl` の入力で再実行して突き合わせる。
 
@@ -86,6 +88,11 @@ cargo build --release -p verdict-candle
 `max_classes` 超過の拒否、tensor set不一致の拒否を含む。
 
 ## 4. canisterでの実行
+
+課金対応版では、以下のupdateを含むコマンドに`--proxy PRINCIPAL --max-cycles N`を追加します。
+再install後の初期単価は`--execution-pricing BASE,NUMERATOR,DENOMINATOR`で設定してください。
+使用するowner PEMのidentityをproxyのcontrollerとして認可する必要があります。
+無料の`--query`のみの実行には支払い引数は不要です。詳細は[サイクル課金仕様](CYCLES_BILLING.md)を参照してください。
 
 ```bash
 bash tools/build_one.sh verdict-engine
@@ -138,6 +145,12 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 > （commit `b38d606`）で削除した**ため、それらに依存する値は履歴であり再実行できない。
 > 現在も再現できるのは `bench_int8`（0.780 instructions/MAC）、`infer_tokens`、
 > `infer_profiled`、`--sweep`、および `verdict-infer check` である。
+>
+> **現行カーネル（HEAD）の実測**: T=120 の実checkpointは **36,976,071,434 instructions**
+> （308,133,929/token、`artifacts/verdict_sweep.json`）。これは最適化前の基準値
+> 39,568,154,800（`overflow-checks` 有効時）／37,311,793,353（無効化直後）より低い。
+> 以下の 5.1.3〜5.1.13 の対比表は**その当時のF32基準値（37,311,793,353）を1.00とした履歴**で、
+> 現行値に置き換えたものではない。
 
 `infer_tokens` の `measured_instructions`（forwardのみ、引数のdecodeとreplyのencodeは含まない）。
 入力は `[CLS] <<LABEL>> 2000 <<LABEL>> 3000 [SEP]` に filler を足したもの。
@@ -167,12 +180,14 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 
 | T（トークン） | instructions | 判定 |
 |---|---|---|
-| 118 | 38,998,851,854 | 予算内 |
-| 119 | 39,293,820,829 | 予算内 |
-| 120 | **39,568,154,800** | 予算内（成功した最長） |
+| 118 | 38,998,851,854 | 予算内（最適化前のカーネル） |
+| 119 | 39,293,820,829 | 予算内（同） |
+| 120 | **36,976,071,434** | 予算内（現行カーネル。成功した最長。最適化前は 39,568,154,800） |
 | 126 | — | **replicaが40B上限で拒否（IC0522）** |
 | 128 | — | 同上 |
 
+* **現行カーネルでの再測は T=120 の1点**（36,976,071,434、308,133,929/token）。118/119/126/128 の行は
+  int8カーネル整理（commit `b38d606`/`52f47e9`）より前の測定で、そのままでは現行値と混ぜられない。
 * **上限は T=120（成功）と T=126（拒否）の間**。5.1節の外挿 `T ≈ 123` はこの範囲に入っており、
   外挿としては妥当だった。ただし**上限値そのものは外挿ではなくこの3点で押さえる**。
 * この3点の厳密な最小二乗は `I(T) ≈ 5.41e9 + 2.8465e8 × T`（切片を落とすと過小評価になる）。5.1節の式（`2.66e8 + 3.22e8 × T`）と
@@ -213,10 +228,16 @@ python3 tools/measure_verdict.py --skip-upload --sweep 120 --keep
 
 | 項目 | 値 |
 |---|---|
-| warm時のwasm linear memory | **1,099,694,080 B ≒ 1.02 GiB**（`heap_bytes` = `memory_size(0)×64KiB`、実checkpoint warm時） |
+| warm時のwasm linear memory | **1,099,694,080 B ≒ 1.02 GiB**（`heap_bytes` = `memory_size(0)×64KiB`、実checkpoint warm時。現行wasmでの再測でも同値: `info.heap_bytes = 1_099_694_080`） |
 | `decide`（state+question+2選択肢+abstention、実重み） | 52トークン、**16,831,252,741 instructions**、`card_lost` を 0.9731 で選択（targetと一致）、abstention 0.0245 |
 | 事前予算ガード | `I(T)=2.544e8+3.276e8·T`（実測2点 T=2/T=120 にフィット）＋余裕0.5%。**以下はコードの実値**（以前の39.10e9/41.04e9は傾きの取り違え）。`estimated_cost(120)=39,764,232,000`（39.76e9）≤ 40e9 で**許可**、`estimated_cost(126)=41,739,660,000`（41.74e9）で**拒否** |
-| ガードの実地確認 | T=120: `39,567,477,066` で **Ok**（先行実測39.568e9と再現）。T=126: 40B超過を**trap ではなく `Capacity`** で返す（以前は replica が IC0522 で拒否） |
+| ガードの実地確認 | T=120: 現行カーネルで `36,976,071,434` が **Ok**（最適化前の同条件は `39,567,477,066`、ガードはそこから更新していない）。T=126: 40B超過を**trap ではなく `Capacity`** で返す（以前は replica が IC0522 で拒否） |
+
+**ガードの費用モデルは最適化前の実測に固定されたままである。** 傾き 3.276e8 instructions/token は
+今も `estimated_cost(120)=39.76e9` / `estimated_cost(126)=41.74e9` を返すが、現行カーネルの実測傾きは
+**3.081e8**（36,976,071,434 − 固定費2.544e8 を120で割った値）で、T=126 の実測見積りは約38.8e9と
+40B以内に入る。つまり**ガードは約7%保守的**で、予算内の長さを `Capacity` で拒否しうる。
+費用モデルの再フィット（`set_cost_model`）はコード変更なので、ここでは数値のずれとして記録するにとどめる。
 
 `decide` が実重みで通ったことで、**typed decision 経路（tokenizer→prompt契約→forward→temperature→softmax）が canister 上で完走する**ことが確認できた。
 
@@ -583,6 +604,11 @@ rope.table に計上されていた**ためだった。位相計測では「重�
 
 ### 5.1.12 int8 カーネルの8行化と、カーネル路線の限界
 
+2026-09-23追記: 以下は8行×4列版を測った当時の記録。
+その後16/8/4行×8列と端数処理の改善で、48行の主形状は約0.681 instructions/MACまで下がった。
+「実用上の床」という当時の見立ては更新した。追加最適化では約0.591 instructions/MACまで下がった。
+現行の53-token query受入は[QUERY_OPTIMIZATION_V3.md](QUERY_OPTIMIZATION_V3.md)を参照。
+
 | 版 | instr/MAC | 対 gemm | T=120 全体 | 対 f32 |
 |---|---|---|---|---|
 | f32 gemm | 2.501 | 1.00 | 37,139,559,055 | 1.00 |
@@ -625,25 +651,29 @@ candle の `softmax_last_dim` は `max_keepdim` → `broadcast_sub` → `exp` �
 ### 5.2 位相別の内訳とボトルネック（`infer_profiled`、T=120、実checkpoint）
 
 canisterにowner専用の `infer_profiled(input_ids, detailed)` を追加し、`logits` の位相境界で
-`instruction_counter` を読んだ。**同一入力で2回測って同じ配分**（attn.pre 33.0%/32.9%）である。
+`instruction_counter` を読んだ。**同一入力で2回測って同じ配分**（`rope.apply` 32.9%）である。
+位相名は現行の計装（`--profile-detailed`）のもので、`artifacts/verdict_sweep.json` の値をそのまま載せる。
 
 | 位相 | instructions | 割合 | 理論MAC | instr/MAC |
 |---|---|---|---|---|
-| `attn.pre`（qkv射影＋RoPE＋head整形） | 13,050,393,833 | **33.0%** | 4,671,406,080 | 2.79 |
-| `layer.mlp_up`（Wi＋GELU） | 12,636,107,754 | **31.9%** | 4,671,406,080 | 2.70 |
-| `layer.mlp_down`（Wo） | 6,251,963,430 | **15.8%** | 2,335,703,040 | 2.68 |
-| `layer.attn`（out射影） | 4,140,907,026 | 10.5% | 1,557,135,360 | 2.66 |
-| `attn.core`（scores＋mask＋softmax＋AV） | 2,685,295,641 | 6.8% | 486,604,800 | 5.52 |
-| `layer.attn_norm`＋`mlp_act`＋`attn_resid` | 734,462,544 | 1.9% | — | — |
-| embedding / encoder / projector / decode | 70,905,384 | 0.2% | — | — |
-| **合計** | **39,568,154,800** | 100% | 13,722,255,360 | **2.88** |
+| `rope.apply`（qkv射影＋RoPE＋head整形） | 12,147,651,930 | **32.9%** | 4,671,406,080 | 2.60 |
+| `layer.mlp_up`（Wi＋GELU） | 11,950,467,823 | **32.3%** | 4,671,406,080 | 2.56 |
+| `layer.mlp_down`（Wo） | 5,908,475,625 | **16.0%** | 2,335,703,040 | 2.53 |
+| `layer.attn`（out射影） | 3,911,952,785 | 10.6% | 1,557,135,360 | 2.51 |
+| `attn.scores`＋`attn.mask`＋`attn.softmax`＋`attn.core`（AV） | 2,234,092,695 | 6.0% | 486,604,800 | 4.59 |
+| `layer.attn_norm`＋`mlp_act`＋`attn_resid` | 733,751,878 | 2.0% | — | — |
+| embedding / rope.table / attn.pre / encoder / projector / decode | 89,982,739 | 0.2% | — | — |
+| **合計** | **36,976,375,475** | 100% | 13,722,255,360 | **2.69** |
+
+（最適化前の同じ計装は合計 39,568,154,800・2.88 instr/MAC で、位相名も `attn.pre`／`attn.core` だった。
+差分の大半は softmax の融合とカーネル整理である。）
 
 **読み方:**
 
-1. **密なmatmulが92%を占める**（`attn.pre`＋`mlp_up`＋`mlp_down`＋`layer.attn`）。
+1. **密なmatmulが92%を占める**（`rope.apply`＋`mlp_up`＋`mlp_down`＋`layer.attn` ＝ 91.8%）。
    norm・活性化・softmax・gather・decodeは合計2%未満で、最適化対象ではない。
-2. **どのmatmulも instr/MAC が 2.66〜2.79 でほぼ一定**。つまり特定の1カ所が遅いのではなく、
-   **カーネル全体がf32x4の下限0.5の約5.5倍**で回っている。`attn.core` の5.52は
+2. **どのmatmulも instr/MAC が 2.51〜2.60 でほぼ一定**。つまり特定の1カ所が遅いのではなく、
+   **カーネル全体がf32x4の下限0.5の約5倍**で回っている。`attn.scores`〜`attn.core` の4.59は
    `t×t` の要素演算（mask加算・softmax）を含むためで、これも別種のカーネル問題である。
 3. **形状依存がある**（`verdict-infer gemm`、native、同一カーネル）:
 
@@ -654,16 +684,16 @@ canisterにowner専用の `infer_profiled(input_ids, detailed)` を追加し、`
    | m=120 n=768 k=768 | 159.9 | attention out射影と同じ形 |
 
    同じMAC数でも **n=2304 は n=768 より1.4〜1.5倍遅い**。canister実測の
-   `attn.pre`(2.79) 対 `layer.attn`(2.66)・`mlp_down`(2.68) の比（1.05）とは桁が違うので、
+   `rope.apply`(2.60) 対 `layer.attn`(2.51)・`mlp_down`(2.53) の比（1.04）とは桁が違うので、
    位相間の差の主因は形状ではなく**位相ごとの周辺コスト**である。
 
 **ボトルネックの結論:** 費用は「特定の遅い演算」ではなく**密行列積の総量**にある。
-モデルは1トークンあたり 1.14e8 MAC（22層・hidden 768）を必要とし、それが2.9 instructions/MACで
+モデルは1トークンあたり 1.14e8 MAC（22層・hidden 768）を必要とし、それが2.69 instructions/MACで
 実行されている。したがって改善のレバーは次の2つだけで、優先順位は明確である:
 
 | レバー | 効果の見積り | 根拠 |
 |---|---|---|
-| **カーネル効率**（f32x4下限0.5へ） | 2.9〜5.8倍 | 実測2.88 instr/MAC ÷ 下限0.5。**ただしFMAが無いwasmでは現実的な下限は1.0前後**なので、過度な期待は禁物 |
+| **カーネル効率**（f32x4下限0.5へ） | 2.7〜5.4倍 | 実測2.69 instr/MAC ÷ 下限0.5。**ただしFMAが無いwasmでは現実的な下限は1.0前後**なので、過度な期待は禁物 |
 | **MAC総量**（INT8・蒸留・入力長） | 削減率そのもの | instr/MACが既に下限近辺なら、これが唯一の大きなレバー |
 
 **注意（誤読しやすい点）:** 2.88 instr/MAC を「5.8倍の伸びしろ」と読んではいけない。
@@ -686,46 +716,124 @@ canisterにowner専用の `infer_profiled(input_ids, detailed)` を追加し、`
 fixtureはモデルではない（重みは乱数）。ここで測っているのは
 「pack投入 → warm-up → forward → 命令数の報告」という経路が canister 上で成立することである。
 
-### 5.3 ネイティブでの一致（外部証拠）
+### 5.3 ネイティブF32での一致（過去の外部証拠）
 
-`data/real_banking_test.jsonl` の入力を、著者が記録した `predictions_v2.jsonl` と突き合わせた結果。
+以下はF32経路で `data/real_banking_test.jsonl` の入力を、著者が記録した `predictions_v2.jsonl` と突き合わせた過去の結果であり、現行INT8の値ではない。
 
 | 項目 | 値 |
 |---|---|
 | 比較件数 | **1000（全件、`skipped_no_truth=0`）** |
 | argmax一致 | **1000/1000 (100.00%)** |
-| 校正済み top 確率の最大偏差 | 7e-6 |
+| 校正済み top 確率の最大偏差 | 5e-6 |
 | 平均偏差 | 0.000000 |
 | 最長入力 | 150トークン |
 | 重み転置の修正後（50件で再確認） | 50/50 (100.00%)、最大偏差 3e-6（in-session実行。生ログは`artifacts/`未保存） |
 
 tokenizer・prompt contract・projector・内積scorer・temperature 1.4265148639678955 まで含めて
 一致している。ログは `artifacts/verdict_parity.log`。`cargo test --release -p verdict-candle --test golden -- --ignored` が同じ比較を
-gateとして実行する（1000件版は `--limit` を外す）。
+gateとして実行する。現行INT8の基準は1,000件以上・argmax一致99.5%以上・欠落0・危険な棄権反転0である。
+現行の検証結果は5.4節と `report.md` を参照。
 
 
-## 6. 制約と未検証
+### 5.3 query 経路（5B上限）と、そこでの実測上限
 
-* **既定はF32**。量子化カーネル（INT8）は実装済みで `verdict-engine` の `int8` フィーチャ
-  （`IC_VERDICT_INT8=1 bash tools/build_one.sh verdict-engine`）として配線されており、実測は
-  0.780 instructions/MAC・T=120で14.57e9（F32比 −60.8%）。INT4/ternaryは未実装で2.2節の表は推定。
-  既定F32のT=120実測は37.1e9（`overflow-checks=false`適用後）。
+`infer_tokens_query` / `decide_query` は同じ forward を **query call** として実行する。resource limits
+（[canister resource limits](https://oa7fk-maaaa-aaaam-abgka-cai.icp0.io/docs/building-apps/canister-management/resource-limits)）では
+update 40B に対して **query は 5B**、応答サイズは update 2MiB / query 3MiB、canister あたりの query 実行スレッドは 2、
+replicated query の stable アクセスは 1GiB である。query は cycles を消費せず、合意も要らない。
+代償は**上限の低さ**と、**応答が certified でない**こと（呼び出し側は「誰が何を実行したか」を検証できない）。
+
+上限は update と同じ費用モデルから導出する:
+`T_query = floor(((QUERY_BUDGET×1000/1005) − COST_FIXED) / COST_PER_TOKEN)`。canister は `query_limits()` で
+`budget` / `margin_permille` / `max_tokens` / `max_input_tokens` を返すので、呼び出し側がこの値を
+ハードコードする必要はない。超過は replica が切る前に **ガードが `Capacity` で拒否**する（`Error` に変種は足していない:
+variant 一覧は公開 Candid surface であり、呼び出した method で区別できる）。
+
+既定（F32、保守的な費用モデル）での実測。canister `verdict-engine` に実checkpointを投入し warm した状態で、
+canonical な短い id 列（`cls,<<LABEL>>,2000,<<LABEL>>,3000,sep`）を neutral filler `[PAD]` で pad して測った
+（`artifacts/verdict_query_sweep.json`）:
+
+| T | instructions | 判定 |
+|---|---|---|
+| 6 | 2,000,352,930 | 予算内 |
+| 10 | 3,159,259,650 | 予算内 |
+| 12 | 3,652,108,732 | 予算内 |
+| 14 | **4,325,353,975** | **予算内（成功した最長）** |
+| 15 | — | **ガードが `Capacity` で拒否（実測見積りは約4.6e9で5B以内）** |
+
+* `query_limits()` は `max_tokens=14` を返す。限界費用は実測 308.1e6/token で update と同一だが、
+  **ガードは最適化前の傾き（3.276e8）のままなので1トークン保守的**である（update 側の T=120/126 と同じ性質。
+  owner が実測傾斜を `set_cost_model` で入れると 15 になる）。
+* **JevBench の実benchmark入力（自然長118）は query には絶対に入らない。** `decide` の実測 52トークン
+  （16.83e9）も同様で、`decide_query` は現実的な入力では `Capacity` を返す。これは仕様どおりの拒否である。
+* 同一 id 列で query と update の logits は一致した（1.950261 / 1.879874）。query は状態を変えない
+  （複数 query の前後で `info` の `warmed` / `active_model` / `callers` / `tensors` / `heap_bytes` が不変）。
+* **int8 ビルドでは上限が大きく上がる。** 実測2点（T=6: 774,918,466 / T=120: 14,572,176,608）から
+  フィットした `fixed=48,746,986, per_token=121,028,580` を `set_cost_model` で入れると
+  `query_limits().max_tokens` は **40** になり、実測も T=40 まで成功した
+  （`artifacts/verdict_query_sweep_int8.json`）。F32 の 14 に対して **約2.9倍**である。
+  int8 の実測は T に対して単調でない（T=38: 4.317e9、T=39: 4.889e9、T=40: 4.447e9）— int8 カーネルに
+  データ依存の分岐（範囲クランプ）があるためで、フィットは平均として扱う。
+* **資金移動の根拠に query を使わない。** 応答は certified ではなく、`executor` は verdict-engine を
+  呼んでいない。この経路は対話的な短入力の採点と計測のためのもので、資金を動かす判断は update 経路のままである。
+* 実測の再現: 温まった replica に対し `python3 tools/measure_verdict.py --query --skip-upload --keep`
+  （opt-in の gate は `python3 tools/verify.py --verdict-query`）。int8 の手順は上記のフィット→`set_cost_model`。
+
+
+### 5.4 block-32の再計測と状態管理の改善（2026-09-22）
+
+現行packの比較記録は [`report.md`](../report.md) に集約した。
+同じpackで比較した7入力（合成T=8/16/32/64/96/120、実例T=98）のlogitsは旧版と完全一致した。
+T=120の推論命令数は39,782,583,123から39,769,124,903へ約0.034%減少した。
+warm-up後のWasmメモリ最大到達量は355,729,408から185,925,632 bytesへ約47.7%減少した。
+これは量子化済み重みを複製せず移動する効果であり、解放後のlive heapやwarm-up時間を測った値ではない。
+
+block-32用の2×4・4×4・8×4タイルは、標準カーネルより命令数が増えたため採用しなかった。
+局所attentionのQK/softmax/AV候補も増加したため採用せず、attention maskのforward内共有だけを適用した。
+測定用のowner限定 `bench_int8_block32` と `bench_local_attention` は通常推論から呼ばれない。
+既定の費用モデルと予算は変更していない。T=128は両版とも通常経路のガードで拒否され、
+ガードを持たない計測経路でも40B命令上限に達した。
+
+同一bundleの再warm-upはスキーマ・校正・キャッシュ・利用枠を維持する。
+別bundleではモデル依存の登録情報を消去し、callerの利用枠を保持する。
+質問バッチは質問ごとに選択肢IDを検証し、質問ごとにsoftmaxを計算する。
+質問をまたぐ同じ選択肢IDや棄権選択肢を許可するが、質問IDの重複は拒否する。
+executorは変更キーだけをstable memoryへ保存し、Errを返す状態遷移も保存する。
+verdict-engineはawaitを含まないupdateのheapコミットを利用し、snapshotはinit/pre_upgrade時に作成する。
+
+## 現行方式への訂正
+
+速度優先の指定により、現行packは`i8_row_symmetric`のper-row INT8へ復帰した。
+block-32とその品質ゲートに関する以下の記載は旧版の履歴である。
+現在の仕様・測定結果は[PER_ROW_INT8.md](PER_ROW_INT8.md)を参照。
+
+## 6. 旧block-32版の制約と未検証
+
+* コード経路は `ic-verdict-int8-pack-v1` 専用で、旧F32 packを拒否する。全2次元重みはblock-32 INT8、
+  Norm・bias・scaleだけがF32補助値である。packは170,408,640 bytes。著者記録とのargmaxは
+  997/1000で許容基準99.5%を通過するが、`__insufficient_evidence__`から具体クラスへの危険な反転が1件あるため、
+  本番配備とcost model更新は停止中。過去のper-row INT8実測は
+  0.780 instructions/MAC・T=120で14.57e9だったが、現行block-32のT=120は39.77e9である（5.4節）。
+  F32やper-row INT8の過去の実測値は、現行packの費用推定には利用できない。
 * 校正は同梱artifactの **5候補限定** temperature（1.4265148639678955）をそのまま使う経路のみ。
   候補数・qtype別の再校正は未実施。
 * `crates/verdict-simd` は **int8 経路でモデルに配線されている**（`Linear::forward` が量子化重みを持つとき
-  `matmul_i8` を呼び、softmaxは既定経路でも `softmax_rows_inplace` を使う）。f32カーネル一族と
-  `bench_simd` は整理で削除したため、既定（F32）の行列積は candle gemm のままである。
-* `verdict-engine` は推論専用で、executor / mock-ledger / ワークフローには接続していない。
-  実資金・Receipt・委任の経路は `decision-engine` 側のままである。
-* 実checkpointの canister 実行は **T=2〜120** で確認済み。成功した最長は **T=120**（39.57e9は
-  `overflow-checks` 有効時の実測、無効化後は37.1e9、int8は14.57e9）。**T=126は予算ガードの
-  計算値41.74e9が40Bを超えるため拒否**される設計で、replicaでの実測記録は残っていない。
-  383トークンの実入力は1 callに収まらない（5.1.1節）。
-* `tools/measure_verdict.py` は replica を起動し577.5 MiB（605,512,704 B）を投入するため、既定では `verify.py` の
-  gateに入らない。`python3 tools/verify.py --verdict-canister` は**温まったreplica**に対して
-  `tools/measure_verdict.py --skip-upload --sweep 120` を実行する。
+  `matmul_i8_blocked` を呼び、softmaxは `softmax_rows_inplace` を使う）。attentionのF32行列積は
+  candle gemmを使う。
+* `verdict-engine` はraw推論に加えてexecutor互換の`register_schema`・`register_calibration`・`evaluate`を持ち、
+  実checkpointのlogitsを型付き`Receipt`へ変換できる。実資金dispatchは引き続き無効である。
+* **query 経路（`infer_tokens_query` / `decide_query` / `query_limits`）の上限は5B**である。
+  5.3節のper-row INT8で40トークンという記録は、現行block-32には適用できない。
+  今回のupdate計測ではT=16で約5.13Bだったが、現行queryの最長入力は再測定していない。
+  応答は非certifiedなので、資金を動かす判断には使わない。
+* 現行block-32のcanister実行は今回T=8〜120で確認し、成功した最長はT=120である。
+  T=128は40Bを超過した。T=121〜127の境界は再測定しておらず、上限拡張は行っていない。
+  383トークンの実入力は1 callに収まらない。
+* `tools/measure_verdict.py` の全実行はモデル投入とローカルreplicaを必要とするため、既定の
+  `verify.py` gateには含まれない。`--verdict-canister` / `--verdict-query` は温まったreplicaに対して
+  実行するopt-in検査である。今回の旧版との比較は `tools/compare_verdict.py` で再現できる。
 * `tools/verify.py` の `PASS` の意味は `artifacts/verification.json` の各行が示すとおりで、
   実行していない検査は `NOT_RUN` として残る。`python_reference_and_export_tests` は
   `python3 -m unittest discover -s tests` の結果である（torch依存の検査はLaya削除時に撤去済み）。
-* 品質評価は行っていない。JevBenchの独立値は Intelligence 59.0 / hard 38.2%（公開GLiClass重み、
+* 著者記録との一致検証は実施したが、JevBench自体は再評価していない。JevBenchの独立値は Intelligence 59.0 / hard 38.2%（公開GLiClass重み、
   著者エンジン）で、Laya-large は 63.2 / 34.1%。このリポジトリで再測定したものではない。

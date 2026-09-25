@@ -44,12 +44,23 @@ impl EngineState {
         self.calibrations.insert(c.id,c);Ok(())
     }
     pub fn evaluate<T:TextTokenizer,B:InferenceBackend>(&mut self,caller:Principal,req:DecisionRequest,now:u64,tokenizer:&T,backend:&mut B)->Result<Receipt> {
+        if backend.bundle_id()!=req.model{return Err(Error::BindingMismatch);}
+        self.evaluate_with(caller,req,now,|s,_,state|{
+            let input=schema::render(s,tokenizer,state)?;
+            let logits=backend.infer(&input)?;
+            Ok((logits,input.input_ids.len() as u32,backend.kind(),0))
+        })
+    }
+    /// Shared durable contract for local and canister-specific inference backends.
+    /// The callback owns prompt rendering and returns logits in registered option order.
+    pub fn evaluate_with<F>(&mut self,caller:Principal,req:DecisionRequest,now:u64,infer:F)->Result<Receipt>
+    where F:FnOnce(&CompiledSchema,f64,&str)->Result<(Vec<f32>,u32,BackendKind,u64)> {
         if !self.callers.contains_key(&caller){return Err(Error::Unauthorized);}
         if req.state.len()>MAX_STATE_BYTES || req.state.is_empty(){return Err(Error::TooLong);}
         // Bound expiration to avoid permanent attacker-selected cache lifetimes.
         if req.expires_at_ns<=now || req.expires_at_ns-now>MAX_EVALUATION_WINDOW_NS{return Err(Error::Expired);}
         let key=(caller,req.evaluation_id);let fingerprint=req.digest();
-        if req.model!=self.active_model || backend.bundle_id()!=req.model{return Err(Error::BindingMismatch);}
+        if req.model!=self.active_model{return Err(Error::BindingMismatch);}
         let s=self.schemas.get(&req.schema_hash).cloned().ok_or(Error::NotFound)?;
         let temp=if let Some(id)=req.calibration {
             let c=self.calibrations.get(&id).ok_or(Error::Uncalibrated)?;c.validate(now)?;
@@ -66,18 +77,16 @@ impl EngineState {
             self.cache.retain(|_,c|c.stored_at>=cutoff);
             if self.cache.len()>=self.max_cache_entries as usize{return Err(Error::Capacity);}
         }
-        // Render before expensive inference. Never silently truncate.
-        let input=schema::render(&s,tokenizer,&req.state)?;
         let quota=self.callers.get_mut(&caller).ok_or(Error::Unauthorized)?;
         let epoch=now/60_000_000_000;
         if quota.epoch!=epoch {quota.epoch=epoch;quota.used=0;}
         if quota.used>=quota.max_per_minute{return Err(Error::Capacity);}quota.used+=1;
         let result=(||{
-            let logits=backend.infer(&input)?;
+            let (logits,input_tokens,backend,measured_instructions)=infer(&s,temp,&req.state)?;
             if logits.len()!=s.schema.options.len(){return Err(Error::BindingMismatch);}
             let d=math::from_logits(&logits,temp)?;
-            let stamp=Stamp{evaluation_id:req.evaluation_id,schema_hash:req.schema_hash,tokenizer_hash:s.tokenizer_hash,model:req.model,calibration:req.calibration,binding:req.binding.clone(),state_hash:hash(req.state.as_bytes()),profile:PROFILE.into(),backend:backend.kind()};
-            Ok(Receipt{stamp,outcome:EvaluationOutcome::Assessed(math::value(&s.schema,&d)?),diagnostics:Some(d.diagnostics()),input_tokens:input.input_ids.len() as u32,measured_instructions:0})
+            let stamp=Stamp{evaluation_id:req.evaluation_id,schema_hash:req.schema_hash,tokenizer_hash:s.tokenizer_hash,model:req.model,calibration:req.calibration,binding:req.binding.clone(),state_hash:hash(req.state.as_bytes()),profile:PROFILE.into(),backend};
+            Ok(Receipt{stamp,outcome:EvaluationOutcome::Assessed(math::value(&s.schema,&d)?),diagnostics:Some(d.diagnostics()),input_tokens,measured_instructions})
         })();
         // Cache failures too: a bad backend cannot force unlimited retries under one ID.
         self.cache.insert(key,Cached{fingerprint,stored_at:now,result:result.clone()});result

@@ -35,70 +35,71 @@ test workflow::tests::reserve_keeps_windows_that_hold_reservations ... ok
 test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
 
-running 61 tests
+running 62 tests
 test all_primitives_reach_ready ... ok
-test abandon_unknown_clears_the_upgrade_gate_and_keeps_the_reservation ... ok
-test budget_failure_does_not_partially_reserve_operation ... ok
-test cached_result_cannot_bypass_active_model_change ... ok
-test calibration_must_cover_whole_workflow_expiry ... ok
+test backend_specific_renderer_uses_the_shared_receipt_contract ... ok
 test budget_reserved_before_send ... ok
-test business_duplicate_blocked ... ok
+test abandon_unknown_clears_the_upgrade_gate_and_keeps_the_reservation ... ok
+test abandon_unknown_requires_the_owner_and_an_unresolved_transfer ... ok
+test budget_failure_does_not_partially_reserve_operation ... ok
+test calibration_must_cover_whole_workflow_expiry ... ok
+test cached_result_cannot_bypass_active_model_change ... ok
 test count_bounds ... ok
-test compiled_three_schemas ... ok
+test changed_evidence_stale ... ok
 test caller_must_own_grant ... ok
 test display_tie_is_first ... ok
+test business_duplicate_blocked ... ok
 test duplicate_options_rejected ... ok
-test changed_evidence_stale ... ok
+test compiled_three_schemas ... ok
+test engine_deduplicates ... ok
+test engine_namespace_not_public ... ok
+test definitive_first_error_releases ... ok
 test dedup_expiry_blocks_blind_retry ... ok
-test abandon_unknown_requires_the_owner_and_an_unresolved_transfer ... ok
-test duplicate_success_accounts_once ... ok
 test engine_transport_retry_same_id ... ok
 test forged_derived_score_rejected ... ok
-test engine_namespace_not_public ... ok
-test engine_deduplicates ... ok
-test definitive_first_error_releases ... ok
 test fixture_backend_cannot_authorize_a_live_transfer ... ok
+test duplicate_success_accounts_once ... ok
 test huge_logits_stable ... ok
 test golden_vectors ... ok
 test exact_length_limit ... ok
-test forged_snapshot_never_passes ... ok
 test live_mode_is_closed ... ok
+test forged_snapshot_never_passes ... ok
+test late_error_does_not_revert_success ... ok
 test marker_tamper_rejected ... ok
 test no_normalization_of_bad_input ... ok
 test no_silent_option_truncation ... ok
 test late_reply_after_cancel_ignored ... ok
+test nonce_cannot_skip ... ok
 test noul_order_fixed ... ok
-test mock_requires_registered_ledger ... ok
-test late_error_does_not_revert_success ... ok
-test nonce_payload_conflict ... ok
 test ordinal_units ... ok
+test nonce_payload_conflict ... ok
+test partial_signals_cannot_authorize ... ok
 test nonce_replay_returns_same ... ok
 test ppm_sum_and_tie ... ok
-test reject_special_token_injection ... ok
 test rejects_malformed_distribution ... ok
 test rejects_nonfinite ... ok
 test rejects_temperature ... ok
-test nonce_cannot_skip ... ok
-test partial_signals_cannot_authorize ... ok
+test reject_special_token_injection ... ok
+test mock_requires_registered_ledger ... ok
 test parallel_advance_busy ... ok
 test same_mean_different_tail ... ok
-test snapshot_envelope_integrity ... ok
-test three_primitives_exist ... ok
 test revoke_stops_retry_not_reconciliation ... ok
+test three_primitives_exist ... ok
 test revoke_during_inference ... ok
-test report_only_does_not_reserve ... ok
-test unauthorized_mode_change ... ok
-test ttl_enforced ... ok
 test typed_score_exposes_tail_and_rejects_other_schema ... ok
+test ttl_enforced ... ok
+test report_only_does_not_reserve ... ok
+test snapshot_envelope_integrity ... ok
 test typed_view_rejects_forged_receipt_stamp ... ok
-test unknown_cannot_cancel ... ok
+test unauthorized_mode_change ... ok
+test unknown_then_badfee_is_still_unknown ... ok
 test unknown_keeps_reservation ... ok
 test upgrade_retains_unknown_budget ... ok
-test unknown_then_badfee_is_still_unknown ... ok
+test unknown_cannot_cancel ... ok
 test many_ledger_event_sequences_preserve_invariants ... ok
 test cache_evicts_entries_older_than_the_acceptance_window ... ok
 
-test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+test result: ok. 62 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
 
 
 running 0 tests
@@ -129,32 +130,39 @@ test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; fini
 
 running 12 tests
 test pack_rejects_tensor_set_mismatch ... ok
-test every_label_marker_contributes_one_slot_in_order ... ok
+test refuses_more_classes_than_the_checkpoint_scores ... ok
 test profiled_forward_keeps_the_same_rejections ... ok
 test reserved_token_literals_are_rejected_in_prompt_inputs ... ok
-test refuses_more_classes_than_the_checkpoint_scores ... ok
+test every_label_marker_contributes_one_slot_in_order ... ok
 test refuses_non_finite_and_out_of_vocab_ids ... ok
-test logits_are_one_per_class_token_in_order ... ok
+test detailed_profiling_only_adds_repeated_markers ... ok
 test same_input_gives_the_same_logits ... ok
 test pack_round_trip_reproduces_the_model ... ok
-test detailed_profiling_only_adds_repeated_markers ... ok
+test logits_are_one_per_class_token_in_order ... ok
 test head_matches_an_independent_recomputation_from_the_encoder_output ... ok
 test profiled_forward_returns_the_same_logits ... ok
 
-test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
 
 
-running 0 tests
+running 7 tests
+test tests::the_query_budget_is_the_protocol_limit ... ok
+test tests::the_measured_slope_raises_the_query_ceiling ... ok
+test tests::the_update_guard_still_pins_the_measured_ceiling ... ok
+test tests::the_measured_fit_relaxes_the_update_ceiling_to_the_policy_bound ... ok
+test tests::the_advertised_length_is_never_refused_by_the_guard ... ok
+test tests::the_default_model_advertises_fourteen_query_tokens ... ok
+test tests::legacy_snapshot_defaults_the_workflow_registry ... ok
 
-test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
 
 running 8 tests
 test tests::degenerate_quantisation_inputs_do_not_panic ... ok
-test tests::softmax_handles_degenerate_shapes ... ok
 test tests::matmul_i8_reports_which_path_ran ... ok
-test tests::softmax_rows_match_the_scalar_reference_and_sum_to_one ... ok
+test tests::softmax_handles_degenerate_shapes ... ok
 test tests::quantisation_is_bounded_and_dequantises_within_one_step ... ok
+test tests::softmax_rows_match_the_scalar_reference_and_sum_to_one ... ok
 test tests::quantisation_rejects_a_short_slice - should panic ... ok
 test tests::activation_range_shrinks_for_large_contractions ... ok
 test tests::int8_matmul_matches_an_independent_reference_over_shapes ... ok
@@ -190,7 +198,7 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 1 test
 test crates/ic-laya-core/src/workflow.rs - workflow::AuthorizedTransfer (line 108) - compile fail ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
 
 
 running 0 tests
@@ -217,53 +225,27 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug/examples/export
-  |
-  = note: the example target `export` in package `executor v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/executor)` has the same output filename as the example target `export` in package `decision-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/decision-engine)`
-  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
-  = help: consider changing their names to be unique or compiling them separately
-warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug/examples/export.dSYM
-  |
-  = note: the example target `export` in package `executor v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/executor)` has the same output filename as the example target `export` in package `decision-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/decision-engine)`
-  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
-  = help: consider changing their names to be unique or compiling them separately
-warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug/examples/export
-  |
-  = note: the example target `export` in package `mock-ledger v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/mock-ledger)` has the same output filename as the example target `export` in package `executor v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/executor)`
-  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
-  = help: consider changing their names to be unique or compiling them separately
-warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug/examples/export.dSYM
-  |
-  = note: the example target `export` in package `mock-ledger v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/mock-ledger)` has the same output filename as the example target `export` in package `executor v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/executor)`
-  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
-  = help: consider changing their names to be unique or compiling them separately
-warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug/examples/export
-  |
-  = note: the example target `export` in package `verdict-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/verdict-engine)` has the same output filename as the example target `export` in package `mock-ledger v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/mock-ledger)`
-  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
-  = help: consider changing their names to be unique or compiling them separately
-warning: output filename collision at /Volumes/KINGSTON/ICP/IC-Laya/target/debug/examples/export.dSYM
-  |
-  = note: the example target `export` in package `verdict-engine v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/verdict-engine)` has the same output filename as the example target `export` in package `mock-ledger v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/mock-ledger)`
-  = note: this may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>
-  = help: consider changing their names to be unique or compiling them separately
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.80s
-     Running unittests src/lib.rs (target/debug/deps/canister_common-29fb78dd0b2fafde)
-     Running unittests src/lib.rs (target/debug/deps/decision_engine-f7b504ad905c8b96)
-     Running unittests src/lib.rs (target/debug/deps/executor-4d667ae0d4e7d648)
-     Running unittests src/lib.rs (target/debug/deps/hf_tokenizer-69449724ed879f0d)
-     Running tests/adapter.rs (target/debug/deps/adapter-7275fe97dd7227d6)
-     Running unittests src/lib.rs (target/debug/deps/ic_laya_core-38ed18e2a42481b0)
-     Running tests/core.rs (target/debug/deps/core-41a604e8d46607ca)
-     Running unittests src/lib.rs (target/debug/deps/mock_ledger-fdbaff64fad9c648)
-     Running unittests src/lib.rs (target/debug/deps/modernbert_candle-b004800bd89e0e4e)
-     Running unittests src/lib.rs (target/debug/deps/verdict_candle-c678ee49e5f9a2de)
-     Running unittests src/bin/verdict_infer.rs (target/debug/deps/verdict_infer-d90f16b278ece7be)
-     Running tests/golden.rs (target/debug/deps/golden-2a01370648485c5f)
-     Running tests/model.rs (target/debug/deps/model-6832875a3c5298df)
-     Running unittests src/lib.rs (target/debug/deps/verdict_engine-59bc3f11564f9c88)
-     Running unittests src/lib.rs (target/debug/deps/verdict_simd-e9eb9875952165f5)
-     Running unittests src/main.rs (target/debug/deps/verdict_upload-765dfeb996b9968c)
+   Compiling executor v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/executor)
+   Compiling verdict-engine v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/verdict-engine)
+   Compiling mock-ledger v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/mock-ledger)
+   Compiling decision-engine v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/decision-engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.21s
+     Running unittests src/lib.rs (target/debug/deps/canister_common-e8c91fcc9a82a4f2)
+     Running unittests src/lib.rs (target/debug/deps/decision_engine-96c35d98d3337935)
+     Running unittests src/lib.rs (target/debug/deps/executor-34e9c0d500acd0f1)
+     Running unittests src/lib.rs (target/debug/deps/hf_tokenizer-3a15f7753ab9184e)
+     Running tests/adapter.rs (target/debug/deps/adapter-ede2d140482621df)
+     Running unittests src/lib.rs (target/debug/deps/ic_laya_core-40771f6d45c4a2c0)
+     Running tests/core.rs (target/debug/deps/core-664ed30899607b18)
+     Running unittests src/lib.rs (target/debug/deps/mock_ledger-60f8bc5b8b24e563)
+     Running unittests src/lib.rs (target/debug/deps/modernbert_candle-19f05990b5c762d3)
+     Running unittests src/lib.rs (target/debug/deps/verdict_candle-22c5288b6a60fda3)
+     Running unittests src/bin/verdict_infer.rs (target/debug/deps/verdict_infer-4c3836714210a4ca)
+     Running tests/golden.rs (target/debug/deps/golden-6db26de8b23a104a)
+     Running tests/model.rs (target/debug/deps/model-b770b9c1d45d229b)
+     Running unittests src/lib.rs (target/debug/deps/verdict_engine-d94b9c6e3645b8ac)
+     Running unittests src/lib.rs (target/debug/deps/verdict_simd-c52c2116f6be7e04)
+     Running unittests src/main.rs (target/debug/deps/verdict_upload-a5805e701420be79)
    Doc-tests canister_common
    Doc-tests decision_engine
    Doc-tests executor

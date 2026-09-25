@@ -1,0 +1,32 @@
+{
+  "url": "https://openjev.kinic.xyz",
+  "canister": "qojfj-6qaaa-aaaam-qjkaq-cai",
+  "wasm_sha256": "78f7b42df1aa878f76f2c0e9f978388cbd613469ec29433f680e9edd11e95d34",
+  "worker_version": "a697c497-7645-4ebb-88a9-639c9b35cda9",
+  "rollback": {
+    "wasm": "build/tetris-placement-query/verdict-engine.wasm",
+    "worker_version": "7853f415-03e5-4810-b44b-bc66bf733961"
+  },
+  "assets": {
+    "index.html": "e9a64a1903fbb81f4a4fe678289d0e1369502aa26f083055f4fceec2ae6e9461",
+    "assets/index-0l64QSAk.css": "6dd884f3d98b02fdfce9df9cea38cdebb67ebe7787d0b7d70d67194ff896de28",
+    "assets/index-Da3xU6lx.js": "cfe82cf71beaab1a49b22f4e961be8a98216476f83af0b6c93d6e912f54ce0ba"
+  },
+  "verification": "passed",
+  "warmed_tensors": 142,
+  "model_unchanged": true,
+  "query_check": "production-query-check.json",
+  "browser": {
+    "start_clicks": 1,
+    "observed_turns": 8,
+    "observed_lines": 2,
+    "observed_input_tokens": 41,
+    "model_passes_per_turn": 1,
+    "queries_per_turn": 1,
+    "game_update_calls": 0,
+    "console_errors": 0,
+    "new_disclosure": true,
+    "lang": "en",
+    "session_closed": true
+  }
+}

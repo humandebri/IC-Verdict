@@ -1,0 +1,47 @@
+{
+  "commit": "47754d1bff713ad4914a56fe4dc8b997e67a7d3d",
+  "canister": "4caro-hl777-77775-aaaba-cai",
+  "endpoint": "http://localhost:8011",
+  "measurements": [
+    {
+      "tokens": 8,
+      "instructions": 2590912904
+    },
+    {
+      "tokens": 32,
+      "instructions": 10255615208
+    },
+    {
+      "tokens": 64,
+      "instructions": 20736809682
+    },
+    {
+      "tokens": 120,
+      "instructions": 39769110363
+    }
+  ],
+  "info_before": "(\n  record {\n    model = blob \"\\2d\\b0\\54\\92\\7c\\36\\f1\\2f\\14\\b9\\6b\\4e\\92\\4f\\f8\\e8\\5a\\31\\6f\\8f\\1e\\68\\4f\\39\\c5\\69\\f8\\e9\\a8\\c2\\ad\\50\";\n    pack_format = \"ic-verdict-int8-pack-v1\";\n    max_input_tokens = 128 : nat32;\n    max_classes = 25 : nat32;\n    cost_per_token = 327_600_000 : nat64;\n    callers = 1 : nat64;\n    cost_fixed = 254_400_000 : nat64;\n    model_bytes = 170_408_640 : nat64;\n    warmed = true;\n    budget = 40_000_000_000 : nat64;\n    tensors = 0 : nat64;\n    upload_complete = true;\n    heap_bytes = 188_547_072 : nat64;\n  },\n)\n",
+  "receipt": "(\n  variant {\n    Ok = record {\n      measured_instructions = 8_319_995_888 : nat64;\n      stamp = record {\n        model = blob \"\\2d\\b0\\54\\92\\7c\\36\\f1\\2f\\14\\b9\\6b\\4e\\92\\4f\\f8\\e8\\5a\\31\\6f\\8f\\1e\\68\\4f\\39\\c5\\69\\f8\\e9\\a8\\c2\\ad\\50\";\n        tokenizer_hash = blob \"\\8b\\b4\\49\\eb\\0c\\03\\7a\\ae\\44\\11\\5b\\65\\90\\5b\\b3\\39\\b8\\f3\\f7\\4e\\b3\\70\\67\\c1\\91\\27\\fe\\b3\\c0\\75\\57\\23\";\n        binding = null;\n        calibration = null;\n        state_hash = blob \"\\df\\73\\c6\\70\\e8\\06\\d4\\be\\21\\06\\ec\\41\\87\\bb\\df\\fe\\94\\8f\\5a\\9d\\15\\b7\\b2\\be\\8e\\08\\6b\\e2\\ba\\89\\58\\b7\";\n        evaluation_id = blob \"\\4b\\2e\\d0\\47\\6b\\cb\\08\\57\\b3\\e1\\aa\\4f\\4f\\a1\\fa\\f8\\e6\\a5\\b6\\b9\\fd\\b7\\0f\\66\\56\\d8\\20\\09\\11\\2e\\6e\\bc\";\n        profile = \"Compact128-v1\";\n        schema_hash = blob \"\\62\\b4\\7c\\a3\\73\\19\\12\\ef\\66\\93\\a0\\39\\cd\\5c\\52\\40\\73\\85\\f4\\34\\c1\\c8\\c4\\22\\17\\3a\\80\\bc\\f5\\46\\9a\\b2\";\n        backend = variant { Checkpoint };\n      };\n      input_tokens = 26 : nat32;\n      outcome = variant {\n        Assessed = variant {\n          Noul = record {\n            true_ppm = 317_140 : nat32;\n            false_ppm = 682_860 : nat32;\n          }\n        }\n      };\n      diagnostics = opt record {\n        top1_ppm = 682_860 : nat32;\n        tied = false;\n        margin_ppm = 365_720 : nat32;\n      };\n    }\n  },\n)\n",
+  "eight_token_reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\2d\\b0\\54\\92\\7c\\36\\f1\\2f\\14\\b9\\6b\\4e\\92\\4f\\f8\\e8\\5a\\31\\6f\\8f\\1e\\68\\4f\\39\\c5\\69\\f8\\e9\\a8\\c2\\ad\\50\";\n      logits = vec {\n        2.5337107 : float32;\n        2.5736506 : float32;\n        2.236216 : float32;\n        1.4204041 : float32;\n        0.078995004 : float32;\n      };\n      measured_instructions = 2_590_912_904 : nat64;\n      class_positions = vec {\n        1 : nat32;\n        2 : nat32;\n        3 : nat32;\n        4 : nat32;\n        5 : nat32;\n      };\n      input_tokens = 8 : nat32;\n    }\n  },\n)\n",
+  "native_wasm_parity_pass": false,
+  "native_logits": [
+    2.522023,
+    2.561987,
+    2.225702,
+    1.412001,
+    0.074813
+  ],
+  "wasm_logits": [
+    2.5337107,
+    2.5736506,
+    2.236216,
+    1.4204041,
+    0.078995004
+  ],
+  "native_wasm_max_abs_diff": 0.011687699999999968,
+  "query_14": "(\n  variant {\n    Ok = record {\n      model = blob \"\\2d\\b0\\54\\92\\7c\\36\\f1\\2f\\14\\b9\\6b\\4e\\92\\4f\\f8\\e8\\5a\\31\\6f\\8f\\1e\\68\\4f\\39\\c5\\69\\f8\\e9\\a8\\c2\\ad\\50\";\n      logits = vec { 4.13974 : float32 };\n      measured_instructions = 4_480_512_904 : nat64;\n      class_positions = vec { 1 : nat32 };\n      input_tokens = 14 : nat32;\n    }\n  },\n)\n",
+  "query_15": "(variant { Err = variant { Capacity } })\n",
+  "info_after": "(\n  record {\n    model = blob \"\\2d\\b0\\54\\92\\7c\\36\\f1\\2f\\14\\b9\\6b\\4e\\92\\4f\\f8\\e8\\5a\\31\\6f\\8f\\1e\\68\\4f\\39\\c5\\69\\f8\\e9\\a8\\c2\\ad\\50\";\n    pack_format = \"ic-verdict-int8-pack-v1\";\n    max_input_tokens = 128 : nat32;\n    max_classes = 25 : nat32;\n    cost_per_token = 327_600_000 : nat64;\n    callers = 1 : nat64;\n    cost_fixed = 254_400_000 : nat64;\n    model_bytes = 170_408_640 : nat64;\n    warmed = true;\n    budget = 40_000_000_000 : nat64;\n    tensors = 0 : nat64;\n    upload_complete = true;\n    heap_bytes = 186_646_528 : nat64;\n  },\n)\n",
+  "lifecycle_passed": true,
+  "passed": false
+}

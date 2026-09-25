@@ -1,0 +1,12002 @@
+[
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "baseline",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "explicit",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "compact",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-0",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-1",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-2",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-3",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-4",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-5",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-6",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "real-7",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "development",
+    "variant": "tuple",
+    "case": "dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "baseline",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-0",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-1",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-2",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-3",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-4",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 3,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-real-5",
+    "kind": "real",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 3,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-0",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-1",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-2",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-3",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-4",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 1,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      1,
+      3,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      1,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      2,
+      3,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      2,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      0,
+      3,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      0,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      0,
+      3,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      0,
+      3
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      1,
+      3,
+      0
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      0,
+      1
+    ],
+    "selected": 2,
+    "best": false,
+    "dominated": true
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      2,
+      3,
+      1,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      0,
+      2,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      0,
+      2
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      1,
+      2,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  },
+  {
+    "stage": "held_out",
+    "variant": "explicit",
+    "case": "hold-dominance-5",
+    "kind": "dominance",
+    "order": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "selected": 0,
+    "best": true,
+    "dominated": false
+  }
+]

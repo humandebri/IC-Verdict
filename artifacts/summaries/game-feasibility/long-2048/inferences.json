@@ -1,0 +1,17 @@
+{
+  "source": "artifacts/game-feasibility/long-2048/inferences.json",
+  "source_sha256": "3eff84e85f8c1355fda519e0cde397f785aa8ce9ef48cfb1812c75b64a0269bf",
+  "source_bytes": 128208,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "omitted": true,
+    "see_raw_source": true
+  },
+  "omitted": [
+    {
+      "path": "$",
+      "count": 103,
+      "sha256": "0dd39e64dd7010503ca9b8e1221b8f0555eebcfb66d798cf25300e2863f86c72"
+    }
+  ]
+}

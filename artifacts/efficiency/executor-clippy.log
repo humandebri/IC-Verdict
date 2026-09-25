@@ -1,0 +1,4 @@
+    Checking ic-laya-core v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/ic-laya-core)
+    Checking canister-common v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/canister-common)
+    Checking executor v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/canisters/executor)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.51s

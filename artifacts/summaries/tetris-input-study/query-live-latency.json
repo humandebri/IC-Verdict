@@ -1,0 +1,79 @@
+{
+  "source": "artifacts/tetris-input-study/query-live-latency.json",
+  "source_sha256": "76e3f736093e0d409eeae484bcddf8bca051aa3bb9f10fb6d9ac118cdfd63531",
+  "source_bytes": 328349,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "provenance": {
+      "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+      "fixtures": "0d051061a23ae51e15e240d57e0d0aa8208a12daa871661b4fec8fa20234d33f",
+      "clock": "real local canister query results; fixed-latency games charge exactly 1000ms per choice (cached identical prompts permitted); live-latency games use actual uncached RTT; one in-flight query per game, at most four independent games/fixtures concurrently",
+      "host": "http://localhost:8011",
+      "canister": "4fbx2-kt777-77775-aaabq-cai",
+      "wasm": "0x0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b"
+    },
+    "games": [
+      {
+        "seed": 42,
+        "variant": "history-short",
+        "actualLatency": true,
+        "lines": 0,
+        "pieces": 16,
+        "truncated": false,
+        "metrics": {
+          "queries": 153,
+          "late": 10,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 143,
+          "errors": 0,
+          "responses": 153,
+          "latencyTotal": 79670.65554400044,
+          "latencyMax": 932.9741249999497,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "seed": 42,
+        "variant": "columns-explicit",
+        "actualLatency": true,
+        "lines": 0,
+        "pieces": 15,
+        "truncated": false,
+        "metrics": {
+          "queries": 113,
+          "late": 7,
+          "blocked": 0,
+          "stale": 0,
+          "executed": 106,
+          "errors": 0,
+          "responses": 113,
+          "latencyTotal": 58754.532500000205,
+          "latencyMax": 666.5233340000268,
+          "valid": true
+        },
+        "turns": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      }
+    ]
+  },
+  "omitted": [
+    {
+      "path": "$.games[0].turns",
+      "count": 153,
+      "sha256": "6f19b5e9cd37f6be7624014b998a449f2fa55e8d78700fcbefc94022e5dfc485"
+    },
+    {
+      "path": "$.games[1].turns",
+      "count": 113,
+      "sha256": "9fb9038824284d9b9b56c118acbe4d177e929bc4e88a858aedae52210a29249b"
+    }
+  ]
+}

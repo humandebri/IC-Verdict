@@ -19,15 +19,15 @@ running 12 tests
 test pack_rejects_tensor_set_mismatch ... ok
 test profiled_forward_keeps_the_same_rejections ... ok
 test refuses_more_classes_than_the_checkpoint_scores ... ok
-test reserved_token_literals_are_rejected_in_prompt_inputs ... ok
 test every_label_marker_contributes_one_slot_in_order ... ok
-test refuses_non_finite_and_out_of_vocab_ids ... ok
+test reserved_token_literals_are_rejected_in_prompt_inputs ... ok
+test head_matches_an_independent_recomputation_from_the_encoder_output ... ok
 test logits_are_one_per_class_token_in_order ... ok
 test detailed_profiling_only_adds_repeated_markers ... ok
+test refuses_non_finite_and_out_of_vocab_ids ... ok
 test profiled_forward_returns_the_same_logits ... ok
-test same_input_gives_the_same_logits ... ok
-test head_matches_an_independent_recomputation_from_the_encoder_output ... ok
 test pack_round_trip_reproduces_the_model ... ok
+test same_input_gives_the_same_logits ... ok
 
 test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
 
@@ -36,10 +36,10 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-   Compiling verdict-candle v0.1.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-candle)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.74s
-     Running unittests src/lib.rs (target/debug/deps/verdict_candle-aeb3a7a60d0fb2cd)
-     Running unittests src/bin/verdict_infer.rs (target/debug/deps/verdict_infer-8a10fab891b2195e)
-     Running tests/golden.rs (target/debug/deps/golden-9db2998f71211ed3)
-     Running tests/model.rs (target/debug/deps/model-5174c88f9b693b24)
+   Compiling verdict-candle v0.2.0 (/Volumes/KINGSTON/ICP/IC-Laya/crates/verdict-candle)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.70s
+     Running unittests src/lib.rs (target/debug/deps/verdict_candle-29432a07870e19e1)
+     Running unittests src/bin/verdict_infer.rs (target/debug/deps/verdict_infer-90521aa08db24e6f)
+     Running tests/golden.rs (target/debug/deps/golden-4aefe915a0b73de8)
+     Running tests/model.rs (target/debug/deps/model-abdf7b66f6a5cc4b)
    Doc-tests verdict_candle

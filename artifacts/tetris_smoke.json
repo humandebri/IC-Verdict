@@ -1,0 +1,21 @@
+{
+  "canister": "4fbx2-kt777-77775-aaabq-cai",
+  "checks": [
+    "disabled when switched off",
+    "anonymous cannot enable",
+    "owner enables",
+    "warm without reupload",
+    "anonymous bounded query",
+    "empty candidate list rejected",
+    "out-of-bounds rejected",
+    "generic query remains protected",
+    "enabled survives upgrade",
+    "heap model resets",
+    "query output identical after upgrade",
+    "operator shutdown rejects query"
+  ],
+  "initial_status": "(\n  record {\n    model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n    enabled = true;\n    max_tokens = 36 : nat32;\n    warmed = true;\n  },\n)\n",
+  "reply": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      scores = vec { 0.73395705 : float32; 0.26604298 : float32 };\n      measured_instructions = 2_623_598_787 : nat64;\n      selected = 0 : nat8;\n      prompt = \"<<LABEL>>holes 0 height 4 lines 1<<LABEL>>holes 200 height 20 lines 4<<SEP>>Tetris: choose placement.\";\n      input_tokens = 24 : nat32;\n    }\n  },\n)\n",
+  "reply_after_upgrade": "(\n  variant {\n    Ok = record {\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      scores = vec { 0.73395705 : float32; 0.26604298 : float32 };\n      measured_instructions = 2_623_655_129 : nat64;\n      selected = 0 : nat8;\n      prompt = \"<<LABEL>>holes 0 height 4 lines 1<<LABEL>>holes 200 height 20 lines 4<<SEP>>Tetris: choose placement.\";\n      input_tokens = 24 : nat32;\n    }\n  },\n)\n",
+  "passed": true
+}

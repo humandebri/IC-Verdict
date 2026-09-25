@@ -1,0 +1,222 @@
+{
+  "created_utc": "2026-09-22T12:35:32.978879+00:00",
+  "canister": "4xhad-gd777-77775-aaacq-cai",
+  "endpoint": "http://localhost:8011/",
+  "mode": "decide",
+  "classes": 3,
+  "input_kind": "un-padded English requests, 2 options plus abstention",
+  "module_hash": "0xd928b2190bf53369a65657006536f5bcb4a8df70302e9be31dd5316aa9cd150b",
+  "initial_info": "(\n  record {\n    model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n    pack_format = \"ic-verdict-int8-pack-v1\";\n    max_input_tokens = 128 : nat32;\n    max_classes = 25 : nat32;\n    cost_per_token = 121_028_580 : nat64;\n    callers = 0 : nat64;\n    cost_fixed = 48_746_986 : nat64;\n    model_bytes = 152_245_512 : nat64;\n    warmed = true;\n    budget = 40_000_000_000 : nat64;\n    tensors = 0 : nat64;\n    upload_complete = true;\n    heap_bytes = 186_843_136 : nat64;\n  },\n)\n",
+  "initial_query_limits": "(\n  record {\n    max_input_tokens = 128 : nat32;\n    cost_per_token = 121_028_580 : nat64;\n    cost_fixed = 48_746_986 : nat64;\n    margin_permille = 1_005 : nat64;\n    max_tokens = 40 : nat32;\n    budget = 5_000_000_000 : nat64;\n  },\n)\n",
+  "rows": [
+    {
+      "status": "ok",
+      "wall_seconds": 0.9749297910020687,
+      "raw": "(\n  variant {\n    Ok = record {\n      ids = vec { \"lost\"; \"dispute\"; \"__insufficient_evidence__\" };\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      probabilities = vec {\n        0.9991836 : float32;\n        0.0004098565 : float32;\n        0.00040652326 : float32;\n      };\n      logits = vec {\n        7.4853125 : float32;\n        -0.31357414 : float32;\n        -0.3217403 : float32;\n      };\n      measured_instructions = 3_515_841_260 : nat64;\n      selected = \"lost\";\n      input_tokens = 32 : nat32;\n      confidence = 0.9991836 : float32;\n    }\n  },\n)\n",
+      "tokens": 32,
+      "case": {
+        "question": "What is the request?",
+        "text": "I lost my card.",
+        "candidates": [
+          {
+            "id": "lost",
+            "description": "lost card"
+          },
+          {
+            "id": "dispute",
+            "description": "dispute payment"
+          },
+          {
+            "id": "__insufficient_evidence__",
+            "description": "insufficient evidence"
+          }
+        ]
+      },
+      "instructions": 3515841260
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 0.639465125001152,
+      "raw": "(\n  variant {\n    Ok = record {\n      ids = vec { \"lost\"; \"dispute\"; \"__insufficient_evidence__\" };\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      probabilities = vec {\n        0.9977093 : float32;\n        0.00080981356 : float32;\n        0.0014808913 : float32;\n      };\n      logits = vec {\n        6.481473 : float32;\n        -0.6349399 : float32;\n        -0.03134504 : float32;\n      };\n      measured_instructions = 4_187_412_305 : nat64;\n      selected = \"lost\";\n      input_tokens = 37 : nat32;\n      confidence = 0.9977093 : float32;\n    }\n  },\n)\n",
+      "tokens": 37,
+      "case": {
+        "question": "What is the request?",
+        "text": "I lost my card yesterday and need a replacement.",
+        "candidates": [
+          {
+            "id": "lost",
+            "description": "lost card"
+          },
+          {
+            "id": "dispute",
+            "description": "dispute payment"
+          },
+          {
+            "id": "__insufficient_evidence__",
+            "description": "insufficient evidence"
+          }
+        ]
+      },
+      "instructions": 4187412305
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 0.7857168330083368,
+      "raw": "(\n  variant {\n    Ok = record {\n      ids = vec { \"lost\"; \"dispute\"; \"__insufficient_evidence__\" };\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      probabilities = vec {\n        0.9337849 : float32;\n        0.017238038 : float32;\n        0.048977036 : float32;\n      };\n      logits = vec {\n        3.8760357 : float32;\n        -0.11609186 : float32;\n        0.928141 : float32;\n      };\n      measured_instructions = 4_302_143_119 : nat64;\n      selected = \"lost\";\n      input_tokens = 38 : nat32;\n      confidence = 0.9337849 : float32;\n    }\n  },\n)\n",
+      "tokens": 38,
+      "case": {
+        "question": "What is the request?",
+        "text": "My bank card was stolen at the station this morning.",
+        "candidates": [
+          {
+            "id": "lost",
+            "description": "lost card"
+          },
+          {
+            "id": "dispute",
+            "description": "dispute payment"
+          },
+          {
+            "id": "__insufficient_evidence__",
+            "description": "insufficient evidence"
+          }
+        ]
+      },
+      "instructions": 4302143119
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 1.4562384170130827,
+      "raw": "(\n  variant {\n    Ok = record {\n      ids = vec { \"lost\"; \"dispute\"; \"__insufficient_evidence__\" };\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      probabilities = vec {\n        0.99323326 : float32;\n        0.0018066097 : float32;\n        0.0049601453 : float32;\n      };\n      logits = vec {\n        5.734533 : float32;\n        -0.5749807 : float32;\n        0.43500212 : float32;\n      };\n      measured_instructions = 4_614_086_201 : nat64;\n      selected = \"lost\";\n      input_tokens = 41 : nat32;\n      confidence = 0.99323326 : float32;\n    }\n  },\n)\n",
+      "tokens": 41,
+      "case": {
+        "question": "What is the request?",
+        "text": "I lost my wallet yesterday and need to stop my debit card immediately.",
+        "candidates": [
+          {
+            "id": "lost",
+            "description": "lost card"
+          },
+          {
+            "id": "dispute",
+            "description": "dispute payment"
+          },
+          {
+            "id": "__insufficient_evidence__",
+            "description": "insufficient evidence"
+          }
+        ]
+      },
+      "instructions": 4614086201
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 0.7105677079962334,
+      "raw": "(\n  variant {\n    Ok = record {\n      ids = vec { \"lost\"; \"dispute\"; \"__insufficient_evidence__\" };\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      probabilities = vec {\n        0.98507786 : float32;\n        0.007792369 : float32;\n        0.0071297884 : float32;\n      };\n      logits = vec {\n        5.4219446 : float32;\n        0.5823686 : float32;\n        0.49350542 : float32;\n      };\n      measured_instructions = 4_728_898_344 : nat64;\n      selected = \"lost\";\n      input_tokens = 42 : nat32;\n      confidence = 0.98507786 : float32;\n    }\n  },\n)\n",
+      "tokens": 42,
+      "case": {
+        "question": "What is the request?",
+        "text": "I cannot find my card and need to block it before anyone uses it.",
+        "candidates": [
+          {
+            "id": "lost",
+            "description": "lost card"
+          },
+          {
+            "id": "dispute",
+            "description": "dispute payment"
+          },
+          {
+            "id": "__insufficient_evidence__",
+            "description": "insufficient evidence"
+          }
+        ]
+      },
+      "instructions": 4728898344
+    },
+    {
+      "status": "ok",
+      "wall_seconds": 0.6457947500020964,
+      "raw": "(\n  variant {\n    Ok = record {\n      ids = vec { \"lost\"; \"dispute\"; \"__insufficient_evidence__\" };\n      model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n      probabilities = vec {\n        0.99132466 : float32;\n        0.0035022646 : float32;\n        0.005173152 : float32;\n      };\n      logits = vec {\n        5.6969132 : float32;\n        0.051281206 : float32;\n        0.44135353 : float32;\n      };\n      measured_instructions = 4_927_732_825 : nat64;\n      selected = \"lost\";\n      input_tokens = 44 : nat32;\n      confidence = 0.99132466 : float32;\n    }\n  },\n)\n",
+      "tokens": 44,
+      "case": {
+        "question": "What is the request?",
+        "text": "I lost my wallet yesterday and need to stop my debit card immediately. Please help.",
+        "candidates": [
+          {
+            "id": "lost",
+            "description": "lost card"
+          },
+          {
+            "id": "dispute",
+            "description": "dispute payment"
+          },
+          {
+            "id": "__insufficient_evidence__",
+            "description": "insufficient evidence"
+          }
+        ]
+      },
+      "instructions": 4927732825
+    },
+    {
+      "status": "instruction_limit",
+      "wall_seconds": 0.6218204169999808,
+      "raw": "Error: The replica returned a rejection error: reject code CanisterError, reject message Error from Canister 4xhad-gd777-77775-aaacq-cai: Canister exceeded the limit of 5000000000 instructions for single message execution..\nTry optimizing this method to consume fewer instructions or split the work across multiple messages. See documentation: https://docs.internetcomputer.org/references/execution-errors#instruction-limit-exceeded, error code Some(\"IC0522\")\n",
+      "tokens": 45,
+      "case": {
+        "question": "What is the request?",
+        "text": "I lost my wallet yesterday and need to stop my debit card immediately. Please help me.",
+        "candidates": [
+          {
+            "id": "lost",
+            "description": "lost card"
+          },
+          {
+            "id": "dispute",
+            "description": "dispute payment"
+          },
+          {
+            "id": "__insufficient_evidence__",
+            "description": "insufficient evidence"
+          }
+        ]
+      }
+    },
+    {
+      "status": "instruction_limit",
+      "wall_seconds": 2.0079262500075856,
+      "raw": "Error: The replica returned a rejection error: reject code CanisterError, reject message Error from Canister 4xhad-gd777-77775-aaacq-cai: Canister exceeded the limit of 5000000000 instructions for single message execution..\nTry optimizing this method to consume fewer instructions or split the work across multiple messages. See documentation: https://docs.internetcomputer.org/references/execution-errors#instruction-limit-exceeded, error code Some(\"IC0522\")\n",
+      "tokens": 46,
+      "case": {
+        "question": "What is the request?",
+        "text": "I lost my wallet yesterday and need to stop my debit card immediately. Please help me now.",
+        "candidates": [
+          {
+            "id": "lost",
+            "description": "lost card"
+          },
+          {
+            "id": "dispute",
+            "description": "dispute payment"
+          },
+          {
+            "id": "__insufficient_evidence__",
+            "description": "insufficient evidence"
+          }
+        ]
+      }
+    }
+  ],
+  "source_hashes": {
+    "crates/verdict-simd/src/lib.rs": "b68e3d59a997cb29401464a5055fec97eb92b5a0dd04e8f80f561b57a90e9471",
+    "crates/modernbert-candle/src/lib.rs": "9fc2c02a38b932502de588cbe26e83ce9b14b81adc2dbac14fe99665103795e6",
+    "crates/verdict-candle/src/lib.rs": "fc9466ffc0943cf06de153b0daa888e4f74fcbc43f08d7696d93cc01a455c28b",
+    "canisters/verdict-engine/src/lib.rs": "7a76e274ea21879252f5954681cbcd368b484c453ab987c366d3122a567f224f"
+  },
+  "guard_relaxation": "local estimate only: fixed=1, per_token=1; replica limit unchanged",
+  "restored_query_limits": "(\n  record {\n    max_input_tokens = 128 : nat32;\n    cost_per_token = 121_028_580 : nat64;\n    cost_fixed = 48_746_986 : nat64;\n    margin_permille = 1_005 : nat64;\n    max_tokens = 40 : nat32;\n    budget = 5_000_000_000 : nat64;\n  },\n)\n",
+  "guard_restored": true,
+  "source_hashes_note": "Working-tree snapshot only; module_hash identifies the installed Wasm. Sources can differ during candidate builds.",
+  "query_repeats_note": "Identical queries can hit the replica cache; repetitions are not independent timing samples."
+}

@@ -8,7 +8,8 @@
 //! Usage:
 //!   verdict-infer ids    --pack DIR --ids 50281,50368,123,50282
 //!   verdict-infer check  --pack DIR --tokenizer FILE --cases FILE.jsonl \
-//!                        --predictions FILE.jsonl [--temp F] [--limit N] [--quiet]
+//!                        --predictions FILE.jsonl [--temp F] [--limit N]
+//!                        [--min-cases N] [--min-argmax-ratio F] [--abstain-id ID] [--quiet]
 //!   verdict-infer tokens --pack DIR --tokenizer FILE --case-json JSON \
 //!                        [--tokens N] [--index I]
 use hf_tokenizer::HfTokenizer;
@@ -25,7 +26,7 @@ const MASK:u32=50284;
 const PAD:u32=50283;
 
 fn usage()->&'static str{
-    "usage:\n  verdict-infer ids   --pack DIR --ids 50281,50368,123,50282\n  verdict-infer check --pack DIR --tokenizer FILE --cases FILE.jsonl --predictions FILE.jsonl [--temp F] [--limit N] [--quiet]\n  verdict-infer tokens --pack DIR --tokenizer FILE --case-json JSON [--tokens N] [--index I]"
+    "usage:\n  verdict-infer ids   --pack DIR --ids 50281,50368,123,50282\n  verdict-infer check --pack DIR --tokenizer FILE --cases FILE.jsonl --predictions FILE.jsonl [--temp F] [--limit N] [--min-cases N] [--min-argmax-ratio F] [--abstain-id ID] [--quiet]\n  verdict-infer tokens --pack DIR --tokenizer FILE --case-json JSON [--tokens N] [--index I]"
 }
 
 /// Neutral filler for `tokens --tokens N`.
@@ -106,6 +107,11 @@ fn softmax(xs:&[f32])->Vec<f32>{
     e.iter().map(|x|x/s).collect()
 }
 
+fn quality_pass(cases:usize,matched:usize,missing:usize,_abstention_escape:usize,min_cases:usize,min_ratio:f64)->bool{
+    cases>0 && cases>=min_cases && missing==0 && matched as f64/cases as f64>=min_ratio
+}
+
+
 fn main(){
     let args:Vec<String>=std::env::args().skip(1).collect();
     if args.len()<2 {eprintln!("{}",usage());std::process::exit(2);}
@@ -144,6 +150,12 @@ fn main(){
             let predictions=opt("--predictions").unwrap_or_else(||die("--predictions is required".into()));
             let temp:f32=opt("--temp").unwrap_or_else(||"1.4265148639678955".into()).parse().unwrap_or_else(|_|die("bad --temp".into()));
             let limit:usize=opt("--limit").unwrap_or_else(||"1000000".into()).parse().unwrap_or_else(|_|die("bad --limit".into()));
+            let offset:usize=opt("--offset").unwrap_or_else(||"0".into()).parse().unwrap_or_else(|_|die("bad --offset".into()));
+            // Agreement is reported, not a deployment gate unless explicitly requested.
+            let min_argmax_ratio:f64=opt("--min-argmax-ratio").unwrap_or_else(||"0.0".into()).parse().unwrap_or_else(|_|die("bad --min-argmax-ratio".into()));
+            if !(0.0..=1.0).contains(&min_argmax_ratio){die("--min-argmax-ratio must be in 0..=1".into());}
+            let min_cases:usize=opt("--min-cases").unwrap_or_else(||"1000".into()).parse().unwrap_or_else(|_|die("bad --min-cases".into()));
+            let abstain_id=opt("--abstain-id").unwrap_or_else(||"__insufficient_evidence__".into());
             let quiet=flag("--quiet");
             let bytes=std::fs::read(&tokenizer).unwrap_or_else(|e|die(format!("tokenizer: {e}")));
             let special=SpecialTokens{cls:CLS,sep:SEP,mask:MASK,pad:PAD,
@@ -154,16 +166,18 @@ fn main(){
                 if line.trim().is_empty(){continue;}
                 let v:Value=serde_json::from_str(line).unwrap_or_else(|e|die(format!("predictions json: {e}")));
                 if let (Some(id),Some(pid))=(v["id"].as_str(),v["predicted_id"].as_str()){
-                    truth.insert(id.into(),(pid.into(),v["confidence"].as_f64().unwrap_or(0.0) as f32));
+                    if truth.insert(id.into(),(pid.into(),v["confidence"].as_f64().unwrap_or(0.0) as f32)).is_some(){die(format!("duplicate prediction id: {id}"));}
                 }
             }
-            let (mut n,mut argmax_ok,mut max_dev,mut sum_dev)=(0usize,0usize,0f32,0f64);
+            let (mut n,mut argmax_ok,mut unsafe_escape,mut max_dev,mut sum_dev)=(0usize,0usize,0usize,0f32,0f64);
             let (mut missing,mut longest)=(0usize,0usize);
-            for line in std::fs::read_to_string(&cases).unwrap_or_else(|e|die(format!("cases: {e}"))).lines(){
+            let mut seen=std::collections::BTreeSet::new();
+            for line in std::fs::read_to_string(&cases).unwrap_or_else(|e|die(format!("cases: {e}"))).lines().skip(offset){
                 if line.trim().is_empty(){continue;}
                 if n>=limit {break;}
                 let v:Value=serde_json::from_str(line).unwrap_or_else(|e|die(format!("cases json: {e}")));
-                let id=match v["id"].as_str(){Some(x)=>x.to_string(),None=>continue};
+                let id=match v["id"].as_str(){Some(x)=>x.to_string(),None=>die("case id missing".into())};
+                if !seen.insert(id.clone()){die(format!("duplicate case id: {id}"));}
                 let (want,want_p)=match truth.get(&id){Some(x)=>x.clone(),None=>{missing+=1;continue;}};
                 let candidates=match v["candidates"].as_array(){Some(c)=>c,None=>{die(format!("{id}: no candidates"))}};
                 let ids_c:Vec<String>=candidates.iter().map(|c|c["id"].as_str().unwrap_or("").to_string()).collect();
@@ -176,6 +190,7 @@ fn main(){
                 let got=&ids_c[best.0];
                 let ok=*got==want;
                 if ok {argmax_ok+=1;}
+                if want==abstain_id && *got!=abstain_id {unsafe_escape+=1;}
                 let dev=(best.1-want_p).abs();
                 max_dev=max_dev.max(dev);
                 sum_dev+=dev as f64;
@@ -191,6 +206,8 @@ fn main(){
             println!("cases={n} skipped_no_truth={missing} argmax_match={argmax_ok}/{n} ({:.2}%) longest_input_tokens={longest} temp={temp}",
                 if n>0{100.0*argmax_ok as f64/n as f64}else{0.0});
             println!("top-probability |p-gold|: max={max_dev:.6} mean={mean:.6}");
+            println!("quality-gate min_cases={min_cases} min_argmax_ratio={min_argmax_ratio:.4} unsafe_abstention_escape={unsafe_escape}");
+            if !quality_pass(n,argmax_ok,missing,unsafe_escape,min_cases,min_argmax_ratio){std::process::exit(1);}
         }
         // Emits one real case's token ids so a token-length sweep can drive the
         // canister with whatever length the caller asks for, without reimplementing
@@ -220,5 +237,20 @@ fn main(){
             println!("ids={}",ids.iter().map(|i|i.to_string()).collect::<Vec<_>>().join(","));
         }
         other=>{eprintln!("unknown mode {other}\n{}",usage());std::process::exit(2);}
+    }
+}
+
+#[cfg(test)]
+mod tests{
+    use super::quality_pass;
+    #[test]
+    fn quality_reports_drift_and_enforces_only_explicit_ratio(){
+        assert!(quality_pass(1000,995,0,0,1000,0.995));
+        assert!(!quality_pass(1000,994,0,0,1000,0.995));
+        assert!(quality_pass(1000,997,0,1,1000,0.995));
+        assert!(quality_pass(1000,994,0,3,1000,0.0));
+        assert!(!quality_pass(999,999,0,0,1000,0.995));
+        assert!(!quality_pass(1000,1000,1,0,1000,0.995));
+        assert!(!quality_pass(0,0,0,0,0,0.));
     }
 }

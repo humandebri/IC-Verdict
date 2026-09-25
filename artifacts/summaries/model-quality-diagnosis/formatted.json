@@ -1,0 +1,17 @@
+{
+  "source": "artifacts/model-quality-diagnosis/formatted.json",
+  "source_sha256": "705eef3b575d45dd5c6618e9d09ea8d25ab0f888f19c127b2186d80e1c10ee14",
+  "source_bytes": 120833,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "omitted": true,
+    "see_raw_source": true
+  },
+  "omitted": [
+    {
+      "path": "$",
+      "count": 216,
+      "sha256": "4ef3c1406a822b6a622567d83ab57742bfc945da725631c1dabca77d45b68ad8"
+    }
+  ]
+}

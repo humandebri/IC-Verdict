@@ -43,6 +43,14 @@ def _sandbox(tmp: Path) -> None:
 
 
 class VerifyContractTests(unittest.TestCase):
+    def test_paid_sweep_forwards_proxy_cap_and_explicit_tariff(self):
+        flags = ["--proxy", "proxy-id", "--max-cycles", "120015000000",
+                 "--execution-pricing", "5000000,1,1"]
+        code, _, _, _, commands = self._main(["--verdict-canister", *flags])
+        self.assertEqual(code, 0)
+        sweep = next(c for c in commands if "tools/measure_verdict.py" in c)
+        self.assertEqual(sweep[-len(flags):], flags)
+
     def _main(self, argv: list[str], toolchain_available: bool = False):
         """Run `verify.main()` in-process against a temporary ROOT."""
         recorded: list[list[str]] = []

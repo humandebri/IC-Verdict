@@ -1,0 +1,16 @@
+{
+  "description": "Each feature is a cost: holes, height, missed line clears (best offered cleared lines minus candidate cleared lines). Rank each separately; no combined score.",
+  "text": "Min holes",
+  "labels": "min/mid/max/equal holes,height,missed",
+  "development_gate": "Mean lines >= 90% of 5.625 and turns >= 90% of 39.875; then validate fresh seeds.",
+  "fresh_seeds": [
+    277,
+    281,
+    283,
+    293,
+    307,
+    311,
+    313,
+    317
+  ]
+}

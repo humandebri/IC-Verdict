@@ -1,0 +1,1394 @@
+[
+  {
+    "id": "terrarium/0/0/0",
+    "game": "terrarium",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 47,
+    "text": "Question: Choose the animal action.\n\nContext:\nHungry rabbit finds a fresh carrot.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      4.958251953125,
+      -3.0417709350585938,
+      -0.9414051175117493,
+      -1.9402060508728027
+    ]
+  },
+  {
+    "id": "terrarium/1/0/0",
+    "game": "terrarium",
+    "expected": "ignore",
+    "answer": "eat",
+    "tokens": 47,
+    "text": "Question: Choose the animal action.\n\nContext:\nHungry rabbit finds a plastic carrot.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      3.8732404708862305,
+      -2.620284080505371,
+      0.6900675296783447,
+      -1.6078089475631714
+    ]
+  },
+  {
+    "id": "terrarium/2/0/0",
+    "game": "terrarium",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 46,
+    "text": "Question: Choose the animal action.\n\nContext:\nHungry cat finds cooked fish.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      4.855321407318115,
+      -3.0179059505462646,
+      -2.698042392730713,
+      -2.0010828971862793
+    ]
+  },
+  {
+    "id": "terrarium/3/0/0",
+    "game": "terrarium",
+    "expected": "ignore",
+    "answer": "investigate",
+    "tokens": 48,
+    "text": "Question: Choose the animal action.\n\nContext:\nHungry cat finds a picture of fish.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -0.19559070467948914,
+      -2.4575483798980713,
+      5.435765266418457,
+      -1.9226853847503662
+    ]
+  },
+  {
+    "id": "terrarium/4/0/0",
+    "game": "terrarium",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 47,
+    "text": "Question: Choose the animal action.\n\nContext:\nHungry snake finds a live mouse.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      1.1748460531234741,
+      -0.8981778621673584,
+      0.20777025818824768,
+      0.7598379850387573
+    ]
+  },
+  {
+    "id": "terrarium/5/0/0",
+    "game": "terrarium",
+    "expected": "ignore",
+    "answer": "investigate",
+    "tokens": 47,
+    "text": "Question: Choose the animal action.\n\nContext:\nHungry snake finds a rubber mouse.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      1.3976695537567139,
+      -0.940426230430603,
+      1.6096971035003662,
+      -0.7761186361312866
+    ]
+  },
+  {
+    "id": "terrarium/6/0/0",
+    "game": "terrarium",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 46,
+    "text": "Question: Choose the animal action.\n\nContext:\nHungry rabbit finds fresh grass.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      2.250816583633423,
+      -1.9624249935150146,
+      -1.7009105682373047,
+      -0.39840826392173767
+    ]
+  },
+  {
+    "id": "terrarium/7/0/0",
+    "game": "terrarium",
+    "expected": "flee",
+    "answer": "flee",
+    "tokens": 47,
+    "text": "Question: Choose the animal action.\n\nContext:\nRabbit sees a cat chasing it.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -2.927382469177246,
+      2.186593770980835,
+      -1.95499849319458,
+      1.1799941062927246
+    ]
+  },
+  {
+    "id": "terrarium/8/0/0",
+    "game": "terrarium",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 46,
+    "text": "Question: Choose the animal action.\n\nContext:\nHungry cat finds fresh meat.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      5.399796962738037,
+      -3.5712528228759766,
+      -3.4226717948913574,
+      -2.356562614440918
+    ]
+  },
+  {
+    "id": "terrarium/9/0/0",
+    "game": "terrarium",
+    "expected": "flee",
+    "answer": "flee",
+    "tokens": 47,
+    "text": "Question: Choose the animal action.\n\nContext:\nCat sees a dog charging at it.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.7279889583587646,
+      1.514140009880066,
+      -1.7834950685501099,
+      0.7004916071891785
+    ]
+  },
+  {
+    "id": "terrarium/10/0/0",
+    "game": "terrarium",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 47,
+    "text": "Question: Choose the animal action.\n\nContext:\nHungry rabbit finds a fresh apple.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      4.416453838348389,
+      -3.013735294342041,
+      -1.308333158493042,
+      -1.9286850690841675
+    ]
+  },
+  {
+    "id": "terrarium/11/0/0",
+    "game": "terrarium",
+    "expected": "flee",
+    "answer": "flee",
+    "tokens": 49,
+    "text": "Question: Choose the animal action.\n\nContext:\nRabbit sees a snake lunging at it.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.8396902084350586,
+      4.160089492797852,
+      -0.7943575382232666,
+      0.853615939617157
+    ]
+  },
+  {
+    "id": "terrarium/12/0/0",
+    "game": "terrarium",
+    "expected": "flee",
+    "answer": "ignore",
+    "tokens": 47,
+    "text": "Question: Choose the animal action.\n\nContext:\nMouse sees a real cat hunting it.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.708794116973877,
+      0.12777431309223175,
+      -0.05787547677755356,
+      2.3001914024353027
+    ]
+  },
+  {
+    "id": "terrarium/13/0/0",
+    "game": "terrarium",
+    "expected": "investigate",
+    "answer": "ignore",
+    "tokens": 48,
+    "text": "Question: Choose the animal action.\n\nContext:\nCurious mouse sees a harmless toy cat.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -2.7803664207458496,
+      -1.5747084617614746,
+      -0.03387133777141571,
+      3.747897148132324
+    ]
+  },
+  {
+    "id": "terrarium/14/0/0",
+    "game": "terrarium",
+    "expected": "flee",
+    "answer": "flee",
+    "tokens": 49,
+    "text": "Question: Choose the animal action.\n\nContext:\nRabbit sees a real wolf approaching to attack.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.9010987281799316,
+      2.099858522415161,
+      -1.9981111288070679,
+      -0.11272357404232025
+    ]
+  },
+  {
+    "id": "terrarium/15/0/0",
+    "game": "terrarium",
+    "expected": "investigate",
+    "answer": "ignore",
+    "tokens": 48,
+    "text": "Question: Choose the animal action.\n\nContext:\nCurious rabbit sees a harmless stuffed wolf.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -2.780846118927002,
+      -1.0837112665176392,
+      -0.7542670369148254,
+      4.164765357971191
+    ]
+  },
+  {
+    "id": "terrarium/16/0/0",
+    "game": "terrarium",
+    "expected": "flee",
+    "answer": "flee",
+    "tokens": 46,
+    "text": "Question: Choose the animal action.\n\nContext:\nCat sees flames spreading toward it.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -4.112130165100098,
+      2.300632953643799,
+      -2.2176578044891357,
+      -1.276360273361206
+    ]
+  },
+  {
+    "id": "terrarium/17/0/0",
+    "game": "terrarium",
+    "expected": "investigate",
+    "answer": "investigate",
+    "tokens": 50,
+    "text": "Question: Choose the animal action.\n\nContext:\nCurious cat sees a safe flickering light toy.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.485424041748047,
+      -1.5341674089431763,
+      2.803560256958008,
+      -1.0726300477981567
+    ]
+  },
+  {
+    "id": "terrarium/18/0/0",
+    "game": "terrarium",
+    "expected": "investigate",
+    "answer": "investigate",
+    "tokens": 48,
+    "text": "Question: Choose the animal action.\n\nContext:\nCurious cat finds an unfamiliar safe box.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.618051290512085,
+      -0.931492805480957,
+      3.2595038414001465,
+      -0.3706302344799042
+    ]
+  },
+  {
+    "id": "terrarium/19/0/0",
+    "game": "terrarium",
+    "expected": "ignore",
+    "answer": "ignore",
+    "tokens": 52,
+    "text": "Question: Choose the animal action.\n\nContext:\nSleeping cat is content. An old box sits far away.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.025357484817505,
+      -1.4877982139587402,
+      0.6588496565818787,
+      4.625856876373291
+    ]
+  },
+  {
+    "id": "terrarium/20/0/0",
+    "game": "terrarium",
+    "expected": "investigate",
+    "answer": "flee",
+    "tokens": 48,
+    "text": "Question: Choose the animal action.\n\nContext:\nCurious rabbit finds a new safe tunnel.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -4.012392044067383,
+      1.7597079277038574,
+      0.11280260980129242,
+      0.0073485225439071655
+    ]
+  },
+  {
+    "id": "terrarium/21/0/0",
+    "game": "terrarium",
+    "expected": "ignore",
+    "answer": "ignore",
+    "tokens": 52,
+    "text": "Question: Choose the animal action.\n\nContext:\nResting rabbit is content. A familiar tunnel is far away.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.8068671226501465,
+      -0.49966925382614136,
+      -1.8873153924942017,
+      4.693120956420898
+    ]
+  },
+  {
+    "id": "terrarium/22/0/0",
+    "game": "terrarium",
+    "expected": "investigate",
+    "answer": "investigate",
+    "tokens": 49,
+    "text": "Question: Choose the animal action.\n\nContext:\nCurious mouse finds a new harmless wooden object.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.9776880741119385,
+      -2.5886082649230957,
+      6.1912713050842285,
+      1.0468460321426392
+    ]
+  },
+  {
+    "id": "terrarium/23/0/0",
+    "game": "terrarium",
+    "expected": "ignore",
+    "answer": "ignore",
+    "tokens": 53,
+    "text": "Question: Choose the animal action.\n\nContext:\nResting mouse is content. An old wooden object is far away.",
+    "labels": [
+      "It is eat the food",
+      "It is escape danger",
+      "It is inspect a novel object",
+      "It is leave it alone"
+    ],
+    "logits": [
+      -3.944716453552246,
+      -0.7817995548248291,
+      2.3204197883605957,
+      4.253942489624023
+    ]
+  },
+  {
+    "id": "last_exit/0/0/0",
+    "game": "last_exit",
+    "expected": "consistent",
+    "answer": "consistent",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: only fruit. Scan: apples only.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      1.0334503650665283,
+      -0.3980133533477783,
+      0.7960255146026611
+    ]
+  },
+  {
+    "id": "last_exit/1/0/0",
+    "game": "last_exit",
+    "expected": "contradictory",
+    "answer": "contradictory",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: only fruit. Scan: rifles only.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      0.5746513605117798,
+      1.0581177473068237,
+      0.8405998945236206
+    ]
+  },
+  {
+    "id": "last_exit/2/0/0",
+    "game": "last_exit",
+    "expected": "consistent",
+    "answer": "insufficient information",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: no passengers. Search: empty seats.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      -0.20742999017238617,
+      0.6559614539146423,
+      0.8317000269889832
+    ]
+  },
+  {
+    "id": "last_exit/3/0/0",
+    "game": "last_exit",
+    "expected": "contradictory",
+    "answer": "consistent",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: no passengers. Search: two passengers.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      1.524150013923645,
+      -0.3020246922969818,
+      -0.002874210476875305
+    ]
+  },
+  {
+    "id": "last_exit/4/0/0",
+    "game": "last_exit",
+    "expected": "consistent",
+    "answer": "consistent",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: heading north. GPS: northbound.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      2.939296245574951,
+      -1.5032967329025269,
+      -0.3318173289299011
+    ]
+  },
+  {
+    "id": "last_exit/5/0/0",
+    "game": "last_exit",
+    "expected": "contradictory",
+    "answer": "contradictory",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: heading north. GPS: southbound.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      1.185572862625122,
+      1.5878924131393433,
+      0.2991904020309448
+    ]
+  },
+  {
+    "id": "last_exit/6/0/0",
+    "game": "last_exit",
+    "expected": "consistent",
+    "answer": "contradictory",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: no animals. Search: books only.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      -0.06320212781429291,
+      0.773134171962738,
+      0.6768876314163208
+    ]
+  },
+  {
+    "id": "last_exit/7/0/0",
+    "game": "last_exit",
+    "expected": "contradictory",
+    "answer": "consistent",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: no animals. Search: live dog.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      0.7316755056381226,
+      0.019183747470378876,
+      0.5698856115341187
+    ]
+  },
+  {
+    "id": "last_exit/8/0/0",
+    "game": "last_exit",
+    "expected": "consistent",
+    "answer": "consistent",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: carrying medicine. Search: labeled medicine.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      1.226684808731079,
+      -1.2269150018692017,
+      -0.14952845871448517
+    ]
+  },
+  {
+    "id": "last_exit/9/0/0",
+    "game": "last_exit",
+    "expected": "insufficient information",
+    "answer": "contradictory",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: carrying medicine. Cargo not inspected.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      -1.1944828033447266,
+      3.2383675575256348,
+      1.8847122192382812
+    ]
+  },
+  {
+    "id": "last_exit/10/0/0",
+    "game": "last_exit",
+    "expected": "consistent",
+    "answer": "consistent",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: arrived yesterday. Entry record: yesterday.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      1.5256178379058838,
+      -1.2466914653778076,
+      0.16568957269191742
+    ]
+  },
+  {
+    "id": "last_exit/11/0/0",
+    "game": "last_exit",
+    "expected": "insufficient information",
+    "answer": "contradictory",
+    "tokens": 48,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: arrived yesterday. Entry record unavailable.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      -1.1077935695648193,
+      3.0862996578216553,
+      2.383455276489258
+    ]
+  },
+  {
+    "id": "last_exit/12/0/0",
+    "game": "last_exit",
+    "expected": "consistent",
+    "answer": "consistent",
+    "tokens": 50,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: permit is valid. Database confirms valid permit.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      4.886043071746826,
+      -2.751251697540283,
+      -1.229196310043335
+    ]
+  },
+  {
+    "id": "last_exit/13/0/0",
+    "game": "last_exit",
+    "expected": "insufficient information",
+    "answer": "consistent",
+    "tokens": 48,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: permit is valid. Database offline.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      3.0518076419830322,
+      -1.1478570699691772,
+      0.44824594259262085
+    ]
+  },
+  {
+    "id": "last_exit/14/0/0",
+    "game": "last_exit",
+    "expected": "consistent",
+    "answer": "consistent",
+    "tokens": 48,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: transporting glass. Search confirms glass.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      4.228799819946289,
+      -1.9284759759902954,
+      -0.719231903553009
+    ]
+  },
+  {
+    "id": "last_exit/15/0/0",
+    "game": "last_exit",
+    "expected": "insufficient information",
+    "answer": "consistent",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: transporting glass. Crate remains sealed.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      0.9678777456283569,
+      0.17763790488243103,
+      0.08574619889259338
+    ]
+  },
+  {
+    "id": "last_exit/16/0/0",
+    "game": "last_exit",
+    "expected": "contradictory",
+    "answer": "consistent",
+    "tokens": 50,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: carrying no weapons. Search finds a pistol.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      1.2641339302062988,
+      0.3063206076622009,
+      0.3168399930000305
+    ]
+  },
+  {
+    "id": "last_exit/17/0/0",
+    "game": "last_exit",
+    "expected": "insufficient information",
+    "answer": "contradictory",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: carrying no weapons. No search performed.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      0.5770986080169678,
+      1.1372525691986084,
+      0.9450005888938904
+    ]
+  },
+  {
+    "id": "last_exit/18/0/0",
+    "game": "last_exit",
+    "expected": "contradictory",
+    "answer": "consistent",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: vehicle is empty. Search finds furniture.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      2.5032832622528076,
+      -0.33397382497787476,
+      -0.2310672104358673
+    ]
+  },
+  {
+    "id": "last_exit/19/0/0",
+    "game": "last_exit",
+    "expected": "insufficient information",
+    "answer": "contradictory",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: vehicle is empty. Windows are opaque.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      -0.9941573143005371,
+      2.8544764518737793,
+      0.9202107191085815
+    ]
+  },
+  {
+    "id": "last_exit/20/0/0",
+    "game": "last_exit",
+    "expected": "contradictory",
+    "answer": "consistent",
+    "tokens": 50,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: only frozen goods. Scan: live birds.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      1.7471928596496582,
+      0.6544708013534546,
+      0.5434930920600891
+    ]
+  },
+  {
+    "id": "last_exit/21/0/0",
+    "game": "last_exit",
+    "expected": "insufficient information",
+    "answer": "contradictory",
+    "tokens": 50,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: only frozen goods. Scanner is broken.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      -1.3403255939483643,
+      3.3908169269561768,
+      1.3004330396652222
+    ]
+  },
+  {
+    "id": "last_exit/22/0/0",
+    "game": "last_exit",
+    "expected": "contradictory",
+    "answer": "consistent",
+    "tokens": 50,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: no liquids. Search: bottled water.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      0.8998936414718628,
+      -0.5498625040054321,
+      0.7000328302383423
+    ]
+  },
+  {
+    "id": "last_exit/23/0/0",
+    "game": "last_exit",
+    "expected": "insufficient information",
+    "answer": "insufficient information",
+    "tokens": 49,
+    "text": "Question: Compare the claim with the evidence.\n\nContext:\nClaim: no liquids. No cargo evidence available.",
+    "labels": [
+      "It is evidence supports the claim",
+      "It is evidence contradicts the claim",
+      "It is evidence cannot verify the claim"
+    ],
+    "logits": [
+      -1.9070204496383667,
+      2.8327813148498535,
+      2.884626865386963
+    ]
+  },
+  {
+    "id": "hundred/0/0/0",
+    "game": "hundred",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 56,
+    "text": "Question: Choose the person's next action.\n\nContext:\nMira is starving, rested, and has food ready. Nobody needs help.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      3.9828479290008545,
+      0.48518991470336914,
+      -4.25714111328125,
+      3.582630157470703
+    ]
+  },
+  {
+    "id": "hundred/1/0/0",
+    "game": "hundred",
+    "expected": "rest",
+    "answer": "help",
+    "tokens": 57,
+    "text": "Question: Choose the person's next action.\n\nContext:\nMira is exhausted, fed, and has a bed ready. Nobody needs help.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -0.6990381479263306,
+      3.0991153717041016,
+      -4.092917442321777,
+      3.9326705932617188
+    ]
+  },
+  {
+    "id": "hundred/2/0/0",
+    "game": "hundred",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 56,
+    "text": "Question: Choose the person's next action.\n\nContext:\nNoah has not eaten all day. He is rested and lunch is ready.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      6.326716423034668,
+      2.6824910640716553,
+      -4.20230770111084,
+      -1.1791152954101562
+    ]
+  },
+  {
+    "id": "hundred/3/0/0",
+    "game": "hundred",
+    "expected": "rest",
+    "answer": "rest",
+    "tokens": 57,
+    "text": "Question: Choose the person's next action.\n\nContext:\nNoah has not slept all night. He is fed and a bed is ready.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      3.358828067779541,
+      3.710479736328125,
+      -3.0945944786071777,
+      0.5654032230377197
+    ]
+  },
+  {
+    "id": "hundred/4/0/0",
+    "game": "hundred",
+    "expected": "eat",
+    "answer": "rest",
+    "tokens": 54,
+    "text": "Question: Choose the person's next action.\n\nContext:\nAva is faint from hunger. She slept well and has soup.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      3.79360032081604,
+      5.729596138000488,
+      -5.220578193664551,
+      -0.7540020942687988
+    ]
+  },
+  {
+    "id": "hundred/5/0/0",
+    "game": "hundred",
+    "expected": "rest",
+    "answer": "eat",
+    "tokens": 55,
+    "text": "Question: Choose the person's next action.\n\nContext:\nAva is faint from exhaustion. She ate well and has a bed.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      4.414874076843262,
+      3.948521375656128,
+      -5.196537971496582,
+      -0.4085173010826111
+    ]
+  },
+  {
+    "id": "hundred/6/0/0",
+    "game": "hundred",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 53,
+    "text": "Question: Choose the person's next action.\n\nContext:\nLeo is starving. Work can wait; food is ready.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      5.479730606079102,
+      -5.133347511291504,
+      0.3930044174194336,
+      0.3734317123889923
+    ]
+  },
+  {
+    "id": "hundred/7/0/0",
+    "game": "hundred",
+    "expected": "work",
+    "answer": "work",
+    "tokens": 56,
+    "text": "Question: Choose the person's next action.\n\nContext:\nLeo is fed and rested. His shift starts now; nobody needs help.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -1.1228423118591309,
+      0.5366343855857849,
+      5.093602180480957,
+      2.955085039138794
+    ]
+  },
+  {
+    "id": "hundred/8/0/0",
+    "game": "hundred",
+    "expected": "eat",
+    "answer": "work",
+    "tokens": 53,
+    "text": "Question: Choose the person's next action.\n\nContext:\nIris is starving. She has food; work starts tomorrow.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      2.1077332496643066,
+      -5.043118000030518,
+      5.684189796447754,
+      -0.43125054240226746
+    ]
+  },
+  {
+    "id": "hundred/9/0/0",
+    "game": "hundred",
+    "expected": "work",
+    "answer": "work",
+    "tokens": 56,
+    "text": "Question: Choose the person's next action.\n\nContext:\nIris is fed and rested. Her shift starts now; nobody needs help.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -1.0099372863769531,
+      0.20224133133888245,
+      5.054802894592285,
+      2.851956605911255
+    ]
+  },
+  {
+    "id": "hundred/10/0/0",
+    "game": "hundred",
+    "expected": "eat",
+    "answer": "eat",
+    "tokens": 56,
+    "text": "Question: Choose the person's next action.\n\nContext:\nOwen is hungry and rested. Lunch is ready; work is finished.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      4.073190212249756,
+      -0.8469463586807251,
+      2.7676777839660645,
+      0.21468991041183472
+    ]
+  },
+  {
+    "id": "hundred/11/0/0",
+    "game": "hundred",
+    "expected": "work",
+    "answer": "work",
+    "tokens": 56,
+    "text": "Question: Choose the person's next action.\n\nContext:\nOwen is fed and rested. His shift starts now; nobody needs help.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -1.2161833047866821,
+      0.34484872221946716,
+      5.165255546569824,
+      3.0630807876586914
+    ]
+  },
+  {
+    "id": "hundred/12/0/0",
+    "game": "hundred",
+    "expected": "rest",
+    "answer": "rest",
+    "tokens": 54,
+    "text": "Question: Choose the person's next action.\n\nContext:\nZoe is exhausted. Everyone is safe and a bed is available.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -2.87355375289917,
+      5.621581077575684,
+      -4.527050971984863,
+      1.3696486949920654
+    ]
+  },
+  {
+    "id": "hundred/13/0/0",
+    "game": "hundred",
+    "expected": "help",
+    "answer": "help",
+    "tokens": 56,
+    "text": "Question: Choose the person's next action.\n\nContext:\nZoe is fed and rested. A child is trapped and calling for help.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -1.7898402214050293,
+      0.09620489180088043,
+      -3.1561684608459473,
+      5.541193008422852
+    ]
+  },
+  {
+    "id": "hundred/14/0/0",
+    "game": "hundred",
+    "expected": "rest",
+    "answer": "rest",
+    "tokens": 54,
+    "text": "Question: Choose the person's next action.\n\nContext:\nEli is exhausted. Everyone is safe and a bed is available.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -2.95796799659729,
+      5.673799514770508,
+      -4.440715312957764,
+      1.1603527069091797
+    ]
+  },
+  {
+    "id": "hundred/15/0/0",
+    "game": "hundred",
+    "expected": "help",
+    "answer": "rest",
+    "tokens": 55,
+    "text": "Question: Choose the person's next action.\n\nContext:\nEli is fed and rested. A neighbor fell and cannot get up.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -1.309836983680725,
+      3.598065137863159,
+      -2.549267292022705,
+      2.267821788787842
+    ]
+  },
+  {
+    "id": "hundred/16/0/0",
+    "game": "hundred",
+    "expected": "rest",
+    "answer": "rest",
+    "tokens": 53,
+    "text": "Question: Choose the person's next action.\n\nContext:\nAda is exhausted. Everyone is safe and a bed is available.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -2.9481449127197266,
+      5.93950080871582,
+      -4.021326065063477,
+      1.6067702770233154
+    ]
+  },
+  {
+    "id": "hundred/17/0/0",
+    "game": "hundred",
+    "expected": "help",
+    "answer": "rest",
+    "tokens": 52,
+    "text": "Question: Choose the person's next action.\n\nContext:\nAda is fed and rested. A friend is drowning nearby.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -1.9522215127944946,
+      3.132967472076416,
+      -4.413405418395996,
+      2.264094829559326
+    ]
+  },
+  {
+    "id": "hundred/18/0/0",
+    "game": "hundred",
+    "expected": "work",
+    "answer": "work",
+    "tokens": 55,
+    "text": "Question: Choose the person's next action.\n\nContext:\nFinn is fed and rested. Work starts now. Everyone is safe.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      2.2618770599365234,
+      1.5098185539245605,
+      5.408808708190918,
+      0.848289966583252
+    ]
+  },
+  {
+    "id": "hundred/19/0/0",
+    "game": "hundred",
+    "expected": "help",
+    "answer": "help",
+    "tokens": 55,
+    "text": "Question: Choose the person's next action.\n\nContext:\nFinn is fed and rested. Work can wait; someone is trapped.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      1.0436058044433594,
+      1.2793760299682617,
+      0.4481075704097748,
+      2.2662696838378906
+    ]
+  },
+  {
+    "id": "hundred/20/0/0",
+    "game": "hundred",
+    "expected": "work",
+    "answer": "work",
+    "tokens": 55,
+    "text": "Question: Choose the person's next action.\n\nContext:\nNia is fed and rested. Work starts now. Everyone is safe.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      1.9679369926452637,
+      1.5939218997955322,
+      5.381092071533203,
+      0.9438831806182861
+    ]
+  },
+  {
+    "id": "hundred/21/0/0",
+    "game": "hundred",
+    "expected": "help",
+    "answer": "help",
+    "tokens": 57,
+    "text": "Question: Choose the person's next action.\n\nContext:\nNia is fed and rested. Work can wait; a lost child needs help.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -0.14586669206619263,
+      0.3522427976131439,
+      -1.0158997774124146,
+      6.459158420562744
+    ]
+  },
+  {
+    "id": "hundred/22/0/0",
+    "game": "hundred",
+    "expected": "work",
+    "answer": "work",
+    "tokens": 54,
+    "text": "Question: Choose the person's next action.\n\nContext:\nBen is fed and rested. Work starts now. Everyone is safe.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      2.2120203971862793,
+      1.2019845247268677,
+      5.343505859375,
+      1.0033106803894043
+    ]
+  },
+  {
+    "id": "hundred/23/0/0",
+    "game": "hundred",
+    "expected": "help",
+    "answer": "help",
+    "tokens": 56,
+    "text": "Question: Choose the person's next action.\n\nContext:\nBen is fed and rested. Work can wait; an injured friend needs help.",
+    "labels": [
+      "It is eat a meal",
+      "It is sleep to recover",
+      "It is start the job",
+      "It is assist someone"
+    ],
+    "logits": [
+      -0.4828100800514221,
+      1.1472406387329102,
+      -1.181395173072815,
+      6.390443801879883
+    ]
+  }
+]

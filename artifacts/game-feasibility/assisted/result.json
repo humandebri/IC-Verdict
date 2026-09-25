@@ -1,0 +1,55 @@
+{
+  "gates": {},
+  "games": {
+    "snake/legal_outcome": {
+      "steps": 99.4,
+      "food": 3.4,
+      "stops": [
+        "step_limit",
+        "collision",
+        "step_limit",
+        "step_limit",
+        "collision"
+      ]
+    },
+    "snake/random_legal": {
+      "steps": 112.6,
+      "food": 2.4,
+      "stops": [
+        "step_limit",
+        "step_limit",
+        "collision",
+        "collision",
+        "collision"
+      ]
+    },
+    "2048/legal_outcome": {
+      "steps": 150.0,
+      "score": 1531.2,
+      "max_tile": 128.0,
+      "invalid": 0.0,
+      "stops": [
+        "step_limit",
+        "step_limit",
+        "step_limit",
+        "step_limit",
+        "step_limit"
+      ]
+    },
+    "2048/random_legal": {
+      "steps": 94.4,
+      "score": 744.8,
+      "max_tile": 70.4,
+      "invalid": 0.0,
+      "stops": [
+        "game_over",
+        "game_over",
+        "game_over",
+        "game_over",
+        "game_over"
+      ]
+    }
+  },
+  "native_inferences": 454,
+  "max_tokens": 41
+}

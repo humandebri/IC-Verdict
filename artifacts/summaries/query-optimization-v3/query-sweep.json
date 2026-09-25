@@ -1,0 +1,42 @@
+{
+  "source": "artifacts/query-optimization-v3/query-sweep.json",
+  "source_sha256": "c46966e454f2a668730641be4778a7829861408e7db736503e8ffb49bd6efc9c",
+  "source_bytes": 52519,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "created_utc": "2026-09-23T02:30:49.008656+00:00",
+    "canister": "4xhad-gd777-77775-aaacq-cai",
+    "endpoint": "http://localhost:8011/",
+    "mode": "query",
+    "classes": 2,
+    "compact_classes": false,
+    "input_kind": "canonical short prompt padded with PAD",
+    "vary_inputs": false,
+    "module_hash": "0xbbec470abd556824a9519f2089b49271174ae4029cf98f39e376b84cf12d5aea",
+    "initial_info": "(\n  record {\n    model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n    pack_format = \"ic-verdict-int8-pack-v1\";\n    max_input_tokens = 128 : nat32;\n    max_classes = 25 : nat32;\n    cost_per_token = 92_000_000 : nat64;\n    callers = 0 : nat64;\n    cost_fixed = 170_000_000 : nat64;\n    model_bytes = 152_245_512 : nat64;\n    warmed = true;\n    budget = 40_000_000_000 : nat64;\n    tensors = 0 : nat64;\n    upload_complete = true;\n    heap_bytes = 176_816_128 : nat64;\n  },\n)\n",
+    "initial_query_limits": "(\n  record {\n    max_input_tokens = 128 : nat32;\n    cost_per_token = 92_000_000 : nat64;\n    cost_fixed = 170_000_000 : nat64;\n    margin_permille = 1_005 : nat64;\n    max_tokens = 52 : nat32;\n    budget = 5_000_000_000 : nat64;\n  },\n)\n",
+    "rows": {
+      "omitted": true,
+      "see_raw_source": true
+    },
+    "source_hashes_note": "Working-tree snapshot only; module_hash identifies the installed Wasm. Sources can differ during candidate builds.",
+    "query_repeats_note": "Identical queries can hit the replica cache; repetitions are not independent timing samples.",
+    "source_hashes": {
+      "crates/verdict-simd/src/lib.rs": "9c85571012d4a0b61e5cb43bb70856677000a4462dfa3bc9398369843509e2b1",
+      "crates/modernbert-candle/src/lib.rs": "12fe51363fcf43da1826ba58beab03e857f5f2ab6a89080203c40d295e288ffe",
+      "crates/verdict-candle/src/lib.rs": "fc9466ffc0943cf06de153b0daa888e4f74fcbc43f08d7696d93cc01a455c28b",
+      "canisters/verdict-engine/src/lib.rs": "9ba4af04afca8fab7ebdd481dd5124ac26196d278d5eb27c4a9a0198fc43a03b"
+    },
+    "respect_guard": false,
+    "guard_relaxation": "local estimate only: fixed=1, per_token=1; replica limit unchanged",
+    "restored_query_limits": "(\n  record {\n    max_input_tokens = 128 : nat32;\n    cost_per_token = 92_000_000 : nat64;\n    cost_fixed = 170_000_000 : nat64;\n    margin_permille = 1_005 : nat64;\n    max_tokens = 52 : nat32;\n    budget = 5_000_000_000 : nat64;\n  },\n)\n",
+    "guard_restored": true
+  },
+  "omitted": [
+    {
+      "path": "$.rows",
+      "count": 48,
+      "sha256": "c9f19b7507c9c01b07c8fce3ade5b9726fb800c3d3eb9f44a1cba564de4a0ea4"
+    }
+  ]
+}

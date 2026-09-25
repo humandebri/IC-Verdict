@@ -1,0 +1,8 @@
+{
+  "native_inferences": 576,
+  "max_tokens": 45,
+  "canister_calls": 0,
+  "fixture_hashes_verified": true,
+  "response_mapping_verified": true,
+  "aggregates_recomputed": true
+}

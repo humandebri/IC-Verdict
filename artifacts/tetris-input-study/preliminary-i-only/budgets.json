@@ -1,0 +1,106 @@
+{
+  "provenance": {
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+    "fixtures": "2dc9e2c07c71fb86548fdea4fe5733f0b692c85278987864600337e798ae97df",
+    "clock": "native frozen INT8 weights; game gravity charged fixed 1000 ms per decision; measured native CPU time is not query RTT"
+  },
+  "budgets": [
+    {
+      "variant": {
+        "format": "history",
+        "labels": "short",
+        "id": "history-short"
+      },
+      "max_tokens": 52,
+      "eligible": true,
+      "checks": 534,
+      "worst_prompt": "<<LABEL>>left<<LABEL>>right<<LABEL>>rotate<<LABEL>>down<<LABEL>>wait<<SEP>>Clear lines. Tetris I x0 y0 r0 next I heights 0 0 0 0 0 0 0 0 0 0 holes0 prev x0 y0 r0 left executed history left left",
+      "proof": "All numeric/label domains exhausted independently at fixed ByteLevel pretoken boundaries; concatenated token IDs checked. Five labels and full history dominate legal subsets/shorter histories."
+    },
+    {
+      "variant": {
+        "format": "history",
+        "labels": "explicit",
+        "id": "history-explicit"
+      },
+      "max_tokens": 57,
+      "eligible": false,
+      "checks": 534,
+      "worst_prompt": "<<LABEL>>move left<<LABEL>>move right<<LABEL>>rotate clockwise<<LABEL>>move down<<LABEL>>wait<<SEP>>Clear lines. Tetris I x0 y0 r0 next I heights 0 0 0 0 0 0 0 0 0 0 holes0 prev x0 y0 r0 left executed history left left",
+      "proof": "All numeric/label domains exhausted independently at fixed ByteLevel pretoken boundaries; concatenated token IDs checked. Five labels and full history dominate legal subsets/shorter histories."
+    },
+    {
+      "variant": {
+        "format": "no-history",
+        "labels": "short",
+        "id": "no-history-short"
+      },
+      "max_tokens": 40,
+      "eligible": true,
+      "checks": 478,
+      "worst_prompt": "<<LABEL>>left<<LABEL>>right<<LABEL>>rotate<<LABEL>>down<<LABEL>>wait<<SEP>>Clear lines. Tetris I x0 y0 r0 next I heights 0 0 0 0 0 0 0 0 0 0 holes0",
+      "proof": "All numeric/label domains exhausted independently at fixed ByteLevel pretoken boundaries; concatenated token IDs checked. Five labels and full history dominate legal subsets/shorter histories."
+    },
+    {
+      "variant": {
+        "format": "no-history",
+        "labels": "explicit",
+        "id": "no-history-explicit"
+      },
+      "max_tokens": 45,
+      "eligible": true,
+      "checks": 478,
+      "worst_prompt": "<<LABEL>>move left<<LABEL>>move right<<LABEL>>rotate clockwise<<LABEL>>move down<<LABEL>>wait<<SEP>>Clear lines. Tetris I x0 y0 r0 next I heights 0 0 0 0 0 0 0 0 0 0 holes0",
+      "proof": "All numeric/label domains exhausted independently at fixed ByteLevel pretoken boundaries; concatenated token IDs checked. Five labels and full history dominate legal subsets/shorter histories."
+    },
+    {
+      "variant": {
+        "format": "columns",
+        "labels": "short",
+        "id": "columns-short"
+      },
+      "max_tokens": 47,
+      "eligible": true,
+      "checks": 476,
+      "worst_prompt": "<<LABEL>>left<<LABEL>>right<<LABEL>>rotate<<LABEL>>down<<LABEL>>wait<<SEP>>Clear lines. I x0 y0 r0 next I heights 0 0 0 0 0 0 0 0 0 0 holes 0 0 0 0 0 0 0 0 0 0",
+      "proof": "All numeric/label domains exhausted independently at fixed ByteLevel pretoken boundaries; concatenated token IDs checked. Five labels and full history dominate legal subsets/shorter histories."
+    },
+    {
+      "variant": {
+        "format": "columns",
+        "labels": "explicit",
+        "id": "columns-explicit"
+      },
+      "max_tokens": 52,
+      "eligible": true,
+      "checks": 476,
+      "worst_prompt": "<<LABEL>>move left<<LABEL>>move right<<LABEL>>rotate clockwise<<LABEL>>move down<<LABEL>>wait<<SEP>>Clear lines. I x0 y0 r0 next I heights 0 0 0 0 0 0 0 0 0 0 holes 0 0 0 0 0 0 0 0 0 0",
+      "proof": "All numeric/label domains exhausted independently at fixed ByteLevel pretoken boundaries; concatenated token IDs checked. Five labels and full history dominate legal subsets/shorter histories."
+    },
+    {
+      "variant": {
+        "format": "rows",
+        "labels": "short",
+        "id": "rows-short"
+      },
+      "max_tokens": 66,
+      "eligible": false,
+      "checks": 20545,
+      "worst_prompt": "<<LABEL>>left<<LABEL>>right<<LABEL>>rotate<<LABEL>>down<<LABEL>>wait<<SEP>>Clear lines. I x0 y0 r0 next I rows 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558",
+      "proof": "All numeric/label domains exhausted independently at fixed ByteLevel pretoken boundaries; concatenated token IDs checked. Five labels and full history dominate legal subsets/shorter histories."
+    },
+    {
+      "variant": {
+        "format": "rows",
+        "labels": "explicit",
+        "id": "rows-explicit"
+      },
+      "max_tokens": 71,
+      "eligible": false,
+      "checks": 20545,
+      "worst_prompt": "<<LABEL>>move left<<LABEL>>move right<<LABEL>>rotate clockwise<<LABEL>>move down<<LABEL>>wait<<SEP>>Clear lines. I x0 y0 r0 next I rows 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558 558",
+      "proof": "All numeric/label domains exhausted independently at fixed ByteLevel pretoken boundaries; concatenated token IDs checked. Five labels and full history dominate legal subsets/shorter histories."
+    }
+  ]
+}

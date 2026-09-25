@@ -1,0 +1,14 @@
+{
+  "provenance": {
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+    "fixtures": "2dc9e2c07c71fb86548fdea4fe5733f0b692c85278987864600337e798ae97df",
+    "clock": "native frozen INT8 weights; game gravity charged fixed 1000 ms per decision; measured native CPU time is not query RTT"
+  },
+  "winner": {
+    "format": "columns",
+    "labels": "explicit",
+    "id": "columns-explicit"
+  },
+  "criterion": "development accuracy; tie by domain token bound, then variant ID; held-out outcomes unavailable at selection"
+}

@@ -7,7 +7,6 @@ pub const BLOB_BASE:u64=64*1024*1024;
 /// body is written to the inactive slot and only then does the 16-byte header point at
 /// it. Each slot holds the self-describing block from `storage::encode`, so a partial
 /// body write is detected by its own length and checksum.
-pub const SNAPSHOT_HEADER:u64=16;
 pub const SNAPSHOT_SLOT_A:u64=1<<20;
 pub const SNAPSHOT_SLOT_B:u64=33<<20;
 pub const SNAPSHOT_MAGIC:&[u8;8]=b"ICSLOT01";
@@ -71,7 +70,7 @@ pub fn restore<T:DeserializeOwned>()->Result<T>{
     let (_,active)=read_header().ok_or(Error::Storage)?;
     match read_slot::<T>(active){Ok(v)=>Ok(v),Err(first)=>read_slot::<T>(1-active).map_err(|_|first)}
 }
-pub fn persist_or_trap<T:Serialize>(state:&T){if let Err(e)=save(state){ic_cdk::trap(&format!("snapshot commit failed: {e}"));}}
+pub fn persist_or_trap<T:Serialize>(state:&T){if let Err(e)=save(state){ic_cdk::trap(format!("snapshot commit failed: {e}"));}}
 
 #[derive(Debug,Clone,PartialEq,Eq,Serialize,Deserialize,CandidType)]
 pub struct IcrcAccount {pub owner:Principal,pub subaccount:Option<Vec<u8>>}
@@ -115,7 +114,6 @@ mod tests {
     #[test]
     fn slots_are_disjoint_and_fit_below_the_blob_area() {
         let max=ic_laya_core::storage::MAX_SNAPSHOT as u64+48;
-        assert!(SNAPSHOT_SLOT_A+SNAPSHOT_SLOT_B-1>SNAPSHOT_SLOT_A);
         assert!(SNAPSHOT_SLOT_A+max<=SNAPSHOT_SLOT_B,"slot A may not reach slot B");
         assert!(SNAPSHOT_SLOT_B+max<=BLOB_BASE,"slot B may not reach the upload area");
     }

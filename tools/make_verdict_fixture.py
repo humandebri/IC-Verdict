@@ -91,6 +91,9 @@ def check() -> int:
         print(f"fixture missing under {OUT}; build it with `python3 {sys.argv[0]}`", file=sys.stderr)
         return 1
     manifest = json.loads(manifest_path.read_text())
+    if manifest.get("format") != "ic-verdict-int8-pack-v1":
+        print(f"unexpected pack format {manifest.get('format')!r}", file=sys.stderr)
+        return 1
     blob = blob_path.read_bytes()
     if manifest.get("total_bytes") != len(blob):
         print(f"manifest total_bytes={manifest.get('total_bytes')} but model.bin is {len(blob)}", file=sys.stderr)
@@ -106,6 +109,9 @@ def check() -> int:
             return 1
         if list(hashlib.sha256(chunk).digest()) != tensor["sha256"]:
             print(f"{tensor['name']}: sha256 mismatch", file=sys.stderr)
+            return 1
+        if len(tensor["shape"]) == 2 and tensor.get("encoding") != "i8_row_symmetric":
+            print(f"{tensor['name']}: matrix is not per-row INT8", file=sys.stderr)
             return 1
         offset += tensor["length"]
     for name in ("config.json", "tokenizer.json"):

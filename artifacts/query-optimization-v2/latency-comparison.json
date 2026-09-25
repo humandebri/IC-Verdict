@@ -1,0 +1,63 @@
+{
+  "baseline-latency": {
+    "module_hash": "0xa3de6a00af386bf9aa2967291d1ea657d3e8a9e1cd65f911a90ca056cde60389",
+    "seconds": [
+      0.8744090000109281,
+      0.9733422090066597,
+      1.089741415984463,
+      0.5010396249999758,
+      0.7746709169878159,
+      0.6271514169930015
+    ],
+    "median_seconds": 0.824539958499372
+  },
+  "k128-latency": {
+    "module_hash": "0x5a37049d4988d3743d799ecae763db3c06ba6ce79612ce2bc3c1046f2234b101",
+    "seconds": [
+      3.174768500000937,
+      2.7434901249944232,
+      2.401785583002493,
+      2.488840624981094,
+      2.776937959017232,
+      3.480559582996648
+    ],
+    "median_seconds": 2.7602140420058277
+  },
+  "tile16x32-k64-latency": {
+    "module_hash": "0xb4c7ed53bac679a08085d6ed0c6a7326ba0686c84179c52b517e0fc2f5daf7ed",
+    "seconds": [
+      0.4490875839837827,
+      0.5212105419777799,
+      0.5404807500017341,
+      1.1297656249953434,
+      0.49880433300859295,
+      3.230654749990208
+    ],
+    "median_seconds": 0.530845645989757
+  },
+  "tile16x16-k64-latency": {
+    "module_hash": "0xb17e1f9a968539a0be578a272eebeb6d77522075e610457fc32b7fafe89c2999",
+    "seconds": [
+      0.4204755419923458,
+      0.4347023750015069,
+      0.5484691669989843,
+      0.4916314999863971,
+      0.47880454099504277,
+      0.8899352500156965
+    ],
+    "median_seconds": 0.48521802049071994
+  },
+  "final-latency": {
+    "module_hash": "0x35a16200b030bbb5323fa0a63eed438754d06d3bce988547c3409bb9aca1eec9",
+    "seconds": [
+      1.7282053329981863,
+      2.944719207996968,
+      1.061452832975192,
+      0.9628029580053408,
+      1.9537116670107935,
+      0.8428597080055624
+    ],
+    "median_seconds": 1.3948290829866892
+  },
+  "limitations": "Six distinct matching inputs per module, builds completed before measurements; host load was not controlled. Candidate/final median varied materially. These data do not establish a latency speedup."
+}

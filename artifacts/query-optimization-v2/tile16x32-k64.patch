@@ -1,0 +1,90 @@
+--- turn-start/verdict-simd/src/lib.rs
++++ tile16x32-k64/verdict-simd/src/lib.rs
+@@ -425,53 +425,58 @@
+     }
+ }
+ 
+-/// A 16/8/4-row by eight-column tile shares loaded vectors. K is 768 or 1152;
+-/// R is 16, 8, or 4, selected only by the dispatch and tail calls below. Literal
++/// A 32/16/8/4-row by 32-column tile shares loaded vectors. K is 768 or 1152;
++/// R is 32, 16, 8, or 4, selected only by the dispatch and tail calls below. Literal
+ /// macro indices let LLVM retain accumulators in Wasm locals, not a memory array.
+ #[cfg(target_arch = "wasm32")]
+ #[target_feature(enable="simd128")]
+ #[allow(clippy::too_many_arguments)]
+ unsafe fn matmul_i8_simd_tile<const K:usize,const R:usize>(a:&[i16],w:&[i8],sx:&[f32],sw:&[f32],m:usize,n:usize,out:&mut[f32]) {
+     use core::arch::wasm32::*;
+-    let full=m/R*R;let n8=n/8*8;
++    let full=m/R*R;let nc=n/32*32;
+     for i in (0..full).step_by(R) {
+-        for j in (0..n8).step_by(8) {
+-            let mut acc=[[i32x4_splat(0);8];16];
+-            for p in (0..K).step_by(32) {
+-                let mut x=[[i32x4_splat(0);4];16];
++        for j in (0..nc).step_by(32) {
++            let mut acc=[[i32x4_splat(0);32];32];
++            for p in (0..K).step_by(64) {
++                let mut x=[[i32x4_splat(0);8];32];
+                 macro_rules! load_rows {($($r:literal),*)=>{$(
+                     if $r<R {
+-                    // SAFETY: i+r < full <= m and p+32 <= K.
++                    // SAFETY: i+r < full <= m and p+64 <= K.
+                     let ap=unsafe{a.as_ptr().add((i+$r)*K+p)};
+-                    x[$r]=unsafe{[v128_load(ap.cast()),v128_load(ap.add(8).cast()),v128_load(ap.add(16).cast()),v128_load(ap.add(24).cast())]};
++                    x[$r]=unsafe{[v128_load(ap.cast()),v128_load(ap.add(8).cast()),v128_load(ap.add(16).cast()),v128_load(ap.add(24).cast()),v128_load(ap.add(32).cast()),v128_load(ap.add(40).cast()),v128_load(ap.add(48).cast()),v128_load(ap.add(56).cast())]};
+                     }
+                 )*};}
+-                load_rows!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+-                macro_rules! accumulate_rows {($c:literal,$w0:ident,$w1:ident,$w2:ident,$w3:ident;$($r:literal),*)=>{$(
++                load_rows!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31);
++                macro_rules! accumulate_rows {($c:literal,$w0:ident,$w1:ident,$w2:ident,$w3:ident,$w4:ident,$w5:ident,$w6:ident,$w7:ident;$($r:literal),*)=>{$(
+                     if $r<R {acc[$r][$c]=i32x4_add(i32x4_add(i32x4_add(i32x4_add(acc[$r][$c],
+                         i32x4_dot_i16x8(x[$r][0],$w0)),i32x4_dot_i16x8(x[$r][1],$w1)),
+-                        i32x4_dot_i16x8(x[$r][2],$w2)),i32x4_dot_i16x8(x[$r][3],$w3));}
++                        i32x4_dot_i16x8(x[$r][2],$w2)),i32x4_dot_i16x8(x[$r][3],$w3));
++                    acc[$r][$c]=i32x4_add(i32x4_add(i32x4_add(i32x4_add(acc[$r][$c],i32x4_dot_i16x8(x[$r][4],$w4)),i32x4_dot_i16x8(x[$r][5],$w5)),i32x4_dot_i16x8(x[$r][6],$w6)),i32x4_dot_i16x8(x[$r][7],$w7));}
+                 )*};}
+                 macro_rules! columns {($($c:literal),*)=>{$(
+-                    // SAFETY: j+c < n8 <= n; each load reads eight bytes.
++                    // SAFETY: j+c < nc <= n; each load reads eight bytes.
+                     let wp=unsafe{w.as_ptr().add((j+$c)*K+p)};
+                     let w0=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.cast()))};
+                     let w1=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(8).cast()))};
+                     let w2=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(16).cast()))};
+                     let w3=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(24).cast()))};
+-                    accumulate_rows!($c,w0,w1,w2,w3;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
++                    let w4=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(32).cast()))};
++                    let w5=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(40).cast()))};
++                    let w6=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(48).cast()))};
++                    let w7=unsafe{i16x8_extend_low_i8x16(v128_load64_zero(wp.add(56).cast()))};
++                    accumulate_rows!($c,w0,w1,w2,w3,w4,w5,w6,w7;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31);
+                 )*};}
+-                columns!(0,1,2,3,4,5,6,7);
++                columns!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31);
+             }
+             let reduce=|v| (i32x4_extract_lane::<0>(v)+i32x4_extract_lane::<1>(v)+i32x4_extract_lane::<2>(v)+i32x4_extract_lane::<3>(v)) as f32;
+             macro_rules! store_row {($r:literal;$($c:literal),*)=>{$(
+                 // SAFETY: full tile bounds and caller-checked scale/output slices.
+                 if $r<R {unsafe{*out.as_mut_ptr().add((i+$r)*n+j+$c)=reduce(acc[$r][$c]) * *sx.get_unchecked(i+$r) * *sw.get_unchecked(j+$c)};}
+             )*};}
+-            macro_rules! store_rows {($($r:literal),*)=>{$(store_row!($r;0,1,2,3,4,5,6,7);)*};}
+-            store_rows!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+-        }
+-        for j in n8..n {for r in 0..R {
++            macro_rules! store_rows {($($r:literal),*)=>{$(store_row!($r;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31);)*};}
++            store_rows!(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31);
++        }
++        for j in nc..n {for r in 0..R {
+             let mut sum=0i32;
+             for p in 0..K {sum+=unsafe{*a.get_unchecked((i+r)*K+p) as i32 * *w.get_unchecked(j*K+p) as i32};}
+             unsafe{*out.get_unchecked_mut((i+r)*n+j)=sum as f32 * *sx.get_unchecked(i+r) * *sw.get_unchecked(j)};
+@@ -495,7 +500,8 @@
+             out[..remaining*n].copy_from_slice(&padded_out[..remaining*n]);
+             return;
+         }
+-        unsafe{if R==16 {matmul_i8_simd_tile::<K,8>(a,w,sx,sw,m-full,n,out)}
++        unsafe{if R==32 {matmul_i8_simd_tile::<K,16>(a,w,sx,sw,m-full,n,out)}
++            else if R==16 {matmul_i8_simd_tile::<K,8>(a,w,sx,sw,m-full,n,out)}
+             else if R==8 {matmul_i8_simd_tile::<K,4>(a,w,sx,sw,m-full,n,out)}
+             else {matmul_i8_simd_k2::<K>(a,w,sx,sw,m-full,n,out)}};
+     }

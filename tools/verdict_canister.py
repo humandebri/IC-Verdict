@@ -24,6 +24,7 @@ Two identities are in play, and they are deliberately different:
 from __future__ import annotations
 
 import argparse
+import billing_cli
 import base64
 import json
 import os
@@ -213,7 +214,12 @@ def main() -> int:
     parser.add_argument("--skip-upload", action="store_true")
     parser.add_argument("--keep", action="store_true", help="leave the local network running")
     parser.add_argument("--decide", action="store_true", help="also run one decide() request")
+    parser.add_argument("--query", action="store_true",
+                        help="run the smoke inference through infer_tokens_query (5B budget) instead of "
+                             "the update path; the ids must then be short enough for the query ceiling")
+    billing_cli.add_arguments(parser)
     args = parser.parse_args()
+    if not args.query or args.decide: billing_cli.require_payment(args)
 
     if not (BUILD / "verdict-engine.wasm").exists():
         raise Failure("missing build/verdict-engine.wasm; run bash tools/build_one.sh verdict-engine")
@@ -222,15 +228,18 @@ def main() -> int:
 
     args.home.mkdir(parents=True, exist_ok=True, mode=0o700)
     icp = Icp(args.env, args.identity, args.home)
-    # Fail before starting anything: this script mints cycles and `-m reinstall`s a
-    # canister, which wipes its state irreversibly.
-    require_local_network(icp, Failure)
+    # Start the replica before demanding proof that it is local: `network start` is
+    # not a guarded command, while everything past this point mints cycles and
+    # `-m reinstall`s a canister, which wipes its state irreversibly. Checking first
+    # made the documented cold start impossible -- with nothing running, `network
+    # status` is unreadable and the fail-closed guard refused before the start.
     status = icp.run(["network", "status", "-e", args.env, "--json"], expect_ok=False)
     started_here = "api_url" not in status
     if started_here:
         print("starting the local network ...")
         icp.run(["network", "start", "-d", "-e", args.env])
         status = icp.run(["network", "status", "-e", args.env, "--json"])
+    require_local_network(icp, Failure)
     match = re.search(r'"api_url":\s*"([^"]+)"', status)
     args.replica = args.replica or (match.group(1) if match else "")
     # `--env local` with `--replica https://ic0.app` would otherwise pass the
@@ -271,25 +280,16 @@ def deploy(icp: Icp, args: argparse.Namespace) -> int:
 
     # The measured inference is made by the owner key. The payer is allowlisted in
     # the same invocation so decide() can also be issued from the CLI below.
-    print(f"infer_tokens {args.ids} ...")
+    method = "infer_tokens_query" if args.query else "infer_tokens"
+    print(f"{method} {args.ids} ...")
     command = [str(UPLOADER), "--url", args.replica, "--canister", canister,
                "--pem", str(args.owner_pem), "--no-upload",
-               "--allow-caller", payer, "--infer", args.ids]
+               "--allow-caller", payer, "--query-infer" if args.query else "--infer", args.ids]
+    command += billing_cli.uploader_flags(args, paid=not args.query or args.decide)
+    if args.decide: command += ["--decide"]
     if subprocess.run(command, text=True, timeout=1800).returncode != 0:
         raise Failure("verdict-upload inference failed")
 
-    if args.decide:
-        print("decide ...")
-        record = ("record { state = %s; question = %s; options = vec { record { id = \"a\"; text = %s }; "
-                  "record { id = \"b\"; text = %s } }; abstention = true; temperature = 1.4265148639678955 }"
-                  % (json.dumps("I lost my wallet yesterday and need to stop my debit card immediately."),
-                     json.dumps("What is the primary customer inquiry?"),
-                     json.dumps("Reporting a lost or stolen card"),
-                     json.dumps("Disputing an unrecognized charge")))
-        reply = icp.call("decide", "(%s)" % record)
-        print(" ", " ".join(reply.split())[:900])
-        if "Err" in reply:
-            raise Failure("decide returned an error")
     print("\nVERDICT ENGINE LOCAL RUN OK")
     return 0
 

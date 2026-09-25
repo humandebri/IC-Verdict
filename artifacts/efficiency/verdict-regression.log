@@ -1,0 +1,6 @@
+PASS registered calibrated evaluation
+Canister upgrade-fixture installed successfully
+PASS upgrade + rewarm preserve snapshot and cached receipt
+PASS rewarm preserves schema calibration and cached receipt
+PASS batch with two abstentions
+PASS failed upgrade leaves active heap and cache usable

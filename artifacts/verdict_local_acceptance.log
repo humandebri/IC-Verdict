@@ -1,0 +1,19 @@
+PASS managed loopback network
+PASS real pack resident and upload complete
+PASS resident model hash matches local INT8 manifest
+PASS unauthorized caller rejected
+PASS canister-to-canister evaluate returns real-model Receipt
+PASS 8-token update inference
+PASS native/Wasm output shape matches
+PARITY max_abs_diff=0.011687699999999968 pass=False
+PASS 32-token update inference
+PASS 64-token update inference
+PASS 120-token update inference
+PASS 121-token request rejected by budget guard
+PASS query boundary 14 tokens
+PASS query boundary 15 tokens
+PASS upgrade keeps stable pack and resets heap model
+PASS inference requires rewarm after upgrade
+PASS upgrade rewarm succeeds without reupload
+PASS upgrade preserves caller, schema and cached Receipt
+PASS post-upgrade logits identical

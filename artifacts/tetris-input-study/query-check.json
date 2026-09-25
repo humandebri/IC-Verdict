@@ -1,0 +1,239 @@
+{
+  "host": "http://localhost:8011/",
+  "canister": "4fbx2-kt777-77775-aaabq-cai",
+  "wasm": "0962574cae166a5a438e62a588d3351408613f52b867e6e18ed7311ba3d8074b",
+  "provenance": {
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+    "fixtures": "0d051061a23ae51e15e240d57e0d0aa8208a12daa871661b4fec8fa20234d33f",
+    "clock": "native frozen INT8 weights; game gravity charged fixed 1000 ms per decision; measured native CPU time is not query RTT"
+  },
+  "checks": [
+    {
+      "variant": "history-short",
+      "fixture": "rotate-dev-00",
+      "tokens": 52,
+      "instructions": 4754607568,
+      "action": 4,
+      "latency_ms": 1730.760874983389,
+      "native_action_matches": true
+    },
+    {
+      "variant": "history-short",
+      "fixture": "left-dev-00",
+      "tokens": 52,
+      "instructions": 4755015151,
+      "action": 4,
+      "latency_ms": 2190.949083014857,
+      "native_action_matches": true
+    },
+    {
+      "variant": "history-short",
+      "fixture": "right-dev-00",
+      "tokens": 50,
+      "instructions": 4621849138,
+      "action": 4,
+      "latency_ms": 5247.316374996444,
+      "native_action_matches": true
+    },
+    {
+      "variant": "history-short",
+      "fixture": "aligned-dev-00",
+      "tokens": 50,
+      "instructions": 4621734970,
+      "action": 4,
+      "latency_ms": 3341.263834008714,
+      "native_action_matches": true
+    },
+    {
+      "variant": "history-short",
+      "fixture": "collision-dev-00",
+      "tokens": 50,
+      "instructions": 4621612036,
+      "action": 4,
+      "latency_ms": 4717.325792007614,
+      "native_action_matches": true
+    },
+    {
+      "variant": "history-short",
+      "fixture": "domain-boundary",
+      "tokens": 52,
+      "instructions": 4754056274,
+      "action": 0,
+      "latency_ms": 3966.382708022138,
+      "native_action_matches": null
+    },
+    {
+      "variant": "no-history-short",
+      "fixture": "rotate-dev-00",
+      "tokens": 40,
+      "instructions": 3612263430,
+      "action": 1,
+      "latency_ms": 3744.391291984357,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-short",
+      "fixture": "left-dev-00",
+      "tokens": 40,
+      "instructions": 3612300094,
+      "action": 1,
+      "latency_ms": 894.850167009281,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-short",
+      "fixture": "right-dev-00",
+      "tokens": 38,
+      "instructions": 3536298405,
+      "action": 1,
+      "latency_ms": 1439.636374998372,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-short",
+      "fixture": "aligned-dev-00",
+      "tokens": 38,
+      "instructions": 3536297492,
+      "action": 1,
+      "latency_ms": 1254.8524580197409,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-short",
+      "fixture": "collision-dev-00",
+      "tokens": 38,
+      "instructions": 3536214936,
+      "action": 1,
+      "latency_ms": 1102.3914589895867,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-short",
+      "fixture": "domain-boundary",
+      "tokens": 40,
+      "instructions": 3613723265,
+      "action": 1,
+      "latency_ms": 1028.1834590132348,
+      "native_action_matches": null
+    },
+    {
+      "variant": "no-history-explicit",
+      "fixture": "rotate-dev-00",
+      "tokens": 45,
+      "instructions": 4225939425,
+      "action": 1,
+      "latency_ms": 2074.868833995424,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-explicit",
+      "fixture": "left-dev-00",
+      "tokens": 45,
+      "instructions": 4225888642,
+      "action": 1,
+      "latency_ms": 5238.910874992143,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-explicit",
+      "fixture": "right-dev-00",
+      "tokens": 42,
+      "instructions": 3908400302,
+      "action": 1,
+      "latency_ms": 5310.594500013394,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-explicit",
+      "fixture": "aligned-dev-00",
+      "tokens": 42,
+      "instructions": 3908263890,
+      "action": 1,
+      "latency_ms": 2199.7687499970198,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-explicit",
+      "fixture": "collision-dev-00",
+      "tokens": 42,
+      "instructions": 3908170706,
+      "action": 1,
+      "latency_ms": 1175.8825420110952,
+      "native_action_matches": true
+    },
+    {
+      "variant": "no-history-explicit",
+      "fixture": "domain-boundary",
+      "tokens": 45,
+      "instructions": 4225869517,
+      "action": 1,
+      "latency_ms": 1004.8452500195708,
+      "native_action_matches": null
+    },
+    {
+      "variant": "columns-short",
+      "fixture": "rotate-dev-00",
+      "tokens": 47,
+      "instructions": 4320244072,
+      "action": 1,
+      "latency_ms": 4099.921084009111,
+      "native_action_matches": true
+    },
+    {
+      "variant": "columns-short",
+      "fixture": "left-dev-00",
+      "tokens": 47,
+      "instructions": 4319890276,
+      "action": 1,
+      "latency_ms": 1097.6800830103457,
+      "native_action_matches": true
+    },
+    {
+      "variant": "columns-short",
+      "fixture": "right-dev-00",
+      "tokens": 45,
+      "instructions": 4223433205,
+      "action": 1,
+      "latency_ms": 3005.6946250260808,
+      "native_action_matches": true
+    },
+    {
+      "variant": "columns-short",
+      "fixture": "aligned-dev-00",
+      "tokens": 45,
+      "instructions": 4223208398,
+      "action": 1,
+      "latency_ms": 3202.450000011595,
+      "native_action_matches": true
+    },
+    {
+      "variant": "columns-short",
+      "fixture": "collision-dev-00",
+      "tokens": 45,
+      "instructions": 4223457764,
+      "action": 1,
+      "latency_ms": 3509.918708994519,
+      "native_action_matches": true
+    },
+    {
+      "variant": "columns-short",
+      "fixture": "domain-boundary",
+      "tokens": 47,
+      "instructions": 4320115685,
+      "action": 1,
+      "latency_ms": 1299.4110000145156,
+      "native_action_matches": null
+    },
+    {
+      "variant": "columns-explicit",
+      "fixture": "rotate-dev-00",
+      "tokens": 52,
+      "instructions": 4755179165,
+      "action": 0,
+      "latency_ms": 1591.5094999945723,
+      "native_action_matches": true
+    }
+  ],
+  "mutations": false
+}

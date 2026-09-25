@@ -1,0 +1,685 @@
+{
+  "upstream_revision": "70fa19828074e1199e4a793c4af4dba3bfd1d222",
+  "verified_files": {
+    "config.json": {
+      "hash": "8db7fe6b354ef97840467f06c634cf09dc88ecaf",
+      "matches_upstream": true
+    },
+    "model.safetensors": {
+      "hash": "d252823994d47a7933217fc86449493299643af6a0c0d83d6bd5a7666d3253ef",
+      "matches_upstream": true
+    },
+    "tokenizer.json": {
+      "hash": "5651093fc4690c7ddd401a6621f3c0228f2663d1",
+      "matches_upstream": true
+    }
+  },
+  "pack_tensors": 142,
+  "original_tensors": 143,
+  "omitted": [
+    "model.logit_scale"
+  ],
+  "tensors": [
+    {
+      "name": "classes_projector.linear_1.bias",
+      "exact": true
+    },
+    {
+      "name": "classes_projector.linear_1.weight",
+      "max_abs_error": 0.0005446355789899826,
+      "within_half_step": true
+    },
+    {
+      "name": "classes_projector.linear_2.bias",
+      "exact": true
+    },
+    {
+      "name": "classes_projector.linear_2.weight",
+      "max_abs_error": 0.0005419105291366577,
+      "within_half_step": true
+    },
+    {
+      "name": "embeddings.norm.weight",
+      "exact": true
+    },
+    {
+      "name": "embeddings.weight",
+      "max_abs_error": 0.01326117292046547,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.0.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.0.out.weight",
+      "max_abs_error": 0.0016841335454955697,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.0.qkv.weight",
+      "max_abs_error": 0.0053542181849479675,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.0.wi.weight",
+      "max_abs_error": 0.006323873996734619,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.0.wo.weight",
+      "max_abs_error": 0.012646198272705078,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.1.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.1.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.1.out.weight",
+      "max_abs_error": 0.0025331825017929077,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.1.qkv.weight",
+      "max_abs_error": 0.0075239562429487705,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.1.wi.weight",
+      "max_abs_error": 0.004347282461822033,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.1.wo.weight",
+      "max_abs_error": 0.00982750579714775,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.10.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.10.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.10.out.weight",
+      "max_abs_error": 0.0034310519695281982,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.10.qkv.weight",
+      "max_abs_error": 0.004762529395520687,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.10.wi.weight",
+      "max_abs_error": 0.00718596950173378,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.10.wo.weight",
+      "max_abs_error": 0.012694746255874634,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.11.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.11.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.11.out.weight",
+      "max_abs_error": 0.004003606736660004,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.11.qkv.weight",
+      "max_abs_error": 0.004926133900880814,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.11.wi.weight",
+      "max_abs_error": 0.005719125270843506,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.11.wo.weight",
+      "max_abs_error": 0.007679998874664307,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.12.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.12.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.12.out.weight",
+      "max_abs_error": 0.0067126452922821045,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.12.qkv.weight",
+      "max_abs_error": 0.0028252527117729187,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.12.wi.weight",
+      "max_abs_error": 0.0035242959856987,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.12.wo.weight",
+      "max_abs_error": 0.009713912382721901,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.13.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.13.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.13.out.weight",
+      "max_abs_error": 0.004301548004150391,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.13.qkv.weight",
+      "max_abs_error": 0.004097357392311096,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.13.wi.weight",
+      "max_abs_error": 0.003525868058204651,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.13.wo.weight",
+      "max_abs_error": 0.0069810450077056885,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.14.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.14.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.14.out.weight",
+      "max_abs_error": 0.005773454904556274,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.14.qkv.weight",
+      "max_abs_error": 0.0031793639063835144,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.14.wi.weight",
+      "max_abs_error": 0.006411571055650711,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.14.wo.weight",
+      "max_abs_error": 0.012512058019638062,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.15.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.15.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.15.out.weight",
+      "max_abs_error": 0.005888581275939941,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.15.qkv.weight",
+      "max_abs_error": 0.0026685278862714767,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.15.wi.weight",
+      "max_abs_error": 0.006982266902923584,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.15.wo.weight",
+      "max_abs_error": 0.016895979642868042,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.16.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.16.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.16.out.weight",
+      "max_abs_error": 0.0036868155002593994,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.16.qkv.weight",
+      "max_abs_error": 0.0029688170179724693,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.16.wi.weight",
+      "max_abs_error": 0.002949856221675873,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.16.wo.weight",
+      "max_abs_error": 0.0058231353759765625,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.17.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.17.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.17.out.weight",
+      "max_abs_error": 0.0034128427505493164,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.17.qkv.weight",
+      "max_abs_error": 0.0027481205761432648,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.17.wi.weight",
+      "max_abs_error": 0.010845839977264404,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.17.wo.weight",
+      "max_abs_error": 0.010401949286460876,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.18.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.18.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.18.out.weight",
+      "max_abs_error": 0.008277185261249542,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.18.qkv.weight",
+      "max_abs_error": 0.0034076906740665436,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.18.wi.weight",
+      "max_abs_error": 0.003067411482334137,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.18.wo.weight",
+      "max_abs_error": 0.010127812623977661,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.19.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.19.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.19.out.weight",
+      "max_abs_error": 0.002962246537208557,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.19.qkv.weight",
+      "max_abs_error": 0.0026586055755615234,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.19.wi.weight",
+      "max_abs_error": 0.004042148590087891,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.19.wo.weight",
+      "max_abs_error": 0.007484078407287598,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.2.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.2.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.2.out.weight",
+      "max_abs_error": 0.002198159694671631,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.2.qkv.weight",
+      "max_abs_error": 0.005756989121437073,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.2.wi.weight",
+      "max_abs_error": 0.004834234714508057,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.2.wo.weight",
+      "max_abs_error": 0.01225830614566803,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.20.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.20.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.20.out.weight",
+      "max_abs_error": 0.0037996824830770493,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.20.qkv.weight",
+      "max_abs_error": 0.0030175112187862396,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.20.wi.weight",
+      "max_abs_error": 0.003667667508125305,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.20.wo.weight",
+      "max_abs_error": 0.010203009471297264,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.21.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.21.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.21.out.weight",
+      "max_abs_error": 0.003911871463060379,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.21.qkv.weight",
+      "max_abs_error": 0.004199095070362091,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.21.wi.weight",
+      "max_abs_error": 0.003833368420600891,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.21.wo.weight",
+      "max_abs_error": 0.004263817798346281,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.3.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.3.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.3.out.weight",
+      "max_abs_error": 0.005020892713218927,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.3.qkv.weight",
+      "max_abs_error": 0.006551124155521393,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.3.wi.weight",
+      "max_abs_error": 0.005515605211257935,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.3.wo.weight",
+      "max_abs_error": 0.012854069471359253,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.4.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.4.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.4.out.weight",
+      "max_abs_error": 0.003078751266002655,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.4.qkv.weight",
+      "max_abs_error": 0.0033505484461784363,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.4.wi.weight",
+      "max_abs_error": 0.006515979766845703,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.4.wo.weight",
+      "max_abs_error": 0.009289950132369995,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.5.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.5.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.5.out.weight",
+      "max_abs_error": 0.002500578761100769,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.5.qkv.weight",
+      "max_abs_error": 0.004489928483963013,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.5.wi.weight",
+      "max_abs_error": 0.003026336431503296,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.5.wo.weight",
+      "max_abs_error": 0.010643422603607178,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.6.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.6.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.6.out.weight",
+      "max_abs_error": 0.006148308515548706,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.6.qkv.weight",
+      "max_abs_error": 0.003494247794151306,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.6.wi.weight",
+      "max_abs_error": 0.0064852312207221985,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.6.wo.weight",
+      "max_abs_error": 0.01212361454963684,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.7.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.7.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.7.out.weight",
+      "max_abs_error": 0.0035124029964208603,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.7.qkv.weight",
+      "max_abs_error": 0.0044388845562934875,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.7.wi.weight",
+      "max_abs_error": 0.0071310847997665405,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.7.wo.weight",
+      "max_abs_error": 0.00860491394996643,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.8.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.8.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.8.out.weight",
+      "max_abs_error": 0.0032169967889785767,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.8.qkv.weight",
+      "max_abs_error": 0.0034773722290992737,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.8.wi.weight",
+      "max_abs_error": 0.003313988447189331,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.8.wo.weight",
+      "max_abs_error": 0.010371565818786621,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.9.attn_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.9.mlp_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "encoder.9.out.weight",
+      "max_abs_error": 0.004596009850502014,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.9.qkv.weight",
+      "max_abs_error": 0.003276275470852852,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.9.wi.weight",
+      "max_abs_error": 0.0072328150272369385,
+      "within_half_step": true
+    },
+    {
+      "name": "encoder.9.wo.weight",
+      "max_abs_error": 0.015079185366630554,
+      "within_half_step": true
+    },
+    {
+      "name": "final_norm.weight",
+      "exact": true
+    },
+    {
+      "name": "text_projector.linear_1.bias",
+      "exact": true
+    },
+    {
+      "name": "text_projector.linear_1.weight",
+      "max_abs_error": 0.0005263052880764008,
+      "within_half_step": true
+    },
+    {
+      "name": "text_projector.linear_2.bias",
+      "exact": true
+    },
+    {
+      "name": "text_projector.linear_2.weight",
+      "max_abs_error": 0.0005292175337672234,
+      "within_half_step": true
+    }
+  ]
+}

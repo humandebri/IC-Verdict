@@ -1,0 +1,17 @@
+{
+  "source": "artifacts/semantic-game-study/descriptive/fixtures.json",
+  "source_sha256": "3dbaf63c1b4abf10ffa410be0cc8ce6f8885259c53024d3867f05d42eedc6548",
+  "source_bytes": 137369,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "omitted": true,
+    "see_raw_source": true
+  },
+  "omitted": [
+    {
+      "path": "$",
+      "count": 288,
+      "sha256": "c5d3113efc98c3b5824de88aed72290b83e2ffc35bf45c10a29c4078af7bb08d"
+    }
+  ]
+}

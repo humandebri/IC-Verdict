@@ -1,0 +1,1015 @@
+{
+  "source": "artifacts/game-feasibility/assisted/games.json",
+  "source_sha256": "e1d17dc6f17c55e16dae79cc5110be0c21fe68110a7908b5b78df33fec26d39e",
+  "source_bytes": 850106,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": [
+    {
+      "game": "snake",
+      "seed": 11,
+      "policy": "legal_outcome",
+      "steps": 150,
+      "food": 0,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "snake",
+      "seed": 23,
+      "policy": "legal_outcome",
+      "steps": 9,
+      "food": 2,
+      "stop": "collision",
+      "trace": [
+        {
+          "body": [
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "food": [
+            3,
+            3
+          ],
+          "action": 1,
+          "death": false,
+          "eating": true
+        },
+        {
+          "body": [
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "food": [
+            5,
+            0
+          ],
+          "action": 0,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          "food": [
+            5,
+            0
+          ],
+          "action": 0,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ]
+          ],
+          "food": [
+            5,
+            0
+          ],
+          "action": 0,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          "food": [
+            5,
+            0
+          ],
+          "action": 1,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ]
+          ],
+          "food": [
+            5,
+            0
+          ],
+          "action": 2,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ]
+          ],
+          "food": [
+            5,
+            0
+          ],
+          "action": 1,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "food": [
+            5,
+            0
+          ],
+          "action": 0,
+          "death": false,
+          "eating": true
+        },
+        {
+          "body": [
+            [
+              5,
+              0
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 0,
+          "death": true,
+          "eating": false
+        }
+      ]
+    },
+    {
+      "game": "snake",
+      "seed": 37,
+      "policy": "legal_outcome",
+      "steps": 150,
+      "food": 8,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "snake",
+      "seed": 53,
+      "policy": "legal_outcome",
+      "steps": 150,
+      "food": 5,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "snake",
+      "seed": 71,
+      "policy": "legal_outcome",
+      "steps": 38,
+      "food": 2,
+      "stop": "collision",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "snake",
+      "seed": 11,
+      "policy": "random_legal",
+      "steps": 150,
+      "food": 2,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "snake",
+      "seed": 23,
+      "policy": "random_legal",
+      "steps": 150,
+      "food": 2,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "snake",
+      "seed": 37,
+      "policy": "random_legal",
+      "steps": 124,
+      "food": 2,
+      "stop": "collision",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "snake",
+      "seed": 53,
+      "policy": "random_legal",
+      "steps": 123,
+      "food": 4,
+      "stop": "collision",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "snake",
+      "seed": 71,
+      "policy": "random_legal",
+      "steps": 16,
+      "food": 2,
+      "stop": "collision",
+      "trace": [
+        {
+          "body": [
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "food": [
+            5,
+            3
+          ],
+          "action": 0,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          "food": [
+            5,
+            3
+          ],
+          "action": 1,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              3,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ]
+          ],
+          "food": [
+            5,
+            3
+          ],
+          "action": 1,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              4,
+              2
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              2,
+              2
+            ]
+          ],
+          "food": [
+            5,
+            3
+          ],
+          "action": 2,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              3,
+              2
+            ]
+          ],
+          "food": [
+            5,
+            3
+          ],
+          "action": 1,
+          "death": false,
+          "eating": true
+        },
+        {
+          "body": [
+            [
+              5,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              3,
+              2
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 0,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 3,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              4,
+              2
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 0,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 0,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              5,
+              2
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 3,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 3,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 3,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 2,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 3,
+          "death": false,
+          "eating": false
+        },
+        {
+          "body": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "food": [
+            0,
+            0
+          ],
+          "action": 0,
+          "death": false,
+          "eating": true
+        },
+        {
+          "body": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "food": [
+            1,
+            2
+          ],
+          "action": 0,
+          "death": true,
+          "eating": false
+        }
+      ]
+    },
+    {
+      "game": "2048",
+      "seed": 11,
+      "policy": "legal_outcome",
+      "steps": 150,
+      "score": 1628,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 23,
+      "policy": "legal_outcome",
+      "steps": 150,
+      "score": 1576,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 37,
+      "policy": "legal_outcome",
+      "steps": 150,
+      "score": 1488,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 53,
+      "policy": "legal_outcome",
+      "steps": 150,
+      "score": 1528,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 71,
+      "policy": "legal_outcome",
+      "steps": 150,
+      "score": 1436,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "step_limit",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 11,
+      "policy": "random_legal",
+      "steps": 112,
+      "score": 1036,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 23,
+      "policy": "random_legal",
+      "steps": 59,
+      "score": 336,
+      "max_tile": 32,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 37,
+      "policy": "random_legal",
+      "steps": 106,
+      "score": 836,
+      "max_tile": 64,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 53,
+      "policy": "random_legal",
+      "steps": 100,
+      "score": 836,
+      "max_tile": 64,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 71,
+      "policy": "random_legal",
+      "steps": 95,
+      "score": 680,
+      "max_tile": 64,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    }
+  ],
+  "omitted": [
+    {
+      "path": "$[0].trace",
+      "count": 150,
+      "sha256": "510286edb25a41f01511449cefe681a224b00ab28dc4ad60eba3064ae4117cbf"
+    },
+    {
+      "path": "$[2].trace",
+      "count": 150,
+      "sha256": "02465d077680af065eca2a13d83d313a1809c1713c89c3bbf743b7ada240f30f"
+    },
+    {
+      "path": "$[3].trace",
+      "count": 150,
+      "sha256": "38e474fb4a42ed9183c043daabdb1054c4668c01cf6fd4539a36e5dcc526b89e"
+    },
+    {
+      "path": "$[4].trace",
+      "count": 38,
+      "sha256": "8c56b7ed189a1d3c74d563ca1450049ae621ab1d514a7a74a593957ef3cce5a2"
+    },
+    {
+      "path": "$[5].trace",
+      "count": 150,
+      "sha256": "afc4d249663a139153fba7d720993d5a55d89d77cbb0e52b4aaf095022213e10"
+    },
+    {
+      "path": "$[6].trace",
+      "count": 150,
+      "sha256": "839482c787ee5ae164c2f62e6be5f9e6a4884828bf7407f8e09ea961a77b3b96"
+    },
+    {
+      "path": "$[7].trace",
+      "count": 124,
+      "sha256": "89156fbcdcf9de0db99db6a7686261414d71335f372073acaf2ae009a3b9c8b7"
+    },
+    {
+      "path": "$[8].trace",
+      "count": 123,
+      "sha256": "cc11e55ef2f2974a0e8f94d36f8fffa026c80cd6c11849a8de5bb4c7d004d52c"
+    },
+    {
+      "path": "$[10].trace",
+      "count": 150,
+      "sha256": "d5711106c72f8167286cc21fbb0e7af48205ded35b794ae553afb4ebbfe0bf1e"
+    },
+    {
+      "path": "$[11].trace",
+      "count": 150,
+      "sha256": "a6b9485205fc5fd0b263679778f1d8da0fc3be989708b7702cf9d976eb3c9dd7"
+    },
+    {
+      "path": "$[12].trace",
+      "count": 150,
+      "sha256": "19e7b803a4a7522224f6ac7d0b2d6afbc867c6b036088552aa8c09ad4f579b52"
+    },
+    {
+      "path": "$[13].trace",
+      "count": 150,
+      "sha256": "ae2df7591b81de65d9a8de478c3014932128b9d49f8f5019a8367d10119ace73"
+    },
+    {
+      "path": "$[14].trace",
+      "count": 150,
+      "sha256": "a7885317b8b23b002906c0461f70eedeeb5d22426610f805c482c3110649c04d"
+    },
+    {
+      "path": "$[15].trace",
+      "count": 112,
+      "sha256": "a02648231aca72e9ba01e57a3f467674eba2b4d4803b9a2431dccc17f515fc16"
+    },
+    {
+      "path": "$[16].trace",
+      "count": 59,
+      "sha256": "8858f62658dfdfbc664650655a6b952718247af1f9eef835ea57ba07b17e3e96"
+    },
+    {
+      "path": "$[17].trace",
+      "count": 106,
+      "sha256": "202812912f6527bd6ce3ee4563594d23acc9a01ee572705a44bc43a17c01a845"
+    },
+    {
+      "path": "$[18].trace",
+      "count": 100,
+      "sha256": "a0592eca058f5ec27ac5f92230c68f80840252f2e8bcb21df0827526b298baa2"
+    },
+    {
+      "path": "$[19].trace",
+      "count": 95,
+      "sha256": "7079f5d1fd206b4ae9890456d425d6d6dc3a0f3f069bf7ec6cc61d654caf233b"
+    }
+  ]
+}

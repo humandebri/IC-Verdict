@@ -1,0 +1,1879 @@
+{
+  "source": "artifacts/query-profile/phases.json",
+  "source_sha256": "92e40ac641780042dbc1e954fe0a598cd34c1f8197a5b257e2f6dfda9cbff9d7",
+  "source_bytes": 1965015,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "created_utc": "2026-09-22T12:28:53.865414+00:00",
+    "canister": "4xhad-gd777-77775-aaacq-cai",
+    "endpoint": "http://localhost:8011/",
+    "mode": "profile",
+    "classes": 2,
+    "input_kind": "canonical short prompt padded with PAD",
+    "module_hash": "0x43dc7743e4ab11aa237752d31b6b94604501221bc89fce12dbee763142e15a8f",
+    "initial_info": "(\n  record {\n    model = blob \"\\07\\57\\d7\\74\\c8\\c4\\43\\97\\d1\\89\\c5\\b4\\79\\85\\38\\97\\ac\\ef\\8f\\1e\\2b\\55\\eb\\f1\\f5\\a4\\69\\69\\06\\32\\25\\e0\";\n    pack_format = \"ic-verdict-int8-pack-v1\";\n    max_input_tokens = 128 : nat32;\n    max_classes = 25 : nat32;\n    cost_per_token = 121_028_580 : nat64;\n    callers = 0 : nat64;\n    cost_fixed = 48_746_986 : nat64;\n    model_bytes = 152_245_512 : nat64;\n    warmed = true;\n    budget = 40_000_000_000 : nat64;\n    tensors = 0 : nat64;\n    upload_complete = true;\n    heap_bytes = 172_556_288 : nat64;\n  },\n)\n",
+    "initial_query_limits": "(\n  record {\n    max_input_tokens = 128 : nat32;\n    cost_per_token = 121_028_580 : nat64;\n    cost_fixed = 48_746_986 : nat64;\n    margin_permille = 1_005 : nat64;\n    max_tokens = 40 : nat32;\n    budget = 5_000_000_000 : nat64;\n  },\n)\n",
+    "rows": [
+      {
+        "status": "ok",
+        "wall_seconds": 0.589432000007946,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 32,
+        "repeat": 0,
+        "ids": [
+          50281,
+          50368,
+          2000,
+          50368,
+          3000,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50282
+        ],
+        "instructions": 3527643863,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 4800683,
+          "rope.table": 945286,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 50962702,
+          "attn.qkv": 1025661138,
+          "attn.layout": 18946907,
+          "rope.apply": 93098434,
+          "attn.pre": 228703,
+          "attn.scores": 87832942,
+          "attn.mask": 14931,
+          "attn.softmax": 50182230,
+          "attn.core": 54308095,
+          "attn.out": 356703903,
+          "layer.attn": 250529,
+          "layer.attn_resid": 11731873,
+          "layer.mlp_norm": 53484566,
+          "layer.mlp_up": 1025712306,
+          "layer.mlp_act": 140390585,
+          "layer.mlp_down": 528277669,
+          "layer.mlp_resid": 11730630,
+          "encoder": 2418576,
+          "text_projector": 6486858,
+          "class_projector": 3405987,
+          "dot_decode": 65736
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.5933184169989545,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 32,
+        "repeat": 1,
+        "ids": [
+          50281,
+          50368,
+          2000,
+          50368,
+          3000,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50283,
+          50282
+        ],
+        "instructions": 3526764873,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 4339619,
+          "rope.table": 945448,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 50806812,
+          "attn.qkv": 1025801165,
+          "attn.layout": 18973324,
+          "rope.apply": 93026440,
+          "attn.pre": 143886,
+          "attn.scores": 87706074,
+          "attn.mask": 114896,
+          "attn.softmax": 50182465,
+          "attn.core": 54293470,
+          "attn.out": 356721633,
+          "layer.attn": 192630,
+          "layer.attn_resid": 11729092,
+          "layer.mlp_norm": 53503748,
+          "layer.mlp_up": 1025551453,
+          "layer.mlp_act": 140325798,
+          "layer.mlp_down": 528317046,
+          "layer.mlp_resid": 11730240,
+          "encoder": 2418787,
+          "text_projector": 6486821,
+          "class_projector": 3385767,
+          "dot_decode": 65665
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.7507390419923468,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 38,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4314124510,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5105825,
+          "rope.table": 1119122,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 60148341,
+          "attn.qkv": 1246286688,
+          "attn.layout": 22779691,
+          "rope.apply": 109703029,
+          "attn.pre": 141161,
+          "attn.scores": 122897898,
+          "attn.mask": 54896,
+          "attn.softmax": 76289806,
+          "attn.core": 76776243,
+          "attn.out": 433698258,
+          "layer.attn": 193501,
+          "layer.attn_resid": 13906422,
+          "layer.mlp_norm": 63033122,
+          "layer.mlp_up": 1246000020,
+          "layer.mlp_act": 167167160,
+          "layer.mlp_down": 642011483,
+          "layer.mlp_resid": 13988538,
+          "encoder": 2861998,
+          "text_projector": 6487681,
+          "class_projector": 3405427,
+          "dot_decode": 65606
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.7360707499901764,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 38,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4314232899,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5146023,
+          "rope.table": 1119121,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 60149261,
+          "attn.qkv": 1246267236,
+          "attn.layout": 22799895,
+          "rope.apply": 109746915,
+          "attn.pre": 141368,
+          "attn.scores": 122898548,
+          "attn.mask": 54896,
+          "attn.softmax": 76289807,
+          "attn.core": 76696349,
+          "attn.out": 433817524,
+          "layer.attn": 191766,
+          "layer.attn_resid": 13906333,
+          "layer.mlp_norm": 63035965,
+          "layer.mlp_up": 1246001026,
+          "layer.mlp_act": 167167308,
+          "layer.mlp_down": 642051749,
+          "layer.mlp_resid": 13948588,
+          "encoder": 2861916,
+          "text_projector": 6487680,
+          "class_projector": 3385426,
+          "dot_decode": 65605
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.7860565419978229,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 39,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4886193615,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5137062,
+          "rope.table": 1124748,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 61702591,
+          "attn.qkv": 1440103765,
+          "attn.layout": 22717450,
+          "rope.apply": 112498620,
+          "attn.pre": 141352,
+          "attn.scores": 126205766,
+          "attn.mask": 14839,
+          "attn.softmax": 80556277,
+          "attn.core": 80656961,
+          "attn.out": 499160376,
+          "layer.attn": 212846,
+          "layer.attn_resid": 14268192,
+          "layer.mlp_norm": 64716445,
+          "layer.mlp_up": 1439596567,
+          "layer.mlp_act": 171471352,
+          "layer.mlp_down": 738676962,
+          "layer.mlp_resid": 14353178,
+          "encoder": 2935951,
+          "text_projector": 6487677,
+          "class_projector": 3386364,
+          "dot_decode": 65681
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.7699100000027101,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 39,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4886308857,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5177134,
+          "rope.table": 1184781,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 61691615,
+          "attn.qkv": 1440104359,
+          "attn.layout": 22797439,
+          "rope.apply": 112446273,
+          "attn.pre": 141485,
+          "attn.scores": 126206471,
+          "attn.mask": 14839,
+          "attn.softmax": 80556277,
+          "attn.core": 80656982,
+          "attn.out": 499180209,
+          "layer.attn": 193779,
+          "layer.attn_resid": 14268278,
+          "layer.mlp_norm": 64712329,
+          "layer.mlp_up": 1439596392,
+          "layer.mlp_act": 171471186,
+          "layer.mlp_down": 738677157,
+          "layer.mlp_resid": 14353028,
+          "encoder": 2936498,
+          "text_projector": 6487677,
+          "class_projector": 3386394,
+          "dot_decode": 65681
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.7534502500056988,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 40,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4443763781,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5248142,
+          "rope.table": 1150319,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 63238964,
+          "attn.qkv": 1278289674,
+          "attn.layout": 23714926,
+          "rope.apply": 115686742,
+          "attn.pre": 100971,
+          "attn.scores": 127148996,
+          "attn.mask": 14923,
+          "attn.softmax": 78542413,
+          "attn.core": 82790720,
+          "attn.out": 445078756,
+          "layer.attn": 230585,
+          "layer.attn_resid": 14632130,
+          "layer.mlp_norm": 67129957,
+          "layer.mlp_up": 1277882926,
+          "layer.mlp_act": 176103511,
+          "layer.mlp_down": 659170596,
+          "layer.mlp_resid": 14656358,
+          "encoder": 3009997,
+          "text_projector": 6487866,
+          "class_projector": 3386109,
+          "dot_decode": 65606
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8112118330027442,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 40,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4443719521,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5207781,
+          "rope.table": 1190322,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 63278231,
+          "attn.qkv": 1278289101,
+          "attn.layout": 23674789,
+          "rope.apply": 115639292,
+          "attn.pre": 140458,
+          "attn.scores": 127189228,
+          "attn.mask": 14924,
+          "attn.softmax": 78542420,
+          "attn.core": 82748773,
+          "attn.out": 445080191,
+          "layer.attn": 191217,
+          "layer.attn_resid": 14632465,
+          "layer.mlp_norm": 67094766,
+          "layer.mlp_up": 1277883423,
+          "layer.mlp_act": 176143499,
+          "layer.mlp_down": 659170315,
+          "layer.mlp_resid": 14656283,
+          "encoder": 3009867,
+          "text_projector": 6487866,
+          "class_projector": 3386111,
+          "dot_decode": 65606
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.9564762079971842,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 41,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5032061838,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5378521,
+          "rope.table": 1215999,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 64814575,
+          "attn.qkv": 1471923995,
+          "attn.layout": 24232964,
+          "rope.apply": 118929947,
+          "attn.pre": 140952,
+          "attn.scores": 139835325,
+          "attn.mask": 54897,
+          "attn.softmax": 88209529,
+          "attn.core": 87456910,
+          "attn.out": 510059087,
+          "layer.attn": 195796,
+          "layer.attn_resid": 14996253,
+          "layer.mlp_norm": 68745262,
+          "layer.mlp_up": 1471518501,
+          "layer.mlp_act": 180190612,
+          "layer.mlp_down": 756137840,
+          "layer.mlp_resid": 14999565,
+          "encoder": 3084093,
+          "text_projector": 6488033,
+          "class_projector": 3384982,
+          "dot_decode": 65606
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.0679702909983462,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 41,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5032059119,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5398881,
+          "rope.table": 1195967,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 64790986,
+          "attn.qkv": 1471922952,
+          "attn.layout": 24193010,
+          "rope.apply": 119017294,
+          "attn.pre": 141970,
+          "attn.scores": 139835267,
+          "attn.mask": 74895,
+          "attn.softmax": 88209534,
+          "attn.core": 87458784,
+          "attn.out": 510097672,
+          "layer.attn": 195672,
+          "layer.attn_resid": 14995946,
+          "layer.mlp_norm": 68739041,
+          "layer.mlp_up": 1471477893,
+          "layer.mlp_act": 180190623,
+          "layer.mlp_down": 756098058,
+          "layer.mlp_resid": 14999581,
+          "encoder": 3083967,
+          "text_projector": 6488033,
+          "class_projector": 3384892,
+          "dot_decode": 65608
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.097013374994276,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 42,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4741880205,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5489354,
+          "rope.table": 1261737,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 66348398,
+          "attn.qkv": 1360826738,
+          "attn.layout": 24851585,
+          "rope.apply": 121589529,
+          "attn.pre": 142360,
+          "attn.scores": 143428804,
+          "attn.mask": 34897,
+          "attn.softmax": 92816793,
+          "attn.core": 91084366,
+          "attn.out": 473532610,
+          "layer.attn": 217230,
+          "layer.attn_resid": 15359010,
+          "layer.mlp_norm": 70293193,
+          "layer.mlp_up": 1360400412,
+          "layer.mlp_act": 184605237,
+          "layer.mlp_down": 701136647,
+          "layer.mlp_resid": 15362908,
+          "encoder": 3157978,
+          "text_projector": 6487857,
+          "class_projector": 3384532,
+          "dot_decode": 65437
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.0351357079925947,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 42,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4741982867,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5550211,
+          "rope.table": 1241770,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 66348125,
+          "attn.qkv": 1360787236,
+          "attn.layout": 24831946,
+          "rope.apply": 121749333,
+          "attn.pre": 142303,
+          "attn.scores": 143388459,
+          "attn.mask": 34896,
+          "attn.softmax": 92816793,
+          "attn.core": 91124296,
+          "attn.out": 473533001,
+          "layer.attn": 257266,
+          "layer.attn_resid": 15359124,
+          "layer.mlp_norm": 70214447,
+          "layer.mlp_up": 1360400412,
+          "layer.mlp_act": 184605241,
+          "layer.mlp_down": 701136697,
+          "layer.mlp_resid": 15362909,
+          "encoder": 3157982,
+          "text_projector": 6487857,
+          "class_projector": 3384532,
+          "dot_decode": 65437
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.1552070410107262,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 43,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5315094765,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5701361,
+          "rope.table": 1227513,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 67898173,
+          "attn.qkv": 1554439468,
+          "attn.layout": 25392775,
+          "rope.apply": 124529801,
+          "attn.pre": 141638,
+          "attn.scores": 146925776,
+          "attn.mask": 74897,
+          "attn.softmax": 97549735,
+          "attn.core": 95053733,
+          "attn.out": 538497522,
+          "layer.attn": 192057,
+          "layer.attn_resid": 15722072,
+          "layer.mlp_norm": 71635854,
+          "layer.mlp_up": 1554032933,
+          "layer.mlp_act": 189083960,
+          "layer.mlp_down": 798099467,
+          "layer.mlp_resid": 15723927,
+          "encoder": 3231968,
+          "text_projector": 6487530,
+          "class_projector": 3384333,
+          "dot_decode": 65678
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.1108511670026928,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 43,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5315091662,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5761958,
+          "rope.table": 1186862,
+          "attn.mask_setup": 2594,
+          "layer.attn_norm": 67914620,
+          "attn.qkv": 1554392934,
+          "attn.layout": 25374196,
+          "rope.apply": 124619875,
+          "attn.pre": 141265,
+          "attn.scores": 146969118,
+          "attn.mask": 54894,
+          "attn.softmax": 97549953,
+          "attn.core": 95015889,
+          "attn.out": 538577572,
+          "layer.attn": 175303,
+          "layer.attn_resid": 15723488,
+          "layer.mlp_norm": 71479181,
+          "layer.mlp_up": 1554033328,
+          "layer.mlp_act": 189084682,
+          "layer.mlp_down": 798139193,
+          "layer.mlp_resid": 15723963,
+          "encoder": 3232980,
+          "text_projector": 6487587,
+          "class_projector": 3384512,
+          "dot_decode": 65715
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8356950839952333,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 44,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4941194868,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5891664,
+          "rope.table": 1253255,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 69449477,
+          "attn.qkv": 1417032041,
+          "attn.layout": 25728249,
+          "rope.apply": 127440444,
+          "attn.pre": 141927,
+          "attn.scores": 147921058,
+          "attn.mask": 74897,
+          "attn.softmax": 95109672,
+          "attn.core": 98779707,
+          "attn.out": 493330501,
+          "layer.attn": 192552,
+          "layer.attn_resid": 16086875,
+          "layer.mlp_norm": 72859863,
+          "layer.mlp_up": 1416631494,
+          "layer.mlp_act": 193510084,
+          "layer.mlp_down": 730389142,
+          "layer.mlp_resid": 16126397,
+          "encoder": 3306016,
+          "text_projector": 6487156,
+          "class_projector": 3384198,
+          "dot_decode": 65606
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.6239963330008322,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 44,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 4941190904,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5752040,
+          "rope.table": 1253252,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 69449443,
+          "attn.qkv": 1417031701,
+          "attn.layout": 25788618,
+          "rope.apply": 127409023,
+          "attn.pre": 140614,
+          "attn.scores": 147959743,
+          "attn.mask": 74896,
+          "attn.softmax": 95109675,
+          "attn.core": 98837009,
+          "attn.out": 493370501,
+          "layer.attn": 190036,
+          "layer.attn_resid": 16086067,
+          "layer.mlp_norm": 72875624,
+          "layer.mlp_up": 1416631495,
+          "layer.mlp_act": 193470074,
+          "layer.mlp_down": 730389152,
+          "layer.mlp_resid": 16126379,
+          "encoder": 3306015,
+          "text_projector": 6487156,
+          "class_projector": 3384193,
+          "dot_decode": 65605
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8743932919896906,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 45,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5531412143,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5782972,
+          "rope.table": 1239069,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 71042686,
+          "attn.qkv": 1610667656,
+          "attn.layout": 26087079,
+          "rope.apply": 130184655,
+          "attn.pre": 101993,
+          "attn.scores": 160816718,
+          "attn.mask": 74947,
+          "attn.softmax": 106769131,
+          "attn.core": 103489834,
+          "attn.out": 558437048,
+          "layer.attn": 196041,
+          "layer.attn_resid": 16449660,
+          "layer.mlp_norm": 74486235,
+          "layer.mlp_up": 1610247497,
+          "layer.mlp_act": 198112527,
+          "layer.mlp_down": 827356379,
+          "layer.mlp_resid": 16529753,
+          "encoder": 3379905,
+          "text_projector": 6487273,
+          "class_projector": 3404887,
+          "dot_decode": 65605
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8720269170007668,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 45,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5531347924,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5803094,
+          "rope.table": 1239067,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 71001909,
+          "attn.qkv": 1610647656,
+          "attn.layout": 26066856,
+          "rope.apply": 130143110,
+          "attn.pre": 101836,
+          "attn.scores": 160776575,
+          "attn.mask": 74946,
+          "attn.softmax": 106769132,
+          "attn.core": 103489692,
+          "attn.out": 558517048,
+          "layer.attn": 175725,
+          "layer.attn_resid": 16449658,
+          "layer.mlp_norm": 74565276,
+          "layer.mlp_up": 1610287497,
+          "layer.mlp_act": 198052526,
+          "layer.mlp_down": 827356380,
+          "layer.mlp_resid": 16489678,
+          "encoder": 3379905,
+          "text_projector": 6487273,
+          "class_projector": 3404887,
+          "dot_decode": 65605
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8536104590020841,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 46,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5242301374,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5994170,
+          "rope.table": 1284936,
+          "attn.mask_setup": 2612,
+          "layer.attn_norm": 72560068,
+          "attn.qkv": 1499537546,
+          "attn.layout": 26626707,
+          "rope.apply": 132970785,
+          "attn.pre": 142992,
+          "attn.scores": 164576397,
+          "attn.mask": 14812,
+          "attn.softmax": 111787931,
+          "attn.core": 107513896,
+          "attn.out": 521912491,
+          "layer.attn": 195932,
+          "layer.attn_resid": 16812610,
+          "layer.mlp_norm": 76157201,
+          "layer.mlp_up": 1499110673,
+          "layer.mlp_act": 202339529,
+          "layer.mlp_down": 772395342,
+          "layer.mlp_resid": 16893780,
+          "encoder": 3454469,
+          "text_projector": 6546473,
+          "class_projector": 3404417,
+          "dot_decode": 65605
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8384230420051608,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 46,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5242402033,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 5954170,
+          "rope.table": 1284936,
+          "attn.mask_setup": 2612,
+          "layer.attn_norm": 72560068,
+          "attn.qkv": 1499617546,
+          "attn.layout": 26626707,
+          "rope.apply": 132890785,
+          "attn.pre": 142992,
+          "attn.scores": 164577056,
+          "attn.mask": 14812,
+          "attn.softmax": 111787931,
+          "attn.core": 107593896,
+          "attn.out": 521872491,
+          "layer.attn": 195932,
+          "layer.attn_resid": 16812610,
+          "layer.mlp_norm": 76157201,
+          "layer.mlp_up": 1499150673,
+          "layer.mlp_act": 202459529,
+          "layer.mlp_down": 772395342,
+          "layer.mlp_resid": 16853780,
+          "encoder": 3454469,
+          "text_projector": 6546473,
+          "class_projector": 3384417,
+          "dot_decode": 65605
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.851911999998265,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 48,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5371665743,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 6456047,
+          "rope.table": 1336585,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 75990837,
+          "attn.qkv": 1531498538,
+          "attn.layout": 28129999,
+          "rope.apply": 138397828,
+          "attn.pre": 145849,
+          "attn.scores": 168632272,
+          "attn.mask": 74946,
+          "attn.softmax": 112460577,
+          "attn.core": 115866709,
+          "attn.out": 533116518,
+          "layer.attn": 189910,
+          "layer.attn_resid": 17539900,
+          "layer.mlp_norm": 79497324,
+          "layer.mlp_up": 1531033629,
+          "layer.mlp_act": 210696234,
+          "layer.mlp_down": 789536205,
+          "layer.mlp_resid": 17542949,
+          "encoder": 3602486,
+          "text_projector": 6466441,
+          "class_projector": 3385689,
+          "dot_decode": 65678
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.8603675409976859,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 48,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 5371604129,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 6375839,
+          "rope.table": 1336586,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 76001790,
+          "attn.qkv": 1531518295,
+          "attn.layout": 28169927,
+          "rope.apply": 138320300,
+          "attn.pre": 147073,
+          "attn.scores": 168672436,
+          "attn.mask": 54947,
+          "attn.softmax": 112460597,
+          "attn.core": 115746922,
+          "attn.out": 533116539,
+          "layer.attn": 190128,
+          "layer.attn_resid": 17539502,
+          "layer.mlp_norm": 79540461,
+          "layer.mlp_up": 1531034018,
+          "layer.mlp_act": 210776239,
+          "layer.mlp_down": 789536207,
+          "layer.mlp_resid": 17542908,
+          "encoder": 3603011,
+          "text_projector": 6466441,
+          "class_projector": 3385692,
+          "dot_decode": 65678
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.0188319579901872,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 56,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 6322620488,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 7564225,
+          "rope.table": 1646419,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 88233177,
+          "attn.qkv": 1784635990,
+          "attn.layout": 32299865,
+          "rope.apply": 160949004,
+          "attn.pre": 142524,
+          "attn.scores": 221240159,
+          "attn.mask": 54897,
+          "attn.softmax": 153634666,
+          "attn.core": 153360264,
+          "attn.out": 621516612,
+          "layer.attn": 234441,
+          "layer.attn_resid": 20448700,
+          "layer.mlp_norm": 92785294,
+          "layer.mlp_up": 1784109151,
+          "layer.mlp_act": 245210531,
+          "layer.mlp_down": 919987833,
+          "layer.mlp_resid": 20451960,
+          "encoder": 4195012,
+          "text_projector": 6465506,
+          "class_projector": 3385987,
+          "dot_decode": 65678
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 0.9833483749971492,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 56,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 6322712845,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 7684224,
+          "rope.table": 1646419,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 88313985,
+          "attn.qkv": 1784635990,
+          "attn.layout": 32299939,
+          "rope.apply": 160958390,
+          "attn.pre": 102913,
+          "attn.scores": 221161360,
+          "attn.mask": 54897,
+          "attn.softmax": 153634665,
+          "attn.core": 153320571,
+          "attn.out": 621556612,
+          "layer.attn": 233571,
+          "layer.attn_resid": 20449534,
+          "layer.mlp_norm": 92785421,
+          "layer.mlp_up": 1784109151,
+          "layer.mlp_act": 245210606,
+          "layer.mlp_down": 919987834,
+          "layer.mlp_resid": 20451960,
+          "encoder": 4195039,
+          "text_projector": 6465506,
+          "class_projector": 3385987,
+          "dot_decode": 65678
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.0707982080057263,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 64,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 7289427179,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 8695604,
+          "rope.table": 1737171,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 100599472,
+          "attn.qkv": 2037853808,
+          "attn.layout": 36839891,
+          "rope.apply": 183282603,
+          "attn.pre": 142128,
+          "attn.scores": 278413219,
+          "attn.mask": 74897,
+          "attn.softmax": 200278966,
+          "attn.core": 196740343,
+          "attn.out": 709737583,
+          "layer.attn": 232919,
+          "layer.attn_resid": 23354137,
+          "layer.mlp_norm": 105844648,
+          "layer.mlp_up": 2037266234,
+          "layer.mlp_act": 279843173,
+          "layer.mlp_down": 1050402988,
+          "layer.mlp_resid": 23357120,
+          "encoder": 4789459,
+          "text_projector": 6466975,
+          "class_projector": 3405559,
+          "dot_decode": 65689
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.0889225420105504,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 64,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 7289409777,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 8615260,
+          "rope.table": 1737173,
+          "attn.mask_setup": 2593,
+          "layer.attn_norm": 100598999,
+          "attn.qkv": 2037853467,
+          "attn.layout": 36839861,
+          "rope.apply": 183282837,
+          "attn.pre": 143230,
+          "attn.scores": 278454658,
+          "attn.mask": 74897,
+          "attn.softmax": 200278986,
+          "attn.core": 196700343,
+          "attn.out": 709737583,
+          "layer.attn": 233451,
+          "layer.attn_resid": 23354006,
+          "layer.mlp_norm": 105885212,
+          "layer.mlp_up": 2037266247,
+          "layer.mlp_act": 279883247,
+          "layer.mlp_down": 1050362989,
+          "layer.mlp_resid": 23357119,
+          "encoder": 4789483,
+          "text_projector": 6466974,
+          "class_projector": 3425508,
+          "dot_decode": 65654
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.4594340420007939,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 80,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 9297915439,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 10550835,
+          "rope.table": 2203610,
+          "attn.mask_setup": 728696,
+          "layer.attn_norm": 126413681,
+          "attn.qkv": 2544329562,
+          "attn.layout": 45992692,
+          "rope.apply": 228935368,
+          "attn.pre": 146490,
+          "attn.scores": 409157278,
+          "attn.mask": 23263497,
+          "attn.softmax": 308072937,
+          "attn.core": 299169594,
+          "attn.out": 886047920,
+          "layer.attn": 192745,
+          "layer.attn_resid": 29161592,
+          "layer.mlp_norm": 132796460,
+          "layer.mlp_up": 2543867807,
+          "layer.mlp_act": 350163012,
+          "layer.mlp_down": 1311656481,
+          "layer.mlp_resid": 29169919,
+          "encoder": 5973811,
+          "text_projector": 6468996,
+          "class_projector": 3387019,
+          "dot_decode": 65437
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.4299203749978915,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 80,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 9297915373,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 10590835,
+          "rope.table": 2203610,
+          "attn.mask_setup": 788696,
+          "layer.attn_norm": 126393681,
+          "attn.qkv": 2544289562,
+          "attn.layout": 46072692,
+          "rope.apply": 228855368,
+          "attn.pre": 146490,
+          "attn.scores": 409157199,
+          "attn.mask": 23263497,
+          "attn.softmax": 308072937,
+          "attn.core": 299169594,
+          "attn.out": 886087920,
+          "layer.attn": 192758,
+          "layer.attn_resid": 29161592,
+          "layer.mlp_norm": 132736460,
+          "layer.mlp_up": 2543827807,
+          "layer.mlp_act": 350183012,
+          "layer.mlp_down": 1311656481,
+          "layer.mlp_resid": 29169919,
+          "encoder": 5973811,
+          "text_projector": 6468996,
+          "class_projector": 3387019,
+          "dot_decode": 65437
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.6534292080032174,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 96,
+        "repeat": 0,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 11352136757,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 12467650,
+          "rope.table": 2715093,
+          "attn.mask_setup": 866769,
+          "layer.attn_norm": 150984989,
+          "attn.qkv": 3050858084,
+          "attn.layout": 55135424,
+          "rope.apply": 273909437,
+          "attn.pre": 105542,
+          "attn.scores": 562382640,
+          "attn.mask": 33430248,
+          "attn.softmax": 433187755,
+          "attn.core": 423776865,
+          "attn.out": 1062360373,
+          "layer.attn": 166317,
+          "layer.attn_resid": 34980359,
+          "layer.mlp_norm": 159020712,
+          "layer.mlp_up": 3050106839,
+          "layer.mlp_act": 420906763,
+          "layer.mlp_down": 1572710715,
+          "layer.mlp_resid": 34981992,
+          "encoder": 7158198,
+          "text_projector": 6469662,
+          "class_projector": 3388569,
+          "dot_decode": 65762
+        }
+      },
+      {
+        "status": "ok",
+        "wall_seconds": 1.666641083007562,
+        "raw": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "tokens": 96,
+        "repeat": 1,
+        "ids": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "instructions": 11352096294,
+        "phases": {
+          "omitted": true,
+          "see_raw_source": true
+        },
+        "phase_totals": {
+          "embedding": 12587650,
+          "rope.table": 2735136,
+          "attn.mask_setup": 806769,
+          "layer.attn_norm": 151004989,
+          "attn.qkv": 3050818084,
+          "attn.layout": 55115424,
+          "rope.apply": 273869437,
+          "attn.pre": 105542,
+          "attn.scores": 562342134,
+          "attn.mask": 33430248,
+          "attn.softmax": 433187755,
+          "attn.core": 423776865,
+          "attn.out": 1062400373,
+          "layer.attn": 166317,
+          "layer.attn_resid": 34980359,
+          "layer.mlp_norm": 158900712,
+          "layer.mlp_up": 3050206839,
+          "layer.mlp_act": 420926763,
+          "layer.mlp_down": 1572670715,
+          "layer.mlp_resid": 34981992,
+          "encoder": 7158198,
+          "text_projector": 6469662,
+          "class_projector": 3388569,
+          "dot_decode": 65762
+        }
+      }
+    ],
+    "source_hashes": {
+      "crates/verdict-simd/src/lib.rs": "712e99f534198edc568f51a3599270c8922f574997bd135c70efaa8aaa432eb0",
+      "crates/modernbert-candle/src/lib.rs": "9fc2c02a38b932502de588cbe26e83ce9b14b81adc2dbac14fe99665103795e6",
+      "crates/verdict-candle/src/lib.rs": "fc9466ffc0943cf06de153b0daa888e4f74fcbc43f08d7696d93cc01a455c28b",
+      "canisters/verdict-engine/src/lib.rs": "7a76e274ea21879252f5954681cbcd368b484c453ab987c366d3122a567f224f"
+    },
+    "source_hashes_note": "Working-tree snapshot only; module_hash identifies the installed Wasm. Sources can differ during candidate builds.",
+    "query_repeats_note": "Identical queries can hit the replica cache; repetitions are not independent timing samples."
+  },
+  "omitted": [
+    {
+      "path": "$.rows[0].raw",
+      "count": 27147,
+      "sha256": "0bd7a590ba885eaa6db2802f8d3907223561744956ceac353187a5081b416e28"
+    },
+    {
+      "path": "$.rows[0].phases",
+      "count": 404,
+      "sha256": "749f244f4e1459b8ac64c371f61bc2cb6e384529f17186b359cec844253f0101"
+    },
+    {
+      "path": "$.rows[1].raw",
+      "count": 27134,
+      "sha256": "bfed088d7c7a9b658d477a7767545845dd116c762a1f82f3c80e2f22bc1a6602"
+    },
+    {
+      "path": "$.rows[1].phases",
+      "count": 404,
+      "sha256": "45c79b26e2fd9a3f24e503bbd0c1c957bfb42ada9be08ddc4dfb5a379bceb88e"
+    },
+    {
+      "path": "$.rows[2].raw",
+      "count": 27141,
+      "sha256": "154dda5dd61a526f851cc7121b48464b2e0881e74bcce5a0dc88e9146d9e8565"
+    },
+    {
+      "path": "$.rows[2].ids",
+      "count": 38,
+      "sha256": "45cb5c2a4de0c6c6effcee8edd7e587501c00fdaab3d1ebb2fd399ea8fb1c9d5"
+    },
+    {
+      "path": "$.rows[2].phases",
+      "count": 404,
+      "sha256": "03ea49efe8128ee888c92a2274d72708a4e9d9b037dfe8e6339082786c394bb8"
+    },
+    {
+      "path": "$.rows[3].raw",
+      "count": 27141,
+      "sha256": "198257d0321c8e481097a3e8dbfee8837563adb7a6dfb782abcb90f741bfef4c"
+    },
+    {
+      "path": "$.rows[3].ids",
+      "count": 38,
+      "sha256": "45cb5c2a4de0c6c6effcee8edd7e587501c00fdaab3d1ebb2fd399ea8fb1c9d5"
+    },
+    {
+      "path": "$.rows[3].phases",
+      "count": 404,
+      "sha256": "7141fc22f91145edc7dbd8e9d3335619c00852cabdcaacd7b97ca7ed980103a1"
+    },
+    {
+      "path": "$.rows[4].raw",
+      "count": 27176,
+      "sha256": "e223c748f099767560d2d3aaabb8e757d687972773e8ec87cc295378cd203e67"
+    },
+    {
+      "path": "$.rows[4].ids",
+      "count": 39,
+      "sha256": "21fa70d04c9d97918de1459f134fa311a408b2ff29568ccc046ca05b37d28395"
+    },
+    {
+      "path": "$.rows[4].phases",
+      "count": 404,
+      "sha256": "ae5d32d89f191dc53c1423fb019daee74fa693233b7b453030b2cdd418af696c"
+    },
+    {
+      "path": "$.rows[5].raw",
+      "count": 27176,
+      "sha256": "779a98ec82534ffdfeb63b8abc0e209fe9623e51e532a2c3bed6155d55035b73"
+    },
+    {
+      "path": "$.rows[5].ids",
+      "count": 39,
+      "sha256": "21fa70d04c9d97918de1459f134fa311a408b2ff29568ccc046ca05b37d28395"
+    },
+    {
+      "path": "$.rows[5].phases",
+      "count": 404,
+      "sha256": "863ebc943c74deee7efadd411bd384bc2ee7926886bd47bb88a38c7688a19c23"
+    },
+    {
+      "path": "$.rows[6].raw",
+      "count": 27175,
+      "sha256": "d8009b4d13dc8baf7a3c452c2355430e91ac69571133d3d4ca64b8ea4135c278"
+    },
+    {
+      "path": "$.rows[6].ids",
+      "count": 40,
+      "sha256": "ce3c36880b4ac4fcf6194673ae044adfbd2ebaa5aa25d32f0cf6ea8924599cac"
+    },
+    {
+      "path": "$.rows[6].phases",
+      "count": 404,
+      "sha256": "af6c4bbae86757d0c6fe91544c9bc3a9b29a252d799628f00f72bb66f8ec0e64"
+    },
+    {
+      "path": "$.rows[7].raw",
+      "count": 27176,
+      "sha256": "fb878c480448e69f06d598ffd791a674bc761c875047df2882704af71c5d6720"
+    },
+    {
+      "path": "$.rows[7].ids",
+      "count": 40,
+      "sha256": "ce3c36880b4ac4fcf6194673ae044adfbd2ebaa5aa25d32f0cf6ea8924599cac"
+    },
+    {
+      "path": "$.rows[7].phases",
+      "count": 404,
+      "sha256": "e19e288475ef4d46f29a51e0fec08093e33d1c4cfa0ea13ca536e751a60bc3fb"
+    },
+    {
+      "path": "$.rows[8].raw",
+      "count": 27177,
+      "sha256": "36247022d60a5dc2f8cffea5a0f7510657138906e353fb91ed01e88bf028f543"
+    },
+    {
+      "path": "$.rows[8].ids",
+      "count": 41,
+      "sha256": "4b59ce295721eecb5017ef080e66056fd985ef426e6b65d81fedbb28aec46bfc"
+    },
+    {
+      "path": "$.rows[8].phases",
+      "count": 404,
+      "sha256": "4ba603db21fa29db00314f93749cb05df5e1cc3ea53547efb0ed5bcfa5eb4d19"
+    },
+    {
+      "path": "$.rows[9].raw",
+      "count": 27177,
+      "sha256": "09ce2af75939d79023de49c1d581aa2732533709cff28c01505c09b67d536d86"
+    },
+    {
+      "path": "$.rows[9].ids",
+      "count": 41,
+      "sha256": "4b59ce295721eecb5017ef080e66056fd985ef426e6b65d81fedbb28aec46bfc"
+    },
+    {
+      "path": "$.rows[9].phases",
+      "count": 404,
+      "sha256": "868fc7632678159963ee407839f67dfca515ea3d9827a07b46b58cc206e620d7"
+    },
+    {
+      "path": "$.rows[10].raw",
+      "count": 27177,
+      "sha256": "77c8a59fe73b07c07767c0bc6ae449856b4d5cc9310e3bcb7978f14e2fecbeb5"
+    },
+    {
+      "path": "$.rows[10].ids",
+      "count": 42,
+      "sha256": "c72351322011fc6590d95b80df9a2db981461c9f56d08be24b9530dc3177a01c"
+    },
+    {
+      "path": "$.rows[10].phases",
+      "count": 404,
+      "sha256": "ca53e803c3bd4642c27fac75ca2ddad6111cb31ed227d748aebdd4075a56322d"
+    },
+    {
+      "path": "$.rows[11].raw",
+      "count": 27177,
+      "sha256": "be63a4a3e6eaf086f928e1726fd8536e2f83f73279231965e84fd93aa8a099f7"
+    },
+    {
+      "path": "$.rows[11].ids",
+      "count": 42,
+      "sha256": "c72351322011fc6590d95b80df9a2db981461c9f56d08be24b9530dc3177a01c"
+    },
+    {
+      "path": "$.rows[11].phases",
+      "count": 404,
+      "sha256": "55aaa28cf6ab010f0f8fdcb7f70f0b2f0031a1d33df6209140809bcc50c26ad1"
+    },
+    {
+      "path": "$.rows[12].raw",
+      "count": 27177,
+      "sha256": "2a30890eb06f92b3dc3c5e7d918fd3af93b3b83642d4ef0de863c9e84e1fc1ad"
+    },
+    {
+      "path": "$.rows[12].ids",
+      "count": 43,
+      "sha256": "90d17dda85aa7ce188d9189e2674d0244633fd441a9b9d217be7e108f3a9d066"
+    },
+    {
+      "path": "$.rows[12].phases",
+      "count": 404,
+      "sha256": "0389ae06378093d7c8f8d192d1e0056a3ae3a765d4849f4c02610a6c5e35bd6d"
+    },
+    {
+      "path": "$.rows[13].raw",
+      "count": 27176,
+      "sha256": "a71f52d8f04c66311051e5d12fd7b4942cdfa05c58e3bb90f159f362198a9183"
+    },
+    {
+      "path": "$.rows[13].ids",
+      "count": 43,
+      "sha256": "90d17dda85aa7ce188d9189e2674d0244633fd441a9b9d217be7e108f3a9d066"
+    },
+    {
+      "path": "$.rows[13].phases",
+      "count": 404,
+      "sha256": "3bc5766b7feeb3d5f852f812da9dd332ef56a8d991a6b481d2490d86381ea0ae"
+    },
+    {
+      "path": "$.rows[14].raw",
+      "count": 27178,
+      "sha256": "645eaf0d68ab2b526f9e3f0d2eda5d2c44b4474df00469704ff66eb8015a9f19"
+    },
+    {
+      "path": "$.rows[14].ids",
+      "count": 44,
+      "sha256": "206b0930b29b23b9c6438fd16c2ecdbe18138f26e7484f6547ebbddf2a841b82"
+    },
+    {
+      "path": "$.rows[14].phases",
+      "count": 404,
+      "sha256": "218f0e6df5e6d2e337b38a015f23a0e617b866ac4e1e174ba1fa0158b92e1d50"
+    },
+    {
+      "path": "$.rows[15].raw",
+      "count": 27178,
+      "sha256": "c94076645b6628bab0f65abba1be49e6bf9ab26f830ae0e715a17b6d8c375bf9"
+    },
+    {
+      "path": "$.rows[15].ids",
+      "count": 44,
+      "sha256": "206b0930b29b23b9c6438fd16c2ecdbe18138f26e7484f6547ebbddf2a841b82"
+    },
+    {
+      "path": "$.rows[15].phases",
+      "count": 404,
+      "sha256": "7de9b656c03f41ef8c186ddf7ff7905b2497fadd383615b124795f2cde17a68c"
+    },
+    {
+      "path": "$.rows[16].raw",
+      "count": 27179,
+      "sha256": "dd6c987519322d5e381b5a06b5e6dd4b7328751737a4effc5e2b541590ed7092"
+    },
+    {
+      "path": "$.rows[16].ids",
+      "count": 45,
+      "sha256": "3b146a236404f603cc778e9f38d499dac3f9c2cd03bfbdeb10d3049206408735"
+    },
+    {
+      "path": "$.rows[16].phases",
+      "count": 404,
+      "sha256": "40e466d4a18b06624b3f960979c37469027a73267c84ae0375feccdcbcc878e3"
+    },
+    {
+      "path": "$.rows[17].raw",
+      "count": 27178,
+      "sha256": "180b88ee2e2d1d83113fd2aa2e7fd467cd357038ad6dedd3134f2db0292ab986"
+    },
+    {
+      "path": "$.rows[17].ids",
+      "count": 45,
+      "sha256": "3b146a236404f603cc778e9f38d499dac3f9c2cd03bfbdeb10d3049206408735"
+    },
+    {
+      "path": "$.rows[17].phases",
+      "count": 404,
+      "sha256": "b8df4739301d1cecbe257816c8968f7d0feafd7a00209adbc8fdbb29fe258516"
+    },
+    {
+      "path": "$.rows[18].raw",
+      "count": 27180,
+      "sha256": "4db4d08c7c40a7b3e172bfea7456f09612de2657ca40100b4177e067788955c8"
+    },
+    {
+      "path": "$.rows[18].ids",
+      "count": 46,
+      "sha256": "62d05a167191c8f4c46a08a883bbcbfb72278eabc69ab20103c0c9082fd331e0"
+    },
+    {
+      "path": "$.rows[18].phases",
+      "count": 404,
+      "sha256": "ce9524bc2c455294996384286d4162773003f46dbce29d3c6e974e2586d4be07"
+    },
+    {
+      "path": "$.rows[19].raw",
+      "count": 27180,
+      "sha256": "a7d56759e1e89fd0075099abc64af0291aa56d24b962b0c02eb066b3e6188a99"
+    },
+    {
+      "path": "$.rows[19].ids",
+      "count": 46,
+      "sha256": "62d05a167191c8f4c46a08a883bbcbfb72278eabc69ab20103c0c9082fd331e0"
+    },
+    {
+      "path": "$.rows[19].phases",
+      "count": 404,
+      "sha256": "dcd6c05b14da16fca0aa26f9fce237be783b5fb14395f217c35f707128423e64"
+    },
+    {
+      "path": "$.rows[20].raw",
+      "count": 27187,
+      "sha256": "22592876729639ffb155f26d4be7c7121aba0e7065cbaee7a097ccf768ba7f8e"
+    },
+    {
+      "path": "$.rows[20].ids",
+      "count": 48,
+      "sha256": "61512065331324353398fe5ad30574988c99d002e833d59034f4b7e7aca57935"
+    },
+    {
+      "path": "$.rows[20].phases",
+      "count": 404,
+      "sha256": "d6a36f0b012e55ce9528f17402d5bc6bd9da95c9c8b6bb5581693a3550032629"
+    },
+    {
+      "path": "$.rows[21].raw",
+      "count": 27187,
+      "sha256": "c13bda09ad2d5f60aa4b59ae3be6d82ef57c63ade4552a8a8c7e1c76ec2eaa37"
+    },
+    {
+      "path": "$.rows[21].ids",
+      "count": 48,
+      "sha256": "61512065331324353398fe5ad30574988c99d002e833d59034f4b7e7aca57935"
+    },
+    {
+      "path": "$.rows[21].phases",
+      "count": 404,
+      "sha256": "6881a2b8792bef1a2319dfb3195126e5cf7c7c352184768466e6413f97a43930"
+    },
+    {
+      "path": "$.rows[22].raw",
+      "count": 27215,
+      "sha256": "c39cd96eafa9e9f8380ad78e4138efe27d0b4fea79b0d616791dd928be3eabb3"
+    },
+    {
+      "path": "$.rows[22].ids",
+      "count": 56,
+      "sha256": "3fb698b92691f24657172411428fed9572812b9d2ed1da9e44183af714c7774e"
+    },
+    {
+      "path": "$.rows[22].phases",
+      "count": 404,
+      "sha256": "1efc37bbb0e0dcb53782f72261181bee4d456bccb3b0fc9d67cc0d359ce34b33"
+    },
+    {
+      "path": "$.rows[23].raw",
+      "count": 27214,
+      "sha256": "8964aa38fc6b3cf8984613de5762b90103a671eb1f42620b03e5b2cd9999903d"
+    },
+    {
+      "path": "$.rows[23].ids",
+      "count": 56,
+      "sha256": "3fb698b92691f24657172411428fed9572812b9d2ed1da9e44183af714c7774e"
+    },
+    {
+      "path": "$.rows[23].phases",
+      "count": 404,
+      "sha256": "1c129077b9c39cf826f99e800cdc93d33609e9bdf645b7822ef78152a16b5e4e"
+    },
+    {
+      "path": "$.rows[24].raw",
+      "count": 27309,
+      "sha256": "da17a2da2f8e1b0c4473c0415f8e7fff33de49eafa5b812cab4746519114e951"
+    },
+    {
+      "path": "$.rows[24].ids",
+      "count": 64,
+      "sha256": "749399d61bc8e63adce85a0b1de8e01d3a11631e60246b371b7d2df6894c5af8"
+    },
+    {
+      "path": "$.rows[24].phases",
+      "count": 404,
+      "sha256": "9000d27923cf27b93b43d64040edba95450afa25b49e6af69cff5679e99c8eb8"
+    },
+    {
+      "path": "$.rows[25].raw",
+      "count": 27309,
+      "sha256": "f2dfaf86e1bbdef8f1d6ee64f001dc5efd66984097a14a34eccd93d51735a7bf"
+    },
+    {
+      "path": "$.rows[25].ids",
+      "count": 64,
+      "sha256": "749399d61bc8e63adce85a0b1de8e01d3a11631e60246b371b7d2df6894c5af8"
+    },
+    {
+      "path": "$.rows[25].phases",
+      "count": 404,
+      "sha256": "b92acad6968bea75608db5de8f17ded00380499f68515dcdbec09ae7ae7df6c1"
+    },
+    {
+      "path": "$.rows[26].raw",
+      "count": 27490,
+      "sha256": "59c926ab4d8d0ac209d12a815d7557c6474c1d6d1552385fd8d1c6dda3b8cbd4"
+    },
+    {
+      "path": "$.rows[26].ids",
+      "count": 80,
+      "sha256": "262f3d85a923d5039be90731100f97b2bd1918b9e14df0adef40b48aa5f447d8"
+    },
+    {
+      "path": "$.rows[26].phases",
+      "count": 404,
+      "sha256": "d162cb59483b4612e93dfdc7cbf0b44fb6d7cdf223f159d99cf20d218a461476"
+    },
+    {
+      "path": "$.rows[27].raw",
+      "count": 27490,
+      "sha256": "a10b4e3fe78aa30a7d6ba4a0587f4867508d29b7b1175189529b06c7c1460a03"
+    },
+    {
+      "path": "$.rows[27].ids",
+      "count": 80,
+      "sha256": "262f3d85a923d5039be90731100f97b2bd1918b9e14df0adef40b48aa5f447d8"
+    },
+    {
+      "path": "$.rows[27].phases",
+      "count": 404,
+      "sha256": "40c463948eea8feb8a5f6d6acbe4486d47b28b7bc65b8d597401ffdbbcac5c2f"
+    },
+    {
+      "path": "$.rows[28].raw",
+      "count": 27486,
+      "sha256": "a2f245de3da17fa833eecd02aff0049086ee12a6cf97e27617ad37d6c1345674"
+    },
+    {
+      "path": "$.rows[28].ids",
+      "count": 96,
+      "sha256": "52f852d2b1449a5035a5f17f9877e0e6e0dc6e516522722a353dd7f8ade53ac0"
+    },
+    {
+      "path": "$.rows[28].phases",
+      "count": 404,
+      "sha256": "cda69bb061aec1f2aebfc4ef42535e6094a5005137e5d39c2dcb80284812307b"
+    },
+    {
+      "path": "$.rows[29].raw",
+      "count": 27486,
+      "sha256": "c6557d1c70f8f93f4f2f2c4548d4021c9a7368878ddc81e1057f32f309012af6"
+    },
+    {
+      "path": "$.rows[29].ids",
+      "count": 96,
+      "sha256": "52f852d2b1449a5035a5f17f9877e0e6e0dc6e516522722a353dd7f8ade53ac0"
+    },
+    {
+      "path": "$.rows[29].phases",
+      "count": 404,
+      "sha256": "eeaf1d4ffe88aaf01566bfbd96f495794e9e108133872c6e8bb2b8d301bd37ce"
+    }
+  ]
+}

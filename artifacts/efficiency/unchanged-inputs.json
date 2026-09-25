@@ -1,0 +1,10 @@
+{
+  "all_match_baseline": true,
+  "files": {
+    "models/verdict-pack/manifest.json": "2db054927c36f12f14b96b4e924ff8e85a316f8f1e684f39c569f8e9a8c2ad50",
+    "models/verdict-pack/model.bin": "b7c819193e87b6d558826062f4729f16ea9b1ce82451b555e6ed4b028815c7a8",
+    "models/verdict-151m/tokenizer.json": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+    "models/verdict-parity/cases.jsonl": "533f773c5167a402c30685c1f673bc68feb1d29c096d583a2cdfd9afb58a0426",
+    "models/verdict-parity/predictions.jsonl": "1d9274ac3bc0bf27e18919d874fbbead570b4e44f4166e06246f706844999f26"
+  }
+}

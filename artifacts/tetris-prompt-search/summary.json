@@ -1,0 +1,144 @@
+{
+  "selected": "cost/0",
+  "sampler": "features-diverse",
+  "passed_game_gate": true,
+  "formats_screened": 114,
+  "formats_inferred": 75,
+  "development_original": {
+    "baseline": {
+      "games": 8,
+      "mean_turns": 27.625,
+      "mean_lines": 0,
+      "clearing_games": 0,
+      "min_lines": 0,
+      "max_lines": 0
+    },
+    "ranks/compact": {
+      "games": 8,
+      "mean_turns": 23.75,
+      "mean_lines": 0,
+      "clearing_games": 0,
+      "min_lines": 0,
+      "max_lines": 0
+    },
+    "four-heuristic": {
+      "games": 8,
+      "mean_turns": 29.375,
+      "mean_lines": 0.25,
+      "clearing_games": 2,
+      "min_lines": 0,
+      "max_lines": 1
+    },
+    "random": {
+      "games": 8,
+      "mean_turns": 24.875,
+      "mean_lines": 0,
+      "clearing_games": 0,
+      "min_lines": 0,
+      "max_lines": 0
+    }
+  },
+  "development_new": {
+    "cost/0": {
+      "games": 8,
+      "mean_turns": 51.625,
+      "mean_lines": 9.5,
+      "clearing_games": 8,
+      "min_lines": 2,
+      "max_lines": 18
+    }
+  },
+  "fresh_original": {
+    "games": 8,
+    "mean_turns": 26.875,
+    "mean_lines": 0,
+    "clearing_games": 0,
+    "min_lines": 0,
+    "max_lines": 0
+  },
+  "fresh_new": {
+    "cost/0": {
+      "games": 8,
+      "mean_turns": 45.75,
+      "mean_lines": 6.5,
+      "clearing_games": 7,
+      "min_lines": 0,
+      "max_lines": 12
+    },
+    "baseline": {
+      "games": 8,
+      "mean_turns": 20.125,
+      "mean_lines": 0.125,
+      "clearing_games": 1,
+      "min_lines": 0,
+      "max_lines": 1
+    },
+    "four-heuristic": {
+      "games": 8,
+      "mean_turns": 39.625,
+      "mean_lines": 5,
+      "clearing_games": 8,
+      "min_lines": 1,
+      "max_lines": 15
+    },
+    "random": {
+      "games": 8,
+      "mean_turns": 19.875,
+      "mean_lines": 0,
+      "clearing_games": 0,
+      "min_lines": 0,
+      "max_lines": 0
+    }
+  },
+  "input_tokens": {
+    "max": 41,
+    "mean": 40.50819672131148,
+    "total_turns": 366,
+    "exhaustive_label_bound": 41
+  },
+  "single_feature_checks": {
+    "correct": 72,
+    "total": 72,
+    "per_metric": {
+      "lines": 24,
+      "holes": 24,
+      "height": 24
+    },
+    "max_tokens": 41,
+    "token_checks": 256,
+    "unique_inferences": 36,
+    "note": "Exhaustive single-feature rank/order checks, not independent accuracy samples. Values collapse to the same rank labels."
+  },
+  "local": {
+    "games": [
+      {
+        "seed": 11,
+        "turns": 39,
+        "lines": 4
+      },
+      {
+        "seed": 277,
+        "turns": 31,
+        "lines": 1
+      }
+    ],
+    "queries": 70,
+    "all_native_choices_match": true,
+    "update_calls": 0,
+    "max_tokens": 41,
+    "max_model_instructions": 3686936071,
+    "median_response_ms": 386.7583954999991
+  },
+  "hashes": {
+    "models/verdict-pack/manifest.json": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "models/verdict-151m/tokenizer.json": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+    "build/tetris-feature-cost/verdict-engine.wasm": "78f7b42df1aa878f76f2c0e9f978388cbd613469ec29433f680e9edd11e95d34"
+  },
+  "limitations": [
+    "Eight fresh deterministic seeds are not a general performance guarantee.",
+    "Single-feature permutations share normalized inputs; they are not independent accuracy samples.",
+    "Model receives code-computed costs and relative ranks; this does not establish raw-board or numeric rule understanding.",
+    "Candidate generation remains code assistance. No combined evaluation score or recommended ID enters the model request.",
+    "Production release status is recorded separately in production-release.json."
+  ]
+}

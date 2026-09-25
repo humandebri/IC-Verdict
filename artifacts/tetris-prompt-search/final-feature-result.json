@@ -1,0 +1,1391 @@
+{
+  "baseline": {
+    "metrics": {
+      "real": {
+        "tests": 48,
+        "best": 27,
+        "dominated": 21,
+        "stable": 7,
+        "cases": 12
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 10,
+        "dominated": 38,
+        "stable": 5,
+        "cases": 12
+      }
+    },
+    "rows": [
+      {
+        "case": "final-real-0",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-0",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-2",
+        "kind": "real",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-2",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-2",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-2",
+        "kind": "real",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-4",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-5",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-6",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-6",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-6",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-6",
+        "kind": "real",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-8",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-8",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-8",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-8",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-9",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-9",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-9",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-9",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-10",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-10",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-10",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-10",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-11",
+        "kind": "real",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-11",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-11",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-11",
+        "kind": "real",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-0",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-1",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-1",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-2",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-3",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-1",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-1",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-1",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-1",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-2",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-2",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-2",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-2",
+        "kind": "dominance",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-3",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-3",
+        "kind": "dominance",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-1",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-1",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-1",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-1",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-2",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-2",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-2",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-2",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-3",
+        "kind": "dominance",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-3",
+        "kind": "dominance",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-3",
+        "kind": "dominance",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-height-3",
+        "kind": "dominance",
+        "selected": 3,
+        "best": false,
+        "dominated": true
+      }
+    ]
+  },
+  "full_holes/5": {
+    "metrics": {
+      "real": {
+        "tests": 48,
+        "best": 41,
+        "dominated": 6,
+        "stable": 9,
+        "cases": 12
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 32,
+        "dominated": 16,
+        "stable": 12,
+        "cases": 12
+      }
+    },
+    "rows": [
+      {
+        "case": "final-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-0",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-1",
+        "kind": "real",
+        "selected": 1,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-2",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-2",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-2",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-2",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-3",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-4",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-4",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-4",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-4",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-5",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-5",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": false
+      },
+      {
+        "case": "final-real-6",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-6",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-6",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-6",
+        "kind": "real",
+        "selected": 2,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-7",
+        "kind": "real",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-8",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-8",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-8",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-8",
+        "kind": "real",
+        "selected": 1,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-9",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-9",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-9",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-9",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-10",
+        "kind": "real",
+        "selected": 2,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-real-10",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-10",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-10",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-11",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-11",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-11",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-real-11",
+        "kind": "real",
+        "selected": 3,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-lines-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-lines-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": false,
+        "dominated": true
+      },
+      {
+        "case": "final-holes-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-holes-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-0",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-1",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-2",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      },
+      {
+        "case": "final-height-3",
+        "kind": "dominance",
+        "selected": 0,
+        "best": true,
+        "dominated": false
+      }
+    ]
+  },
+  "token_bound": {
+    "max": 45,
+    "checks": 256,
+    "method": "All 64 relative-feature labels repeated at each candidate count 1..4; fixed label separators and ASCII tokenizer boundaries."
+  }
+}

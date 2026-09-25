@@ -1,0 +1,17 @@
+{
+  "rust_model_tests": "PASS: cargo test -q -p verdict-candle --test model",
+  "instrumented_wasm_build": "PASS: bash tools/build_one.sh verdict-engine",
+  "candidate_wasm_build": "PASS: bash tools/build_one.sh verdict-engine",
+  "python_syntax": "PASS: python3 -m py_compile tools/profile_query.py",
+  "whitespace": "PASS: git diff --check",
+  "phase_sums": "all 30 detailed profiles sum to measured_instructions",
+  "candidate_synthetic_exact_logits": 11,
+  "instrumentation_exact_logits": 5,
+  "candidate_real_exact_logits": 5,
+  "query_guard_restored_for_all_sweeps": true,
+  "final_kernel_source_restored": true,
+  "final_local_module_hash": "0x43dc7743e4ab11aa237752d31b6b94604501221bc89fce12dbee763142e15a8f",
+  "final_local_canister": "4xhad-gd777-77775-aaacq-cai",
+  "final_query_limits": "(\n  record {\n    max_input_tokens = 128 : nat32;\n    cost_per_token = 121_028_580 : nat64;\n    cost_fixed = 48_746_986 : nat64;\n    margin_permille = 1_005 : nat64;\n    max_tokens = 40 : nat32;\n    budget = 5_000_000_000 : nat64;\n  },\n)\n",
+  "production_modified": false
+}

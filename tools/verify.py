@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Record PASS / FAIL / NOT_RUN independently. Never substitute Python for Rust."""
 from __future__ import annotations
-import argparse,ast,datetime,importlib.metadata,json,os,re,shutil,subprocess,sys,tomllib
+import argparse,ast,datetime,json,os,re,shutil,subprocess,sys,tomllib
+import billing_cli
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
 # Vendored/cache trees that must never be scanned as project source. `.cargohome`
 # holds the Cargo registry used by tools/verdict-upload (thousands of .rs files).
-SKIP={".venv","target",".cargohome",".icphome",".icp","__pycache__"}
+SKIP={".venv","target",".cargohome",".icphome",".icp","__pycache__","node_modules"}
 def skipped(path):
     return any(part in SKIP for part in path.parts)
 
@@ -43,7 +44,11 @@ def main():
         help="log file from a manual real-ledger transfer to record as evidence")
     p.add_argument("--verdict-canister",action="store_true",
                    help="also sweep the openJev canister on an already-warm local replica (tools/measure_verdict.py --skip-upload)")
+    p.add_argument("--verdict-query",action="store_true",
+                   help="also sweep the 5B query path on an already-warm local replica (tools/measure_verdict.py --query --skip-upload)")
+    billing_cli.add_arguments(p)
     args=p.parse_args();records=[]
+    if args.verdict_canister:billing_cli.require_payment(args)
     artifacts=ROOT/"artifacts";artifacts.mkdir(exist_ok=True)
     def run(name,cmd,log,timeout=300):
         try:
@@ -103,20 +108,14 @@ def main():
         # Candid come from tools/build_one.sh.
         run("wasm_build",["cargo","build","--target","wasm32-unknown-unknown","-p","decision-engine","--lib"],"wasm_build.log",900)
         run("verdict_candle_tests",["cargo","test","-p","verdict-candle"],"verdict_candle_tests.log",900)
-        # The quantised dense path is opt-in at deploy time, so the default test run
-        # would never compile it. Both feature configurations are required here.
-        run("verdict_candle_int8_tests",["cargo","test","-p","verdict-candle","--features","int8"],"verdict_int8_tests.log",900)
         run("verdict_engine_wasm_build",["cargo","build","--target","wasm32-unknown-unknown","-p","verdict-engine","--lib"],"verdict_wasm_build.log",900)
-        run("verdict_engine_int8_wasm_build",["cargo","build","--target","wasm32-unknown-unknown","-p","verdict-engine","--lib","--features","int8"],"verdict_int8_wasm_build.log",900)
     else:
         why="Rust toolchain not installed" if not binaries["cargo"] or not binaries["rustc"] else "Pass --rust to run Rust checks"
         records.append(dict(check="rust_workspace_tests",status="NOT_RUN",reason=why))
         records.append(dict(check="wasm_build",status="NOT_RUN",reason=why))
         records.append(dict(check="verdict_candle_tests",status="NOT_RUN",reason=why))
-        records.append(dict(check="verdict_candle_int8_tests",status="NOT_RUN",reason=why))
         records.append(dict(check="verdict_engine_wasm_build",status="NOT_RUN",reason=why))
-        records.append(dict(check="verdict_engine_int8_wasm_build",status="NOT_RUN",reason=why))
-    # Opt-in: needs the 605 MiB pack (tools/pack_verdict.py) and the release binary.
+    # Opt-in: needs the generated INT8 pack and the release binary.
     parity_pack=ROOT/"models"/"verdict-pack"
     parity_bin=ROOT/"target"/"release"/"verdict-infer"
     parity_cases=ROOT/"models"/"verdict-parity"
@@ -139,10 +138,19 @@ def main():
     # that says nothing about either check.
     if args.verdict_canister:
         run("openjev_canister_instructions",[sys.executable,"tools/measure_verdict.py",
-            "--skip-upload","--sweep","120"],"verdict_sweep.log",3600)
+            "--skip-upload","--sweep","120",*billing_cli.uploader_flags(args)],"verdict_sweep.log",3600)
     else:
         records.append(dict(check="openjev_canister_instructions",status="NOT_RUN",
           reason="Pass --verdict-canister with a warm local replica; see docs/VERDICT_ENGINE.md"))
+    # The 5B query path is a separate measurement with its own artifact, because it has a
+    # different ceiling: it cannot reuse the update sweep's 118-token prompt at all.
+    # Same contract as `--verdict-canister`: the caller must have warmed a replica.
+    if args.verdict_query:
+        run("openjev_query_canister",[sys.executable,"tools/measure_verdict.py",
+            "--query","--skip-upload"],"verdict_query_sweep.log",1800)
+    else:
+        records.append(dict(check="openjev_query_canister",status="NOT_RUN",
+          reason="Pass --verdict-query with a warm local replica; see docs/VERDICT_ENGINE.md"))
     # A real-ledger transfer cannot be claimed by default, but it must be possible to
     # *request* it: otherwise this row is permanently NOT_RUN and can never fail.
     if args.real_ledger_evidence:
@@ -167,9 +175,6 @@ def main():
         records.append(dict(check="icp_canister_integration",status="NOT_RUN",
           reason="Pass --local-integration to run it (starts a local replica via icp CLI)"))
     versions={}
-    for name in ["torch","numpy","safetensors"]:
-        try:versions[name]=importlib.metadata.version(name)
-        except importlib.metadata.PackageNotFoundError:versions[name]=None
     rust_sources=[p for p in ROOT.rglob("*.rs") if not skipped(p)]
     # A check that was requested and did not run is not a pass. Without this, `--rust`
     # on a machine without a toolchain, or `--verdict` without the pack, wrote a report
@@ -177,9 +182,9 @@ def main():
     # to prevent. The no-flag invocation still exits 0: it is explicitly a
     # source-delivery validation, and it now says so out loud.
     requested={"rust_workspace_tests":want_rust,"wasm_build":want_rust,
-      "verdict_candle_tests":want_rust,"verdict_candle_int8_tests":want_rust,
-      "verdict_engine_wasm_build":want_rust,"verdict_engine_int8_wasm_build":want_rust,
+      "verdict_candle_tests":want_rust,"verdict_engine_wasm_build":want_rust,
       "openjev_checkpoint_parity":args.verdict,"openjev_canister_instructions":args.verdict_canister,
+      "openjev_query_canister":args.verdict_query,
       "icp_canister_integration":args.local_integration,"manifest_integrity":args.manifest,
       "real_ledger_transfer":bool(args.real_ledger_evidence)}
     def reason_for(name):

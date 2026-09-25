@@ -1,0 +1,23 @@
+pack: manifest=88290 model=170408640 tokenizer=3583596 test_only=false
+begin_upload ok
+  1.0 / 165.9 MiB (1.4s)
+  33.0 / 165.9 MiB (35.3s)
+  65.0 / 165.9 MiB (70.5s)
+  97.0 / 165.9 MiB (103.1s)
+  129.0 / 165.9 MiB (146.0s)
+  161.0 / 165.9 MiB (186.8s)
+  165.9 / 165.9 MiB (191.2s)
+uploaded 173992236 bytes in 191.2s
+warm-up: 142 tensors
+  25 / 142
+  50 / 142
+  75 / 142
+  100 / 142
+  125 / 142
+  model resident after 142 of 142 tensors
+warm-up complete
+DECIDE selected=card_lost confidence=0.972573 tokens=52
+  card_lost                    logit    5.2954 p 0.972573
+  dispute_charge               logit   -3.2628 p 0.002412
+  __insufficient_evidence__    logit    0.0736 p 0.025015
+MEASURED_INSTRUCTIONS 16762943658 tokens=52

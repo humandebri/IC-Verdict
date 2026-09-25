@@ -1,0 +1,295 @@
+{
+  "source": "artifacts/game-feasibility/long-2048/games.json",
+  "source_sha256": "a4d511802270ad3b6c20ae9337793d10bf85c0ff954b6fe5c304091ef06f5c6b",
+  "source_bytes": 893173,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": [
+    {
+      "game": "2048",
+      "seed": 11,
+      "policy": "outcome",
+      "steps": 165,
+      "score": 1588,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 23,
+      "policy": "outcome",
+      "steps": 181,
+      "score": 1996,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 37,
+      "policy": "outcome",
+      "steps": 289,
+      "score": 3464,
+      "max_tile": 256,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 53,
+      "policy": "outcome",
+      "steps": 168,
+      "score": 1664,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 71,
+      "policy": "outcome",
+      "steps": 293,
+      "score": 3492,
+      "max_tile": 256,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 11,
+      "policy": "random_legal",
+      "steps": 112,
+      "score": 1036,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 23,
+      "policy": "random_legal",
+      "steps": 59,
+      "score": 336,
+      "max_tile": 32,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 37,
+      "policy": "random_legal",
+      "steps": 106,
+      "score": 836,
+      "max_tile": 64,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 53,
+      "policy": "random_legal",
+      "steps": 100,
+      "score": 836,
+      "max_tile": 64,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 71,
+      "policy": "random_legal",
+      "steps": 95,
+      "score": 680,
+      "max_tile": 64,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 11,
+      "policy": "greedy",
+      "steps": 155,
+      "score": 1440,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 23,
+      "policy": "greedy",
+      "steps": 506,
+      "score": 7356,
+      "max_tile": 512,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 37,
+      "policy": "greedy",
+      "steps": 246,
+      "score": 2592,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 53,
+      "policy": "greedy",
+      "steps": 171,
+      "score": 1680,
+      "max_tile": 128,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    },
+    {
+      "game": "2048",
+      "seed": 71,
+      "policy": "greedy",
+      "steps": 128,
+      "score": 1040,
+      "max_tile": 64,
+      "invalid": 0,
+      "stop": "game_over",
+      "trace": {
+        "omitted": true,
+        "see_raw_source": true
+      }
+    }
+  ],
+  "omitted": [
+    {
+      "path": "$[0].trace",
+      "count": 165,
+      "sha256": "22882e77114ca5a970816b78284476d00a8753a191312ed5079ad5f6c0258d23"
+    },
+    {
+      "path": "$[1].trace",
+      "count": 181,
+      "sha256": "57ab52d286ec6dc8378092b3c6c750651fb37ca93068533caf01e89e308c20da"
+    },
+    {
+      "path": "$[2].trace",
+      "count": 289,
+      "sha256": "f131f6d0f4b40a81969aace4129a02648c194bd562a44213ed88f7d44a689d51"
+    },
+    {
+      "path": "$[3].trace",
+      "count": 168,
+      "sha256": "69a108a19501e3aa233d3b293881e7d52b6476c6f55f3367007123890b1739e2"
+    },
+    {
+      "path": "$[4].trace",
+      "count": 293,
+      "sha256": "4aeb5b867f9181b814cb2312e585434b9ff701fb07c5e777d3c3f5a53725657e"
+    },
+    {
+      "path": "$[5].trace",
+      "count": 112,
+      "sha256": "a02648231aca72e9ba01e57a3f467674eba2b4d4803b9a2431dccc17f515fc16"
+    },
+    {
+      "path": "$[6].trace",
+      "count": 59,
+      "sha256": "8858f62658dfdfbc664650655a6b952718247af1f9eef835ea57ba07b17e3e96"
+    },
+    {
+      "path": "$[7].trace",
+      "count": 106,
+      "sha256": "202812912f6527bd6ce3ee4563594d23acc9a01ee572705a44bc43a17c01a845"
+    },
+    {
+      "path": "$[8].trace",
+      "count": 100,
+      "sha256": "a0592eca058f5ec27ac5f92230c68f80840252f2e8bcb21df0827526b298baa2"
+    },
+    {
+      "path": "$[9].trace",
+      "count": 95,
+      "sha256": "7079f5d1fd206b4ae9890456d425d6d6dc3a0f3f069bf7ec6cc61d654caf233b"
+    },
+    {
+      "path": "$[10].trace",
+      "count": 155,
+      "sha256": "81db295a618917fc87dacfb3b67a94f1b4a780e861ca3b84c008944a58171f5c"
+    },
+    {
+      "path": "$[11].trace",
+      "count": 506,
+      "sha256": "c0b0cb43fd454ee378010d68e42faffc497bc60ac89609a01261451346609839"
+    },
+    {
+      "path": "$[12].trace",
+      "count": 246,
+      "sha256": "335efc0f81c2647ffb3490f030e746b96b62917d5d1e9a6de50bf31ce8e63932"
+    },
+    {
+      "path": "$[13].trace",
+      "count": 171,
+      "sha256": "ca79d97b6e3435b71771224685a76f282715e55f8f9f6393b4a704b1f5f2b40e"
+    },
+    {
+      "path": "$[14].trace",
+      "count": 128,
+      "sha256": "0e57f4d77a45820b70d3d6300cd860f5c74126bbb0504437a1aa5fc69163b49e"
+    }
+  ]
+}

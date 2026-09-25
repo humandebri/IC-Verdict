@@ -1,0 +1,56 @@
+{
+  "old_wasm_parity": {
+    "two_class": {
+      "matched": 47,
+      "max_abs_logit_diff": 0.0,
+      "label_mismatches": 0
+    },
+    "max_classes": {
+      "matched": 26,
+      "max_abs_logit_diff": 0.0,
+      "label_mismatches": 0
+    },
+    "short": {
+      "matched": 3,
+      "max_abs_logit_diff": 0.0,
+      "label_mismatches": 0
+    },
+    "natural": {
+      "matched": 14,
+      "max_abs_logit_diff": 0.0,
+      "label_mismatches": 0
+    }
+  },
+  "final_guard": [
+    [
+      52,
+      "ok",
+      4643627702
+    ],
+    [
+      53,
+      "ok",
+      4834820093
+    ],
+    [
+      54,
+      "guard_refused",
+      null
+    ]
+  ],
+  "final_natural_cases": 15,
+  "final_wasm_sha256": "e64f53a14bf5ddc75f9209c092f86c1bba3bd41874fd439af8ff590260859624",
+  "model_pack_sha256": "c70f28d115880a30ba02416ba318d67f293b00451a9f73e25993c13ac9787815",
+  "source_sha256": {
+    "crates/modernbert-candle/src/lib.rs": "071f08e095bc5aab142225cfbea16fce5cf9d25838d1b0125637ba2703fec395",
+    "canisters/verdict-engine/src/lib.rs": "d26db5082ebb20693fd9fff54a589f66fb77ddab1f5bbaf5342f91af3db5807b"
+  },
+  "checks": {
+    "cargo_test_libraries": "PASS: modernbert-candle, verdict-candle, verdict-engine",
+    "checkpoint_parity_1000": "PASS: cargo test --release -p verdict-candle --test golden -- --ignored (652 s)",
+    "native_clippy": "PASS: modernbert-candle, verdict-candle, verdict-engine libraries with -D warnings",
+    "wasm_clippy": "PASS: wasm32-unknown-unknown release libraries with -D warnings",
+    "final_wasm_build": "PASS: bash tools/build_one.sh verdict-engine",
+    "local_query_guard": "PASS: 53 tokens succeeded, 54 tokens returned Capacity before inference"
+  }
+}

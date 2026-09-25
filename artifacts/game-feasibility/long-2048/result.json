@@ -1,0 +1,46 @@
+{
+  "gates": {},
+  "games": {
+    "2048/outcome": {
+      "steps": 219.2,
+      "score": 2440.8,
+      "max_tile": 179.2,
+      "invalid": 0.0,
+      "stops": [
+        "game_over",
+        "game_over",
+        "game_over",
+        "game_over",
+        "game_over"
+      ]
+    },
+    "2048/random_legal": {
+      "steps": 94.4,
+      "score": 744.8,
+      "max_tile": 70.4,
+      "invalid": 0.0,
+      "stops": [
+        "game_over",
+        "game_over",
+        "game_over",
+        "game_over",
+        "game_over"
+      ]
+    },
+    "2048/greedy": {
+      "steps": 241.2,
+      "score": 2821.6,
+      "max_tile": 192.0,
+      "invalid": 0.0,
+      "stops": [
+        "game_over",
+        "game_over",
+        "game_over",
+        "game_over",
+        "game_over"
+      ]
+    }
+  },
+  "native_inferences": 103,
+  "max_tokens": 41
+}

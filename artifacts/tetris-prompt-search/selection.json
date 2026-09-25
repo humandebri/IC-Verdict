@@ -1,0 +1,607 @@
+{
+  "winner": "ranks/compact",
+  "finalists": [
+    "ranks/compact",
+    "units/target",
+    "units/compact",
+    "units/direction",
+    "cleared/priority",
+    "cleared/direction"
+  ],
+  "screen": {
+    "named/task": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 2,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "named/direction": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "named/safe": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 3,
+        "cases": 4
+      }
+    },
+    "named/priority": {
+      "real": {
+        "tests": 4,
+        "best": 2,
+        "dominated": 2,
+        "stable": 2,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "named/question": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "named/target": {
+      "real": {
+        "tests": 4,
+        "best": 2,
+        "dominated": 2,
+        "stable": 2,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 3,
+        "cases": 4
+      }
+    },
+    "named/short": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 3,
+        "cases": 4
+      }
+    },
+    "named/compact": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "cleared/task": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 2,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 3,
+        "cases": 4
+      }
+    },
+    "cleared/direction": {
+      "real": {
+        "tests": 4,
+        "best": 2,
+        "dominated": 2,
+        "stable": 2,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 3,
+        "dominated": 5,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "cleared/safe": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 2,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 3,
+        "cases": 4
+      }
+    },
+    "cleared/priority": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 4,
+        "dominated": 4,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "cleared/target": {
+      "real": {
+        "tests": 4,
+        "best": 2,
+        "dominated": 2,
+        "stable": 2,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 3,
+        "dominated": 5,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "cleared/short": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 3,
+        "cases": 4
+      }
+    },
+    "cleared/compact": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "units/task": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 4,
+        "cases": 4
+      }
+    },
+    "units/direction": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 4,
+        "dominated": 4,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "units/safe": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 4,
+        "cases": 4
+      }
+    },
+    "units/priority": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 3,
+        "dominated": 5,
+        "stable": 3,
+        "cases": 4
+      }
+    },
+    "units/question": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 3,
+        "dominated": 5,
+        "stable": 3,
+        "cases": 4
+      }
+    },
+    "units/target": {
+      "real": {
+        "tests": 4,
+        "best": 2,
+        "dominated": 2,
+        "stable": 2,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 4,
+        "dominated": 4,
+        "stable": 1,
+        "cases": 4
+      }
+    },
+    "units/short": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 3,
+        "cases": 4
+      }
+    },
+    "units/compact": {
+      "real": {
+        "tests": 4,
+        "best": 1,
+        "dominated": 3,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 4,
+        "dominated": 4,
+        "stable": 0,
+        "cases": 4
+      }
+    },
+    "relative/short": {
+      "real": {
+        "tests": 4,
+        "best": 2,
+        "dominated": 2,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 0,
+        "dominated": 8,
+        "stable": 1,
+        "cases": 4
+      }
+    },
+    "relative/compact": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 0,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 0,
+        "dominated": 8,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "ranks/short": {
+      "real": {
+        "tests": 4,
+        "best": 2,
+        "dominated": 2,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 0,
+        "dominated": 8,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "ranks/compact": {
+      "real": {
+        "tests": 4,
+        "best": 3,
+        "dominated": 1,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 6,
+        "dominated": 2,
+        "stable": 4,
+        "cases": 4
+      }
+    },
+    "relative_holes_first/short": {
+      "real": {
+        "tests": 4,
+        "best": 3,
+        "dominated": 1,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 0,
+        "dominated": 8,
+        "stable": 1,
+        "cases": 4
+      }
+    },
+    "relative_holes_first/compact": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 1,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 0,
+        "dominated": 8,
+        "stable": 2,
+        "cases": 4
+      }
+    },
+    "baseline": {
+      "real": {
+        "tests": 4,
+        "best": 0,
+        "dominated": 4,
+        "stable": 2,
+        "cases": 2
+      },
+      "dominance": {
+        "tests": 8,
+        "best": 2,
+        "dominated": 6,
+        "stable": 2,
+        "cases": 4
+      }
+    }
+  },
+  "development": {
+    "baseline": {
+      "real": {
+        "tests": 56,
+        "best": 25,
+        "dominated": 26,
+        "stable": 4,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 11,
+        "dominated": 37,
+        "stable": 6,
+        "cases": 12
+      }
+    },
+    "ranks/compact": {
+      "real": {
+        "tests": 56,
+        "best": 35,
+        "dominated": 15,
+        "stable": 6,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 42,
+        "dominated": 6,
+        "stable": 8,
+        "cases": 12
+      }
+    },
+    "units/target": {
+      "real": {
+        "tests": 56,
+        "best": 21,
+        "dominated": 26,
+        "stable": 4,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 27,
+        "dominated": 21,
+        "stable": 6,
+        "cases": 12
+      }
+    },
+    "units/compact": {
+      "real": {
+        "tests": 56,
+        "best": 15,
+        "dominated": 34,
+        "stable": 5,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 19,
+        "dominated": 29,
+        "stable": 3,
+        "cases": 12
+      }
+    },
+    "units/direction": {
+      "real": {
+        "tests": 56,
+        "best": 22,
+        "dominated": 28,
+        "stable": 4,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 21,
+        "dominated": 27,
+        "stable": 3,
+        "cases": 12
+      }
+    },
+    "cleared/priority": {
+      "real": {
+        "tests": 56,
+        "best": 17,
+        "dominated": 32,
+        "stable": 3,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 15,
+        "dominated": 33,
+        "stable": 7,
+        "cases": 12
+      }
+    },
+    "cleared/direction": {
+      "real": {
+        "tests": 56,
+        "best": 19,
+        "dominated": 30,
+        "stable": 2,
+        "cases": 14
+      },
+      "dominance": {
+        "tests": 48,
+        "best": 16,
+        "dominated": 32,
+        "stable": 7,
+        "cases": 12
+      }
+    }
+  }
+}

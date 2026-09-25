@@ -1,0 +1,61 @@
+{
+  "kind": "query",
+  "budget": 5000000000,
+  "query_limits": {
+    "budget": 5000000000,
+    "max_tokens": 14,
+    "margin_permille": 1005,
+    "max_input_tokens": 128
+  },
+  "base_ids": [
+    50281,
+    50368,
+    2000,
+    50368,
+    3000,
+    50282
+  ],
+  "filler": 50283,
+  "points": [
+    {
+      "requested_tokens": 6,
+      "over_budget": false,
+      "instructions": 2000352930,
+      "input_tokens": 6,
+      "instructions_per_token": 333392155.0
+    },
+    {
+      "requested_tokens": 10,
+      "over_budget": false,
+      "instructions": 3159259650,
+      "input_tokens": 10,
+      "instructions_per_token": 315925965.0
+    },
+    {
+      "requested_tokens": 12,
+      "over_budget": false,
+      "instructions": 3652108732,
+      "input_tokens": 12,
+      "instructions_per_token": 304342394.3333333
+    },
+    {
+      "requested_tokens": 14,
+      "over_budget": false,
+      "instructions": 4325353975,
+      "input_tokens": 14,
+      "instructions_per_token": 308953855.35714287
+    },
+    {
+      "requested_tokens": 15,
+      "input_tokens": 15,
+      "over_budget": true,
+      "instructions": null,
+      "guard_refused": true,
+      "replica_trapped": false,
+      "variant": "Capacity"
+    }
+  ],
+  "max_tokens_measured": 14,
+  "guard_refused_at": 15,
+  "note": "5B query path (`infer_tokens_query`). Inputs are the canonical short id list padded with neutral filler, not the JevBench prompt: that prompt is 118 tokens and cannot fit a query call at all. The sweep stops at the first refusal because the budget guard is monotone in T, so no longer length is measured."
+}

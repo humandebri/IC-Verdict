@@ -1,0 +1,76 @@
+{
+  "source": "artifacts/tetris-input-study/preliminary-i-only/heldout.json",
+  "source_sha256": "3c86115101e612609b65612864b37bbc14880413475247d7d026a30dc1baa3bf",
+  "source_bytes": 173107,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "provenance": {
+      "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+      "tokenizer": "8bb449eb0c037aae44115b65905bb339b8f3f74eb37067c19127feb3c0755723",
+      "fixtures": "2dc9e2c07c71fb86548fdea4fe5733f0b692c85278987864600337e798ae97df",
+      "clock": "native frozen INT8 weights; game gravity charged fixed 1000 ms per decision; measured native CPU time is not query RTT"
+    },
+    "heldout": [
+      {
+        "variant": {
+          "format": "history",
+          "labels": "short",
+          "id": "history-short"
+        },
+        "summary": {
+          "n": 50,
+          "correct": 10,
+          "accuracy": 0.2,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_accuracy": 0,
+          "rotation_offered": 50,
+          "rotation_chosen": 0,
+          "repeated": 50,
+          "repeat_eligible": 50,
+          "max_tokens": 52
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      },
+      {
+        "variant": {
+          "format": "columns",
+          "labels": "explicit",
+          "id": "columns-explicit"
+        },
+        "summary": {
+          "n": 50,
+          "correct": 10,
+          "accuracy": 0.2,
+          "rotation_required": 10,
+          "rotation_correct": 0,
+          "rotation_accuracy": 0,
+          "rotation_offered": 50,
+          "rotation_chosen": 0,
+          "repeated": 8,
+          "repeat_eligible": 50,
+          "max_tokens": 52
+        },
+        "rows": {
+          "omitted": true,
+          "see_raw_source": true
+        }
+      }
+    ]
+  },
+  "omitted": [
+    {
+      "path": "$.heldout[0].rows",
+      "count": 50,
+      "sha256": "d17124f541f1edf6dbbd6cbcc1e7bab37beb6f058aa8e74ac618151e978d0168"
+    },
+    {
+      "path": "$.heldout[1].rows",
+      "count": 50,
+      "sha256": "2d55e27c7651ddc4fe80dad07da1687e18a2d4cdac05fd4e80ffdae9ff2cd98e"
+    }
+  ]
+}

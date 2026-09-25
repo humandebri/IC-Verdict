@@ -32,6 +32,7 @@ CONFIG = {
     "encoder_config": {
         "vocab_size": 32, "hidden_size": 8, "num_hidden_layers": 2,
         "num_attention_heads": 2, "intermediate_size": 12, "norm_eps": 1e-5,
+        "cls_token_id": 1, "sep_token_id": 2,
         "global_attn_every_n_layers": 2, "local_attention": 4,
         "rope_parameters": {"full_attention": {"rope_theta": 160000.0},
                             "sliding_attention": {"rope_theta": 10000.0}},
@@ -100,6 +101,44 @@ def safetensors(path: Path, shorten: str | None = None) -> None:
 
 
 class PackVerdictTests(unittest.TestCase):
+    def test_existing_outputs_and_concurrent_export_are_safe(self):
+        with tempfile.TemporaryDirectory() as directory:
+            tmp = Path(directory)
+            (tmp / 'config.json').write_text(json.dumps(CONFIG))
+            (tmp / 'tokenizer.json').write_text('{}')
+            safetensors(tmp / 'model.safetensors')
+            out = tmp / 'pack'
+            command = [sys.executable, str(PACK), '--safetensors', str(tmp / 'model.safetensors'),
+                       '--config', str(tmp / 'config.json'), '--tokenizer', str(tmp / 'tokenizer.json'),
+                       '--out', str(out), '--source-repo', 'local-test', '--source-revision', 'a' * 40]
+            def run(cmd=command):
+                return subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+            # Two exporters targeting the same name must never share output files.
+            processes = [subprocess.Popen(command, cwd=ROOT, stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE) for _ in range(2)]
+            for process in processes: process.communicate()
+            self.assertEqual(sorted(p.returncode for p in processes), [0, 1])
+            before = {p.name: p.read_bytes() for p in out.iterdir()}
+            for cmd in [command, command[:-1] + ['invalid-revision']]:
+                self.assertNotEqual(run(cmd).returncode, 0)
+                self.assertEqual(before, {p.name: p.read_bytes() for p in out.iterdir()})
+            for p in out.iterdir(): p.unlink()
+            self.assertNotEqual(run().returncode, 0)  # even an empty directory
+            self.assertEqual(list(out.iterdir()), [])
+            out.rmdir()
+            out.write_bytes(b'keep file')
+            self.assertNotEqual(run().returncode, 0)
+            self.assertEqual(out.read_bytes(), b'keep file')
+            out.unlink()
+            target = tmp / 'missing'
+            out.symlink_to(target, target_is_directory=True)
+            self.assertNotEqual(run().returncode, 0)
+            self.assertTrue(out.is_symlink())
+            self.assertFalse(target.exists())
+            out.unlink()
+            self.assertNotEqual(run(command[:-1] + ['invalid-revision']).returncode, 0)
+            self.assertFalse(out.exists())
+
     def _run(self, config: dict, *extra: str, verify=None) -> subprocess.CompletedProcess:
         with tempfile.TemporaryDirectory() as directory:
             tmp = Path(directory)
@@ -124,15 +163,23 @@ class PackVerdictTests(unittest.TestCase):
         def verify(pack: Path) -> None:
             manifest = json.loads((pack / "manifest.json").read_text())
             blob = (pack / "model.bin").read_bytes()
-            self.assertEqual(manifest["format"], "ic-verdict-f32-pack-v1")
+            self.assertEqual(manifest["format"], "ic-verdict-int8-pack-v1")
             self.assertEqual({t["name"] for t in manifest["tensors"]}, set(inventory()))
             self.assertEqual(manifest["total_bytes"], len(blob))
             offset = 0
             for tensor in manifest["tensors"]:
                 self.assertEqual(tensor["offset"], offset, tensor["name"])
-                length = 4
-                for dim in tensor["shape"]:
-                    length *= dim
+                shape = tensor["shape"]
+                elements = 1
+                for dim in shape:
+                    elements *= dim
+                if len(shape) == 2:
+                    rows, cols = shape
+                    length = elements + 4 * rows
+                    self.assertEqual(tensor["encoding"], "i8_row_symmetric")
+                else:
+                    length = 4 * elements
+                    self.assertEqual(tensor["encoding"], "f32_le")
                 self.assertEqual(tensor["length"], length, tensor["name"])
                 chunk = blob[offset:offset + tensor["length"]]
                 self.assertEqual(list(hashlib.sha256(chunk).digest()), tensor["sha256"], tensor["name"])
@@ -141,7 +188,7 @@ class PackVerdictTests(unittest.TestCase):
 
         result = self._run(CONFIG, verify=verify)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("tensors=22", result.stdout)
+        self.assertIn("wrote 22 tensors", result.stdout)
 
     def test_header_length_disagreeing_with_shape_is_refused(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -156,10 +203,7 @@ class PackVerdictTests(unittest.TestCase):
                  "--source-revision", "a" * 40],
                 capture_output=True, text=True, cwd=ROOT)
         self.assertNotEqual(result.returncode, 0, result.stdout)
-        self.assertIn("expected", result.stderr)
-        # The message names the upstream tensor, which is the one to fix in the header.
-        self.assertIn("model.encoder_model.layers.1.mlp.Wo.weight", result.stderr)
-        self.assertIn("384", result.stderr)
+        self.assertIn("invalid shape, data type, or offset", result.stderr)
 
     def test_random_without_test_is_refused(self) -> None:
         result = self._run(CONFIG, "--random")

@@ -1,0 +1,479 @@
+{
+  "canister": "4fbx2-kt777-77775-aaabq-cai",
+  "records": [
+    {
+      "input": {
+        "piece": 3,
+        "next": 6,
+        "roughness": 30,
+        "options": [
+          {
+            "holes": 43,
+            "height": 19,
+            "lines": 0
+          },
+          {
+            "holes": 46,
+            "height": 17,
+            "lines": 0
+          },
+          {
+            "holes": 43,
+            "height": 20,
+            "lines": 0
+          },
+          {
+            "holes": 46,
+            "height": 17,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 0,
+      "current": {
+        "selected": 1,
+        "tokens": 39,
+        "instructions": 4470410317,
+        "latency_ms": 3614.9225840053987
+      },
+      "objective": {
+        "selected": 1,
+        "tokens": 40,
+        "instructions": 4432679107,
+        "latency_ms": 1378.5975840000901
+      }
+    },
+    {
+      "input": {
+        "piece": 0,
+        "next": 3,
+        "roughness": 16,
+        "options": [
+          {
+            "holes": 30,
+            "height": 15,
+            "lines": 0
+          },
+          {
+            "holes": 41,
+            "height": 14,
+            "lines": 0
+          },
+          {
+            "holes": 24,
+            "height": 18,
+            "lines": 0
+          },
+          {
+            "holes": 24,
+            "height": 14,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 3,
+      "current": {
+        "selected": 3,
+        "tokens": 39,
+        "instructions": 4470836904,
+        "latency_ms": 640.9090829984052
+      },
+      "objective": {
+        "selected": 3,
+        "tokens": 40,
+        "instructions": 4432932346,
+        "latency_ms": 619.2489589884644
+      }
+    },
+    {
+      "input": {
+        "piece": 3,
+        "next": 1,
+        "roughness": 27,
+        "options": [
+          {
+            "holes": 40,
+            "height": 19,
+            "lines": 0
+          },
+          {
+            "holes": 37,
+            "height": 17,
+            "lines": 0
+          },
+          {
+            "holes": 31,
+            "height": 19,
+            "lines": 0
+          },
+          {
+            "holes": 28,
+            "height": 17,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 3,
+      "current": {
+        "selected": 3,
+        "tokens": 39,
+        "instructions": 4470390843,
+        "latency_ms": 1051.2638750078622
+      },
+      "objective": {
+        "selected": 3,
+        "tokens": 40,
+        "instructions": 4432807899,
+        "latency_ms": 1037.7658329962287
+      }
+    },
+    {
+      "input": {
+        "piece": 1,
+        "next": 0,
+        "roughness": 26,
+        "options": [
+          {
+            "holes": 24,
+            "height": 16,
+            "lines": 0
+          },
+          {
+            "holes": 23,
+            "height": 14,
+            "lines": 0
+          },
+          {
+            "holes": 32,
+            "height": 14,
+            "lines": 0
+          },
+          {
+            "holes": 25,
+            "height": 14,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 1,
+      "current": {
+        "selected": 3,
+        "tokens": 39,
+        "instructions": 4470137978,
+        "latency_ms": 479.9317089928081
+      },
+      "objective": {
+        "selected": 3,
+        "tokens": 40,
+        "instructions": 4432618704,
+        "latency_ms": 1144.7357080032816
+      }
+    },
+    {
+      "input": {
+        "piece": 3,
+        "next": 0,
+        "roughness": 25,
+        "options": [
+          {
+            "holes": 22,
+            "height": 14,
+            "lines": 0
+          },
+          {
+            "holes": 25,
+            "height": 13,
+            "lines": 0
+          },
+          {
+            "holes": 22,
+            "height": 15,
+            "lines": 0
+          },
+          {
+            "holes": 22,
+            "height": 14,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 0,
+      "current": {
+        "selected": 0,
+        "tokens": 39,
+        "instructions": 4470386152,
+        "latency_ms": 732.9930830019293
+      },
+      "objective": {
+        "selected": 1,
+        "tokens": 40,
+        "instructions": 4432352543,
+        "latency_ms": 2155.778250002186
+      }
+    },
+    {
+      "input": {
+        "piece": 0,
+        "next": 4,
+        "roughness": 9,
+        "options": [
+          {
+            "holes": 33,
+            "height": 11,
+            "lines": 0
+          },
+          {
+            "holes": 35,
+            "height": 10,
+            "lines": 0
+          },
+          {
+            "holes": 30,
+            "height": 14,
+            "lines": 0
+          },
+          {
+            "holes": 30,
+            "height": 10,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 3,
+      "current": {
+        "selected": 0,
+        "tokens": 39,
+        "instructions": 4470424982,
+        "latency_ms": 511.82995799172204
+      },
+      "objective": {
+        "selected": 0,
+        "tokens": 40,
+        "instructions": 4432689722,
+        "latency_ms": 555.0799159973394
+      }
+    },
+    {
+      "input": {
+        "piece": 2,
+        "next": 4,
+        "roughness": 16,
+        "options": [
+          {
+            "holes": 14,
+            "height": 13,
+            "lines": 0
+          },
+          {
+            "holes": 15,
+            "height": 16,
+            "lines": 0
+          },
+          {
+            "holes": 17,
+            "height": 13,
+            "lines": 0
+          },
+          {
+            "holes": 12,
+            "height": 13,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 3,
+      "current": {
+        "selected": 1,
+        "tokens": 39,
+        "instructions": 4470436062,
+        "latency_ms": 962.127083010273
+      },
+      "objective": {
+        "selected": 1,
+        "tokens": 40,
+        "instructions": 4432767597,
+        "latency_ms": 510.66270799492486
+      }
+    },
+    {
+      "input": {
+        "piece": 3,
+        "next": 2,
+        "roughness": 17,
+        "options": [
+          {
+            "holes": 33,
+            "height": 18,
+            "lines": 0
+          },
+          {
+            "holes": 34,
+            "height": 17,
+            "lines": 0
+          },
+          {
+            "holes": 33,
+            "height": 19,
+            "lines": 0
+          },
+          {
+            "holes": 32,
+            "height": 17,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 3,
+      "current": {
+        "selected": 1,
+        "tokens": 39,
+        "instructions": 4470576155,
+        "latency_ms": 560.0693339947611
+      },
+      "objective": {
+        "selected": 1,
+        "tokens": 40,
+        "instructions": 4433142133,
+        "latency_ms": 980.1391660002992
+      }
+    },
+    {
+      "input": {
+        "piece": 4,
+        "next": 0,
+        "roughness": 25,
+        "options": [
+          {
+            "holes": 24,
+            "height": 14,
+            "lines": 0
+          },
+          {
+            "holes": 20,
+            "height": 13,
+            "lines": 0
+          },
+          {
+            "holes": 19,
+            "height": 16,
+            "lines": 0
+          },
+          {
+            "holes": 16,
+            "height": 13,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 3,
+      "current": {
+        "selected": 1,
+        "tokens": 39,
+        "instructions": 4470157804,
+        "latency_ms": 570.8095420122845
+      },
+      "objective": {
+        "selected": 1,
+        "tokens": 40,
+        "instructions": 4432293858,
+        "latency_ms": 935.704874995281
+      }
+    },
+    {
+      "input": {
+        "piece": 3,
+        "next": 2,
+        "roughness": 20,
+        "options": [
+          {
+            "holes": 22,
+            "height": 15,
+            "lines": 0
+          },
+          {
+            "holes": 25,
+            "height": 13,
+            "lines": 0
+          },
+          {
+            "holes": 22,
+            "height": 16,
+            "lines": 0
+          },
+          {
+            "holes": 21,
+            "height": 13,
+            "lines": 0
+          }
+        ]
+      },
+      "heuristic": 3,
+      "current": {
+        "selected": 1,
+        "tokens": 39,
+        "instructions": 4470315934,
+        "latency_ms": 624.8536249913741
+      },
+      "objective": {
+        "selected": 1,
+        "tokens": 40,
+        "instructions": 4432707278,
+        "latency_ms": 1223.0441249994328
+      }
+    },
+    {
+      "input": {
+        "piece": 2,
+        "next": 0,
+        "roughness": 180,
+        "options": [
+          {
+            "holes": 200,
+            "height": 20,
+            "lines": 0
+          },
+          {
+            "holes": 200,
+            "height": 20,
+            "lines": 0
+          },
+          {
+            "holes": 200,
+            "height": 20,
+            "lines": 0
+          },
+          {
+            "holes": 0,
+            "height": 1,
+            "lines": 4
+          }
+        ]
+      },
+      "heuristic": 3,
+      "current": {
+        "selected": 0,
+        "tokens": 39,
+        "instructions": 4470827841,
+        "latency_ms": 845.6155419989955
+      },
+      "objective": {
+        "selected": 2,
+        "tokens": 40,
+        "instructions": 4433125043,
+        "latency_ms": 829.7863749903627
+      }
+    }
+  ],
+  "summary": {
+    "current": {
+      "agreement": 3,
+      "count": 11,
+      "max_instructions": 4470836904
+    },
+    "objective": {
+      "agreement": 2,
+      "count": 11,
+      "max_instructions": 4433142133
+    }
+  }
+}

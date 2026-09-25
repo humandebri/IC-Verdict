@@ -1,0 +1,21 @@
+{
+  "bank_cases": 100,
+  "game_cases": 288,
+  "format_cases": 216,
+  "aggregates_recomputed": true,
+  "model_hashes_unchanged": true,
+  "changed_after_initial_run": [
+    "target/release/tetris_probe",
+    "target/release/verdict-infer",
+    "tools/verdict_quality_diagnosis.py"
+  ],
+  "canister_calls": 0,
+  "bank_full": {
+    "cases": 1000,
+    "matched": 996,
+    "missing": 0,
+    "unsafe_abstention_escape": 1,
+    "shard_inputs_verified": true,
+    "model_hashes_unchanged": true
+  }
+}

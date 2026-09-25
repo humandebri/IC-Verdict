@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "mocked": false,
+  "host": "http://localhost:8011",
+  "metrics": {
+    "rules": "nes-ntsc-query-v2",
+    "seed": 42,
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "canister": "4fbx2-kt777-77775-aaabq-cai",
+    "score": 54,
+    "lines": 0,
+    "level": 0,
+    "pieces": 3,
+    "gameOver": false,
+    "queries": 3,
+    "late": 0,
+    "missed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "responses": 3,
+    "latencyTotal": 95.39999999105922,
+    "latencyMax": 49.69999999701977,
+    "valid": true
+  },
+  "input": {
+    "piece": 3,
+    "next": 0,
+    "roughness": 3,
+    "options": [
+      {
+        "holes": 3,
+        "height": 5,
+        "lines": 0
+      },
+      {
+        "holes": 2,
+        "height": 3,
+        "lines": 0
+      },
+      {
+        "holes": 2,
+        "height": 6,
+        "lines": 0
+      },
+      {
+        "holes": 2,
+        "height": 3,
+        "lines": 0
+      }
+    ]
+  },
+  "response": {
+    "selected": 1,
+    "scores": [
+      0.14694605767726898,
+      0.5163848400115967,
+      0.029088949784636497,
+      0.3075801730155945
+    ],
+    "input_tokens": 39,
+    "measured_instructions": "4469859410",
+    "model": "0757d774c8c44397d189c5b479853897acef8f1e2b55ebf1f5a46969063225e0",
+    "prompt": "<<LABEL>>holes3 height5 lines0<<LABEL>>holes2 height3 lines0<<LABEL>>holes2 height6 lines0<<LABEL>>holes2 height3 lines0<<SEP>>Tetris S next I rough3"
+  },
+  "query_only": true,
+  "query_requests": 5,
+  "page_errors": [],
+  "mobile_width": 390
+}

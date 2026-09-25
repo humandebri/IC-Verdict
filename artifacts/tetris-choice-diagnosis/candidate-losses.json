@@ -1,0 +1,2472 @@
+[
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 0,
+    "legal_count": 34,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 1,
+    "legal_count": 17,
+    "best_all": -2,
+    "best_four": -10,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 2,
+    "legal_count": 9,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 3,
+    "legal_count": 34,
+    "best_all": 9,
+    "best_four": -3,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 4,
+    "legal_count": 17,
+    "best_all": -3,
+    "best_four": -11,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 5,
+    "legal_count": 34,
+    "best_all": -3,
+    "best_four": -11,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 6,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -4,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 7,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -4,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 8,
+    "legal_count": 34,
+    "best_all": 7,
+    "best_four": 7,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 9,
+    "legal_count": 34,
+    "best_all": -3,
+    "best_four": -4,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 10,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -4,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 11,
+    "legal_count": 34,
+    "best_all": -4,
+    "best_four": -12,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 12,
+    "legal_count": 17,
+    "best_all": 18,
+    "best_four": -6,
+    "loss": 24,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 13,
+    "legal_count": 9,
+    "best_all": -3,
+    "best_four": -3,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 14,
+    "legal_count": 34,
+    "best_all": -3,
+    "best_four": -3,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 15,
+    "legal_count": 9,
+    "best_all": -4,
+    "best_four": -5,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 16,
+    "legal_count": 34,
+    "best_all": 7,
+    "best_four": 7,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 17,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -13,
+    "loss": 9,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 18,
+    "legal_count": 34,
+    "best_all": -5,
+    "best_four": -5,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 19,
+    "legal_count": 17,
+    "best_all": 6,
+    "best_four": -6,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 20,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -12,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 21,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -12,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 22,
+    "legal_count": 9,
+    "best_all": -5,
+    "best_four": -6,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 23,
+    "legal_count": 34,
+    "best_all": -2,
+    "best_four": -13,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 24,
+    "legal_count": 17,
+    "best_all": -12,
+    "best_four": -12,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 25,
+    "legal_count": 34,
+    "best_all": -10,
+    "best_four": -22,
+    "loss": 12,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 26,
+    "legal_count": 34,
+    "best_all": -20,
+    "best_four": -30,
+    "loss": 10,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 27,
+    "legal_count": 17,
+    "best_all": -22,
+    "best_four": -22,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 28,
+    "legal_count": 17,
+    "best_all": -22,
+    "best_four": -38,
+    "loss": 16,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 29,
+    "legal_count": 9,
+    "best_all": -22,
+    "best_four": -23,
+    "loss": 1,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 30,
+    "legal_count": 17,
+    "best_all": -11,
+    "best_four": -11,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "all-heuristic",
+    "turn": 31,
+    "legal_count": 34,
+    "best_all": -18,
+    "best_four": -30,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 0,
+    "legal_count": 34,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 1,
+    "legal_count": 17,
+    "best_all": -2,
+    "best_four": -10,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 2,
+    "legal_count": 9,
+    "best_all": -10,
+    "best_four": -10,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 3,
+    "legal_count": 34,
+    "best_all": -11,
+    "best_four": -13,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 4,
+    "legal_count": 17,
+    "best_all": -13,
+    "best_four": -13,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 5,
+    "legal_count": 34,
+    "best_all": -13,
+    "best_four": -21,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 6,
+    "legal_count": 17,
+    "best_all": -21,
+    "best_four": -21,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 7,
+    "legal_count": 17,
+    "best_all": -21,
+    "best_four": -21,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 8,
+    "legal_count": 34,
+    "best_all": -22,
+    "best_four": -30,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 9,
+    "legal_count": 34,
+    "best_all": -19,
+    "best_four": -19,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 10,
+    "legal_count": 17,
+    "best_all": -30,
+    "best_four": -30,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 11,
+    "legal_count": 34,
+    "best_all": -30,
+    "best_four": -30,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 12,
+    "legal_count": 17,
+    "best_all": -30,
+    "best_four": -32,
+    "loss": 2,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 13,
+    "legal_count": 9,
+    "best_all": -32,
+    "best_four": -32,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 14,
+    "legal_count": 34,
+    "best_all": -32,
+    "best_four": -32,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 15,
+    "legal_count": 9,
+    "best_all": -34,
+    "best_four": -34,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 16,
+    "legal_count": 34,
+    "best_all": -37,
+    "best_four": -42,
+    "loss": 5,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 17,
+    "legal_count": 17,
+    "best_all": -42,
+    "best_four": -42,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 18,
+    "legal_count": 34,
+    "best_all": -42,
+    "best_four": -51,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 19,
+    "legal_count": 17,
+    "best_all": -40,
+    "best_four": -52,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 20,
+    "legal_count": 17,
+    "best_all": -60,
+    "best_four": -60,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 21,
+    "legal_count": 17,
+    "best_all": -68,
+    "best_four": -69,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 22,
+    "legal_count": 9,
+    "best_all": -69,
+    "best_four": -69,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 23,
+    "legal_count": 36,
+    "best_all": -69,
+    "best_four": -93,
+    "loss": 24,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 24,
+    "legal_count": 17,
+    "best_all": -101,
+    "best_four": -101,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 25,
+    "legal_count": 34,
+    "best_all": -102,
+    "best_four": -103,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 26,
+    "legal_count": 34,
+    "best_all": -103,
+    "best_four": -114,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 27,
+    "legal_count": 16,
+    "best_all": -103,
+    "best_four": -114,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 28,
+    "legal_count": 17,
+    "best_all": -114,
+    "best_four": -124,
+    "loss": 10,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 29,
+    "legal_count": 7,
+    "best_all": -124,
+    "best_four": -124,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 30,
+    "legal_count": 15,
+    "best_all": -132,
+    "best_four": -132,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 1,
+    "policy": "four-heuristic",
+    "turn": 31,
+    "legal_count": 30,
+    "best_all": -132,
+    "best_four": -140,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 0,
+    "legal_count": 9,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 1,
+    "legal_count": 17,
+    "best_all": -10,
+    "best_four": -10,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 2,
+    "legal_count": 34,
+    "best_all": -10,
+    "best_four": -10,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 3,
+    "legal_count": 34,
+    "best_all": -11,
+    "best_four": -11,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 4,
+    "legal_count": 34,
+    "best_all": -11,
+    "best_four": -14,
+    "loss": 3,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 5,
+    "legal_count": 17,
+    "best_all": -12,
+    "best_four": -12,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 6,
+    "legal_count": 17,
+    "best_all": -13,
+    "best_four": -13,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 7,
+    "legal_count": 17,
+    "best_all": -13,
+    "best_four": -30,
+    "loss": 17,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 8,
+    "legal_count": 9,
+    "best_all": -15,
+    "best_four": -15,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 9,
+    "legal_count": 34,
+    "best_all": -15,
+    "best_four": -33,
+    "loss": 18,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 10,
+    "legal_count": 17,
+    "best_all": 7,
+    "best_four": 7,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 11,
+    "legal_count": 34,
+    "best_all": -13,
+    "best_four": -29,
+    "loss": 16,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 12,
+    "legal_count": 17,
+    "best_all": -21,
+    "best_four": -23,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 13,
+    "legal_count": 34,
+    "best_all": -21,
+    "best_four": -39,
+    "loss": 18,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 14,
+    "legal_count": 17,
+    "best_all": -23,
+    "best_four": -31,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 15,
+    "legal_count": 34,
+    "best_all": -23,
+    "best_four": -23,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 16,
+    "legal_count": 17,
+    "best_all": -23,
+    "best_four": -25,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 17,
+    "legal_count": 34,
+    "best_all": -24,
+    "best_four": -26,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 18,
+    "legal_count": 34,
+    "best_all": -26,
+    "best_four": -34,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 19,
+    "legal_count": 9,
+    "best_all": -26,
+    "best_four": -26,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 20,
+    "legal_count": 17,
+    "best_all": -27,
+    "best_four": -34,
+    "loss": 7,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 21,
+    "legal_count": 17,
+    "best_all": -27,
+    "best_four": -27,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 22,
+    "legal_count": 17,
+    "best_all": -29,
+    "best_four": -35,
+    "loss": 6,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 23,
+    "legal_count": 9,
+    "best_all": -29,
+    "best_four": -29,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 24,
+    "legal_count": 34,
+    "best_all": -31,
+    "best_four": -61,
+    "loss": 30,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 25,
+    "legal_count": 34,
+    "best_all": -31,
+    "best_four": -39,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 26,
+    "legal_count": 17,
+    "best_all": -33,
+    "best_four": -39,
+    "loss": 6,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 27,
+    "legal_count": 34,
+    "best_all": -41,
+    "best_four": -57,
+    "loss": 16,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 28,
+    "legal_count": 17,
+    "best_all": -49,
+    "best_four": -65,
+    "loss": 16,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 29,
+    "legal_count": 34,
+    "best_all": -57,
+    "best_four": -73,
+    "loss": 16,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 30,
+    "legal_count": 9,
+    "best_all": -57,
+    "best_four": -73,
+    "loss": 16,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "all-heuristic",
+    "turn": 31,
+    "legal_count": 34,
+    "best_all": -59,
+    "best_four": -89,
+    "loss": 30,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 0,
+    "legal_count": 9,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 1,
+    "legal_count": 17,
+    "best_all": -10,
+    "best_four": -10,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 2,
+    "legal_count": 35,
+    "best_all": -2,
+    "best_four": -19,
+    "loss": 17,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 3,
+    "legal_count": 34,
+    "best_all": -19,
+    "best_four": -19,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 4,
+    "legal_count": 34,
+    "best_all": -19,
+    "best_four": -30,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 5,
+    "legal_count": 17,
+    "best_all": -30,
+    "best_four": -38,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 6,
+    "legal_count": 17,
+    "best_all": -38,
+    "best_four": -38,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 7,
+    "legal_count": 18,
+    "best_all": -39,
+    "best_four": -62,
+    "loss": 23,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 8,
+    "legal_count": 9,
+    "best_all": -62,
+    "best_four": -62,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 9,
+    "legal_count": 34,
+    "best_all": -63,
+    "best_four": -71,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 10,
+    "legal_count": 17,
+    "best_all": -71,
+    "best_four": -72,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 11,
+    "legal_count": 34,
+    "best_all": -72,
+    "best_four": -80,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 12,
+    "legal_count": 17,
+    "best_all": -88,
+    "best_four": -90,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 13,
+    "legal_count": 35,
+    "best_all": -90,
+    "best_four": -106,
+    "loss": 16,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 14,
+    "legal_count": 17,
+    "best_all": -114,
+    "best_four": -124,
+    "loss": 10,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 15,
+    "legal_count": 36,
+    "best_all": -124,
+    "best_four": -125,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 16,
+    "legal_count": 18,
+    "best_all": -125,
+    "best_four": -125,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 17,
+    "legal_count": 36,
+    "best_all": -125,
+    "best_four": -149,
+    "loss": 24,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 18,
+    "legal_count": 36,
+    "best_all": -149,
+    "best_four": -151,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 19,
+    "legal_count": 9,
+    "best_all": -151,
+    "best_four": -159,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 20,
+    "legal_count": 17,
+    "best_all": -161,
+    "best_four": -185,
+    "loss": 24,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 21,
+    "legal_count": 13,
+    "best_all": -185,
+    "best_four": -185,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 42,
+    "policy": "four-heuristic",
+    "turn": 22,
+    "legal_count": 19,
+    "best_all": -196,
+    "best_four": -203,
+    "loss": 7,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 0,
+    "legal_count": 34,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 1,
+    "legal_count": 9,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 2,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -10,
+    "loss": 6,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 3,
+    "legal_count": 17,
+    "best_all": -12,
+    "best_four": -12,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 4,
+    "legal_count": 34,
+    "best_all": -12,
+    "best_four": -20,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 5,
+    "legal_count": 35,
+    "best_all": -4,
+    "best_four": -12,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 6,
+    "legal_count": 17,
+    "best_all": 7,
+    "best_four": 7,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 7,
+    "legal_count": 34,
+    "best_all": -3,
+    "best_four": -5,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 8,
+    "legal_count": 17,
+    "best_all": 7,
+    "best_four": -5,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 9,
+    "legal_count": 34,
+    "best_all": 8,
+    "best_four": -3,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 10,
+    "legal_count": 9,
+    "best_all": -3,
+    "best_four": -3,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 11,
+    "legal_count": 17,
+    "best_all": -11,
+    "best_four": -11,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 12,
+    "legal_count": 34,
+    "best_all": -11,
+    "best_four": -12,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 13,
+    "legal_count": 17,
+    "best_all": -13,
+    "best_four": -21,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 14,
+    "legal_count": 17,
+    "best_all": -2,
+    "best_four": -14,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 15,
+    "legal_count": 34,
+    "best_all": -12,
+    "best_four": -13,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 16,
+    "legal_count": 34,
+    "best_all": -12,
+    "best_four": -12,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 17,
+    "legal_count": 9,
+    "best_all": -1,
+    "best_four": -1,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 18,
+    "legal_count": 17,
+    "best_all": -1,
+    "best_four": -20,
+    "loss": 19,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 19,
+    "legal_count": 34,
+    "best_all": -11,
+    "best_four": -20,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 20,
+    "legal_count": 17,
+    "best_all": -11,
+    "best_four": -20,
+    "loss": 9,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 21,
+    "legal_count": 17,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 22,
+    "legal_count": 34,
+    "best_all": 7,
+    "best_four": 7,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 23,
+    "legal_count": 34,
+    "best_all": 8,
+    "best_four": -12,
+    "loss": 20,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 24,
+    "legal_count": 17,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 25,
+    "legal_count": 17,
+    "best_all": -3,
+    "best_four": -3,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 26,
+    "legal_count": 9,
+    "best_all": 8,
+    "best_four": -3,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 27,
+    "legal_count": 34,
+    "best_all": 9,
+    "best_four": -3,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 28,
+    "legal_count": 17,
+    "best_all": -1,
+    "best_four": -4,
+    "loss": 3,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 29,
+    "legal_count": 17,
+    "best_all": -2,
+    "best_four": -11,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 30,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -11,
+    "loss": 7,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "all-heuristic",
+    "turn": 31,
+    "legal_count": 34,
+    "best_all": 7,
+    "best_four": -4,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 0,
+    "legal_count": 34,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 1,
+    "legal_count": 9,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 2,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -11,
+    "loss": 7,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 3,
+    "legal_count": 17,
+    "best_all": -11,
+    "best_four": -11,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 4,
+    "legal_count": 34,
+    "best_all": -13,
+    "best_four": -13,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 5,
+    "legal_count": 34,
+    "best_all": -13,
+    "best_four": -21,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 6,
+    "legal_count": 17,
+    "best_all": -21,
+    "best_four": -21,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 7,
+    "legal_count": 34,
+    "best_all": -22,
+    "best_four": -30,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 8,
+    "legal_count": 18,
+    "best_all": -30,
+    "best_four": -32,
+    "loss": 2,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 9,
+    "legal_count": 34,
+    "best_all": -32,
+    "best_four": -32,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 10,
+    "legal_count": 9,
+    "best_all": -32,
+    "best_four": -32,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 11,
+    "legal_count": 17,
+    "best_all": -34,
+    "best_four": -43,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 12,
+    "legal_count": 36,
+    "best_all": -43,
+    "best_four": -51,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 13,
+    "legal_count": 18,
+    "best_all": -59,
+    "best_four": -70,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 14,
+    "legal_count": 18,
+    "best_all": -70,
+    "best_four": -70,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 15,
+    "legal_count": 39,
+    "best_all": -70,
+    "best_four": -86,
+    "loss": 16,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 16,
+    "legal_count": 36,
+    "best_all": -86,
+    "best_four": -110,
+    "loss": 24,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 17,
+    "legal_count": 9,
+    "best_all": -110,
+    "best_four": -110,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 18,
+    "legal_count": 18,
+    "best_all": -110,
+    "best_four": -129,
+    "loss": 19,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 19,
+    "legal_count": 40,
+    "best_all": -129,
+    "best_four": -169,
+    "loss": 40,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 20,
+    "legal_count": 22,
+    "best_all": -169,
+    "best_four": -169,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 21,
+    "legal_count": 20,
+    "best_all": -137,
+    "best_four": -171,
+    "loss": 34,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 22,
+    "legal_count": 40,
+    "best_all": -155,
+    "best_four": -155,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 23,
+    "legal_count": 38,
+    "best_all": -155,
+    "best_four": -164,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 24,
+    "legal_count": 13,
+    "best_all": -156,
+    "best_four": -156,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 25,
+    "legal_count": 13,
+    "best_all": -164,
+    "best_four": -188,
+    "loss": 24,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 26,
+    "legal_count": 6,
+    "best_all": -188,
+    "best_four": -196,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 27,
+    "legal_count": 21,
+    "best_all": -204,
+    "best_four": -228,
+    "loss": 24,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 28,
+    "legal_count": 10,
+    "best_all": -217,
+    "best_four": -228,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 29,
+    "legal_count": 8,
+    "best_all": -228,
+    "best_four": -228,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 30,
+    "legal_count": 4,
+    "best_all": -340,
+    "best_four": -340,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 184,
+    "policy": "four-heuristic",
+    "turn": 31,
+    "legal_count": 1,
+    "best_all": -380,
+    "best_four": -380,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 0,
+    "legal_count": 9,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 1,
+    "legal_count": 34,
+    "best_all": -2,
+    "best_four": -3,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 2,
+    "legal_count": 17,
+    "best_all": -3,
+    "best_four": -10,
+    "loss": 7,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 3,
+    "legal_count": 34,
+    "best_all": -3,
+    "best_four": -3,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 4,
+    "legal_count": 34,
+    "best_all": -3,
+    "best_four": -11,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 5,
+    "legal_count": 17,
+    "best_all": -4,
+    "best_four": -5,
+    "loss": 1,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 6,
+    "legal_count": 17,
+    "best_all": 18,
+    "best_four": 18,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 7,
+    "legal_count": 17,
+    "best_all": -2,
+    "best_four": -4,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 8,
+    "legal_count": 34,
+    "best_all": -3,
+    "best_four": -13,
+    "loss": 10,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 9,
+    "legal_count": 17,
+    "best_all": -3,
+    "best_four": -14,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 10,
+    "legal_count": 9,
+    "best_all": -5,
+    "best_four": -5,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 11,
+    "legal_count": 17,
+    "best_all": 6,
+    "best_four": -6,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 12,
+    "legal_count": 34,
+    "best_all": -4,
+    "best_four": -4,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 13,
+    "legal_count": 34,
+    "best_all": 7,
+    "best_four": -5,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 14,
+    "legal_count": 34,
+    "best_all": 0,
+    "best_four": -12,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 15,
+    "legal_count": 17,
+    "best_all": -10,
+    "best_four": -12,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 16,
+    "legal_count": 17,
+    "best_all": -11,
+    "best_four": -11,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 17,
+    "legal_count": 34,
+    "best_all": -12,
+    "best_four": -20,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 18,
+    "legal_count": 17,
+    "best_all": -12,
+    "best_four": -21,
+    "loss": 9,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 19,
+    "legal_count": 9,
+    "best_all": -12,
+    "best_four": -20,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 20,
+    "legal_count": 34,
+    "best_all": -13,
+    "best_four": -21,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 21,
+    "legal_count": 17,
+    "best_all": -13,
+    "best_four": -24,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 22,
+    "legal_count": 17,
+    "best_all": -14,
+    "best_four": -24,
+    "loss": 10,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 23,
+    "legal_count": 34,
+    "best_all": -14,
+    "best_four": -23,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 24,
+    "legal_count": 34,
+    "best_all": -15,
+    "best_four": -32,
+    "loss": 17,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 25,
+    "legal_count": 9,
+    "best_all": -15,
+    "best_four": -24,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 26,
+    "legal_count": 17,
+    "best_all": -15,
+    "best_four": -15,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 27,
+    "legal_count": 34,
+    "best_all": -16,
+    "best_four": -16,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 28,
+    "legal_count": 17,
+    "best_all": -17,
+    "best_four": -17,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 29,
+    "legal_count": 17,
+    "best_all": 27,
+    "best_four": 27,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 30,
+    "legal_count": 34,
+    "best_all": -13,
+    "best_four": -22,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "all-heuristic",
+    "turn": 31,
+    "legal_count": 9,
+    "best_all": -15,
+    "best_four": -15,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 0,
+    "legal_count": 9,
+    "best_all": -2,
+    "best_four": -2,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 1,
+    "legal_count": 34,
+    "best_all": -2,
+    "best_four": -3,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 2,
+    "legal_count": 17,
+    "best_all": -3,
+    "best_four": -11,
+    "loss": 8,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 3,
+    "legal_count": 34,
+    "best_all": -11,
+    "best_four": -11,
+    "loss": 0,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 4,
+    "legal_count": 34,
+    "best_all": -13,
+    "best_four": -13,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 5,
+    "legal_count": 17,
+    "best_all": -15,
+    "best_four": -21,
+    "loss": 6,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 6,
+    "legal_count": 17,
+    "best_all": -21,
+    "best_four": -22,
+    "loss": 1,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 7,
+    "legal_count": 17,
+    "best_all": -23,
+    "best_four": -38,
+    "loss": 15,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 8,
+    "legal_count": 34,
+    "best_all": -38,
+    "best_four": -46,
+    "loss": 8,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 9,
+    "legal_count": 17,
+    "best_all": -54,
+    "best_four": -56,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 10,
+    "legal_count": 9,
+    "best_all": -56,
+    "best_four": -56,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 11,
+    "legal_count": 17,
+    "best_all": -45,
+    "best_four": -57,
+    "loss": 12,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 12,
+    "legal_count": 34,
+    "best_all": -57,
+    "best_four": -66,
+    "loss": 9,
+    "feature_aliasing": true
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 13,
+    "legal_count": 35,
+    "best_all": -66,
+    "best_four": -66,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 14,
+    "legal_count": 34,
+    "best_all": -66,
+    "best_four": -75,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 15,
+    "legal_count": 17,
+    "best_all": -64,
+    "best_four": -75,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 16,
+    "legal_count": 17,
+    "best_all": -75,
+    "best_four": -75,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 17,
+    "legal_count": 34,
+    "best_all": -75,
+    "best_four": -77,
+    "loss": 2,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 18,
+    "legal_count": 17,
+    "best_all": -77,
+    "best_four": -93,
+    "loss": 16,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 19,
+    "legal_count": 9,
+    "best_all": -93,
+    "best_four": -93,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 20,
+    "legal_count": 34,
+    "best_all": -93,
+    "best_four": -102,
+    "loss": 9,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 21,
+    "legal_count": 18,
+    "best_all": -110,
+    "best_four": -110,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 22,
+    "legal_count": 18,
+    "best_all": -110,
+    "best_four": -129,
+    "loss": 19,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 23,
+    "legal_count": 38,
+    "best_all": -129,
+    "best_four": -177,
+    "loss": 48,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 24,
+    "legal_count": 37,
+    "best_all": -169,
+    "best_four": -185,
+    "loss": 16,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 25,
+    "legal_count": 9,
+    "best_all": -185,
+    "best_four": -185,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 26,
+    "legal_count": 16,
+    "best_all": -174,
+    "best_four": -174,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 27,
+    "legal_count": 36,
+    "best_all": -184,
+    "best_four": -195,
+    "loss": 11,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 28,
+    "legal_count": 12,
+    "best_all": -203,
+    "best_four": -203,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 29,
+    "legal_count": 15,
+    "best_all": -203,
+    "best_four": -203,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 30,
+    "legal_count": 23,
+    "best_all": -203,
+    "best_four": -203,
+    "loss": 0,
+    "feature_aliasing": false
+  },
+  {
+    "seed": 2026,
+    "policy": "four-heuristic",
+    "turn": 31,
+    "legal_count": 6,
+    "best_all": -203,
+    "best_four": -212,
+    "loss": 9,
+    "feature_aliasing": false
+  }
+]

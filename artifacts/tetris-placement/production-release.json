@@ -1,0 +1,25 @@
+{
+  "canister": "qojfj-6qaaa-aaaam-qjkaq-cai",
+  "identity": "production",
+  "url": "https://openjev.kinic.xyz",
+  "worker_version": "a897e9d4-2af0-4ab5-ac16-0d5a8df8a519",
+  "wasm_sha256": "ed2dc08bdbb105c4409722a637197a01728fea1a00f53af98b64753db2940e32",
+  "model_reuploaded": false,
+  "funding_added": false,
+  "initial_model_turn_budget": 8,
+  "smoke": "passed",
+  "frontend_assets": {
+    "index.html": "ee3287493788df8127673f5d6f6492d67df1ac60a8e8b8c260c951d81b836364",
+    "assets/index-D0x10Uzk.js": "e4fb6e45f824d9f3cc64b462233d0ddd6e497e8b6f7d0d995279a102da4b838c",
+    "assets/index-0l64QSAk.css": "6dd884f3d98b02fdfce9df9cea38cdebb67ebe7787d0b7d70d67194ff896de28"
+  },
+  "record_id": 1,
+  "certificate_verified": true,
+  "local_root_key": false,
+  "response_seconds_display": 3.09,
+  "input_tokens": 99,
+  "inference_instructions": "9625341081",
+  "cycles_delta_including_start_and_idle": 9705538155,
+  "cycles_after_smoke": "1_008_474_588_622",
+  "configured_model_turns": 50
+}

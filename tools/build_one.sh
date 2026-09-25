@@ -5,22 +5,9 @@ package="${1:?usage: tools/build_one.sh decision-engine|verdict-engine|executor|
 case "$package" in decision-engine|verdict-engine|executor|mock-ledger) ;; *) echo "unsupported package" >&2; exit 2;; esac
 command -v cargo >/dev/null || { echo 'cargo is required; Rust builds were not verified in the delivery environment.' >&2; exit 1; }
 mkdir -p build
-# Pass the feature flag through run(), not via a features=() array: bash 3.2 (the
-# /bin/bash shipped with macOS) reports an *empty* array as unbound under `set -u`,
-# which aborted every build with "features[@]: unbound variable".
-#
-# `IC_VERDICT_INT8=1` selects the quantised dense-weight build. It is the only
-# remaining feature flag: the Laya backend and its `candle` feature were removed
-# with that model.
-run() {
-  if [[ "$package" == verdict-engine && "${IC_VERDICT_INT8:-0}" == 1 ]]; then
-    cargo "$@" --features int8
-  else
-    cargo "$@"
-  fi
-}
+run() { cargo "$@"; }
 # Native Candid generation and Wasm use exactly the same source feature set.
-run run --quiet -p "$package" --example export > "build/$package.did.tmp"
+run run --quiet -p "$package" --example "$package-export" > "build/$package.did.tmp"
 test -s "build/$package.did.tmp"
 mv "build/$package.did.tmp" "build/$package.did"
 run build --release --target wasm32-unknown-unknown -p "$package" --lib
@@ -32,4 +19,7 @@ target_dir="$(run metadata --no-deps --format-version 1 | "${PYTHON:-python3}" -
 wasm="$target_dir/wasm32-unknown-unknown/release/$artifact.wasm"
 test -f "$wasm" || { echo "expected Wasm artifact not found: $wasm" >&2; exit 1; }
 cp "$wasm" "build/$package.wasm"
+if [[ "$package" == verdict-engine ]]; then
+  "${PYTHON:-python3}" tools/attach_candid.py embed "build/$package.wasm" "build/$package.did"
+fi
 echo "Built build/$package.wasm and .did; no deployment performed."

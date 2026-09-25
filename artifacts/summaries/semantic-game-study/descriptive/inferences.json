@@ -1,0 +1,17 @@
+{
+  "source": "artifacts/semantic-game-study/descriptive/inferences.json",
+  "source_sha256": "bc4774b317b3d8bc31b039ecb4ad397b197555b2d95c0195438db4582cf9ac61",
+  "source_bytes": 366225,
+  "note": "Derived summary, not full evidence. Omitted details require the local raw source.",
+  "summary": {
+    "omitted": true,
+    "see_raw_source": true
+  },
+  "omitted": [
+    {
+      "path": "$",
+      "count": 288,
+      "sha256": "1deee106aac3e1c5c07693be09083fd2fb7e9a6d22936a4fe1de2cb063719d35"
+    }
+  ]
+}

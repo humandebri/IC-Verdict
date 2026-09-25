@@ -1,0 +1,22 @@
+[
+  {
+    "name": "model_card",
+    "url": "https://huggingface.co/heman10x/rlcd-modernbert-151m/blob/70fa19828074e1199e4a793c4af4dba3bfd1d222/README.md",
+    "sha256": "5ff00fca5b5576ea6b0e554918e79b1494a63b7944149d7f33cfa6e1cf536d43"
+  },
+  {
+    "name": "project_readme",
+    "url": "https://github.com/Heman10x-NGU/openJev-verdict-2.0",
+    "sha256": "4f75677f7f18cc7983e46ed15094b31fd531538ba2e014fee7fcda4907e1ab46"
+  },
+  {
+    "name": "formatting",
+    "url": "https://github.com/Heman10x-NGU/openJev-verdict-2.0/blob/main/core/formatting.py",
+    "sha256": "2ab22599b4cbc1227d7befb767e58bf0bdbc67c62b88848f06c384eadf7f92f2"
+  },
+  {
+    "name": "engine",
+    "url": "https://github.com/Heman10x-NGU/openJev-verdict-2.0/blob/main/core/engine_encoder.py",
+    "sha256": "78d094ae36aaf90a8a3a27e175746916f440adf749f73ead17c9012c27a6814b"
+  }
+]

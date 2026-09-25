@@ -1,0 +1,90 @@
+{
+  "wasm_sha256": "e529c14d4539cc0641a64c418782367f68a07c087cc6b7a580761a1b55559ce0",
+  "endpoint": "http://localhost:8012/",
+  "rows": [
+    {
+      "tokens": 8,
+      "distance": 64,
+      "candidate": false,
+      "instructions": 1048816
+    },
+    {
+      "tokens": 8,
+      "distance": 64,
+      "candidate": true,
+      "instructions": 4538689
+    },
+    {
+      "tokens": 16,
+      "distance": 64,
+      "candidate": false,
+      "instructions": 2734584
+    },
+    {
+      "tokens": 16,
+      "distance": 64,
+      "candidate": true,
+      "instructions": 18072997
+    },
+    {
+      "tokens": 32,
+      "distance": 64,
+      "candidate": false,
+      "instructions": 8225654
+    },
+    {
+      "tokens": 32,
+      "distance": 64,
+      "candidate": true,
+      "instructions": 72213068
+    },
+    {
+      "tokens": 64,
+      "distance": 64,
+      "candidate": false,
+      "instructions": 28714071
+    },
+    {
+      "tokens": 64,
+      "distance": 64,
+      "candidate": true,
+      "instructions": 288219161
+    },
+    {
+      "tokens": 96,
+      "distance": 64,
+      "candidate": false,
+      "instructions": 60511910
+    },
+    {
+      "tokens": 96,
+      "distance": 64,
+      "candidate": true,
+      "instructions": 578568569
+    },
+    {
+      "tokens": 120,
+      "distance": 64,
+      "candidate": false,
+      "instructions": 91987787
+    },
+    {
+      "tokens": 120,
+      "distance": 64,
+      "candidate": true,
+      "instructions": 796331314
+    },
+    {
+      "tokens": 128,
+      "distance": 64,
+      "candidate": false,
+      "instructions": 104079424
+    },
+    {
+      "tokens": 128,
+      "distance": 64,
+      "candidate": true,
+      "instructions": 868918923
+    }
+  ]
+}
