@@ -12,3 +12,8 @@ rayon = "1"
 name = "wasm-check"
 path = "examples/wasm_check.rs"
 crate-type = ["cdylib"]
+
+[[example]]
+name = "metering-canister"
+path = "examples/metering_canister.rs"
+crate-type = ["cdylib"]
