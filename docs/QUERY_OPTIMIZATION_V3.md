@@ -19,8 +19,8 @@
 52トークンの詳細計測では、RoPEが約5,481万命令、attention/MLP正規化が合計約5,772万命令減った。
 残りは射影入力コピーなどによる削減である。計測用マーカーを含むため、
 詳細計測と通常queryの命令数はわずかに異なる。
-生値は[baseline-phases.json](../artifacts/query-optimization-v3/baseline-phases.json)と
-[candidate-phases.json](../artifacts/query-optimization-v3/candidate-phases.json)。
+生値は[baseline-phases.json](../artifacts/summaries/query-optimization-v3/baseline-phases.json)と
+[candidate-phases.json](../artifacts/summaries/query-optimization-v3/candidate-phases.json)。
 
 ## query境界と費用モデル
 
@@ -30,7 +30,7 @@
 57・58トークンはreplicaの命令上限で失敗した。
 最大25クラスの27〜53トークン、2クラスの6〜53トークン、
 1クラスの3〜5トークン、未パディング英文15件はいずれも成功した。
-生値は[query-sweep.json](../artifacts/query-optimization-v3/query-sweep.json)、
+生値は[query-sweep.json](../artifacts/summaries/query-optimization-v3/query-sweep.json)、
 [maxclasses-query.json](../artifacts/query-optimization-v3/maxclasses-query.json)、
 [short-query.json](../artifacts/query-optimization-v3/short-query.json)、
 [real-query.json](../artifacts/query-optimization-v3/real-query.json)、

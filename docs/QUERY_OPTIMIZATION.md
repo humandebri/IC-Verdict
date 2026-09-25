@@ -44,7 +44,7 @@ nativeの時間から換算した値ではなく、canisterのinstruction counte
 - 未パディング英文の`decide_query`を48まで呼び出す。
 - 49トークンは実行を始める前に`Capacity`で拒否する。
 
-記録は[final-query.json](../artifacts/query-optimization/final-query.json)、
+記録は[final-query.json](../artifacts/summaries/query-optimization/final-query.json)、
 [final-maxclasses.json](../artifacts/query-optimization/final-maxclasses.json)、
 [final-short.json](../artifacts/query-optimization/final-short.json)、
 [final-real.json](../artifacts/query-optimization/final-real.json)。
