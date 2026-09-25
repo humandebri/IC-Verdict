@@ -1,0 +1,93 @@
+{
+  "shape_m_n_k": [
+    120,
+    2304,
+    768
+  ],
+  "wasm_sha256": "3bbb0359cd243985ccff6879ba003563cc7f7646f52b9d035deaac971c03799f",
+  "ic_cost_source_revision": "d26cd031176beec51b39fbb9e39e80a3a46a748e",
+  "measured_kernel_cost": 126402135,
+  "attribution": {
+    "inner_loop_locals": {
+      "cost": 63993024,
+      "percent_of_measured": 50.62653728119387
+    },
+    "inner_loop_dot_and_add": {
+      "cost": 53084160,
+      "percent_of_measured": 41.996252674054915
+    },
+    "inner_loop_vector_loads": {
+      "cost": 3428352,
+      "percent_of_measured": 2.7122579851993796
+    },
+    "other_inner_loop": {
+      "cost": 1156032,
+      "percent_of_measured": 0.9145668306947505
+    },
+    "outside_attributed_inner_loops": {
+      "cost": 4740567,
+      "percent_of_measured": 3.7503852288570916
+    }
+  },
+  "loops": [
+    {
+      "kind": "loop",
+      "start_line": 1092041,
+      "function": "$_RINvCs5ym4j4hL7NS_12verdict_simd19matmul_i8_simd_tileKj300_Kj10_KBW_EB2_",
+      "counts": {
+        "local.get": 4386,
+        "i32.const": 3,
+        "i32.shl": 1,
+        "local.tee": 290,
+        "i32.add": 34,
+        "v128.load": 128,
+        "v128.load8x8_s": 128,
+        "i32x4.dot_i16x8_s": 2048,
+        "i32x4.add": 2048,
+        "local.set": 257,
+        "br_if": 1,
+        "end": 1
+      },
+      "end_line": 1101366,
+      "cost_per_loop": 9325,
+      "loop_executions_per_kernel": 12096
+    },
+    {
+      "kind": "loop",
+      "start_line": 1106727,
+      "function": "$_RINvCs5ym4j4hL7NS_12verdict_simd19matmul_i8_simd_tileKj300_Kj8_Kj10_EB2_",
+      "counts": {
+        "local.get": 2179,
+        "i32.const": 193,
+        "i32.add": 193,
+        "v128.load": 64,
+        "local.tee": 194,
+        "v128.load8x8_s": 128,
+        "i32x4.dot_i16x8_s": 1024,
+        "i32x4.add": 1024,
+        "local.set": 129,
+        "i32.ne": 1,
+        "br_if": 1,
+        "end": 1
+      },
+      "end_line": 1111858,
+      "cost_per_loop": 5131,
+      "loop_executions_per_kernel": 1728
+    }
+  ],
+  "weighted_opcode_costs": {
+    "local.get": 56818368,
+    "i32.const": 369792,
+    "i32.shl": 12096,
+    "local.tee": 3843072,
+    "i32.add": 744768,
+    "v128.load": 1658880,
+    "v128.load8x8_s": 1769472,
+    "i32x4.dot_i16x8_s": 26542080,
+    "i32x4.add": 26542080,
+    "local.set": 3331584,
+    "br_if": 27648,
+    "end": 0,
+    "i32.ne": 1728
+  }
+}
