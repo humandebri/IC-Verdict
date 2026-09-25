@@ -53,3 +53,16 @@ it('recreates the actor after agent initialization fails',async()=>{
  expect(mock.agent).toHaveBeenCalledTimes(2);
  expect(mock.create).toHaveBeenCalledTimes(1);
 });
+it('refreshes model identity for a new game and after a changed model reply',async()=>{
+ const client=await connectQuery('https://icp-api.io','aaaaa-aa');
+ await client.status();
+ mock.info.mockResolvedValue({warmed:true,model:Uint8Array.from(Array(32).fill(8))});
+ expect(Array.from((await client.status(true)).model)).toEqual(Array(32).fill(8));
+ mock.decide.mockImplementation(async request=>({Ok:{ids:request.options.map((o:{id:string})=>o.id),selected:'0',
+  probabilities:request.options.map((_:unknown,i:number)=>i===0?1:0),logits:request.options.map(()=>0),
+  model:Uint8Array.from(Array(32).fill(9)),confidence:1,input_tokens:41,measured_instructions:3_000_000_000n}}));
+ await expect(client.step(client.start(11,0))).rejects.toThrow('Invalid model response');
+ mock.info.mockResolvedValue({warmed:true,model:Uint8Array.from(Array(32).fill(9))});
+ expect((await client.step(client.start(11,0))).selected).toBe(0);
+ expect(mock.info).toHaveBeenCalledTimes(3);
+});
