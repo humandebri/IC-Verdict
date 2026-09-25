@@ -1,0 +1,40 @@
+name: W8A16 tile instruction comparison
+on:
+  push:
+    branches: [perf/w8a16-node-metering]
+    paths: ['tools/bench_tile_metering.py', '.github/workflows/w8a16-tile-metering.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.97.1
+          targets: wasm32-unknown-unknown
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PocketIC
+        run: |
+          python -m pip install pocket-ic==3.1.2
+          curl --fail --location --retry 3 --output /tmp/pocketic.tar.gz https://github.com/dfinity/icp-cli-network-launcher/releases/download/v16.0.0-2026-09-18-03-28/icp-cli-network-launcher-x86_64-linux-v16.0.0-2026-09-18-03-28.tar.gz
+          mkdir -p /tmp/pocketic-bin
+          tar -xzf /tmp/pocketic.tar.gz -C /tmp/pocketic-bin
+      - name: Compare metering with identical inputs
+        env:
+          POCKET_IC_MUTE_SERVER: '1'
+        run: |
+          export POCKET_IC_BIN="$(find /tmp/pocketic-bin -type f -name pocket-ic | head -1)"
+          mkdir -p artifacts/tile-comparison
+          lscpu > artifacts/tile-comparison/lscpu.txt
+          python tools/bench_tile_metering.py --out artifacts/tile-comparison/report.json --artifact-dir /tmp/tile-wasm
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: w8a16-tile-comparison
+          path: artifacts/tile-comparison/
