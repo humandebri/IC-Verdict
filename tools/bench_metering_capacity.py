@@ -58,6 +58,8 @@ def main():
     parser.add_argument("--wasm", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--groups", type=int, default=3)
+    parser.add_argument("--gemm-only", action="store_true")
+    parser.add_argument("--native", type=Path)
     args = parser.parse_args()
     args.out.parent.mkdir(parents=True, exist_ok=True)
     pics = [PocketIC() for _ in range(4)]
@@ -74,7 +76,7 @@ def main():
         for p in processes():
             try:
                 t = p.cpu_times()
-                cpu += t.user + t.system
+                cpu += t.user + t.system + t.children_user + t.children_system
                 rss += p.memory_info().rss
             except psutil.NoSuchProcess:
                 pass
@@ -89,7 +91,7 @@ def main():
                 "checksum": values[2] if len(values)>2 else None}
 
     perf_probe = subprocess.run(["sh", "-c", "perf stat -e cycles,instructions,cache-misses -- true"], capture_output=True, text=True)
-    perf_ok = perf_probe.returncode == 0
+    perf_ok = perf_probe.returncode == 0 and "<not supported>" not in perf_probe.stderr and "<not counted>" not in perf_probe.stderr
     report = {
         "lscpu": subprocess.check_output(["lscpu"], text=True),
         "affinity": sorted(os.sched_getaffinity(0)),
@@ -99,6 +101,8 @@ def main():
         "cases": {}, "samples": [],
     }
     cases = [("gemm_hot", 1), ("gemm_rotating_32", 32), ("xor", None), ("multiply_add", None), ("pointer_chase", None)]
+    if args.gemm_only:
+        cases = [case for case in cases if case[1] is not None]
     random.Random(20260925).shuffle(cases)
     for name, banks in cases:
         is_gemm = banks is not None
@@ -126,6 +130,16 @@ def main():
         # Warm every sandbox and touch every weight bank before sustained samples.
         for pic, cid in zip(pics, canisters):
             run_one(pic, cid, max(count, banks or 0))
+        if args.native and is_gemm:
+            native_samples = []
+            for workers in (1, 4):
+                kernels = (8 if workers == 1 else 6) * count
+                completed = subprocess.run([str(args.native), str(banks), str(workers), str(kernels), str(args.groups)], check=True, text=True, capture_output=True)
+                native_samples.extend(json.loads(line) for line in completed.stdout.splitlines())
+            report["cases"][name]["native_samples"] = native_samples
+            # Warm PocketIC again after running the native workload.
+            for pic, cid in zip(pics, canisters):
+                run_one(pic, cid, max(count, banks or 0))
         for group in range(args.groups):
             for workers in (1, 4):
                 calls = 8 if workers == 1 else 6

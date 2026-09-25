@@ -4,6 +4,7 @@ on:
     branches: [perf/w8a16-node-metering]
     paths:
       - 'tools/bench_metering_capacity.py'
+      - 'tools/bench_w8a16_native.c'
       - 'crates/verdict-simd/**'
       - '.github/workflows/w8a16-capacity.yml'
   workflow_dispatch:
@@ -37,6 +38,13 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y linux-tools-generic linux-tools-common
           sudo sysctl kernel.perf_event_paranoid=-1 || true
+      - name: Build and inspect 128-bit native prototype
+        run: |
+          mkdir -p artifacts/capacity
+          gcc -O3 -msse4.1 -mno-avx -ffp-contract=off -pthread tools/bench_w8a16_native.c -o /tmp/w8a16-native
+          gcc --version > artifacts/capacity/compiler.txt
+          objdump -d /tmp/w8a16-native > artifacts/capacity/native.asm
+          if grep -E '\b[yz]mm[0-9]+' artifacts/capacity/native.asm; then exit 1; fi
       - name: Measure execution capacity
         env:
           POCKET_IC_MUTE_SERVER: '1'
@@ -48,7 +56,7 @@ jobs:
             ln -s "$PERF_PATH" /tmp/bench-bin/perf
             export PATH="/tmp/bench-bin:$PATH"
           fi
-          python tools/bench_metering_capacity.py --wasm target/wasm32-unknown-unknown/release/examples/metering_canister.wasm --out artifacts/capacity/report.json
+          python tools/bench_metering_capacity.py --wasm target/wasm32-unknown-unknown/release/examples/metering_canister.wasm --out artifacts/capacity/report.json --gemm-only --native /tmp/w8a16-native
       - uses: actions/upload-artifact@v4
         if: always()
         with:
