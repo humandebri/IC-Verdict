@@ -1,0 +1,36 @@
+name: Wasm local operations versus machine code
+on:
+  push:
+    branches: [perf/w8a16-node-metering]
+    paths: ['tools/audit_wasm_locals.py', '.github/workflows/wasm-locals-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install tools and download exact measured Wasm
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python -m pip install wasmtime==48.0.0 capstone==5.0.6 pyelftools==0.32
+          npm install --prefix /tmp/locals-wabt wabt@1.0.39
+          gh run download 36112530260 -n candid-and-wasm -D /tmp/locals-original
+          node /tmp/locals-wabt/node_modules/wabt/bin/wasm2wat /tmp/locals-original/build/verdict-engine.wasm --generate-names -o /tmp/original.wat
+      - name: Inspect original and extra-local machine code
+        run: |
+          mkdir -p artifacts/locals
+          lscpu > artifacts/locals/lscpu.txt
+          python tools/audit_wasm_locals.py --wasm /tmp/locals-original/build/verdict-engine.wasm --wat /tmp/original.wat --out artifacts/locals
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wasm-locals-machine-code
+          path: artifacts/locals/
