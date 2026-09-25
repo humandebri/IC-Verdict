@@ -1,3 +1,4 @@
+#![cfg(target_arch = "wasm32")]
 //! Local benchmark only: prepare and validate once, then run the production SIMD kernel.
 use std::{cell::RefCell, hint::black_box};
 
