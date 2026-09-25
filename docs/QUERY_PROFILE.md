@@ -36,7 +36,7 @@
 | 45–48 | 各長さで超過 | 各長さで超過 |
 
 固定の2選択肢token列をPADで延長した測定。
-[現行の生データ](../artifacts/query-profile/baseline-query.json)と
+[現行の生データ](../artifacts/summaries/query-profile/baseline-query.json)と
 [試作の生データ](../artifacts/query-profile/candidate-query.json)を保存した。
 同じqueryを2回呼んでいるが、replicaのquery cacheに当たる可能性があるため、
 これを独立した2回の速度測定とは扱わない。CLI経由のwall timeも純粋な推論時間ではない。
