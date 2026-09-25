@@ -9,6 +9,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
+          toolchain: 1.97.1
           components: clippy
           # verify.py also builds decision-engine for wasm32; without the target that
           # check would fail here for the wrong reason.
