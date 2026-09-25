@@ -41,7 +41,7 @@ def main():
         pic.update_call(cid,'prepare',prepare)
         for iterations in (0,1,4,8,8,8):
             start=time.perf_counter();payload=pic.update_call(cid,'run',struct.pack('<I',iterations));wall=time.perf_counter()-start
-            total,kernel,checksum=struct.unpack('<3Q',payload)
+            total,kernel,checksum=struct.unpack('<3Q',bytes(payload))
             assert checksum==EXPECTED_CHECKSUM,(name,iterations,checksum)
             sample={'iterations':iterations,'total_metered':total,'kernel_metered':kernel,'wall_s':wall,'checksum':checksum}
             v['samples'].append(sample)
