@@ -1,0 +1,16 @@
+{
+  "method": "PocketIC performance_counter(0); same arithmetic, different local bookkeeping",
+  "samples": [
+    {
+      "extra_local_ops": 0,
+      "result": 579,
+      "instructions": 40234
+    },
+    {
+      "extra_local_ops": 40,
+      "result": 579,
+      "instructions": 40274
+    }
+  ],
+  "instruction_delta": 40
+}
