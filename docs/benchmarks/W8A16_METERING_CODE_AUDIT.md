@@ -1,5 +1,7 @@
 # 行列積を展開した Wasm 表現への課金
 
+追記：この文書は主要ループだけの静的分類。全額を分類し、8 条件の実測値と誤差ゼロで照合した結果は [詳細分類](W8A16_METERING_BREAKDOWN.md) を参照。
+
 対象は実測と SHA-256 が一致する Wasm (`3bbb0359cd243985ccff6879ba003563cc7f7646f52b9d035deaac971c03799f`)。GitHub Actions run `36112530260` の `candid-and-wasm` から取得し、wabt 1.0.39 で flat WAT に逆アセンブルした。IC の参照ソースは `d26cd031176beec51b39fbb9e39e80a3a46a748e`。
 
 ## コードが行っていること
