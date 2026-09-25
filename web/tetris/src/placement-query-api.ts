@@ -69,16 +69,22 @@ export async function connectQuery(host:string,canisterId:string){
  return {enabled:info.warmed&&limits.max_tokens>=41,warmed:info.warmed,model:info.model,max_tokens:limits.max_tokens};
  };
  let cachedStatus:Promise<Status>|undefined;
- const status=()=>cachedStatus??=fetchStatus().then(value=>{
+ const status=(refresh=false)=>{
+  if(refresh)cachedStatus=undefined;
+  return cachedStatus??=fetchStatus().then(value=>{
   if(!value.enabled)cachedStatus=undefined;
   return value;
- },error=>{cachedStatus=undefined;throw error;});
+  },error=>{cachedStatus=undefined;throw error;});
+ };
  const query=async(request:Request):Promise<ModelReply>=>{
   const r=await (await actor()).decide_query(request) as {Ok?:ModelReply;Err?:unknown};
   if(!r.Ok)throw new Error(`Model query failed: ${JSON.stringify(r.Err)}`);
   return r.Ok;
  };
  return {local,status,start:(seed:number,mode:number):Game=>({id:0,seed,mode,board:Array(200).fill(0),turn:0,lines:0,over:false}),
-  step:async(game:Game)=>choosePlacement(game,game.mode===0?await status():{enabled:false,warmed:false,model:[],max_tokens:0},query)};
+  step:async(game:Game)=>{
+   try{return await choosePlacement(game,game.mode===0?await status():{enabled:false,warmed:false,model:[],max_tokens:0},query);}
+   catch(error){if(game.mode===0)cachedStatus=undefined;throw error;}
+  }};
 }
 export type QueryClient=Awaited<ReturnType<typeof connectQuery>>;

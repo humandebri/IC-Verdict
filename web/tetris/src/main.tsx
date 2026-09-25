@@ -16,7 +16,7 @@ function App(){
  const [seed,setSeed]=useState(184);const [mode,setMode]=useState(0);
  const host=import.meta.env.VITE_IC_HOST||'https://icp-api.io';const canister=import.meta.env.VITE_CANISTER_ID||'';
  useEffect(()=>{let live=true;connectQuery(host,canister).then(c=>{if(live)setClient(c);}).catch(e=>setError(String(e)));return()=>{live=false;};},[]);
- const start=async()=>{if(!client)return;setBusy(true);setError('');setAuto(false);try{if(mode===0&&!(await client.status()).enabled)throw new Error('Model unavailable or query token limit too low');const g=client.start(seed>>>0,mode);setGame(g);setBoard(g.board);setReceipt(undefined);setGhost([]);setMoving([]);setAuto(true);}catch(e){setError(String(e));}finally{setBusy(false);}};
+ const start=async()=>{if(!client)return;setBusy(true);setError('');setAuto(false);try{if(mode===0&&!(await client.status(true)).enabled)throw new Error('Model unavailable or query token limit too low');const g=client.start(seed>>>0,mode);setGame(g);setBoard(g.board);setReceipt(undefined);setGhost([]);setMoving([]);setAuto(true);}catch(e){setError(String(e));}finally{setBusy(false);}};
  const step=async()=>{if(!client||!game||busy||running.current||game.over)return;running.current=true;setBusy(true);setError('');try{
  const begin=performance.now();const r=await client.step(game);setElapsed(performance.now()-begin);setReceipt(r);setBoard(r.before);setGhost(r.candidates[r.selected].cells);await sleep(650);
  for(const p of r.candidates[r.selected].path){setMoving(rotations(r.piece)[p.r].map(([x,y])=>[x+p.x,y+p.y]));await sleep(35);}
