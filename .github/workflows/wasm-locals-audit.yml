@@ -21,10 +21,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           python -m pip install wasmtime==48.0.0 capstone==5.0.6 pyelftools==0.32
+          curl --fail --location --retry 3 https://github.com/bytecodealliance/wasmtime/releases/download/v48.0.1/wasmtime-v48.0.1-x86_64-linux-c-api.tar.xz -o /tmp/wasmtime-c-api.tar.xz
+          tar -xf /tmp/wasmtime-c-api.tar.xz -C /tmp
+          python -c "import importlib.util, pathlib, shutil; p=pathlib.Path(importlib.util.find_spec('wasmtime').origin).parent; shutil.copyfile('/tmp/wasmtime-v48.0.1-x86_64-linux-c-api/lib/libwasmtime.so',p/'linux-x86_64/_libwasmtime.so')"
           npm install --prefix /tmp/locals-wabt wabt@1.0.39
           gh run download 36112530260 -n candid-and-wasm -D /tmp/locals-original
           node /tmp/locals-wabt/node_modules/wabt/bin/wasm2wat /tmp/locals-original/build/verdict-engine.wasm --generate-names -o /tmp/original.wat
       - name: Inspect original and extra-local machine code
+        env:
+          LOCALS_NATIVE_LIBRARY_VERSION: '48.0.1'
         run: |
           mkdir -p artifacts/locals
           lscpu > artifacts/locals/lscpu.txt

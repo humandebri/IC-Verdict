@@ -1,7 +1,7 @@
 """Separate Wasm local bookkeeping from x86 machine code and register spills.
 Standalone Wasmtime, NOT the fully instrumented IC executable. No timing claims.
 """
-import argparse, hashlib, io, json, platform, re
+import argparse, hashlib, io, json, os, platform, re
 from collections import Counter
 from importlib.metadata import version
 from pathlib import Path
@@ -23,7 +23,7 @@ def analyse(code, path):
     def counts(xs):
         c=Counter(x.mnemonic for x in xs)
         stack=[x for x in xs if any(o.type==X86_OP_MEM and o.mem.base in (X86_REG_RSP,X86_REG_RBP,X86_REG_ESP,X86_REG_EBP) for o in x.operands)]
-        return {'instructions':len(xs),'mnemonics':dict(c),'stack_address_instructions':len(stack),'stack_mnemonics':dict(Counter(x.mnemonic for x in stack))}
+        return {'instructions':len(xs),'mnemonics':dict(c),'stack_address_instructions':len(stack),'stack_mnemonics':dict(Counter(x.mnemonic for x in stack)), 'stack_reads':sum(any(o.type==X86_OP_MEM and o.mem.base in (X86_REG_RSP,X86_REG_RBP,X86_REG_ESP,X86_REG_EBP) and o.access & 1 for o in x.operands) for x in stack), 'stack_writes':sum(any(o.type==X86_OP_MEM and o.mem.base in (X86_REG_RSP,X86_REG_RBP,X86_REG_ESP,X86_REG_EBP) and o.access & 2 for o in x.operands) for x in stack)}
     loops=[]
     for x in ops:
         if x.mnemonic.startswith('j') and x.operands and x.operands[0].type==X86_OP_IMM and x.operands[0].imm<x.address:
@@ -58,7 +58,7 @@ def main():
         if active and m and types.get(m[1])=='v128':
             lines.append(f'    local.tee {m[1]}\n');added[active]+=1
     assert set(added)=={'tile16','tile8'}
-    report={'wasm_sha256':SHA,'wasmtime_python_version':version('wasmtime'),'platform':platform.platform(),'config':'opt_level=none; nan_canonicalization=true; relaxed_simd=false; host ISA defaults','ic_reference_wasmtime_version':'48.0.1 (Python wheel is 48.0.0, explicitly different patch version)','instrumentation':'none; original compute functions; IC metering insertion is not reproduced','probe':probe,'inserted_static_local_tee':dict(added),'functions':{}}
+    report={'wasm_sha256':SHA,'wasmtime_python_version':version('wasmtime'),'platform':platform.platform(),'config':'opt_level=none; nan_canonicalization=true; relaxed_simd=false; host ISA defaults','ic_reference_wasmtime_version':'48.0.1','native_library_version':os.environ.get('LOCALS_NATIVE_LIBRARY_VERSION','48.0.0'),'native_library_sha256':sha(Path(wasmtime._ffi.filename).read_bytes()),'instrumentation':'none; original compute functions; IC metering insertion is not reproduced','probe':probe,'inserted_static_local_tee':dict(added),'functions':{}}
     for variant,wasm in [('original',a.wasm.read_bytes()),('extra_locals',''.join(lines))]:
         print('compiling',variant,flush=True)
         syms=compile_symbols(e,wasm)
