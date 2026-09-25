@@ -1,0 +1,1533 @@
+{
+  "lscpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           48 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               AuthenticAMD\nModel name:                              AMD EPYC 7763 64-Core Processor\nCPU family:                              25\nModel:                                   1\nThread(s) per core:                      2\nCore(s) per socket:                      2\nSocket(s):                               1\nStepping:                                1\nBogoMIPS:                                4890.85\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl tsc_reliable nonstop_tsc cpuid extd_apicid aperfmperf tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy svm cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext vmmcall fsgsbase bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves user_shstk clzero xsaveerptr rdpru arat npt nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold v_vmsave_vmload umip vaes vpclmulqdq rdpid fsrm\nVirtualization:                          AMD-V\nHypervisor vendor:                       Microsoft\nVirtualization type:                     full\nL1d cache:                               64 KiB (2 instances)\nL1i cache:                               64 KiB (2 instances)\nL2 cache:                                1 MiB (2 instances)\nL3 cache:                                32 MiB (1 instance)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Vulnerable: Safe RET, no microcode\nVulnerability Spec store bypass:         Vulnerable\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Retpolines; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Vulnerable: No microcode\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n",
+  "affinity": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "cgroup_cpu_max": null,
+  "perf_probe": {
+    "returncode": 0,
+    "stderr": "\n Performance counter stats for 'true':\n\n   <not supported>      cycles                                                                \n   <not supported>      instructions                                                          \n   <not supported>      cache-misses                                                          \n\n       0.001048534 seconds time elapsed\n\n       0.000000000 seconds user\n       0.001133000 seconds sys\n\n\n"
+  },
+  "method": "whole-update sustained throughput; four independent instances share a host, not a subnet scheduler",
+  "cases": {
+    "gemm_hot": {
+      "count": 8,
+      "calibration": {
+        "wall_s": 0.023984837999933006,
+        "metered": 134135602,
+        "kernel_metered": 131442040,
+        "checksum": 641785196358105
+      },
+      "empty": {
+        "wall_s": 0.010329384999977265,
+        "metered": 4053774,
+        "kernel_metered": 212,
+        "checksum": 641785196358105
+      },
+      "metered_per_iteration": 130081828.0,
+      "weight_banks": 1,
+      "native_samples": [
+        {
+          "group": 0,
+          "workers": 1,
+          "banks": 1,
+          "kernels_per_worker": 64,
+          "wall_s": 0.464005477,
+          "gmac_per_worker_s": 29.287466708,
+          "checksum": 641785196358105
+        },
+        {
+          "group": 1,
+          "workers": 1,
+          "banks": 1,
+          "kernels_per_worker": 64,
+          "wall_s": 0.461050884,
+          "gmac_per_worker_s": 29.475152161,
+          "checksum": 641785196358105
+        },
+        {
+          "group": 2,
+          "workers": 1,
+          "banks": 1,
+          "kernels_per_worker": 64,
+          "wall_s": 0.461231242,
+          "gmac_per_worker_s": 29.463626317,
+          "checksum": 641785196358105
+        },
+        {
+          "group": 0,
+          "workers": 4,
+          "banks": 1,
+          "kernels_per_worker": 48,
+          "wall_s": 0.691993488,
+          "gmac_per_worker_s": 14.728691667,
+          "checksum": 641785196358105
+        },
+        {
+          "group": 1,
+          "workers": 4,
+          "banks": 1,
+          "kernels_per_worker": 48,
+          "wall_s": 0.685490752,
+          "gmac_per_worker_s": 14.868411704,
+          "checksum": 641785196358105
+        },
+        {
+          "group": 2,
+          "workers": 4,
+          "banks": 1,
+          "kernels_per_worker": 48,
+          "wall_s": 0.704818276,
+          "gmac_per_worker_s": 14.460690177,
+          "checksum": 641785196358105
+        }
+      ]
+    },
+    "gemm_rotating_32": {
+      "count": 8,
+      "calibration": {
+        "wall_s": 0.023695899000017562,
+        "metered": 134215602,
+        "kernel_metered": 131522040,
+        "checksum": 641785196358105
+      },
+      "empty": {
+        "wall_s": 0.010670789000073455,
+        "metered": 4053774,
+        "kernel_metered": 212,
+        "checksum": 641785196358105
+      },
+      "metered_per_iteration": 130161828.0,
+      "weight_banks": 32,
+      "native_samples": [
+        {
+          "group": 0,
+          "workers": 1,
+          "banks": 32,
+          "kernels_per_worker": 64,
+          "wall_s": 0.462303889,
+          "gmac_per_worker_s": 29.395264205,
+          "checksum": 642655553528498
+        },
+        {
+          "group": 1,
+          "workers": 1,
+          "banks": 32,
+          "kernels_per_worker": 64,
+          "wall_s": 0.460907872,
+          "gmac_per_worker_s": 29.484297808,
+          "checksum": 642655553528498
+        },
+        {
+          "group": 2,
+          "workers": 1,
+          "banks": 32,
+          "kernels_per_worker": 64,
+          "wall_s": 0.461050084,
+          "gmac_per_worker_s": 29.475203306,
+          "checksum": 642655553528498
+        },
+        {
+          "group": 0,
+          "workers": 4,
+          "banks": 32,
+          "kernels_per_worker": 48,
+          "wall_s": 0.686092435,
+          "gmac_per_worker_s": 14.855372542,
+          "checksum": 642086682570298
+        },
+        {
+          "group": 1,
+          "workers": 4,
+          "banks": 32,
+          "kernels_per_worker": 48,
+          "wall_s": 0.685644126,
+          "gmac_per_worker_s": 14.86508574,
+          "checksum": 642655553528498
+        },
+        {
+          "group": 2,
+          "workers": 4,
+          "banks": 32,
+          "kernels_per_worker": 48,
+          "wall_s": 0.685604701,
+          "gmac_per_worker_s": 14.865940541,
+          "checksum": 642086682570298
+        }
+      ]
+    }
+  },
+  "samples": [
+    {
+      "case": "gemm_hot",
+      "group": 0,
+      "workers": 1,
+      "calls": 8,
+      "wall_s": 0.9261120559999654,
+      "cpu_s": 0.9100000000000001,
+      "metered": 8151587184,
+      "effective_billion_per_worker_s": 8.8019447875542,
+      "cpu_s_per_billion": 0.11163470125010198,
+      "used_cpu_cores": 0.9826024767785057,
+      "median_call_s": 0.11538986499999737,
+      "p95_call_s": 0.11660857900005794,
+      "rss_bytes_summed": 460832768,
+      "rows": [
+        {
+          "wall_s": 0.11660857900005794,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11538956300000791,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11433843799989063,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11545724199993401,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11576704199990218,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11539016699998683,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11487086399995405,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11504433800007519,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_hot",
+      "group": 0,
+      "workers": 4,
+      "calls": 24,
+      "wall_s": 1.5657231819999424,
+      "cpu_s": 5.929999999999998,
+      "metered": 24454761552,
+      "effective_billion_per_worker_s": 3.9047070761198097,
+      "cpu_s_per_billion": 0.24248856352128367,
+      "used_cpu_cores": 3.7873872394387376,
+      "median_call_s": 0.2610810049999941,
+      "p95_call_s": 0.26625937900007557,
+      "rss_bytes_summed": 473788416,
+      "rows": [
+        {
+          "wall_s": 0.26625937900007557,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26150434300006964,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2610639380000066,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2533834549999483,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2650110949999771,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.23553844899993237,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26475324799991995,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26279422900006466,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2547806170000513,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.25695576499992967,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2654640499999914,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2528681389999292,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2589148680000335,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2610980719999816,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2580928560000757,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2648959160000004,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.224054987000045,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2564811390000159,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2611211449999473,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26184239700000944,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2588425980000011,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2634160500000462,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26986879400010366,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.249516983000035,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_hot",
+      "group": 1,
+      "workers": 1,
+      "calls": 8,
+      "wall_s": 0.9240338729999849,
+      "cpu_s": 0.9100000000000019,
+      "metered": 8151587184,
+      "effective_billion_per_worker_s": 8.82174065495555,
+      "cpu_s_per_billion": 0.1116347012501022,
+      "used_cpu_cores": 0.9848123825218438,
+      "median_call_s": 0.11542168050004875,
+      "p95_call_s": 0.11674598099989453,
+      "rss_bytes_summed": 473866240,
+      "rows": [
+        {
+          "wall_s": 0.11482957700002316,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11589135500003067,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11674598099989453,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11596293900004184,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11495200600006683,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11589455399996496,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11462282499996945,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11477125699991575,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_hot",
+      "group": 1,
+      "workers": 4,
+      "calls": 24,
+      "wall_s": 1.5674747129999105,
+      "cpu_s": 5.899999999999999,
+      "metered": 24454761552,
+      "effective_billion_per_worker_s": 3.900343869853771,
+      "cpu_s_per_billion": 0.24126180856249135,
+      "used_cpu_cores": 3.764016064226189,
+      "median_call_s": 0.26037707050005565,
+      "p95_call_s": 0.26652759699993567,
+      "rss_bytes_summed": 474288128,
+      "rows": [
+        {
+          "wall_s": 0.2635817999999972,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.259653907000029,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26096747299993694,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2608472529999517,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26063658399993983,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.23499197000001004,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.25781323900002917,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26339990999997553,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26389043100004983,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2602107310000292,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2697559179999871,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.24966627300000255,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2605434100000821,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2609346250000044,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2585530009999957,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.25963066099996013,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2654481529999657,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2597138600000335,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26652759699993567,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2628039070000341,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2595503979999876,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2559018809999998,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2296951519999766,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.24854169000002457,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_hot",
+      "group": 2,
+      "workers": 1,
+      "calls": 8,
+      "wall_s": 0.9195714530000032,
+      "cpu_s": 0.9100000000000001,
+      "metered": 8151587184,
+      "effective_billion_per_worker_s": 8.864550065583616,
+      "cpu_s_per_billion": 0.11163470125010198,
+      "used_cpu_cores": 0.989591398287999,
+      "median_call_s": 0.11486035499996206,
+      "p95_call_s": 0.11583241499999986,
+      "rss_bytes_summed": 474324992,
+      "rows": [
+        {
+          "wall_s": 0.11580169799992746,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11583241499999986,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11435428599997977,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11433882599999379,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11482208399991123,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11543714300000829,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11489862600001288,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.11374870199995257,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_hot",
+      "group": 2,
+      "workers": 4,
+      "calls": 24,
+      "wall_s": 1.569797509999944,
+      "cpu_s": 5.940000000000001,
+      "metered": 24454761552,
+      "effective_billion_per_worker_s": 3.8945726114702643,
+      "cpu_s_per_billion": 0.24289748184088125,
+      "used_cpu_cores": 3.783927520690368,
+      "median_call_s": 0.2595920045000071,
+      "p95_call_s": 0.2658670289999918,
+      "rss_bytes_summed": 474558464,
+      "rows": [
+        {
+          "wall_s": 0.25933924399998887,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.25733179999997446,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2641694879999932,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.25252860199998395,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2543870679999145,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.24309115800008385,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2643729300000359,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.25747705300000234,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2604745029999549,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2658670289999918,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26290362299994285,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2572271820000651,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26062438399992516,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2615674119999767,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2598447650000253,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26027116000000206,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26543735699999615,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2578879490000645,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2591010580000557,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.26146044199992957,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2579396309999993,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2669281640000918,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2535185500000807,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2509193350000487,
+          "metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "checksum": 641785196358105
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_rotating_32",
+      "group": 0,
+      "workers": 1,
+      "calls": 8,
+      "wall_s": 1.0426430909999453,
+      "cpu_s": 1.0600000000000023,
+      "metered": 8273667184,
+      "effective_billion_per_worker_s": 7.935282222093038,
+      "cpu_s_per_billion": 0.1281173120004004,
+      "used_cpu_cores": 1.0166470282591245,
+      "median_call_s": 0.12975175149995266,
+      "p95_call_s": 0.13649988199995278,
+      "rss_bytes_summed": 878088192,
+      "rows": [
+        {
+          "wall_s": 0.12940054899991082,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.12960321899993232,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.13023634399996808,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.129900283999973,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.13649988199995278,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.13283551100005297,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.12859425900001042,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.12523727300003884,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_rotating_32",
+      "group": 0,
+      "workers": 4,
+      "calls": 24,
+      "wall_s": 1.668025660000012,
+      "cpu_s": 6.3999999999999915,
+      "metered": 24820681552,
+      "effective_billion_per_worker_s": 3.7200689034963377,
+      "cpu_s_per_billion": 0.25784948679156205,
+      "used_cpu_cores": 3.8368714303831184,
+      "median_call_s": 0.2777752409999721,
+      "p95_call_s": 0.28099373099996683,
+      "rss_bytes_summed": 905379840,
+      "rows": [
+        {
+          "wall_s": 0.2800281290000157,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.27812737800002196,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.2755076390000113,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.2721728039999789,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2723272860000634,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.2659968689999914,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.28134467999996104,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.2774231039999222,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.28099373099996683,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.2764869390000513,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.2760649699999931,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.2737167129999989,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.2792473639999571,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.28011556199999177,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.276580023000065,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.27409337899996444,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.27941297999996095,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.2666515949999848,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.27845512200008216,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.27944267700002,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.2807922030000327,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.27828595699998004,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.2808847250000781,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.2683979590000263,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_rotating_32",
+      "group": 1,
+      "workers": 1,
+      "calls": 8,
+      "wall_s": 1.037926228999936,
+      "cpu_s": 1.0300000000000011,
+      "metered": 8273667184,
+      "effective_billion_per_worker_s": 7.971344159952345,
+      "cpu_s_per_billion": 0.1244913503400116,
+      "used_cpu_cores": 0.9923633984974327,
+      "median_call_s": 0.12972291599999153,
+      "p95_call_s": 0.13018416599993543,
+      "rss_bytes_summed": 914329600,
+      "rows": [
+        {
+          "wall_s": 0.13018416599993543,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.1295029789999944,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.12936337700000422,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.12957164800002374,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.12987418399995931,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.12904116300001078,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.13016801399999167,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.129892178000091,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_rotating_32",
+      "group": 1,
+      "workers": 4,
+      "calls": 24,
+      "wall_s": 1.6743300759999329,
+      "cpu_s": 6.420000000000009,
+      "metered": 24820601552,
+      "effective_billion_per_worker_s": 3.7060496475249654,
+      "cpu_s_per_billion": 0.25865610011706974,
+      "used_cpu_cores": 3.834369394676194,
+      "median_call_s": 0.2783287259999838,
+      "p95_call_s": 0.2835465520000753,
+      "rss_bytes_summed": 941400064,
+      "rows": [
+        {
+          "wall_s": 0.273855870000034,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.28225988300005156,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.27854712999999265,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.2760183750000351,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.28258341299999756,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.27583169700005783,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.2761324439999271,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.2774994080000397,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.28112136899994766,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.28151562499999727,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.2771501669999452,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.27765607300000283,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.2781950249999454,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.2752947660000018,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.2835465520000753,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.2797413849999657,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.2790507389998993,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.275281294000024,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.279670407000026,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.27414686400004484,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.28136229799997636,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.2839388319999898,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.2784624270000222,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.27589674599994396,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_rotating_32",
+      "group": 2,
+      "workers": 1,
+      "calls": 8,
+      "wall_s": 1.0497560689999546,
+      "cpu_s": 1.0500000000000043,
+      "metered": 8273667184,
+      "effective_billion_per_worker_s": 7.8815140281893035,
+      "cpu_s_per_billion": 0.12690865811360444,
+      "used_cpu_cores": 1.0002323692210535,
+      "median_call_s": 0.12909068649997835,
+      "p95_call_s": 0.14616050100005396,
+      "rss_bytes_summed": 950439936,
+      "rows": [
+        {
+          "wall_s": 0.14616050100005396,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.12965110099992216,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.12938775299994631,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.12855693299991344,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.12858930200002305,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.12879362000001038,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.1300710519999484,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.12820779399999083,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        }
+      ],
+      "perf": null
+    },
+    {
+      "case": "gemm_rotating_32",
+      "group": 2,
+      "workers": 4,
+      "calls": 24,
+      "wall_s": 1.6680860280000616,
+      "cpu_s": 6.329999999999984,
+      "metered": 24820681552,
+      "effective_billion_per_worker_s": 3.7199342742769925,
+      "cpu_s_per_billion": 0.25502925802977905,
+      "used_cpu_cores": 3.7947683115536237,
+      "median_call_s": 0.2764370495000321,
+      "p95_call_s": 0.28878708000002007,
+      "rss_bytes_summed": 936448000,
+      "rows": [
+        {
+          "wall_s": 0.2817270489999828,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.28229621599996335,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.278317990000005,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641697260505668
+        },
+        {
+          "wall_s": 0.27281605900009254,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 641785196358105
+        },
+        {
+          "wall_s": 0.27692176599998675,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641898085763531
+        },
+        {
+          "wall_s": 0.270699368999999,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 641814726927859
+        },
+        {
+          "wall_s": 0.2774655090000806,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.28878708000002007,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.3002106010000034,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.2666106230000196,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.2732484570000224,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.26034319100006087,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.2791504399999667,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.2759523330000775,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.27955581300000176,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.27034988000002613,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.2722454239999479,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.2632483309999998,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.28271471099992596,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.28019409000000906,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        },
+        {
+          "wall_s": 0.2743812139999591,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642484049174989
+        },
+        {
+          "wall_s": 0.2729180430000042,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642655553528498
+        },
+        {
+          "wall_s": 0.2792094010000028,
+          "metered": 1034148398,
+          "kernel_metered": 1031454836,
+          "checksum": 642010592181830
+        },
+        {
+          "wall_s": 0.2664448870000342,
+          "metered": 1034228398,
+          "kernel_metered": 1031534836,
+          "checksum": 642086682570298
+        }
+      ],
+      "perf": null
+    }
+  ]
+}

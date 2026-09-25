@@ -1,0 +1,223 @@
+{
+  "shape_m_n_k": [
+    120,
+    2304,
+    768
+  ],
+  "expected_checksum": 641785196358105,
+  "method": "same production Rust implementation, only 768 dispatch R/C changed; PocketIC before/after performance_counter; one weight bank",
+  "variants": {
+    "16x16": {
+      "sha256": "d6b775f4d70f8b1207f7caa6de6a51f6d8b790eadc7734ec432f563411625007",
+      "bytes": 281961,
+      "tile_rows": 16,
+      "tile_cols": 16,
+      "samples": [
+        {
+          "iterations": 0,
+          "total_metered": 4053774,
+          "kernel_metered": 212,
+          "wall_s": 0.010465616000033151,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 1,
+          "total_metered": 134135602,
+          "kernel_metered": 131442040,
+          "wall_s": 0.02476860500001976,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 4,
+          "total_metered": 513341086,
+          "kernel_metered": 510647524,
+          "wall_s": 0.06542874500001972,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "wall_s": 0.11982762299999195,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "wall_s": 0.12012254799998345,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1018948398,
+          "kernel_metered": 1016254836,
+          "wall_s": 0.11994635199999948,
+          "checksum": 641785196358105
+        }
+      ],
+      "kernel_metered_per_iteration": 126401828,
+      "first_nonzero_fixed_cost": 5040212,
+      "reduction_vs_16x16_percent": 0.0
+    },
+    "8x16": {
+      "sha256": "0dcca3ba7a5ecf11dbe38661e228e481b07ad5d704f1c4caea41f293ab235621",
+      "bytes": 241886,
+      "tile_rows": 8,
+      "tile_cols": 16,
+      "samples": [
+        {
+          "iterations": 0,
+          "total_metered": 4053774,
+          "kernel_metered": 212,
+          "wall_s": 0.01037078800004565,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 1,
+          "total_metered": 145443853,
+          "kernel_metered": 142750291,
+          "wall_s": 0.02067411500001981,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 4,
+          "total_metered": 558574090,
+          "kernel_metered": 555880528,
+          "wall_s": 0.05047856599998113,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1109414406,
+          "kernel_metered": 1106720844,
+          "wall_s": 0.09085027099996523,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1109414406,
+          "kernel_metered": 1106720844,
+          "wall_s": 0.09106938200000059,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1109414406,
+          "kernel_metered": 1106720844,
+          "wall_s": 0.09129473100000496,
+          "checksum": 641785196358105
+        }
+      ],
+      "kernel_metered_per_iteration": 137710079,
+      "first_nonzero_fixed_cost": 5040212,
+      "reduction_vs_16x16_percent": -8.946271726386733
+    },
+    "4x8": {
+      "sha256": "ac774dce172dfd3aa913c0e0d7e8cfe6ff79425a98497a6fb09ee585bf7f30a7",
+      "bytes": 203694,
+      "tile_rows": 4,
+      "tile_cols": 8,
+      "samples": [
+        {
+          "iterations": 0,
+          "total_metered": 4053774,
+          "kernel_metered": 212,
+          "wall_s": 0.011404979000019466,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 1,
+          "total_metered": 166393641,
+          "kernel_metered": 163700079,
+          "wall_s": 0.021419745000002877,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 4,
+          "total_metered": 642373242,
+          "kernel_metered": 639679680,
+          "wall_s": 0.051104458999986946,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1277012710,
+          "kernel_metered": 1274319148,
+          "wall_s": 0.08960611800000606,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1277012710,
+          "kernel_metered": 1274319148,
+          "wall_s": 0.0895639889999984,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1277012710,
+          "kernel_metered": 1274319148,
+          "wall_s": 0.08990167400003202,
+          "checksum": 641785196358105
+        }
+      ],
+      "kernel_metered_per_iteration": 158659867,
+      "first_nonzero_fixed_cost": 5040212,
+      "reduction_vs_16x16_percent": -25.520231400450943
+    },
+    "4x2": {
+      "sha256": "3f364943960505467ce3f555fc7d5dc6a3b5fe59b8fa7c8ecde251c0749f1090",
+      "bytes": 208894,
+      "tile_rows": 4,
+      "tile_cols": 2,
+      "samples": [
+        {
+          "iterations": 0,
+          "total_metered": 4053774,
+          "kernel_metered": 212,
+          "wall_s": 0.010009948000003988,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 1,
+          "total_metered": 212920167,
+          "kernel_metered": 210226605,
+          "wall_s": 0.02197209399997746,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 4,
+          "total_metered": 828479346,
+          "kernel_metered": 825785784,
+          "wall_s": 0.056232085000033294,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1649224918,
+          "kernel_metered": 1646531356,
+          "wall_s": 0.10142147200002682,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1649224918,
+          "kernel_metered": 1646531356,
+          "wall_s": 0.10130704400000923,
+          "checksum": 641785196358105
+        },
+        {
+          "iterations": 8,
+          "total_metered": 1649224918,
+          "kernel_metered": 1646531356,
+          "wall_s": 0.10189206199999035,
+          "checksum": 641785196358105
+        }
+      ],
+      "kernel_metered_per_iteration": 205186393,
+      "first_nonzero_fixed_cost": 5040212,
+      "reduction_vs_16x16_percent": -62.3286595190696
+    }
+  }
+}

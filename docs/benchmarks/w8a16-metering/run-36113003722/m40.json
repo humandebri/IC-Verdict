@@ -1,0 +1,807 @@
+{
+  "host": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "uname": {
+    "system": "Linux",
+    "node": "runnervmtr4k5",
+    "release": "6.17.0-1022-azure",
+    "version": "#22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026",
+    "machine": "x86_64",
+    "processor": "x86_64"
+  },
+  "cpu_model": "Model name:                              AMD EPYC 7763 64-Core Processor",
+  "wasm_sha256": "3bbb0359cd243985ccff6879ba003563cc7f7646f52b9d035deaac971c03799f",
+  "shape": [
+    40,
+    2304,
+    768
+  ],
+  "control_instructions_per_loop": 1808.0,
+  "control_loops_per_kernel": 23602,
+  "pocketic_pid": 9996,
+  "process_tree": [
+    {
+      "pid": 9996,
+      "name": "pocket-ic"
+    },
+    {
+      "pid": 10087,
+      "name": "pocket-ic"
+    },
+    {
+      "pid": 10102,
+      "name": "pocket-ic"
+    },
+    {
+      "pid": 10139,
+      "name": "pocket-ic"
+    }
+  ],
+  "warmup": {
+    "gemm": {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.6863579570000411,
+      "process_tree_cpu_s": 0.6699999999999999
+    },
+    "control_zero": {
+      "kind": "control",
+      "loops": 0,
+      "charged_instructions": 160747,
+      "wall_s": 0.012325102999966475,
+      "process_tree_cpu_s": 0.010000000000000009
+    },
+    "control_calibration": {
+      "kind": "control",
+      "loops": 10000,
+      "charged_instructions": 18240747,
+      "wall_s": 0.014787060000003294,
+      "process_tree_cpu_s": 0.010000000000000009
+    }
+  },
+  "ratios": {
+    "wall_s": {
+      "gemm_seconds_per_billion_charged": 0.09853907177048853,
+      "control_seconds_per_billion_charged": 0.34341594833262584,
+      "gemm_over_control_load_per_charge": 0.2869379603624161,
+      "ratio_bootstrap_95pct": [
+        0.2784025981435789,
+        0.29586767916962026
+      ],
+      "positive_bootstrap_samples": 1000
+    },
+    "process_tree_cpu_s": {
+      "gemm_seconds_per_billion_charged": 0.1033046675180476,
+      "control_seconds_per_billion_charged": 0.3524395649816385,
+      "gemm_over_control_load_per_charge": 0.29311313990365867,
+      "ratio_bootstrap_95pct": [
+        0.26650640582523394,
+        0.3180426695969156
+      ],
+      "positive_bootstrap_samples": 1000
+    }
+  },
+  "rows": [
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.12698938699998052,
+      "process_tree_cpu_s": 0.11000000000000032,
+      "block": 0,
+      "level": 8
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.24449398600000904,
+      "process_tree_cpu_s": 0.2599999999999998,
+      "block": 0,
+      "level": 16
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.6376062309999497,
+      "process_tree_cpu_s": 0.6200000000000001,
+      "block": 0
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.6558259839999891,
+      "process_tree_cpu_s": 0.6599999999999997,
+      "block": 0
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5881881579999799,
+      "process_tree_cpu_s": 0.6000000000000001,
+      "block": 0
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.02290341799999851,
+      "process_tree_cpu_s": 0.010000000000000675,
+      "block": 0,
+      "level": 1
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6027870260000441,
+      "process_tree_cpu_s": 0.5899999999999999,
+      "block": 0
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.06673982600000272,
+      "process_tree_cpu_s": 0.0699999999999994,
+      "block": 0,
+      "level": 4
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.6525815029999649,
+      "process_tree_cpu_s": 0.6499999999999995,
+      "block": 1
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.06765187299998843,
+      "process_tree_cpu_s": 0.07000000000000028,
+      "block": 1,
+      "level": 4
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.6203946040000119,
+      "process_tree_cpu_s": 0.6300000000000008,
+      "block": 1
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.24280689900001562,
+      "process_tree_cpu_s": 0.23999999999999932,
+      "block": 1,
+      "level": 16
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.022874563000016224,
+      "process_tree_cpu_s": 0.020000000000000462,
+      "block": 1,
+      "level": 1
+    },
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.12536377500003937,
+      "process_tree_cpu_s": 0.13000000000000078,
+      "block": 1,
+      "level": 8
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5900966899999958,
+      "process_tree_cpu_s": 0.5799999999999983,
+      "block": 1
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6025761210000269,
+      "process_tree_cpu_s": 0.6000000000000014,
+      "block": 1
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.0669372350000117,
+      "process_tree_cpu_s": 0.05999999999999872,
+      "block": 2,
+      "level": 4
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6057486120000135,
+      "process_tree_cpu_s": 0.5999999999999996,
+      "block": 2
+    },
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.1252311559999839,
+      "process_tree_cpu_s": 0.120000000000001,
+      "block": 2,
+      "level": 8
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.022838122999985444,
+      "process_tree_cpu_s": 0.019999999999999574,
+      "block": 2,
+      "level": 1
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5902694799999608,
+      "process_tree_cpu_s": 0.6000000000000014,
+      "block": 2
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.6190337429999886,
+      "process_tree_cpu_s": 0.6099999999999994,
+      "block": 2
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.24284383600002002,
+      "process_tree_cpu_s": 0.23000000000000043,
+      "block": 2,
+      "level": 16
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.651478931999975,
+      "process_tree_cpu_s": 0.6499999999999986,
+      "block": 2
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.6520292019999943,
+      "process_tree_cpu_s": 0.6500000000000004,
+      "block": 3
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.6192937590000156,
+      "process_tree_cpu_s": 0.6199999999999992,
+      "block": 3
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.24300544900000887,
+      "process_tree_cpu_s": 0.2400000000000002,
+      "block": 3,
+      "level": 16
+    },
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.12552542600002425,
+      "process_tree_cpu_s": 0.13000000000000256,
+      "block": 3,
+      "level": 8
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6023796000000061,
+      "process_tree_cpu_s": 0.5999999999999996,
+      "block": 3
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5945892630000458,
+      "process_tree_cpu_s": 0.5999999999999979,
+      "block": 3
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.06696932900001684,
+      "process_tree_cpu_s": 0.06999999999999851,
+      "block": 3,
+      "level": 4
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.022387810999987323,
+      "process_tree_cpu_s": 0.009999999999999787,
+      "block": 3,
+      "level": 1
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.2430614529999957,
+      "process_tree_cpu_s": 0.25,
+      "block": 4,
+      "level": 16
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6029256620000183,
+      "process_tree_cpu_s": 0.6000000000000032,
+      "block": 4
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5914814480000246,
+      "process_tree_cpu_s": 0.5700000000000003,
+      "block": 4
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.6527947640000207,
+      "process_tree_cpu_s": 0.6499999999999986,
+      "block": 4
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.6200513640000054,
+      "process_tree_cpu_s": 0.6300000000000008,
+      "block": 4
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.0680940420000411,
+      "process_tree_cpu_s": 0.04999999999999716,
+      "block": 4,
+      "level": 4
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.023499109999988832,
+      "process_tree_cpu_s": 0.03000000000000469,
+      "block": 4,
+      "level": 1
+    },
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.12565289100001564,
+      "process_tree_cpu_s": 0.13999999999999702,
+      "block": 4,
+      "level": 8
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5904249480000203,
+      "process_tree_cpu_s": 0.5800000000000018,
+      "block": 5
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.022991536000006363,
+      "process_tree_cpu_s": 0.00999999999999801,
+      "block": 5,
+      "level": 1
+    },
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.12551846799999566,
+      "process_tree_cpu_s": 0.13000000000000256,
+      "block": 5,
+      "level": 8
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.6179580769999689,
+      "process_tree_cpu_s": 0.6099999999999994,
+      "block": 5
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6017554509999741,
+      "process_tree_cpu_s": 0.6000000000000014,
+      "block": 5
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.06690628900003048,
+      "process_tree_cpu_s": 0.05999999999999872,
+      "block": 5,
+      "level": 4
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.6525683560000175,
+      "process_tree_cpu_s": 0.6599999999999966,
+      "block": 5
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.24240540699997837,
+      "process_tree_cpu_s": 0.23000000000000043,
+      "block": 5,
+      "level": 16
+    },
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.12576522799997747,
+      "process_tree_cpu_s": 0.13000000000000256,
+      "block": 6,
+      "level": 8
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.6529347750000056,
+      "process_tree_cpu_s": 0.6600000000000037,
+      "block": 6
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.06711631900003567,
+      "process_tree_cpu_s": 0.06999999999999673,
+      "block": 6,
+      "level": 4
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.022693062999962876,
+      "process_tree_cpu_s": 0.00999999999999801,
+      "block": 6,
+      "level": 1
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5918346749999728,
+      "process_tree_cpu_s": 0.5799999999999983,
+      "block": 6
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.2427144150000231,
+      "process_tree_cpu_s": 0.25000000000000355,
+      "block": 6,
+      "level": 16
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6037650129999861,
+      "process_tree_cpu_s": 0.6000000000000014,
+      "block": 6
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.6192989059999832,
+      "process_tree_cpu_s": 0.6099999999999959,
+      "block": 6
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.24250344799997947,
+      "process_tree_cpu_s": 0.240000000000002,
+      "block": 7,
+      "level": 16
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.06704039999999623,
+      "process_tree_cpu_s": 0.05999999999999872,
+      "block": 7,
+      "level": 4
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6054991679999944,
+      "process_tree_cpu_s": 0.6099999999999959,
+      "block": 7
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.6202050790000158,
+      "process_tree_cpu_s": 0.6100000000000065,
+      "block": 7
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5901793209999937,
+      "process_tree_cpu_s": 0.5899999999999963,
+      "block": 7
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.6597572830000331,
+      "process_tree_cpu_s": 0.6600000000000001,
+      "block": 7
+    },
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.1260750929999972,
+      "process_tree_cpu_s": 0.13000000000000256,
+      "block": 7,
+      "level": 8
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.023525302999985342,
+      "process_tree_cpu_s": 0.00999999999999801,
+      "block": 7,
+      "level": 1
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.6543011599999886,
+      "process_tree_cpu_s": 0.6500000000000021,
+      "block": 8
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.24296025200004578,
+      "process_tree_cpu_s": 0.25,
+      "block": 8,
+      "level": 16
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5912012710000454,
+      "process_tree_cpu_s": 0.5899999999999999,
+      "block": 8
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.06758275200002117,
+      "process_tree_cpu_s": 0.07000000000000028,
+      "block": 8,
+      "level": 4
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.022791771000015615,
+      "process_tree_cpu_s": 0.019999999999999574,
+      "block": 8,
+      "level": 1
+    },
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.1254629590000036,
+      "process_tree_cpu_s": 0.120000000000001,
+      "block": 8,
+      "level": 8
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.623921528999972,
+      "process_tree_cpu_s": 0.6099999999999994,
+      "block": 8
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6039494180000133,
+      "process_tree_cpu_s": 0.6199999999999974,
+      "block": 8
+    },
+    {
+      "kind": "control",
+      "loops": 188816,
+      "charged_instructions": 341540075,
+      "wall_s": 0.12570131400002538,
+      "process_tree_cpu_s": 0.10999999999999943,
+      "block": 9,
+      "level": 8
+    },
+    {
+      "kind": "gemm",
+      "level": 16,
+      "charged_instructions": 682762655,
+      "instructions_per_mac": 0.6029011187730012,
+      "wall_s": 0.6537575449999622,
+      "process_tree_cpu_s": 0.6600000000000037,
+      "block": 9
+    },
+    {
+      "kind": "control",
+      "loops": 23602,
+      "charged_instructions": 42833163,
+      "wall_s": 0.024030313999958253,
+      "process_tree_cpu_s": 0.010000000000001563,
+      "block": 9,
+      "level": 1
+    },
+    {
+      "kind": "control",
+      "loops": 94408,
+      "charged_instructions": 170850411,
+      "wall_s": 0.06842383000002883,
+      "process_tree_cpu_s": 0.06999999999999673,
+      "block": 9,
+      "level": 4
+    },
+    {
+      "kind": "gemm",
+      "level": 8,
+      "charged_instructions": 341381447,
+      "instructions_per_mac": 0.6029013298175953,
+      "wall_s": 0.6209823479999841,
+      "process_tree_cpu_s": 0.6099999999999994,
+      "block": 9
+    },
+    {
+      "kind": "gemm",
+      "level": 1,
+      "charged_instructions": 42672890,
+      "instructions_per_mac": 0.6029042844419126,
+      "wall_s": 0.5903628449999587,
+      "process_tree_cpu_s": 0.6000000000000014,
+      "block": 9
+    },
+    {
+      "kind": "control",
+      "loops": 377632,
+      "charged_instructions": 682919403,
+      "wall_s": 0.24304117099995892,
+      "process_tree_cpu_s": 0.23000000000000043,
+      "block": 9,
+      "level": 16
+    },
+    {
+      "kind": "gemm",
+      "level": 4,
+      "charged_instructions": 170690843,
+      "instructions_per_mac": 0.6029017519067835,
+      "wall_s": 0.6034297250000122,
+      "process_tree_cpu_s": 0.5899999999999999,
+      "block": 9
+    }
+  ]
+}
