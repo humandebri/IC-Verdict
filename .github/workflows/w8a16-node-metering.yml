@@ -1,0 +1,43 @@
+name: W8A16 metering versus x86 node load
+on:
+  push:
+    branches: [perf/w8a16-node-metering]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.97.1
+          targets: wasm32-unknown-unknown
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build the exact canister Wasm from this commit
+        run: bash tools/build_one.sh verdict-engine
+      - name: Install isolated benchmark dependencies
+        run: |
+          python -m pip install --disable-pip-version-check pocket-ic==3.1.2 psutil==7.2.2 wasmtime==49.0.0
+          curl --fail --location --retry 3 --output /tmp/pocketic.tar.gz https://github.com/dfinity/icp-cli-network-launcher/releases/download/v16.0.0-2026-09-18-03-28/icp-cli-network-launcher-x86_64-linux-v16.0.0-2026-09-18-03-28.tar.gz
+          mkdir -p /tmp/pocketic-bin
+          tar -xzf /tmp/pocketic.tar.gz -C /tmp/pocketic-bin
+          find /tmp/pocketic-bin -type f -name pocket-ic -print
+      - name: Compare equal-metered workloads
+        env:
+          POCKET_IC_MUTE_SERVER: '1'
+        run: |
+          POCKET_IC_BIN="$(find /tmp/pocketic-bin -type f -name pocket-ic | head -1)"
+          test -x "$POCKET_IC_BIN"
+          export POCKET_IC_BIN
+          python tools/bench_w8a16_metering.py --wasm build/verdict-engine.wasm --m 40 --n 2304 --k 768 --repeats 10 --out artifacts/w8a16-metering/m40.json
+          python tools/bench_w8a16_metering.py --wasm build/verdict-engine.wasm --m 120 --n 2304 --k 768 --repeats 6 --out artifacts/w8a16-metering/m120.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: w8a16-node-metering
+          path: artifacts/w8a16-metering/*.json
