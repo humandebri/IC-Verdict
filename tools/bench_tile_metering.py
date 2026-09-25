@@ -45,9 +45,13 @@ def main():
             assert checksum==EXPECTED_CHECKSUM,(name,iterations,checksum)
             sample={'iterations':iterations,'total_metered':total,'kernel_metered':kernel,'wall_s':wall,'checksum':checksum}
             v['samples'].append(sample)
-        zero=v['samples'][0]['kernel_metered'];one=v['samples'][1]['kernel_metered'];four=v['samples'][2]['kernel_metered']
-        assert four-zero==4*(one-zero),(name,zero,one,four)
-        v['kernel_metered_per_iteration']=one-zero
+        one=v['samples'][1]['kernel_metered'];four=v['samples'][2]['kernel_metered'];eight=v['samples'][3]['kernel_metered']
+        assert (four-one)%3==0,(name,one,four)
+        per=(four-one)//3
+        assert eight-four==4*per,(name,one,four,eight,per)
+        assert all(s['kernel_metered']==eight for s in v['samples'][3:]),name
+        v['kernel_metered_per_iteration']=per
+        v['first_nonzero_fixed_cost']=one-per
         args.out.write_text(json.dumps(report,indent=2)+'\n')
         print(name,v['kernel_metered_per_iteration'],v['sha256'],flush=True)
     base=report['variants']['16x16']['kernel_metered_per_iteration']
