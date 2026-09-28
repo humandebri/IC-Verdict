@@ -44,6 +44,9 @@ yarn-error.log*
 .wrangler/
 /artifacts/**/*.log
 
+# Generated locally when a delivery needs a checksum list.
+/MANIFEST.sha256
+
 # macOS metadata, including AppleDouble files on external volumes.
 .DS_Store
 ._*
