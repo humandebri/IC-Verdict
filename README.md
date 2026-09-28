@@ -48,6 +48,8 @@ IC-Verdictは、文章と選択肢を受け取り、モデルが選んだ結果�
 >
 > v0.1の「cargoが無くRust未確認」という記述は誤りでした。実際にビルドした結果、`tools/build_one.sh`のbash 3.2非互換、`CARGO_TARGET_DIR`無視、Candle Wasmの`getrandom`欠落という3件の実バグが出たため修正しています。詳細は[docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md)。
 
+`MANIFEST.sha256`はGitで追跡しないローカルの納品用チェックサム一覧です。必要な場合だけ`python3 tools/manifest.py --write`で生成し、`python3 tools/manifest.py --check`で確認してください。
+
 ## 1. 入っているもの
 
 | 部分 | ソース実装 | 今回の実行検証 |

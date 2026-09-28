@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Write or check MANIFEST.sha256, the delivery hash list.
+"""Write or check a local MANIFEST.sha256 delivery hash list.
 
 Why this exists: the file shipped with 89 entries, no generator, no verifier, nothing
 that read it (only a docstring claimed it pinned the fixtures), 24 entries that no longer
 matched the tree, and no coverage of the verdict subsystem. An integrity claim that
 cannot be checked is worse than no claim.
 
-Coverage is Git's tracked and non-ignored source files, so a newly created delivery file
+The generated list is ignored by Git. Git already tracks source integrity; this list is
+only for checking a separate delivery of the working tree. Coverage is Git's tracked
+and non-ignored source files, so a newly created delivery file
 cannot silently escape the list before it is staged. Build outputs, downloaded
 checkpoints and generated fixture packs remain excluded by `.gitignore`.
 
