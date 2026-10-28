@@ -12,5 +12,5 @@
     "study:query": "node --import tsx scripts/input-study-query.ts"
   },
   "dependencies": { "@icp-sdk/core": "^5.0.0", "react": "^19.0.0", "react-dom": "^19.0.0" },
-  "devDependencies": { "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", "@types/node": "^22.0.0", "typescript": "^5.8.0", "vite": "^6.0.0", "vitest": "^3.0.0", "tsx": "^4.0.0" }
+  "devDependencies": { "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", "@types/node": "^22.0.0", "typescript": "^5.8.0", "vite": "^6.0.0", "vitest": "^5.0.5", "tsx": "^4.0.0" }
 }
